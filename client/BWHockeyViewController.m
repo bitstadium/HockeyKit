@@ -99,7 +99,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == [self sectionIndexOfSettings])
-        return NSLocalizedString(@"Check for updates", @"");
+        return NSLocalizedString(@"Check For Update", @"");
     else if (section == [self sectionIndexOfSettings] - 4) {
         return NSLocalizedString(@"Application", @"");
     } else if (section == [self sectionIndexOfSettings] - 2) {
@@ -195,7 +195,7 @@
     
     if (indexPath.section == startIndexOfSettings + 1) {
         // check again button
-        cell.textLabel.text = NSLocalizedString(@"Check for update", @"");
+        cell.textLabel.text = NSLocalizedString(@"Check For Update", @"");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
     } else if (indexPath.section == startIndexOfSettings) {
         // update check interval selection
