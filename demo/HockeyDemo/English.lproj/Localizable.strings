@@ -1,0 +1,27 @@
+
+
+
+/* Alert View */
+
+"Update available" = "Update available";
+"Would you like to check out the new update? You can do this later on at any time in the In-App settings." = "Would you like to check out the new update? You can do this later on at any time in the In-App settings.";
+"No" = "No";
+"Yes" = "Yes";                                               
+                                               
+/* Update View Controller */
+
+"Check for updates" = "Check for update";
+"Application"= "Application";
+"Provisioning Profile" = "Provisioning Profile";
+"Check for update" = "Check for update";
+"On Startup"= "On Startup";
+"Daily" = "Daily";
+"Manually" = "Manually";
+"Install Profile" = "Install Profile";
+"Last Update" = "Last Update";
+"Install Update" = "Install Update";
+"New Version" = "New Version";
+"Installed" = "Installed";
+"Release Notes" = "Release Notes";
+
+"Beta Updates" = "Beta Updates";
