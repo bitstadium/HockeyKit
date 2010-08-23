@@ -304,7 +304,7 @@
     } else if (indexPath.section == startIndexOfSettings - 3) {
         // install application button
         NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-        NSString *temp = [NSString stringWithFormat:self.hockeyController.betaCheckUrl, parameter];
+        NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
         url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp URLEncodedString]];        
     } else if (indexPath.section == startIndexOfSettings - 4 && indexPath.row == 2) {
         // release notes in a webview
