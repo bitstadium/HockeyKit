@@ -55,7 +55,11 @@
         ) {
         return 0;
     } else {
-        return 4;
+        if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
+            return 4;
+        } else {
+            return 2;
+        }
     }    
 }
 
@@ -92,17 +96,24 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return [self sectionIndexOfSettings] + 2;    
+    if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
+        amountProfileRows = 2;
+        return [self sectionIndexOfSettings] + 2;
+    } else {
+        amountProfileRows = 0;
+        return [self sectionIndexOfSettings] + 1;
+    }
+
 }
 
 
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == [self sectionIndexOfSettings])
-        return NSLocalizedString(@"Check For Update", @"");
-    else if (section == [self sectionIndexOfSettings] - 4) {
+        return NSLocalizedString(@"Check for updates", @"");
+    else if (section == [self sectionIndexOfSettings] - 2 - amountProfileRows) {
         return NSLocalizedString(@"Application", @"");
-    } else if (section == [self sectionIndexOfSettings] - 2) {
+    } else if (section == [self sectionIndexOfSettings] - amountProfileRows) {
         return NSLocalizedString(@"Provisioning Profile", @"");
     } else {
         return nil;
@@ -120,21 +131,21 @@
     } else if (section == startIndexOfSettings) {
         // update check interval selection
         numberOfSectionRows = 3;
-    } else if (section == startIndexOfSettings - 1) {
-        // install profile button
-        numberOfSectionRows = 1;
-    } else if (section == startIndexOfSettings - 2) {
-        // last profile update information
-        numberOfSectionRows = 1;
-    } else if (section == startIndexOfSettings - 3) {
+    } else if (section == startIndexOfSettings - 1 - amountProfileRows) {
         // install application button
         numberOfSectionRows = 1;
-    } else if (section == startIndexOfSettings - 4) {
+    } else if (section == startIndexOfSettings - 2 - amountProfileRows) {
         // last application update information
         if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_NOTES])
             numberOfSectionRows = 3;
         else
             numberOfSectionRows = 2;
+    } else if (section == startIndexOfSettings - 1 ) {
+        // install profile button
+        numberOfSectionRows = 1;
+    } else if (section == startIndexOfSettings - 2) {
+        // last profile update information
+        numberOfSectionRows = 1;
     }
     
     // Return the number of rows in the section.
@@ -164,13 +175,13 @@
     NSInteger cellStyle = UITableViewCellStyleSubtitle;
     
     // preselect the required cell style
-    if (indexPath.section == startIndexOfSettings - 4 && indexPath.row == 2) {
+    if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows && indexPath.row == 2) {
         // we need a one line cell with discloure
         requiredIdentifier = BetaCell2Identifier;
         cellStyle = UITableViewCellStyleDefault;
     } else if (indexPath.section == startIndexOfSettings + 1 ||
         indexPath.section == startIndexOfSettings - 1 ||
-        indexPath.section == startIndexOfSettings - 3) {
+        indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
         // we need a button style
         requiredIdentifier = BetaCell3Identifier;
         cellStyle = UITableViewCellStyleDefault;
@@ -178,7 +189,7 @@
         // we need a check cell
         requiredIdentifier = BetaCell4Identifier;
         cellStyle = UITableViewCellStyleDefault;
-    } else if (indexPath.section == startIndexOfSettings - 2) {
+    } else if (amountProfileRows > 0 && indexPath.section == startIndexOfSettings - amountProfileRows) {
         // we need a one line style with value
         requiredIdentifier = BetaCell5Identifier;
         cellStyle = UITableViewCellStyleValue1;
@@ -195,7 +206,7 @@
     
     if (indexPath.section == startIndexOfSettings + 1) {
         // check again button
-        cell.textLabel.text = NSLocalizedString(@"Check For Update", @"");
+        cell.textLabel.text = NSLocalizedString(@"Check Now", @"");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
     } else if (indexPath.section == startIndexOfSettings) {
         // update check interval selection
@@ -219,33 +230,19 @@
             if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
-        }        
-    } else if (indexPath.section == startIndexOfSettings - 1) {
-        // install profile button
-        cell.textLabel.text = NSLocalizedString(@"Install Profile", @"");
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
-    } else if (indexPath.section == startIndexOfSettings - 2) {
-        // last profile update information
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.textLabel.text = NSLocalizedString(@"Last Update", @"");
-
-        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-        
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] intValue]];
-        
-        cell.detailTextLabel.text = [dateFormatter stringFromDate:date];
-    } else if (indexPath.section == startIndexOfSettings - 3) {
+        }
+    } else if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
         // install application button
         cell.textLabel.text = NSLocalizedString(@"Install Update", @"");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
-    } else if (indexPath.section == startIndexOfSettings - 4) {
+    } else if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows) {
         // last application update information
         if (indexPath.row == 0) {
             // app name
             cell.textLabel.text = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE];
-            cell.detailTextLabel.text = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];;
+            if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
+                cell.detailTextLabel.text = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];
+            }
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else if (indexPath.row == 1) {
             // app version
@@ -261,6 +258,22 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.textLabel.text = NSLocalizedString(@"Release Notes", @"");
         }
+    } else if (indexPath.section == startIndexOfSettings - 1) {
+        // install profile button
+        cell.textLabel.text = NSLocalizedString(@"Install Profile", @"");
+        cell.textLabel.textAlignment = UITextAlignmentCenter;
+    } else if (indexPath.section == startIndexOfSettings - 2) {
+        // last profile update information
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.textLabel.text = NSLocalizedString(@"Last Update", @"");
+        
+        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+        
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] intValue]];
+        
+        cell.detailTextLabel.text = [dateFormatter stringFromDate:date];
     }
     
     return cell;
@@ -297,16 +310,16 @@
         // persist the new value
         [[NSUserDefaults standardUserDefaults] synchronize];
         [tableView reloadData];
-    } else if (indexPath.section == startIndexOfSettings - 1) {
-        // install profile button
-        NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_PROFILE, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-        url = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
-    } else if (indexPath.section == startIndexOfSettings - 3) {
+    } else if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
         // install application button
         NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
         NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
         url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp URLEncodedString]];        
-    } else if (indexPath.section == startIndexOfSettings - 4 && indexPath.row == 2) {
+    } else if (indexPath.section == startIndexOfSettings - 1) {
+        // install profile button
+        NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_PROFILE, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
+        url = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
+    } else if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows && indexPath.row == 2) {
         // release notes in a webview
         
         NSMutableString *webString = [[[NSMutableString alloc] init] autorelease];

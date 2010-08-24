@@ -106,7 +106,7 @@ class iOSUpdater
         $note                = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
 
         // notes file is optional, other files are required
-        if (!$plist || !$ipa || !$provisioningProfile)
+        if (!$plist || !$ipa)
         {
             $this->json = array(self::RETURN_RESULT => -1);
             return $this->sendJSONAndExit();
@@ -129,10 +129,14 @@ class iOSUpdater
                 $this->json[self::RETURN_NOTES] = file_get_contents($appDirectory . $note);
             }
 
-            $this->json[self::RETURN_PROFILE] = filectime($appDirectory . $provisioningProfile);
+            if ($provisioningProfile)
+                $this->json[self::RETURN_PROFILE] = filectime($appDirectory . $provisioningProfile);
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
-            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
-            $this->json[self::RETURN_RESULT]  = $latestversion;
+
+			if ($parsed_plist['items'][0]['metadata']['subtitle'])
+	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+    
+	        $this->json[self::RETURN_RESULT]  = $latestversion;
 
             return $this->sendJSONAndExit();
 
@@ -188,7 +192,7 @@ class iOSUpdater
                 $plist               = array_shift(glob($file . '/*.plist'));
                 $note                = array_shift(glob($file . '/*.html'));
 
-                if (!$ipa || !$provisioningProfile || !$plist) {
+                if (!$ipa || !$plist) {
                     continue;
                 }
 
@@ -201,11 +205,14 @@ class iOSUpdater
                 // now get the application name from the plist
                 $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
                 $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
-                $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
-                $newApp[self::INDEX_PROFILE_UPDATE] = filectime($this->appDirectory . $provisioningProfile);
                 $newApp[self::INDEX_DIR]            = $file;
                 $newApp[self::INDEX_NOTES]          = $note ? nl2br(file_get_contents($note)) : '';
 
+                if ($provisioningProfile) {
+                    $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
+                    $newApp[self::INDEX_PROFILE_UPDATE] = filectime($this->appDirectory . $provisioningProfile);
+                }
+                
                 // add it to the array
                 $this->applications[] = $newApp;
             }

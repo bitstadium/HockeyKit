@@ -50,8 +50,7 @@
 - (id)init {
     self = [super init];
     
-	if ( self != nil)
-	{
+	if ( self != nil) {
         self.betaCheckUrl = nil;
         self.betaDictionary = nil;
     }
@@ -84,8 +83,8 @@
 
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal {
     return [[[BWHockeyViewController alloc] init:self
-                                               modal:modal]
-             autorelease];
+                                           modal:modal]
+            autorelease];
 }
 
 
@@ -225,33 +224,44 @@
 
         if (feed != nil && [feed count] > 0) {
             // get the array of "stream" from the feed and cast to NSArray
-            NSString *result = (NSString *)[feed valueForKey:BETA_UPDATE_RESULT];
+            id resultValue = [feed valueForKey:BETA_UPDATE_RESULT];
+            
+            NSString *result = nil;
+            
+            if ([resultValue isKindOfClass:[NSDecimalNumber class]]) {
+                result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
+            } else {
+                result = resultValue;
+            }
             
             if ([result compare:@"-1"] != NSOrderedSame && [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
-                NSString *profile = (NSString *)[feed valueForKey:BETA_UPDATE_PROFILE];
                 
-                NSString *title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
-
-                NSString *subtitle = @"";
-                if ([feed objectForKey:BETA_UPDATE_SUBTITLE] != nil)
-                    subtitle = (NSString *)[feed valueForKey:BETA_UPDATE_SUBTITLE];
-
-                NSString *notes = (NSString *)[feed valueForKey:BETA_UPDATE_NOTES];
-                if (notes == nil) {
-                    self.betaDictionary = [[NSDictionary dictionaryWithObjectsAndKeys: result, BETA_UPDATE_VERSION, 
-                                            profile, BETA_UPDATE_PROFILE, 
-                                            title,BETA_UPDATE_TITLE, 
-                                            subtitle, BETA_UPDATE_SUBTITLE,
-                                            nil] retain];
-                } else {            
-                    self.betaDictionary = [[NSDictionary dictionaryWithObjectsAndKeys: result, BETA_UPDATE_VERSION, 
-                                            profile, BETA_UPDATE_PROFILE, 
-                                            title, BETA_UPDATE_TITLE, 
-                                            subtitle, BETA_UPDATE_SUBTITLE,
-                                            notes, BETA_UPDATE_NOTES, 
-                                            nil] retain];
+                self.betaDictionary = [[NSMutableDictionary alloc] initWithCapacity:5];
+                
+                if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
+                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_PROFILE]
+                                            forKey:BETA_UPDATE_PROFILE];
                 }
                 
+                NSString *title = NSLocalizedString(@"Unknown application", "");
+                if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
+                    title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
+                [self.betaDictionary setObject:title
+                                        forKey:BETA_UPDATE_TITLE];
+
+                if ([feed objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
+                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_SUBTITLE]
+                                            forKey:BETA_UPDATE_SUBTITLE];
+                }
+
+                if ([feed objectForKey:BETA_UPDATE_NOTES] != nil) {
+                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_NOTES]
+                                            forKey:BETA_UPDATE_NOTES];
+                }
+
+                [self.betaDictionary setObject:result
+                                        forKey:BETA_UPDATE_VERSION];
+
                 NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:self.betaDictionary forKey:kDictionaryOfLastHockeyCheck];

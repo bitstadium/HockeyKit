@@ -31,7 +31,7 @@
 @interface BWHockeyController : NSObject <UIAlertViewDelegate> {
     NSString *_betaCheckUrl;
 
-    NSDictionary *_betaDictionary;
+    NSMutableDictionary *_betaDictionary;
   
     BWHockeyViewController *currentHockeyViewController;
     
@@ -40,7 +40,7 @@
 }
 
 @property (nonatomic, retain) NSString *betaCheckUrl;
-@property (nonatomic, retain) NSDictionary *betaDictionary;
+@property (nonatomic, retain) NSMutableDictionary *betaDictionary;
 
 + (BWHockeyController *)sharedHockeyController;
 

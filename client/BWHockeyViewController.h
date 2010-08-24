@@ -31,8 +31,9 @@
     BWHockeyController *_hockeyController;
 
     NSDictionary *cellLayout;
+    int amountProfileRows;
     
-    BOOL _modal;    
+    BOOL _modal;
 }
 
 @property (nonatomic, retain) BWHockeyController *hockeyController;
