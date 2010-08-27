@@ -49,6 +49,7 @@
 
 
 - (NSUInteger)sectionIndexOfSettings {
+    amountProfileRows = 0;
     if (
         self.hockeyController.betaDictionary == nil ||
         [self.hockeyController.betaDictionary count] == 0
@@ -56,10 +57,10 @@
         return 0;
     } else {
         if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
-            return 4;
-        } else {
-            return 2;
+            amountProfileRows = 2;
         }
+        
+        return amountProfileRows + 2;
     }    
 }
 
@@ -96,14 +97,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
-        amountProfileRows = 2;
-        return [self sectionIndexOfSettings] + 2;
-    } else {
-        amountProfileRows = 0;
-        return [self sectionIndexOfSettings] + 1;
-    }
-
+    return [self sectionIndexOfSettings] + 2;
 }
 
 
