@@ -67,7 +67,7 @@
                     </div>
                     
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
-                    <h2>Provisioning Proifile</h2>
+                    <h2>Provisioning Profile</h2>
                     <ul class="rounded">
                         <li><?php echo date('d.m.Y H:i:s', $app[iOSUpdater::INDEX_PROFILE_UPDATE]) ?></li>
                     </ul>
