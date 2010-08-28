@@ -23,27 +23,20 @@
 //  THE SOFTWARE.
 
 
-#define BETA_DOWNLOAD_TYPE_PROFILE @"profile"
-#define BETA_DOWNLOAD_TYPE_APP @"app"
+#define BETA_DOWNLOAD_TYPE_PROFILE	@"profile"
+#define BETA_DOWNLOAD_TYPE_APP		@"app"
 
-#define BETA_UPDATE_RESULT @"result"
-#define BETA_UPDATE_PROFILE @"profile"
-#define BETA_UPDATE_TITLE @"title"
-#define BETA_UPDATE_SUBTITLE @"subtitle"
-#define BETA_UPDATE_NOTES @"notes"
-#define BETA_UPDATE_VERSION @"version"
+#define BETA_UPDATE_RESULT		@"result"
+#define BETA_UPDATE_PROFILE		@"profile"
+#define BETA_UPDATE_TITLE		@"title"
+#define BETA_UPDATE_SUBTITLE	@"subtitle"
+#define BETA_UPDATE_NOTES		@"notes"
+#define BETA_UPDATE_VERSION		@"version"
 
-#define BETA_UPDATE_CHECK_STARTUP 0
-#define BETA_UPDATE_CHECK_DAILY 1
-#define BETA_UPDATE_CHECK_MANUAL 2
+#define BETA_UPDATE_CHECK_STARTUP	0
+#define BETA_UPDATE_CHECK_DAILY		1
+#define BETA_UPDATE_CHECK_MANUAL	2
 
-#define kDictionaryOfLastHockeyCheck @"DictionaryOfLastHockeyCheck"
-#define kDateOfLastHockeyCheck @"DateOfLastHockeyCheck"
-#define kHockeyAutoUpdateSetting @"HockeyAutoUpdateSetting"
-
-@interface BWGlobal : NSObject {}
-
-+ (NSInteger)minorOSVersion;
-+ (NSInteger)majorOSVersion;
-
-@end
+#define kDictionaryOfLastHockeyCheck	@"DictionaryOfLastHockeyCheck"
+#define kDateOfLastHockeyCheck			@"DateOfLastHockeyCheck"
+#define kHockeyAutoUpdateSetting		@"HockeyAutoUpdateSetting"
