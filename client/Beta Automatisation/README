@@ -1,0 +1,15 @@
+Note:
+This script does not work right out of the box, you have to modify it to work correctly. It's just a source of inspiration!
+
+What the script does:
+¥ It checks whether the current build is for the device
+¥ It moves the .app and .app.dSYM files to a secure location you specify
+¥ It archives the .app file into .ipa file, just like Xcode's "Build and Archive"
+¥ It moved the archived .ipa file to your Dropbox folder, so beta testers can easily access it
+¥ It generates the .plist file required for wireless app distribution
+¥ It uploads the archived .ipa file and the generated .plist file to your ftp server using Terminal
+
+How you set it up:
+¥ In your Xcode project you have to add a new "Aggregate" target
+¥ Then you add your main target to that added target's dependencies
+¥ After that you need to a new "Run Script" build phase and paste in your modified script

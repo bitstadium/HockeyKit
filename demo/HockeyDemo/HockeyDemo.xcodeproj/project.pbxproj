@@ -6,6 +6,21 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		4BB1774812298D8D00B3DC81 /* HockeyDemo Script */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4BB1774F12298DBA00B3DC81 /* Build configuration list for PBXAggregateTarget "HockeyDemo Script" */;
+			buildPhases = (
+				4BB1774E12298D9A00B3DC81 /* Beta Automatisation */,
+			);
+			dependencies = (
+				4BB1774C12298D9300B3DC81 /* PBXTargetDependency */,
+			);
+			name = "HockeyDemo Script";
+			productName = "HockeyDemo Script";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1D3623260D0F684500981E51 /* HockeyDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* HockeyDemoAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -29,6 +44,16 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* HockeyDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* HockeyDemoViewController.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4BB1774B12298D9300B3DC81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1D6058900D05DD3D006BFB54 /* HockeyDemo */;
+			remoteInfo = HockeyDemo;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -248,6 +273,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* HockeyDemo */,
+				4BB1774812298D8D00B3DC81 /* HockeyDemo Script */,
 			);
 		};
 /* End PBXProject section */
@@ -264,6 +290,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4BB1774E12298D9A00B3DC81 /* Beta Automatisation */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Beta Automatisation";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n\n# This has to match the name of the configuration you use for Ad-Hoc builds!\nadHocConfigurationName=\"Ad-Hoc\";\n\nexecutableName=\"My Application\";\nbundleDisplayName=\"My Application\";\n\nsymbolicationDirectoryPath=\"${PROJECT_DIR}/Development/CrashReporter/Symbolication\";\ndropboxDistributionDirectoryPath=\"/users/myusername/Dropbox/My Application Beta\";\n\nftpUsername=\"username\";\nftpPassword=\"password\";\nftpServerDirectoryPath=\"my-cool-server.com/httpdocs/beta\";\n\n\n\nif ([ \"${EFFECTIVE_PLATFORM_NAME}\" == \"-iphoneos\" ])\nthen\n\t\n\tapplicationPath=\"${CONFIGURATION_BUILD_DIR}/$executableName.app\";\n\tbundleVersion=$(defaults read \"$applicationPath/Info\" CFBundleVersion);\n\tbundleIdentifier=$(defaults read \"$applicationPath/Info\" CFBundleIdentifier);\n\t\n\t# Move .app file to a secure location\n  \tif !([ -e \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app\" ])\n     then\n\n       \tcp -r $applicationPath $symbolicationDirectoryPath;\n\t\tmv \"$symbolicationDirectoryPath/$executableName.app\" \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app\";\n\t\t\n     fi\n\n\t# Move .app.dSYM file to a secure location\n\tif !([ -e \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app.dSYM\" ])\n  \t   then\n\n       \tcp -r \"$applicationPath.dSYM\" $symbolicationDirectoryPath;\n\t\tmv \"$symbolicationDirectoryPath/$executableName.app.dSYM\" \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app.dSYM\";\n\t\t\n     fi\n\n\n\tif ([ \"${BUILD_STYLE}\" == $adHocConfigurationName ])\n\tthen\n\t\tcd \"${CONFIGURATION_BUILD_DIR}\";\n\n\t\t# Archive the application for Ad-Hoc distribution\n\t\tmkdir \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\tcp -r $applicationPath \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\t(zip -qr \"$executableName.ipa\" Payload);\n\t\trm -rf \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\t\n\t\t# Generate .plist file for wireless app distribution\n\t\techo \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n\t\t \t <!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n\t\t\t <plist version=\\\"1.0\\\">\n\t\t\t <dict>\n\t\t\t\t<key>items</key>\n\t\t\t\t<array>\n\t\t\t\t\t<dict>\n\t\t\t\t\t\t<key>assets</key>\n\t\t\t\t\t\t<array>\n\t\t\t\t\t\t\t<dict>\n\t\t\t\t\t\t\t\t<key>kind</key>\n\t\t\t\t\t\t\t\t<string>software-package</string>\n\t\t\t\t\t\t\t\t<key>url</key>\n\t\t\t\t\t\t\t\t<string>__URL__</string>\n\t\t\t\t\t\t\t</dict>\n\t\t\t\t\t\t</array>\n\t\t\t\t\t\t<key>metadata</key>\n\t\t\t\t\t\t<dict>\n\t\t\t\t\t\t\t<key>bundle-identifier</key>\n\t\t\t\t\t\t\t<string>$bundleIdentifier</string>\n\t\t\t\t\t\t\t<key>bundle-version</key>\n\t\t\t\t\t\t\t<string>$bundleVersion</string>\n\t\t\t\t\t\t\t<key>kind</key>\n\t\t\t\t\t\t\t<string>software</string>\n\t\t\t\t\t\t\t<key>title</key>\n\t\t\t\t\t\t\t<string>$bundleDisplayName</string>\n\t\t\t\t\t\t</dict>\n\t\t\t\t\t</dict>\n\t\t\t\t</array>\n\t\t\t </dict>\n\t\t\t </plist>\" > \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\";\n\t\t\n\t\t# Move the archived application to Dropbox\n\t\tcp \"$executableName.ipa\" \"$dropboxDistributionDirectoryPath/$executableName.ipa\";\n\n\t\t# Open Terminal and upload the .ipa and .plist files\n\t\techo \"Uploading $executableName.ipa and $executableName.plist to $ftpServerDirectoryPath...\";\n\t\t/usr/bin/osascript <<-EOF\t\t\t\n\t\t\ton isApplicationRunning(application)\n\t\t\t\ttell application \"System Events\" to (name of processes) contains application\n\t\t\tend isApplicationRunning\n\n\t\t\tif not (isApplicationRunning(\"Terminal\")) then\n\t\t\t\ttell application \"Terminal\"\n\t\t\t\t\tlaunch\n\t\t\t\t\tclose window 1\n\t\t\t\tend tell\n\t\t\tend if\n\n\t\t\ttell application \"Terminal\"\n\t\t\t\tdo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\\\" \\\"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.ipa\\\"\"\n\t\t\t\tdo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.plist\\\" \\\"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.plist\\\"\"\n\t\t\tend tell\n\t\tEOF\n\n\t\tcd \"${PROJECT_DIR}\";\n\tfi\nfi\n\nexit 0;";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -289,6 +333,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4BB1774C12298D9300B3DC81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1D6058900D05DD3D006BFB54 /* HockeyDemo */;
+			targetProxy = 4BB1774B12298D9300B3DC81 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		1EB333A31221A3F40081CF8E /* Localizable.strings */ = {
@@ -329,6 +381,27 @@
 			};
 			name = Release;
 		};
+		4BB1774912298D8D00B3DC81 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "HockeyDemo Script";
+			};
+			name = Debug;
+		};
+		4BB1774A12298D8D00B3DC81 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "HockeyDemo Script";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -364,6 +437,15 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BB1774F12298DBA00B3DC81 /* Build configuration list for PBXAggregateTarget "HockeyDemo Script" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BB1774912298D8D00B3DC81 /* Debug */,
+				4BB1774A12298D8D00B3DC81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
