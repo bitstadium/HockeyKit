@@ -93,7 +93,10 @@
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     // TODO: find a better way to present the modal sheet on top of the current viewcontroller
-    [[[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController] presentModalViewController:navController animated:YES];
+	if ([UIWindow instancesRespondToSelector:@selector(rootViewController)])
+		[[[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController] presentModalViewController:navController animated:YES];
+	
+	[navController release];
 }
 
 
@@ -116,7 +119,8 @@
 }
 
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController {
-    if ([BWGlobal majorOSVersion] < 4) return;  
+    if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame)
+		return;  
 
     currentHockeyViewController = hockeyViewController;
     
@@ -155,7 +159,7 @@
 // invoke the selected action from the actionsheet for a location element
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1) {
+    if (buttonIndex == [alertView firstOtherButtonIndex]) {
       // YES button has been clicked
       [self showBetaUpdateView];
     }
@@ -218,7 +222,7 @@
                                                            encoding: NSUTF8StringEncoding] autorelease];
         
         
-        SBJSON *jsonParser = [[SBJSON new] autorelease];
+        SBJSON *jsonParser = [[[SBJSON alloc] init] autorelease];
         
         NSDictionary *feed = (NSDictionary *)[jsonParser objectWithString:responseString error:NULL];
 

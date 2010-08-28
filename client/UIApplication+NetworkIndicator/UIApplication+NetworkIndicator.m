@@ -48,7 +48,7 @@ static int NumberOfNetworkRequests = 0;
 - (void) resetNetworkUse
 {
     NumberOfNetworkRequests = 0;
-    [self decreaseNetworkUse];
+   	self.networkActivityIndicatorVisible = NO;
 }
 
 @end
