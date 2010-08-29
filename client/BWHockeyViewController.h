@@ -34,6 +34,7 @@
     int amountProfileRows;
     
     BOOL _modal;
+	UIStatusBarStyle _statusBarStyle;
 }
 
 @property (nonatomic, retain) BWHockeyController *hockeyController;

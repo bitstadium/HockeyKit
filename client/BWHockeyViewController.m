@@ -90,7 +90,16 @@
     }
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	_statusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
+	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+}
 
+- (void) viewWillDisappear:(BOOL)animated {
+	[super viewWillDisappear:animated];
+	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
+}
 
 #pragma mark -
 #pragma mark Table view data source
