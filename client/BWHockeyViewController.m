@@ -93,7 +93,7 @@
 - (void) viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
 	_statusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
-	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+	[[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {

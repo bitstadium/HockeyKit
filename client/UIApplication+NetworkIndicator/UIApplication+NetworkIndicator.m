@@ -22,33 +22,23 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 #import "UIApplication+NetworkIndicator.h"
 
+#if USE_HOCKEY_NETWORK_ACTIVITY_INDICATOR_MANAGEMENT
+static NSInteger kUIApplicationHockeyNumberOfNetworkRequests = 0;
 
 @implementation UIApplication (NetworkIndicator)
 
-static int NumberOfNetworkRequests = 0;
 
-- (void) increaseNetworkUse
-{
-	NumberOfNetworkRequests++;
+- (void) increaseNetworkUse {
+	kUIApplicationHockeyNumberOfNetworkRequests++;
 	self.networkActivityIndicatorVisible = YES;
 }
 
-- (void) decreaseNetworkUse
-{
-	NumberOfNetworkRequests--;
-	if (NumberOfNetworkRequests < 0)
-		NumberOfNetworkRequests = 0;
-	
-	self.networkActivityIndicatorVisible = (NumberOfNetworkRequests > 0);
-}
-
-- (void) resetNetworkUse
-{
-    NumberOfNetworkRequests = 0;
-   	self.networkActivityIndicatorVisible = NO;
+- (void) decreaseNetworkUse {
+	kUIApplicationHockeyNumberOfNetworkRequests -= (kUIApplicationHockeyNumberOfNetworkRequests > 0);
+	self.networkActivityIndicatorVisible = (kUIApplicationHockeyNumberOfNetworkRequests > 0);
 }
 
 @end
+#endif

@@ -22,13 +22,26 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 #import <Foundation/Foundation.h>
 
+/*
+ Set this to 0, if you want to use your own methods to manage the network activity indicator
+*/
+#define USE_HOCKEY_NETWORK_ACTIVITY_INDICATOR_MANAGEMENT 1
+
+#if USE_HOCKEY_NETWORK_ACTIVITY_INDICATOR_MANAGEMENT
+	#define HOCKEY_INCREASE_NETWORK_USE()	[[UIApplication sharedApplication] increaseNetworkUse]
+	#define HOCKEY_DECREASE_NETWORK_USE()	[[UIApplication sharedApplication] decreaseNetworkUse]
+#else
+	#define HOCKEY_INCREASE_NETWORK_USE()	[[UIApplication sharedApplication] increaseNetworkActivityCountMethod]
+	#define HOCKEY_DECREASE_NETWORK_USE()	[[UIApplication sharedApplication] decreaseNetworkActivityCountMethod]
+#endif
+
+#if USE_HOCKEY_NETWORK_ACTIVITY_INDICATOR_MANAGEMENT
 @interface UIApplication (NetworkIndicator)
 
 - (void) increaseNetworkUse;
 - (void) decreaseNetworkUse;
-- (void) resetNetworkUse;
 
 @end
+#endif

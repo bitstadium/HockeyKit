@@ -183,7 +183,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    [[UIApplication sharedApplication] increaseNetworkUse];
+    HOCKEY_INCREASE_NETWORK_USE();
 	
 	if (_receivedData != nil)
 	{
@@ -202,7 +202,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    [[UIApplication sharedApplication] decreaseNetworkUse];
+    HOCKEY_DECREASE_NETWORK_USE();
     
 	// release the connection, and the data object
     [_receivedData release];
@@ -287,7 +287,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    [[UIApplication sharedApplication] decreaseNetworkUse];
+    HOCKEY_DECREASE_NETWORK_USE();
 		
 	// release the connection, and the data object
     [_receivedData release];
