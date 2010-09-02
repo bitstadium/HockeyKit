@@ -277,7 +277,13 @@
 
                 NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
                 
-                [[NSUserDefaults standardUserDefaults] setObject:self.betaDictionary forKey:kDictionaryOfLastHockeyCheck];
+				NSMutableDictionary *betaDictionaryMutableCopy = [self.betaDictionary mutableCopy];
+				for (NSString *key in self.betaDictionary) {
+					if ([self.betaDictionary objectForKey:key] == [NSNull null])
+						[betaDictionaryMutableCopy removeObjectForKey:key];
+				}
+                [[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
+				[betaDictionaryMutableCopy release];
                 
                 if (
                     dictionaryOfLastHockeyCheck == nil || 

@@ -242,10 +242,8 @@
         // last application update information
         if (indexPath.row == 0) {
             // app name
-            cell.textLabel.text = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE];
-            if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
-                cell.detailTextLabel.text = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];
-            }
+            cell.textLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] : nil;
+			cell.detailTextLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] : nil;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else if (indexPath.row == 1) {
             // app version
