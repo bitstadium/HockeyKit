@@ -24,18 +24,16 @@
 
 #import "BWHockeyController.h"
 #import "NSString+URLEncoding.h"
-#import "UIApplication+NetworkIndicator.h"
 #import "JSON.h"
 
-
-@interface BWHockeyController (private)
+@interface BWHockeyController ()
 - (void)registerOnline;
 @end
 
 @implementation BWHockeyController
-
-@synthesize betaCheckUrl = _betaCheckUrl;
-@synthesize betaDictionary = _betaDictionary;
+@synthesize delegate;
+@synthesize betaCheckUrl;
+@synthesize betaDictionary;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -49,18 +47,23 @@
 
 - (id)init {
     self = [super init];
-    
-	if ( self != nil) {
+	if (self != nil) {
         self.betaCheckUrl = nil;
         self.betaDictionary = nil;
     }
+	
     return self;
 }
 
 
 - (void)setBetaURL:(NSString *)url {
-    self.betaCheckUrl = url;
-        
+    [self setBetaURL:url delegate:nil];
+}
+
+- (void)setBetaURL:(NSString *)url delegate:(id <NSObject>)object {
+	self.delegate = object;
+	self.betaCheckUrl = url;
+	
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(checkForBetaUpdate)
                                                  name:UIApplicationDidBecomeActiveNotification
@@ -73,7 +76,11 @@
 													name:UIApplicationDidBecomeActiveNotification
 												  object:nil];
     
-    [self.betaCheckUrl release];
+	self.delegate = nil;
+	currentHockeyViewController = nil;
+    [betaCheckUrl release];
+	[betaDictionary release];
+	[_receivedData release];
     [super dealloc];
 }
 
@@ -183,7 +190,8 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    HOCKEY_INCREASE_NETWORK_USE();
+    if (self.delegate && [self.delegate respondsToSelector:@selector(connectionOpened)])
+		[(id)self.delegate connectionOpened];
 	
 	if (_receivedData != nil)
 	{
@@ -202,7 +210,8 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    HOCKEY_DECREASE_NETWORK_USE();
+    if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
+		[(id)self.delegate connectionClosed];
     
 	// release the connection, and the data object
     [_receivedData release];
@@ -287,7 +296,8 @@
     [[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    HOCKEY_DECREASE_NETWORK_USE();
+    if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
+		[(id)self.delegate connectionClosed];
 		
 	// release the connection, and the data object
     [_receivedData release];

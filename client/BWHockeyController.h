@@ -29,15 +29,16 @@
 #define khockeyLastCheck @"HockeyLastCheck"
 
 @interface BWHockeyController : NSObject <UIAlertViewDelegate> {
-    NSString *_betaCheckUrl;
+	id <NSObject> delegate;
+    NSString *betaCheckUrl;
+    NSMutableDictionary *betaDictionary;
 
-    NSMutableDictionary *_betaDictionary;
-  
-    BWHockeyViewController *currentHockeyViewController;
-    
-    // for async request
+	BWHockeyViewController *currentHockeyViewController;
+	
 	NSMutableData *_receivedData;
 }
+
+@property (nonatomic, assign) id <NSObject> delegate;
 
 @property (nonatomic, retain) NSString *betaCheckUrl;
 @property (nonatomic, retain) NSMutableDictionary *betaDictionary;
@@ -45,9 +46,16 @@
 + (BWHockeyController *)sharedHockeyController;
 
 - (void)setBetaURL:(NSString *)url;
-
+- (void)setBetaURL:(NSString *)url delegate:(id <NSObject>)delegate;
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController;
 
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
+
+@end
+
+@interface NSObject (BWHockeyControllerDelegate)
+
+-(void) connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
+-(void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
 
 @end

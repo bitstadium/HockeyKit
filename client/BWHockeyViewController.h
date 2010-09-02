@@ -27,7 +27,6 @@
 @class BWHockeyController;
 
 @interface BWHockeyViewController : UITableViewController {
-
     BWHockeyController *_hockeyController;
 
     NSDictionary *cellLayout;
