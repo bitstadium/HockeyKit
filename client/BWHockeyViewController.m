@@ -68,16 +68,14 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-
-- (void)onAction:(id)sender
-{
-    if (self.modal) {
-      [self dismissModalViewControllerAnimated:YES];
-    } else {
-      [[self navigationController] popViewControllerAnimated:YES];
-    }
+- (void)onAction:(id)sender {
+    if (self.modal)
+		[self.parentViewController dismissModalViewControllerAnimated:YES];
+    else
+		[self.navigationController popViewControllerAnimated:YES];
+	
+	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -94,11 +92,6 @@
 	[super viewWillAppear:animated];
 	_statusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
 	[[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
-}
-
-- (void) viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];
-	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
 #pragma mark -
