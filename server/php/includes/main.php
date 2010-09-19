@@ -101,10 +101,10 @@ class iOSUpdater
     
     protected function deliver($bundleidentifier, $type)
     {
-        $plist               = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.plist'));
-        $ipa                 = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
-        $provisioningProfile = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.mobileprovision'));
-        $note                = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
+        $plist               = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.plist'));
+        $ipa                 = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
+        $provisioningProfile = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.mobileprovision'));
+        $note                = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
 
         // notes file is optional, other files are required
         if (!$plist || !$ipa)
@@ -188,10 +188,10 @@ class iOSUpdater
                 }
 
                 // now check if this directory has the 3 mandatory files
-                $ipa                 = array_shift(glob($file . '/*.ipa'));
-                $provisioningProfile = array_shift(glob($file . '/*.mobileprovision'));
-                $plist               = array_shift(glob($file . '/*.plist'));
-                $note                = array_shift(glob($file . '/*.html'));
+                $ipa                 = @array_shift(glob($file . '/*.ipa'));
+                $provisioningProfile = @array_shift(glob($file . '/*.mobileprovision'));
+                $plist               = @array_shift(glob($file . '/*.plist'));
+                $note                = @array_shift(glob($file . '/*.html'));
 
                 if (!$ipa || !$plist) {
                     continue;
