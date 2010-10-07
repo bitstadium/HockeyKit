@@ -32,6 +32,7 @@ class iOSUpdater
     // define URL type parameter values
     const TYPE_PROFILE = 'profile';
     const TYPE_APP     = 'app';
+    const TYPE_IPA     = 'ipa';
     
     // define keys for the returning json string
     const RETURN_RESULT   = 'result';
@@ -92,7 +93,7 @@ class iOSUpdater
     
     protected function validateType($type)
     {
-        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP)))
+        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA)))
         {
             return $type;
         }
@@ -161,6 +162,16 @@ class iOSUpdater
             $plist_content = file_get_contents($plist);
             header('content-type: application/xml');
             echo str_replace('__URL__', $ipa_url, $plist_content);
+
+        } else if ($type == self::TYPE_IPA) {
+
+            // send latest profile for the given bundleidentifier
+            $filename = $appDirectory  . $ipa;
+            header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
+            header('Content-Type: application/octet-stream;');
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: '.filesize($filename).";\n");
+            readfile($filename);
 
         }
 
