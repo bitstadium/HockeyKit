@@ -1,5 +1,5 @@
 <?php 
-    require '/home/iphone/includes/main.php';
+    require '../includes/main.php';
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 ?>
