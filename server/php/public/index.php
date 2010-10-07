@@ -1,5 +1,5 @@
 <?php 
-    require '../includes/main.php';
+    require '/home/iphone/includes/main.php';
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 ?>
@@ -90,6 +90,10 @@
                     </div>
                     <div class="info">
                         Use the Install buttons to either install the provisioning profile or the application.
+                    </div>
+
+		    <div style="margin: 10px;">
+                        <a href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>" class="grayButton">Download Application (IPA for iOS 3.x)</a>
                     </div>
 
                 </div>
