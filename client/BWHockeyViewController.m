@@ -72,18 +72,25 @@
 #pragma mark View lifecycle
 
 - (void)onAction:(id)sender {
-    if (self.modal)
-		[self.parentViewController dismissModalViewControllerAnimated:YES];
+    if (self.modal) {
+		
+		if ([UIWindow instancesRespondToSelector:@selector(rootViewController)] && ([[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController])) {
+			[self.parentViewController dismissModalViewControllerAnimated:YES];
+		} else {
+			[self.navigationController.view removeFromSuperview];
+			[self.navigationController release];
+		}
+	}
     else
 		[self.navigationController popViewControllerAnimated:YES];
 	
 	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
+	
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     if (self.modal) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
                                                                                               target:self
