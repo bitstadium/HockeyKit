@@ -97,6 +97,11 @@
 	[[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
 }
 
+- (void) viewWillDisappear:(BOOL)animated {
+	[super viewWillDisappear:animated];
+	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
+}
+
 #pragma mark -
 #pragma mark Table view data source
 
