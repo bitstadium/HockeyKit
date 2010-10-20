@@ -33,6 +33,7 @@
 
 @implementation BWHockeyController
 
+@synthesize versionComparator;
 @synthesize delegate;
 @synthesize betaCheckUrl;
 @synthesize betaDictionary;
@@ -84,6 +85,7 @@
     [betaCheckUrl release];
 	[betaDictionary release];
 	[_receivedData release];
+
 
     [super dealloc];
 }
@@ -250,82 +252,90 @@
         
         NSDictionary *feed = (NSDictionary *)[jsonParser objectWithString:responseString error:NULL];
 
-        if (feed != nil && [feed count] > 0) {
-            // get the array of "stream" from the feed and cast to NSArray
-            id resultValue = [feed valueForKey:BETA_UPDATE_RESULT];
-            
-            NSString *result = nil;
-            
-            if ([resultValue isKindOfClass:[NSDecimalNumber class]]) {
-                result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
-            } else {
-                result = resultValue;
-            }
-            
-            if ([result compare:@"-1"] != NSOrderedSame && [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
-                
-                self.betaDictionary = [[NSMutableDictionary alloc] initWithCapacity:5];
-                
-                if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
-                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_PROFILE]
-                                            forKey:BETA_UPDATE_PROFILE];
-                }
-                
-                NSString *title = NSLocalizedString(@"Unknown application", "");
-                if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
-                    title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
-                [self.betaDictionary setObject:title
-                                        forKey:BETA_UPDATE_TITLE];
-
-                if ([feed objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
-                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_SUBTITLE]
-                                            forKey:BETA_UPDATE_SUBTITLE];
-                }
-
-                if ([feed objectForKey:BETA_UPDATE_NOTES] != nil) {
-                    [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_NOTES]
-                                            forKey:BETA_UPDATE_NOTES];
-                }
-
-                [self.betaDictionary setObject:result
-                                        forKey:BETA_UPDATE_VERSION];
-
-                NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
-                
-				NSMutableDictionary *betaDictionaryMutableCopy = [self.betaDictionary mutableCopy];
-				for (NSString *key in self.betaDictionary) {
-					if ([self.betaDictionary objectForKey:key] == [NSNull null])
-						[betaDictionaryMutableCopy removeObjectForKey:key];
-				}
-                [[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
-				[betaDictionaryMutableCopy release];
-                
-                if (alertSameVersion ||
-                    dictionaryOfLastHockeyCheck == nil || 
-                    [result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame
-                    ) {
-                    if (currentHockeyViewController == nil) {
-                        [self showCheckForBetaAlert];
-                    } else {
-                        [[currentHockeyViewController tableView] reloadData];                        
-                    }
-                }
-            }
-        }        
-	}
-    
-    [[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
-    if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
-		[(id)self.delegate connectionClosed];
+		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
+		[[NSUserDefaults standardUserDefaults] synchronize];
 		
-	// release the connection, and the data object
-    [_receivedData release];
-    _receivedData = nil;
-    
-    [connection release];
-	connection = nil;	
+		if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
+			[(id)self.delegate connectionClosed];
+		
+		// release the connection, and the data object
+		[_receivedData release];
+		_receivedData = nil;
+		
+		[connection release];
+		connection = nil;	
+		
+		
+        if (feed == nil || [feed count] == 0) {
+			return;
+		}
+		
+		// get the array of "stream" from the feed and cast to NSArray
+		id resultValue = [feed valueForKey:BETA_UPDATE_RESULT];
+		
+		NSString *result = nil;
+		
+		if ([resultValue isKindOfClass:[NSDecimalNumber class]]) {
+			result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
+		} else {
+			result = resultValue;
+		}
+		
+		if ([result compare:@"-1"] == NSOrderedSame || [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
+			return;
+		}
+			
+		if (versionComparator == HockeyComparisonResultGreater && [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] options:NSNumericSearch] == NSOrderedAscending) {
+			return;
+		}
+		
+		self.betaDictionary = [[NSMutableDictionary alloc] initWithCapacity:5];
+		
+		if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
+			[self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_PROFILE]
+									forKey:BETA_UPDATE_PROFILE];
+		}
+		
+		NSString *title = NSLocalizedString(@"Unknown application", "");
+		if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
+			title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
+		[self.betaDictionary setObject:title
+								forKey:BETA_UPDATE_TITLE];
+		
+		if ([feed objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
+			[self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_SUBTITLE]
+									forKey:BETA_UPDATE_SUBTITLE];
+		}
+		
+		if ([feed objectForKey:BETA_UPDATE_NOTES] != nil) {
+			[self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_NOTES]
+									forKey:BETA_UPDATE_NOTES];
+		}
+		
+		[self.betaDictionary setObject:result
+								forKey:BETA_UPDATE_VERSION];
+		
+		NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+		
+		NSMutableDictionary *betaDictionaryMutableCopy = [self.betaDictionary mutableCopy];
+		for (NSString *key in self.betaDictionary) {
+			if ([self.betaDictionary objectForKey:key] == [NSNull null])
+				[betaDictionaryMutableCopy removeObjectForKey:key];
+		}
+		[[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
+		[betaDictionaryMutableCopy release];
+		
+		if (alertSameVersion ||
+			dictionaryOfLastHockeyCheck == nil || 
+			[result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame
+			) {
+			if (currentHockeyViewController == nil) {
+				[self showCheckForBetaAlert];
+			} else {
+				[[currentHockeyViewController tableView] reloadData];                        
+			}
+		}
+	}        
 }
 
 
