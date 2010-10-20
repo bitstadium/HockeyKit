@@ -36,7 +36,12 @@
 	BWHockeyViewController *currentHockeyViewController;
 	
 	NSMutableData *_receivedData;
+	BOOL alertSameVersion;
 }
+
+// if YES, the new version alert will be displayed always if the current version is outdated
+// if NO, the alert will be displayed only once for each new update
+@property (nonatomic, assign) BOOL alertSameVersion; 
 
 @property (nonatomic, assign) id <NSObject> delegate;
 
@@ -48,7 +53,7 @@
 - (void)setBetaURL:(NSString *)url;
 - (void)setBetaURL:(NSString *)url delegate:(id <NSObject>)delegate;
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController;
-
+- (void) checkForBetaUpdate;
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
 
 @end

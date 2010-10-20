@@ -28,12 +28,15 @@
 
 @interface BWHockeyController ()
 - (void)registerOnline;
+- (void)wentOnline:(NSNotification *)note;
 @end
 
 @implementation BWHockeyController
+
 @synthesize delegate;
 @synthesize betaCheckUrl;
 @synthesize betaDictionary;
+@synthesize alertSameVersion;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -81,6 +84,7 @@
     [betaCheckUrl release];
 	[betaDictionary release];
 	[_receivedData release];
+
     [super dealloc];
 }
 
@@ -285,7 +289,7 @@
                 [[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
 				[betaDictionaryMutableCopy release];
                 
-                if (
+                if (alertSameVersion ||
                     dictionaryOfLastHockeyCheck == nil || 
                     [result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame
                     ) {
