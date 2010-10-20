@@ -101,13 +101,24 @@
 
 - (void)showBetaUpdateView {
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]];
-    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    // TODO: find a better way to present the modal sheet on top of the current viewcontroller
-	if ([UIWindow instancesRespondToSelector:@selector(rootViewController)])
-		[[[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController] presentModalViewController:navController animated:YES];
 	
-	[navController release];
+	navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+
+	// if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
+	
+	UIViewController *rootVC;
+	if ([UIWindow instancesRespondToSelector:@selector(rootViewController)] && ((rootVC = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController]))) {
+		[rootVC presentModalViewController:navController animated:YES];
+	
+		[navController release];
+		
+	} else {
+		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
+		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
+		[[[[UIApplication sharedApplication] windows] objectAtIndex:0] addSubview:navController.view];
+		
+		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
+	}
 }
 
 
