@@ -28,6 +28,11 @@
 
 #define khockeyLastCheck @"HockeyLastCheck"
 
+typedef enum {
+	HockeyComparisonResultDifferent,
+	HockeyComparisonResultGreater
+} HockeyComparisonResult;
+
 @interface BWHockeyController : NSObject <UIAlertViewDelegate> {
 	id <NSObject> delegate;
     NSString *betaCheckUrl;
@@ -37,11 +42,16 @@
 	
 	NSMutableData *_receivedData;
 	BOOL alertSameVersion;
+	HockeyComparisonResult versionComparator;
 }
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update
 @property (nonatomic, assign) BOOL alertSameVersion; 
+
+// HockeyComparisonResultDifferent: alerts if the version on the server is different
+// HockeyComparisonResultGreater: alerts if the version on the server is greater
+@property (nonatomic, assign) HockeyComparisonResult versionComparator;
 
 @property (nonatomic, assign) id <NSObject> delegate;
 
