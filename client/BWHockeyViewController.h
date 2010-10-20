@@ -40,5 +40,6 @@
 @property (nonatomic, readwrite) BOOL modal;
 
 - (id)init:(BWHockeyController *)hockeyController modal:(BOOL)modal;
+- (id)init;
 
 @end

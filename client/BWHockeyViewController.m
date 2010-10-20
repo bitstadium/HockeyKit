@@ -47,6 +47,9 @@
     return self;    
 }
 
+- (id)init {
+	return [self init:[BWHockeyController sharedHockeyController] modal:NO];
+}
 
 - (NSUInteger)sectionIndexOfSettings {
     amountProfileRows = 0;
