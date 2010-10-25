@@ -3,21 +3,24 @@
 
 @interface BWWebViewController ()
 @property (nonatomic, copy) NSString *htmlString;
+@property (nonatomic, assign) UIWebView *webView;
 @end
 
 @implementation BWWebViewController
 
-- (id)initWithHTMLString:(NSString *)htmlString
+@synthesize htmlString;
+@synthesize webView;
+
+- (id)initWithHTMLString:(NSString *)aHtmlString
 {
     if ((self = [super init])) {
         self.title = NSLocalizedString(@"Release Notes", nil);
-        UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [webView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        [self.view addSubview:webView];
-		[webView release];
+        self.webView = [[[UIWebView alloc] initWithFrame:CGRectZero] autorelease];
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        [self.webView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        [self.view addSubview:self.webView];
 
-        self.htmlString = htmlString;
+        self.htmlString = aHtmlString;
     }
     return self;    
 }
@@ -27,7 +30,7 @@
 {
     [super viewWillAppear:animated];
     
-    [webView loadHTMLString:self.htmlString baseURL:nil];
+    [self.webView loadHTMLString:self.htmlString baseURL:nil];
 }
 
 
