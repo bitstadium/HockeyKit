@@ -23,14 +23,9 @@
 //  THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
 
 
-@interface BWWebViewController : UIViewController <UIWebViewDelegate> {
-	UIWebView *webView;
-    
-    NSString *html;
-}
+@interface BWWebViewController : UIViewController <UIWebViewDelegate>
 
 - (id)initWithHTMLString:(NSString *)htmlString;
 
