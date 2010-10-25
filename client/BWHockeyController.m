@@ -289,7 +289,7 @@
 			return;
 		}
 		
-		self.betaDictionary = [[NSMutableDictionary alloc] initWithCapacity:5];
+		self.betaDictionary = [NSMutableDictionary dictionaryWithCapacity:5];
 		
 		if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
 			[self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_PROFILE]
