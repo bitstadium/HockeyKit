@@ -64,7 +64,7 @@
     [self setBetaURL:url delegate:nil];
 }
 
-- (void)setBetaURL:(NSString *)url delegate:(id <NSObject>)object {
+- (void)setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)object {
 	self.delegate = object;
 	self.betaCheckUrl = url;
 	

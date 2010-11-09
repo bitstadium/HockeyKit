@@ -33,8 +33,10 @@ typedef enum {
 	HockeyComparisonResultGreater
 } HockeyComparisonResult;
 
+@protocol BWHockeyControllerDelegate;
+
 @interface BWHockeyController : NSObject <UIAlertViewDelegate> {
-	id <NSObject> delegate;
+	id <BWHockeyControllerDelegate> delegate;
     NSString *betaCheckUrl;
     NSMutableDictionary *betaDictionary;
 
@@ -53,7 +55,7 @@ typedef enum {
 // HockeyComparisonResultGreater: alerts if the version on the server is greater
 @property (nonatomic, assign) HockeyComparisonResult versionComparator;
 
-@property (nonatomic, assign) id <NSObject> delegate;
+@property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
 
 @property (nonatomic, retain) NSString *betaCheckUrl;
 @property (nonatomic, retain) NSMutableDictionary *betaDictionary;
@@ -61,15 +63,16 @@ typedef enum {
 + (BWHockeyController *)sharedHockeyController;
 
 - (void)setBetaURL:(NSString *)url;
-- (void)setBetaURL:(NSString *)url delegate:(id <NSObject>)delegate;
+- (void)setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController;
 - (void) checkForBetaUpdate;
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
 
 @end
 
-@interface NSObject (BWHockeyControllerDelegate)
+@protocol BWHockeyControllerDelegate <NSObject>
 
+@optional
 -(void) connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
 -(void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
 
