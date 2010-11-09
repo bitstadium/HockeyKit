@@ -383,9 +383,17 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait || 
-            interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-            interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+    BOOL shouldAutorotate;
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait ||
+                            interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
+                            interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+    } else {
+        shouldAutorotate = YES;
+    }
+    
+    return shouldAutorotate;
 }
 
 @end
