@@ -105,16 +105,24 @@
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]];
 	
 	navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-
-	// if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
-	
-	UIViewController *rootVC;
-	if ([UIWindow instancesRespondToSelector:@selector(rootViewController)] && ((rootVC = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController]))) {
-		[rootVC presentModalViewController:navController animated:YES];
-	
-		[navController release];
-		
-	} else {
+    navController.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    UIViewController *parentViewController = nil;
+    
+    if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
+        parentViewController = [[self delegate] viewControllerForHockeyController:self];
+    }
+    
+	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
+        // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
+        parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
+	}
+    
+    if (parentViewController) {
+        [parentViewController presentModalViewController:navController animated:YES];
+        
+        [navController release];
+    } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
 		[[[[UIApplication sharedApplication] windows] objectAtIndex:0] addSubview:navController.view];

@@ -73,7 +73,8 @@ typedef enum {
 @protocol BWHockeyControllerDelegate <NSObject>
 
 @optional
--(void) connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
--(void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
+- (void)connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
+- (void)connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
+- (UIViewController *)viewControllerForHockeyController:(BWHockeyController *)hockeyController;
 
 @end

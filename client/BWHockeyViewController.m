@@ -74,8 +74,8 @@
 - (void)onAction:(id)sender {
     if (self.modal) {
 		
-		if ([UIWindow instancesRespondToSelector:@selector(rootViewController)] && ([[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController])) {
-			[self.parentViewController dismissModalViewControllerAnimated:YES];
+		if (self.navigationController.parentViewController) {
+			[self.navigationController dismissModalViewControllerAnimated:YES];
 		} else {
 			[self.navigationController.view removeFromSuperview];
 			[self.navigationController release];
