@@ -59,9 +59,11 @@
         ) {
         return 0;
     } else {
-        if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
-            amountProfileRows = 2;
-        }
+      // It does not make sense to show update the profile within the app, since it is part of the app update
+      // so disable it this quickly for now
+//        if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
+//            amountProfileRows = 2;
+//        }
         
         return amountProfileRows + 2;
     }    
@@ -121,7 +123,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == [self sectionIndexOfSettings])
-        return NSLocalizedString(@"Check for updates", @"");
+        return NSLocalizedString(@"Check For Updates", @"");
     else if (section == [self sectionIndexOfSettings] - 2 - amountProfileRows) {
         return NSLocalizedString(@"Application", @"");
     } else if (section == [self sectionIndexOfSettings] - amountProfileRows) {
@@ -259,7 +261,7 @@
                                    NSLocalizedString(@"New Version", @""), 
                                    [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION]];
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@", 
-                                         NSLocalizedString(@"Installed", @""), 
+                                         NSLocalizedString(@"Current Version", @""), 
                                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else {
