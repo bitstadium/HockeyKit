@@ -1,0 +1,101 @@
+#container {
+    margin-top: 15px;
+}
+
+.old-ios, .new-ios, .ipad-ios4, .desktop, .desktopbuttons, .ipadbuttons, .hintdevice, .hintipad {
+	display: none;
+}
+
+.bordertop {
+    border-top: 1px dotted black;
+}
+
+.borderbottom {
+    border-bottom: 1px dotted black;
+}
+
+/* < iOS 4 devices */
+.browser-old-ios .old-ios {
+    display: block;
+}
+
+.browser-old-ios .container {
+	width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.browser-old-ios p {
+    font-size: 120%;
+}
+
+/* iOS 4 devices */
+
+.browser-ios4 .new-ios {
+    display: block;
+}
+
+.browser-ios4 .container {
+	width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.browser-ios4 .grid {
+    min-height: 330px;
+    text-align: center;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.browser-ios4 .version {
+    min-height: 460px;
+}
+
+.browser-ios4 .version .icon {
+    float: left;
+    padding-right: 10px;
+}
+
+.browser-ios4 .version .button {
+    margin-left: 25px;
+}
+
+
+/* iPad 4 devices */
+
+.browser-ipad4 .ipad-ios4, .browser-ipad4 .hintipad, .browser-ipad4 .ipadbuttons {
+    display: block;
+}
+
+.browser-ipad4 .container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.browser-ipad4 .icon {
+    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+}
+
+.browser-ipad4 .ipadbuttons {
+    display: block;
+}
+
+.browser-ipad4 .span-8 {
+    margin-left: 15px;
+}
+
+
+/* Mac or PC */
+
+.browser-desktop .desktop, .browser-desktop .hintdevice, .browser-desktop .desktopbuttons {
+    display: block;
+}
+
+.browser-desktop .icon {
+    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+}
+
+.browser-desktop .span-8 {
+    margin-left: 15px;
+}
