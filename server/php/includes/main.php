@@ -44,10 +44,12 @@ class iOSUpdater
     // define keys for the array to keep a list of available beta apps to be displayed in the web interface
     const INDEX_APP            = 'app';
     const INDEX_VERSION        = 'version';
+    const INDEX_DATE           = 'date';
     const INDEX_NOTES          = 'notes';
     const INDEX_PROFILE        = 'profile';
     const INDEX_PROFILE_UPDATE = 'profileupdate';
     const INDEX_DIR            = 'dir';
+    const INDEX_IMAGE          = 'image';
 
 
     protected $appDirectory;
@@ -102,10 +104,10 @@ class iOSUpdater
     
     protected function deliver($bundleidentifier, $type)
     {
-        $plist               = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.plist'));
-        $ipa                 = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
-        $provisioningProfile = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.mobileprovision'));
-        $note                = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
+        $plist               = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.plist'));
+        $ipa                 = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
+        $provisioningProfile = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.mobileprovision'));
+        $note                = array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
 
         // notes file is optional, other files are required
         if (!$plist || !$ipa)
@@ -164,7 +166,7 @@ class iOSUpdater
             echo str_replace('__URL__', $ipa_url, $plist_content);
 
         } else if ($type == self::TYPE_IPA) {
-
+ 
             // send latest profile for the given bundleidentifier
             $filename = $appDirectory  . $ipa;
             header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
@@ -172,7 +174,6 @@ class iOSUpdater
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: '.filesize($filename).";\n");
             readfile($filename);
-
         }
 
         exit();
@@ -203,6 +204,7 @@ class iOSUpdater
                 $provisioningProfile = @array_shift(glob($file . '/*.mobileprovision'));
                 $plist               = @array_shift(glob($file . '/*.plist'));
                 $note                = @array_shift(glob($file . '/*.html'));
+                $image               = @array_shift(glob($file . '/*.png'));
 
                 if (!$ipa || !$plist) {
                     continue;
@@ -217,7 +219,9 @@ class iOSUpdater
                 // now get the application name from the plist
                 $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
                 $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
+                $newApp[self::INDEX_DATE]           = filectime($this->appDirectory . $ipa);
                 $newApp[self::INDEX_DIR]            = $file;
+                $newApp[self::INDEX_IMAGE]          = $image;
                 $newApp[self::INDEX_NOTES]          = $note ? nl2br(file_get_contents($note)) : '';
 
                 if ($provisioningProfile) {
