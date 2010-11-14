@@ -58,7 +58,7 @@
 
                     <div class="desktopbuttons">
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $app[iOSUpdater::INDEX_PROFILE] ?>">Download Profile </a>
+                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Profile </a>
                 <?php } ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
                     </div>
