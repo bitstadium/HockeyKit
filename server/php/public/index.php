@@ -56,10 +56,6 @@
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
-                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
-                <?php endif ?>
-
                     <div class="desktopbuttons">
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
                         <a class="button" href="<?php echo $app[iOSUpdater::INDEX_PROFILE] ?>">Download Profile </a>
@@ -72,6 +68,12 @@
                 <?php } ?>
                         <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
                     </div>
+
+                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                    <p><br/><br/></p>
+                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
+                <?php endif ?>
+
                 </div>
 
             <?php 
