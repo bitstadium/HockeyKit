@@ -91,9 +91,9 @@
                 <h1>Install Apps</h1>
 
                 <p>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
+            <?php if (count($ios->applications) > 1) { ?>
                 <p class="bordertop"></p>
                 <div class="grid">
-            <?php if (count($ios->applications) > 1) { ?>
                     <h2>Choose Your App:</h2>
             <?php
                     $column= 0;
@@ -115,9 +115,11 @@
                             $column = 0;
                         }
                     endforeach;
-                }
             ?>
                 </div>
+            <?php
+                }
+            ?>
                 <div style='clear:both;'><br/></div>
 
             <?php if (count($ios->applications) > 1) { ?>
@@ -134,13 +136,14 @@
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
-                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
-                <?php endif ?>
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
                     <a class="button" href="<?php echo $app[iOSUpdater::INDEX_PROFILE] ?>">Install Profile</a>
                 <?php } ?>
                     <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
+                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                    <p><br/><br/></p>
+                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
+                <?php endif ?>
                 </div>
             <?php endforeach ?>
         	</div>
@@ -183,6 +186,6 @@
         </script>
         <script>/mobile/i.test(navigator.userAgent) && !window.location.hash && setTimeout(function () {
                 window.scrollTo(0, 1);
-            }, 1000);</script>
+            }, 2000);</script>
     </body>
 </html>
