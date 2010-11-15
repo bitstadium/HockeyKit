@@ -143,8 +143,10 @@ class iOSUpdater
             $userelement = explode(";", $line);
 
             if (count($userelement) == 2) {
-                $username = $userelement[1];
-                break;
+                if ($userelement[0] == $user) {
+                    $username = $userelement[1];
+                    break;
+                }
             }
         endforeach;
 
