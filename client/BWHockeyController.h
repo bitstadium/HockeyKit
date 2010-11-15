@@ -44,6 +44,7 @@ typedef enum {
 	NSMutableData *_receivedData;
     
     BOOL checkInProgress;
+    BOOL dataFound;
 }
 
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
