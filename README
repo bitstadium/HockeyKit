@@ -8,8 +8,15 @@ This framework was created after reading the blog post at http://jeffreysambells
 
 
 Requirements:
-- Beta testers need to run at least iOS 4 to benefit from the auto update functionality
 - A PHP5 server needs to be available and is required for distribution of the apps
+
+
+Notes:
+- The server can run stand alone, the client is optional
+- Beta testers need to run at least iOS 4 to benefit from the auto update functionality
+- Beta testers using iOS 3 will also be notified of updates within the app
+- The client framework optionally watches for Reachability notifications to detect if the device is online or not
+- To automatically exclude the library from the AppStore version make sure to add access to the build configuration variable by adding "CONFIGURATION_$(CONFIGURATION)" to the preprocessor macros of all configurations in the project settings of your app.
 
 
 Acknowledgments:
@@ -17,5 +24,5 @@ Acknowledgments:
 The following 3rd party open source libraries have been used:
 - SBJson by Stig Brautaset (http://github.com/stig/json-framework)
 - NSString+URLEncoding by Kaboomerang LLC.
-- jQTouch by David Kaneda (http://www.jqtouch.com/)
+- bluescreen css framework (http://blueprintcss.org/)
 - PHP plist reader code from http://blog.iconara.net/2007/05/08/php-plist-parsing/

@@ -1,0 +1,85 @@
+/* 
+   Hockey.strings
+   Hockey
+
+   Created by Andreas Linde on 11/15/10.
+   Copyright 2010 buzzworks.de. All rights reserved.
+ */
+
+
+/* Alert view */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Ja";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Nein";
+
+/* Unknown application */
+"HockeyUnknownApp" = "Unbekanntes Programm";
+
+/* Update available */
+"HockeyUpdateAvailable" = "Aktualisierung verfügbar";
+
+/* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
+"HockeyUpdateAlertText" = "Möchten Sie sich weitere Informationen zu der Aktualisierung ansehen? Sie können das auch zu einem späteren Zeitpunkt in den Programmeinstellungen nachholen.";
+
+
+/* Update details screen */
+
+/* Update Details */
+"HockeyUpdateScreenTitle" = "Aktualisierung";
+
+
+/* Application Section */
+
+/* Application */
+"HockeySectionAppHeader" = "Programm";
+
+/* New Version */
+"HockeySectionAppNewVersion" = "Neue Version";
+
+/* Current Version */
+"HockeySectionAppCurrentVersion" = "Installierte Version";
+
+/* Release Notes */
+"HockeySectionAppReleaseNotes" = "Neuerungen";
+
+/* Same Version */
+"HockeySectionAppSameVersionButton" = "Identische Version";
+
+/* Visit the beta website on your Mac or PC to update */
+"HockeySectionAppWebsite" = "Besuchen Sie die Beta Webseite auf ihrem Mac oder PC um die Aktualisierung durchzuführen.";
+
+/* Install Update */
+"HockeySectionAppButton" = "Installieren";
+
+
+/* Profile Section */
+
+/* Provisioning Profile */
+"HockeySectionProfileHeader" = "Provisioning Profil";
+
+/* Last Update */
+"HockeySectionProfileLastUpdate" = "Letzte Aktualisierung";
+
+/* Install Profile */
+"HockeySectionProfileButton" = "Profil Installieren";
+
+
+/* Check For Updates Section */
+
+/* Check For Updates */
+"HockeySectionCheckHeader" = "Nach Aktualisierung Prüfen";
+
+/* Check Now */
+"HockeySectionCheckButton" = "Jetzt Prüfen";
+
+/* On Startup */
+"HockeySectionCheckStartup" = "Beim Start";
+
+/* Daily */
+"HockeySectionCheckDaily" = "Täglich";
+
+/* Manually */
+"HockeySectionCheckManually" = "Manuell";

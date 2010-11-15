@@ -8,15 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@class HockeyDemoViewController;
-@class BWHockeyController;
+#if !defined (CONFIGURATION_AppStore_Distribution)
+#import "BWHockeyController.h"
+#endif
 
-@interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate> {
+@class HockeyDemoViewController;
+
+@interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate, BWHockeyControllerDelegate> {
     UIWindow *window;
     UINavigationController *navigationController;
-    HockeyDemoViewController *viewController;
-    
-    BWHockeyController *checkForBetaUpdateController;
+    HockeyDemoViewController *viewController;    
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

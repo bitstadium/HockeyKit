@@ -26,7 +26,6 @@
 #import "BWGlobal.h"
 #import "BWHockeyViewController.h"
 
-#define khockeyLastCheck @"HockeyLastCheck"
 
 typedef enum {
 	HockeyComparisonResultDifferent,
@@ -43,17 +42,9 @@ typedef enum {
 	BWHockeyViewController *currentHockeyViewController;
 	
 	NSMutableData *_receivedData;
-	BOOL alertSameVersion;
-	HockeyComparisonResult versionComparator;
+    
+    BOOL checkInProgress;
 }
-
-// if YES, the new version alert will be displayed always if the current version is outdated
-// if NO, the alert will be displayed only once for each new update
-@property (nonatomic, assign) BOOL alertSameVersion; 
-
-// HockeyComparisonResultDifferent: alerts if the version on the server is different
-// HockeyComparisonResultGreater: alerts if the version on the server is greater
-@property (nonatomic, assign) HockeyComparisonResult versionComparator;
 
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
 
@@ -62,19 +53,37 @@ typedef enum {
 
 + (BWHockeyController *)sharedHockeyController;
 
-- (void)setBetaURL:(NSString *)url;
-- (void)setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
+- (void) setBetaURL:(NSString *)url;
+- (void) setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController;
-- (void) checkForBetaUpdate;
-- (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
+- (void) checkForBetaUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
+								// UIApplicationDidBecomeActiveNotification notification is sent by iOS
+- (BWHockeyViewController *) hockeyViewController:(BOOL)modal;
+- (void) showBetaUpdateView;	// shows the update information screen
 
 @end
 
 @protocol BWHockeyControllerDelegate <NSObject>
 
 @optional
-- (void)connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
-- (void)connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
-- (UIViewController *)viewControllerForHockeyController:(BWHockeyController *)hockeyController;
+- (void) connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
+- (void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
+
+- (HockeyComparisonResult) compareVersionType;
+    						// HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
+    						// HockeyComparisonResultGreater: alerts if the version on the server is greate
+
+- (BOOL) showUpdateReminder;// if YES, the new version alert will be displayed always if the current version is outdated
+    						// if NO, the alert will be displayed only once for each new update (default)
+
+- (BOOL) showProfileData;	// if YES, the provisioning profile data is also shown in the update screen, if it is available on the server
+    						// if NO, the provisioning profile data is not shown even if it is available on the server (default)
+
+- (BOOL) sendCurrentData;	// if YES, the current user data is send: device type, iOS version, app version, UDID (default)
+    						// if NO, no such data is send to the server
+
+
+- (UIViewController *) viewControllerForHockeyController:(BWHockeyController *)hockeyController;
+    						// optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance
 
 @end

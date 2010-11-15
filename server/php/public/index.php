@@ -1,5 +1,5 @@
 <?php 
-    require '../includes/main.php';
+    require '../../../../_betaappsinclude/main.php';
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 ?>
@@ -17,25 +17,25 @@
     </head>
     <body>
         <div id="container" class="container">
-
+            
             <div class='old-ios'>
 
                 <h3>Direct Installation Not Supported</h3>
-                
+
                 <p>You are running a version of iOS that does not support direct installation. Please visit this page on your Mac or PC to download an app.</p>
                 <p>If you are able to upgrade your device to iOS 4.0 or later, simply visit this page with your iPad, iPhone, or iPod touch and you can install an app directly on your device.</p>
 
             </div>
 
             <div class='desktop ipad-ios4'>
-
+            
                 <h1>Install Apps</h1>
 
                 <p class='hintdevice'>Visit this page directly from your your iPad, iPhone, or iPod touch and you will be able to install an app directly on your device. (requires iOS 4.0 or later)</p>
 
                 <p class='hintdevice'>If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="itunes-installation.html">manually</a> via iTunes.
                 </p>
-
+                
                 <p class='hintipad'>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
 
                 <br/>

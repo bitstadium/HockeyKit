@@ -14,7 +14,7 @@
 - (id)initWithHTMLString:(NSString *)aHtmlString
 {
     if ((self = [super init])) {
-        self.title = NSLocalizedString(@"Release Notes", nil);
+        self.title = NSLocalizedStringFromTable(@"HockeySectionAppReleaseNotes", @"Hockey", @"Release Notes");
         self.webView = [[[UIWebView alloc] initWithFrame:CGRectZero] autorelease];
         self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self.webView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];

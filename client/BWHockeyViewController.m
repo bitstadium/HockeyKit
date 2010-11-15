@@ -42,7 +42,7 @@
     if ((self = [super initWithStyle:UITableViewStyleGrouped])) {
         self.hockeyController = hockeyController;
         self.modal = modal;
-        self.title = NSLocalizedString(@"Beta Updates", @"");
+        self.title = NSLocalizedStringFromTable(@"HockeyUpdateScreenTitle", @"Hockey", @"Update Details");
     }
     return self;    
 }
@@ -59,11 +59,15 @@
         ) {
         return 0;
     } else {
-      // It does not make sense to show update the profile within the app, since it is part of the app update
-      // so disable it this quickly for now
-//        if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
-//            amountProfileRows = 2;
-//        }
+        
+        BOOL showProfile = NO;
+        if (self.hockeyController.delegate && [self.hockeyController.delegate respondsToSelector:@selector(showProfileData)])
+            showProfile = [(id)self.hockeyController.delegate showProfileData];
+
+        if (showProfile &&
+            [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
+            amountProfileRows = 2;
+        }
         
         return amountProfileRows + 2;
     }    
@@ -119,15 +123,27 @@
     return [self sectionIndexOfSettings] + 2;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    int startIndexOfSettings = [self sectionIndexOfSettings];
+    
+    CGFloat rowHeight = 44;
+    if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
+        if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
+            rowHeight = 88;
+        }
+    }
 
+    return rowHeight;
+}
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == [self sectionIndexOfSettings])
-        return NSLocalizedString(@"Check For Updates", @"");
+        return NSLocalizedStringFromTable(@"HockeySectionCheckHeader", @"Hockey", @"Check For Updates");
     else if (section == [self sectionIndexOfSettings] - 2 - amountProfileRows) {
-        return NSLocalizedString(@"Application", @"");
+        return NSLocalizedStringFromTable(@"HockeySectionAppHeader", @"Hockey", @"Application");
     } else if (section == [self sectionIndexOfSettings] - amountProfileRows) {
-        return NSLocalizedString(@"Provisioning Profile", @"");
+        return NSLocalizedStringFromTable(@"HockeySectionProfileHeader", @"Hockey", @"Provisioning Profile");
     } else {
         return nil;
     }
@@ -219,7 +235,7 @@
     
     if (indexPath.section == startIndexOfSettings + 1) {
         // check again button
-        cell.textLabel.text = NSLocalizedString(@"Check Now", @"");
+        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckButton", @"Hockey", @"Check Now");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
     } else if (indexPath.section == startIndexOfSettings) {
         // update check interval selection
@@ -227,27 +243,42 @@
         NSNumber *hockeyAutoUpdateSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting];        
         if (indexPath.row == 0) {
             // on startup
-            cell.textLabel.text = NSLocalizedString(@"On Startup", @"");
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckStartup", @"Hockey", @"On Startup");
             if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_STARTUP) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         } else if (indexPath.row == 1) {
             // daily
-            cell.textLabel.text = NSLocalizedString(@"Daily", @"");
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckDaily", @"Hockey", @"Daily");
             if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         } else {
             // manually
-            cell.textLabel.text = NSLocalizedString(@"Manually", @"");
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckManually", @"Hockey", @"Manually");
             if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         }
     } else if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
-        // install application button
-        cell.textLabel.text = NSLocalizedString(@"Install Update", @"");
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
+        
+        if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppSameVersionButton", @"Hockey", @"Same Version");
+            cell.textLabel.textColor = [UIColor grayColor];
+            cell.textLabel.textAlignment = UITextAlignmentCenter;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        } else if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppWebsite", @"Hockey", @"Visit the beta website on your Mac or PC to update");
+            cell.textLabel.numberOfLines = 3;
+            cell.textLabel.textColor = [UIColor grayColor];
+            cell.textLabel.textAlignment = UITextAlignmentLeft;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        } else {
+            // install application button
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppButton", @"Hockey", @"Install Update");
+            cell.textLabel.textColor = [UIColor blackColor];
+            cell.textLabel.textAlignment = UITextAlignmentCenter;
+        }
     } else if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows) {
         // last application update information
         if (indexPath.row == 0) {
@@ -258,25 +289,25 @@
         } else if (indexPath.row == 1) {
             // app version
             cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", 
-                                   NSLocalizedString(@"New Version", @""), 
+                                   NSLocalizedStringFromTable(@"HockeySectionAppNewVersion", @"Hockey", @"New Version"), 
                                    [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION]];
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@", 
-                                         NSLocalizedString(@"Current Version", @""), 
+                                         NSLocalizedStringFromTable(@"HockeySectionAppCurrentVersion", @"Hockey", @"Current Version"), 
                                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else {
             // release notes
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.textLabel.text = NSLocalizedString(@"Release Notes", @"");
+            cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppReleaseNotes", @"Hockey", @"Release Notes");
         }
     } else if (indexPath.section == startIndexOfSettings - 1) {
         // install profile button
-        cell.textLabel.text = NSLocalizedString(@"Install Profile", @"");
+        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionProfileButton", @"Hockey", @"Install Profile");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
     } else if (indexPath.section == startIndexOfSettings - 2) {
         // last profile update information
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.textLabel.text = NSLocalizedString(@"Last Update", @"");
+        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionProfileLastUpdate", @"Hockey", @"Last Update");
         
         NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];

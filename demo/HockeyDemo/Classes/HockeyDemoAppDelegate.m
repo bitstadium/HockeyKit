@@ -9,15 +9,20 @@
 #import "HockeyDemoAppDelegate.h"
 #import "HockeyDemoViewController.h"
 
-#if !defined (CONFIGURATION_AppStore_Distribution)
-#import "BWHockeyController.h"
-#endif
 
 @implementation HockeyDemoAppDelegate
 
 @synthesize window;
 @synthesize viewController;
 @synthesize navigationController;
+
+#pragma mark -
+#pragma mark BWHockeyController
+
+- (BOOL)showUpdateReminder {
+    return YES;
+}
+
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -30,8 +35,14 @@
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
 
+    if ([window respondsToSelector:@selector(setRootViewController:)]) {
+        [window setRootViewController:navigationController];
+    }
+    
+    // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
+    // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-    [[BWHockeyController sharedHockeyController] setBetaURL:@"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated"];
+    [[BWHockeyController sharedHockeyController] setBetaURL:@"http://worldviewmobileapp.com/apps/demo/" delegate:self];
 #endif
     
     return YES;

@@ -25,6 +25,7 @@
 #import "BWHockeyController.h"
 #import "NSString+URLEncoding.h"
 #import "JSON.h"
+#import <sys/sysctl.h>
 
 @interface BWHockeyController ()
 - (void)registerOnline;
@@ -33,11 +34,9 @@
 
 @implementation BWHockeyController
 
-@synthesize versionComparator;
 @synthesize delegate;
 @synthesize betaCheckUrl;
 @synthesize betaDictionary;
-@synthesize alertSameVersion;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -54,6 +53,7 @@
 	if (self != nil) {
         self.betaCheckUrl = nil;
         self.betaDictionary = nil;
+        checkInProgress = NO;
     }
 	
     return self;
@@ -104,8 +104,10 @@
 - (void)showBetaUpdateView {
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]];
 	
-	navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    navController.modalPresentationStyle = UIModalPresentationFormSheet;
+    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
+        navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    }
     
     UIViewController *parentViewController = nil;
     
@@ -133,11 +135,11 @@
 
 
 - (void) showCheckForBetaAlert {
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Update available", @"")
-                                                         message:NSLocalizedString(@"Would you like to check out the new update? You can do this later on at any time in the In-App settings.", @"")
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"HockeyUpdateAvailable", @"Hockey", @"Update available")
+                                                         message:NSLocalizedStringFromTable(@"HockeyUpdateAlertText", @"Hockey", @"Would you like to check out the new update? You can do this later on at any time in the In-App settings.")
                                                         delegate:self
-                                               cancelButtonTitle:NSLocalizedString(@"No", @"")
-                                               otherButtonTitles:NSLocalizedString(@"Yes", @""), nil
+                                               cancelButtonTitle:NSLocalizedStringFromTable(@"HockeyNo", @"Hockey", @"No")
+                                               otherButtonTitles:NSLocalizedStringFromTable(@"HockeyYes", @"Hockey", @"Yes"), nil
                                ] autorelease];
     [alertView show];
 }
@@ -151,20 +153,48 @@
 }
 
 - (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController {
-    if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame)
-		return;  
-
+    if (checkInProgress) return;
+    
+    checkInProgress = YES;
+    
     currentHockeyViewController = hockeyViewController;
     
     NSNumber *hockeyAutoUpdateSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting];
     NSString *dateOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDateOfLastHockeyCheck];
+
+    if (hockeyAutoUpdateSetting == nil) {
+        hockeyAutoUpdateSetting = [NSNumber numberWithInt:BETA_UPDATE_CHECK_STARTUP];
+        [[NSUserDefaults standardUserDefaults] setObject:hockeyAutoUpdateSetting forKey:kHockeyAutoUpdateSetting];            
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     
-    if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL && currentHockeyViewController == nil) {
+    BOOL showUpdateReminder = NO;
+    if (self.delegate && [[self delegate] respondsToSelector:@selector(showUpdateReminder)]) {
+        showUpdateReminder = [[self delegate] showUpdateReminder];
+    }
+    
+    BOOL updatePending = NO;
+    NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+    if (showUpdateReminder && 
+        dictionaryOfLastHockeyCheck && 
+        [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame) {
+        updatePending = YES;
+    }
+    
+    if (updatePending) {
+        // we need to show an alert view any way, but in the meantime there could have been a new check, so whatever the user set
+        // do another check, otherwise the update screen would show details of an already outdated version
+    } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL && currentHockeyViewController == nil) {
+        self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
         return;
     } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY && currentHockeyViewController == nil) {
+        // is there an update available but not installed yet? shall we remind?
+        
         // now check if the last check wasn't done today
         if (dateOfLastHockeyCheck != nil &&
             [dateOfLastHockeyCheck compare:[[[NSDate date] description] substringToIndex:10]] == NSOrderedSame) {
+
+            self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
             return;
         }
 
@@ -172,15 +202,41 @@
     
     self.betaDictionary = nil;
     
-    NSString *parameter = [NSString stringWithFormat:@"?bundleidentifier=%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
+    NSString *parameter = nil;
+    BOOL sendCurrentData = YES;
+    
+    if (self.delegate && [[self delegate] respondsToSelector:@selector(sendCurrentData)]) {
+        sendCurrentData = [[self delegate] sendCurrentData];
+    }
+    
+    if (sendCurrentData) {
+        size_t size = 256;
+        char *machine = malloc(sizeof(char) * size);
+        sysctlbyname("hw.machine", machine, &size, NULL, 0);
+                
+        parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@", 
+                     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"],
+                     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"],
+                     [[UIDevice currentDevice] systemVersion],
+                     [NSString stringWithCString:machine encoding:NSUTF8StringEncoding],
+                     [[UIDevice currentDevice] uniqueIdentifier]
+                     ];
+    } else {
+        parameter = [NSString stringWithFormat:@"?bundleidentifier=%@", 
+                     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]
+                     ];
+    }
+    
     NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
-
+    
     NSURLRequest *theRequest=[NSURLRequest requestWithURL:[NSURL URLWithString:url]
                                               cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                           timeoutInterval:10.0];
     NSURLConnection *theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
-    if (!theConnection)
+    if (!theConnection) {
+        checkInProgress = NO;
         [self registerOnline];
+    }
 }
 
 
@@ -245,6 +301,8 @@
     [connection release];
 	connection = nil;	
     
+    checkInProgress = NO;
+
     [self registerOnline];
 }
 
@@ -263,6 +321,11 @@
 		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
+        BOOL showUpdateReminder = NO;
+        if (self.delegate && [[self delegate] respondsToSelector:@selector(showUpdateReminder)]) {
+            showUpdateReminder = [[self delegate] showUpdateReminder];
+        }
+        
 		if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
 			[(id)self.delegate connectionClosed];
 		
@@ -273,30 +336,14 @@
 		[connection release];
 		connection = nil;	
 		
-		
         if (feed == nil || [feed count] == 0) {
+            checkInProgress = NO;
 			return;
 		}
 		
 		// get the array of "stream" from the feed and cast to NSArray
 		id resultValue = [feed valueForKey:BETA_UPDATE_RESULT];
-		
-		NSString *result = nil;
-		
-		if ([resultValue isKindOfClass:[NSDecimalNumber class]]) {
-			result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
-		} else {
-			result = resultValue;
-		}
-		
-		if ([result compare:@"-1"] == NSOrderedSame || [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
-			return;
-		}
-			
-		if (versionComparator == HockeyComparisonResultGreater && [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] options:NSNumericSearch] == NSOrderedAscending) {
-			return;
-		}
-		
+		        		
 		self.betaDictionary = [NSMutableDictionary dictionaryWithCapacity:5];
 		
 		if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
@@ -304,7 +351,7 @@
 									forKey:BETA_UPDATE_PROFILE];
 		}
 		
-		NSString *title = NSLocalizedString(@"Unknown application", "");
+		NSString *title = NSLocalizedStringFromTable(@"HockeyUnknownApp", @"Hockey", @"Unknown application");
 		if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
 			title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
 		[self.betaDictionary setObject:title
@@ -320,11 +367,19 @@
 									forKey:BETA_UPDATE_NOTES];
 		}
 		
+        NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+        
+        NSString *result = nil;
+		
+		if ([resultValue isKindOfClass:[NSDecimalNumber class]]) {
+			result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
+		} else {
+			result = resultValue;
+		}
+                
 		[self.betaDictionary setObject:result
 								forKey:BETA_UPDATE_VERSION];
-		
-		NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
-		
+        
 		NSMutableDictionary *betaDictionaryMutableCopy = [self.betaDictionary mutableCopy];
 		for (NSString *key in self.betaDictionary) {
 			if ([self.betaDictionary objectForKey:key] == [NSNull null])
@@ -332,18 +387,43 @@
 		}
 		[[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
 		[betaDictionaryMutableCopy release];
-		
-		if (alertSameVersion ||
-			dictionaryOfLastHockeyCheck == nil || 
-			[result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame
-			) {
+
+        
+		if ([result compare:@"-1"] == NSOrderedSame ||
+            (!showUpdateReminder &&
+             dictionaryOfLastHockeyCheck &&
+             [result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] == NSOrderedSame) ||
+            (!showUpdateReminder &&
+             [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame)
+            ) {
+            if (currentHockeyViewController != nil) {
+				[[currentHockeyViewController tableView] reloadData];                        
+            }                
+            checkInProgress = NO;
+			return;
+		}
+        
+        BOOL differentVersion = NO;
+        HockeyComparisonResult versionComparator = HockeyComparisonResultDifferent;
+        
+		if (self.delegate && [self.delegate respondsToSelector:@selector(compareVersionType)])
+			versionComparator = [(id)self.delegate compareVersionType];
+        
+		if (versionComparator == HockeyComparisonResultGreater) { 
+            differentVersion = ([result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] options:NSNumericSearch] == NSOrderedDescending);
+		} else {
+            differentVersion = ([result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame);
+        }
+        
+		if (differentVersion) {
 			if (currentHockeyViewController == nil) {
 				[self showCheckForBetaAlert];
 			} else {
 				[[currentHockeyViewController tableView] reloadData];                        
 			}
 		}
-	}        
+	}
+    checkInProgress = NO;
 }
 
 

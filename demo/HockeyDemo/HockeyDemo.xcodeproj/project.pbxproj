@@ -26,6 +26,7 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		1E2C072A1291568800CCD438 /* Hockey.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1E2C07281291568800CCD438 /* Hockey.strings */; };
 		1EB32FA0122147E20081CF8E /* BWHockeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB32F89122147E20081CF8E /* BWHockeyViewController.m */; };
 		1EB32FA1122147E20081CF8E /* BWHockeyController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB32F8B122147E20081CF8E /* BWHockeyController.m */; };
 		1EB330EB122162200081CF8E /* HockeyDemoSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB330EA122162200081CF8E /* HockeyDemoSettingsViewController.m */; };
@@ -60,6 +61,8 @@
 		1D3623250D0F684500981E51 /* HockeyDemoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HockeyDemoAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* HockeyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HockeyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1E2C07291291568800CCD438 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = ../../client/English.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
+		1E2C072B1291569700CCD438 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = ../../client/German.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 		1EB32F88122147E20081CF8E /* BWHockeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWHockeyViewController.h; sourceTree = "<group>"; };
 		1EB32F89122147E20081CF8E /* BWHockeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWHockeyViewController.m; sourceTree = "<group>"; };
 		1EB32F8A122147E20081CF8E /* BWHockeyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWHockeyController.h; sourceTree = "<group>"; };
@@ -213,6 +216,7 @@
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */,
 				1EB333A31221A3F40081CF8E /* Localizable.strings */,
+				1E2C07281291568800CCD438 /* Hockey.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -280,6 +284,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* HockeyDemoViewController.xib in Resources */,
 				1EB333A41221A3F40081CF8E /* Localizable.strings in Resources */,
+				1E2C072A1291568800CCD438 /* Hockey.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +341,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1E2C07281291568800CCD438 /* Hockey.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E2C07291291568800CCD438 /* English */,
+				1E2C072B1291569700CCD438 /* German */,
+			);
+			name = Hockey.strings;
+			sourceTree = "<group>";
+		};
 		1EB333A31221A3F40081CF8E /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -401,10 +415,13 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -414,11 +431,14 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
