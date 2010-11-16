@@ -64,7 +64,7 @@
                     </div>
                     <div class="ipadbuttons">
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
-                        <a class="button" href="<?php echo $app[iOSUpdater::INDEX_PROFILE] ?>">Install Profile</a>
+                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                         <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
                     </div>
@@ -137,7 +137,7 @@
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
-                    <a class="button" href="<?php echo $app[iOSUpdater::INDEX_PROFILE] ?>">Install Profile</a>
+                    <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                     <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
                 <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
