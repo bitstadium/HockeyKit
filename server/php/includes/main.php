@@ -197,7 +197,8 @@ class iOSUpdater
         $ipa                 = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
         $provisioningProfile = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.mobileprovision'));
         $note                = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.html'));
-
+        $image               = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.png'));
+        
         // did we get any user data?
         $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
         $appversion = isset($_GET['version']) ? $_GET['version'] : "";
@@ -293,8 +294,17 @@ class iOSUpdater
                 $bundleidentifier . '/' . basename($ipa);
 
             $plist_content = file_get_contents($plist);
+            $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
+            if ($image) {
+                $image_url =
+                    dirname("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
+                    $bundleidentifier . '/' . basename($image);
+                $imagedict = "<dict><key>kind</key><string>display-image</string><key>needs-shine</key><false/><key>url</key><string>".$image_url."</string></dict></array>";
+                $insertpos = strpos($plist_content, '</array>');
+                $plist_content = substr_replace($plist_content, $imagedict, $insertpos, 8);
+            }
             header('content-type: application/xml');
-            echo str_replace('__URL__', $ipa_url, $plist_content);
+            echo $plist_content;
 
         } else if ($type == self::TYPE_IPA) {
  
@@ -389,7 +399,7 @@ class iOSUpdater
                     endforeach;
                     
                     // sort by app version
-                    $newApp[self::INDEX_STATS] = self::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_ASC);
+                    $newApp[self::INDEX_STATS] = self::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_LASTCHECK, SORT_DESC);
                 }
                 
                 // add it to the array
