@@ -67,6 +67,9 @@
                 endforeach;
             ?>
 
+              <hr/>
+              <p>Drag this bookmarklet <a href='javascript:(function(){var expIDs = /<td class="id" title="([^"]+)/g;var elIDs= document.body.innerHTML.match(expIDs);var expNames=/<td class="name">.*?<span([^<]+)/g;var elNames=document.body.innerHTML.match(expNames);var content = "";for (var i=0; i<elIDs.length; i++){var id=elIDs[i].substr(elIDs[i].lastIndexOf("79ba73aa62ee2bcf89cf1f88266ea89008565ef5quot;")+1);var name="";if (elNames[i].search("<span title=")>-1){var start=elNames[i].lastIndexOf("title=")+7;var amount=elNames[i].lastIndexOf(">")-1-start;name=elNames[i].substr(start,amount);}else{name=elNames[i].substr(elNames[i].lastIndexOf(">")+1);}content+=id+";"+name+"\n";}document.body.innerHTML=content;alert("Copy the content and paste it into userlist.txt in your Hockey stats directory")}());'>Hockey iOS Portal Device Parser</a> into your bookmarks bar. Then open the <a href="https://developer.apple.com/ios/manage/devices/index.action">iOS Provisioning Portal</a>, invoke the bookmarklet and paste the resulting new content into the userlist.txt inside this stats directory.</p>
+
             </div>
         </div>
     </body>
