@@ -45,12 +45,15 @@ typedef enum {
     
     BOOL checkInProgress;
     BOOL dataFound;
+    
+    NSURLConnection *urlConnection;
 }
 
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
 
 @property (nonatomic, retain) NSString *betaCheckUrl;
 @property (nonatomic, retain) NSMutableDictionary *betaDictionary;
+@property (nonatomic, retain) NSURLConnection *urlConnection;
 
 + (BWHockeyController *)sharedHockeyController;
 

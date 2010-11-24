@@ -37,6 +37,7 @@
 @synthesize delegate;
 @synthesize betaCheckUrl;
 @synthesize betaDictionary;
+@synthesize urlConnection;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -82,6 +83,10 @@
 												  object:nil];
     
 	self.delegate = nil;
+    
+    [urlConnection cancel];
+    self.urlConnection = nil;
+    
 	currentHockeyViewController = nil;
     [betaCheckUrl release];
 	[betaDictionary release];
@@ -103,7 +108,7 @@
 
 
 - (void)showBetaUpdateView {
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]];
+    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]] autorelease];
 	
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
@@ -122,9 +127,7 @@
 	}
     
     if (parentViewController) {
-        [parentViewController presentModalViewController:navController animated:YES];
-        
-        [navController release];
+        [parentViewController presentModalViewController:navController animated:YES];        
     } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
@@ -233,8 +236,8 @@
     NSURLRequest *theRequest=[NSURLRequest requestWithURL:[NSURL URLWithString:url]
                                               cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                           timeoutInterval:10.0];
-    NSURLConnection *theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
-    if (!theConnection) {
+    self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+    if (!urlConnection) {
         checkInProgress = NO;
         [self registerOnline];
     }
@@ -299,8 +302,7 @@
     [_receivedData release];
     _receivedData = nil;
     
-    [connection release];
-	connection = nil;	
+    self.urlConnection = nil;
     
     checkInProgress = NO;
 
@@ -334,8 +336,7 @@
 		[_receivedData release];
 		_receivedData = nil;
 		
-		[connection release];
-		connection = nil;	
+		self.urlConnection = nil;
 		
         if (feed == nil || [feed count] == 0) {
             checkInProgress = NO;
