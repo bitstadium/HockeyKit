@@ -126,6 +126,11 @@
         parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
 	}
     
+    if (parentViewController == nil && [self.delegate RespondsToSelector:@selector(rootViewController)]) {
+        // if we don't have an parentViewController we ask the delegate
+        parentViewController = [self.delegate rootViewController];
+	}
+    
     if (parentViewController) {
         [parentViewController presentModalViewController:navController animated:YES];        
     } else {

@@ -77,6 +77,8 @@ typedef enum {
     						// HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
     						// HockeyComparisonResultGreater: alerts if the version on the server is greate
 
+- (UIViewController*) rootViewController; // returns the viewController used for displaying the Views in 3.2
+
 - (BOOL) showUpdateReminder;// if YES, the new version alert will be displayed always if the current version is outdated
     						// if NO, the alert will be displayed only once for each new update (default)
 
