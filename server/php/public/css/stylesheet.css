@@ -69,6 +69,7 @@
 }
 
 .browser-ipad4 .container {
+	width: 750px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -90,6 +91,11 @@
 
 .browser-desktop .desktop, .browser-desktop .hintdevice, .browser-desktop .desktopbuttons {
     display: block;
+}
+
+.browser-desktop .container {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .browser-desktop .icon {

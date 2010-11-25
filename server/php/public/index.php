@@ -27,7 +27,7 @@
 
             </div>
 
-            <div class='desktop ipad-ios4'>
+            <div class='desktop'>
             
                 <h1>Install Apps</h1>
 
@@ -63,7 +63,7 @@
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
                     </div>
                     <div class="ipadbuttons">
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
+                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                         <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
@@ -85,6 +85,66 @@
             ?>
 
             </div>
+
+            <div class='ipad-ios4'>
+            
+                <h1>Install Apps</h1>
+
+                <p class='hintdevice'>Visit this page directly from your your iPad, iPhone, or iPod touch and you will be able to install an app directly on your device. (requires iOS 4.0 or later)</p>
+
+                <p class='hintdevice'>If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="itunes-installation.html">manually</a> via iTunes.
+                </p>
+                
+                <p class='hintipad'>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
+
+                <br/>
+                <p class="bordertop"><br/></p>
+
+            <?php 
+                $column= 0;
+                foreach ($ios->applications as $i => $app) :
+                    $column++;
+            ?>
+                <div class="column span-3">
+                <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
+                    <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
+                <?php } ?>
+                </div>
+                <div class="column span-6">
+                    <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
+                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
+
+                    <div class="desktopbuttons">
+                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
+                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Profile </a>
+                <?php } ?>
+                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
+                    </div>
+                    <div class="ipadbuttons">
+                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
+                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
+                <?php } ?>
+                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
+                    </div>
+
+                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                    <p><br/><br/></p>
+                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
+                <?php endif ?>
+
+                </div>
+
+            <?php 
+                    if ($column == 2) {
+                        echo "<div style='clear:both;'><br/><p  class='bordertop'><br/></p></div>";
+                        $column = 0;
+                    }
+                endforeach;
+            ?>
+
+            </div>
+
             
             <div class='new-ios'>
             
