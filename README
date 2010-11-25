@@ -9,6 +9,24 @@ This framework was created after reading the blog post at http://jeffreysambells
 
 Requirements:
 - A PHP5 server needs to be available and is required for distribution of the apps
+- No database required!
+
+
+Features:
+- iOS AdHoc build OTA distribution
+- Automatically generated website, in specific versions for all device types and desktop browser
+- Web interface only requires subdirectory to be created and and .ipa and .plist file (any name) being added/updated
+- Website can be used for first time installation and updates, iOS3 users can use the website from a desktop browser to download the app, iTunes installation instructions for those are also included
+- Can handle multiple apps on one server, one subdirectory per app
+- Optionally shows release notes by displaying the content of a file with the extension .html (use HTML format without wrapping it in <html> and <body>)
+- Provisioning profile link shown optionally (useful if new users are added without building a new version just for them)
+- Support for app icon on website and during installation on the device. place any .png file into the subdirectory (114x114 pixel works on all devices!)
+- Optional client side framework
+- Framework notifies users on startup of new updates, iOS4 users can install directly from within the client (In-App-Updates), iOS3 users will be hinted to the website
+- Framework optionally sends UDID, app version, iOS version, device type to the server, overview will appear automatically in /stats/ website (write access for PHP scripts required)
+- Stats website supports replacing UDIDs with names by entering them into a userlist.txt file within the stats subdirectory
+- Bookmarklet to extract all UDIDs and names from iOS program portal device page available in the stats page
+- Template for an Xcode build script to upload all files to your server after a build (Beta Automatisation.sh)
 
 
 Notes:

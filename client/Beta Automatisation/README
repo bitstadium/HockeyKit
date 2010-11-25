@@ -7,7 +7,7 @@ What the script does:
 ¥ It archives the .app file into .ipa file, just like Xcode's "Build and Archive"
 ¥ It moved the archived .ipa file to your Dropbox folder, so beta testers can easily access it
 ¥ It generates the .plist file required for wireless app distribution
-¥ It uploads the archived .ipa file and the generated .plist file to your ftp server using Terminal
+¥ It uploads the archived .ipa file and the generated .plist file to your server via ftp using Terminal or via scp
 
 How you set it up:
 ¥ In your Xcode project you have to add a new "Aggregate" target
