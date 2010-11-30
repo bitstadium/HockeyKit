@@ -44,6 +44,7 @@ class iOSUpdater
     // define keys for the array to keep a list of available beta apps to be displayed in the web interface
     const INDEX_APP            = 'app';
     const INDEX_VERSION        = 'version';
+    const INDEX_SUBTITLE       = 'subtitle';
     const INDEX_DATE           = 'date';
     const INDEX_NOTES          = 'notes';
     const INDEX_PROFILE        = 'profile';
@@ -269,10 +270,10 @@ class iOSUpdater
                 $this->json[self::RETURN_PROFILE] = filectime($appDirectory . $provisioningProfile);
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
 
-			if ($parsed_plist['items'][0]['metadata']['subtitle'])
+            if ($parsed_plist['items'][0]['metadata']['subtitle'])
 	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
     
-	        $this->json[self::RETURN_RESULT]  = $latestversion;
+            $this->json[self::RETURN_RESULT]  = $latestversion;
 
             return $this->sendJSONAndExit();
 
@@ -358,12 +359,14 @@ class iOSUpdater
 
                 // now get the application name from the plist
                 $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
+                if ($parsed_plist['items'][0]['metadata']['subtitle'])
+                  $newApp[self::INDEX_SUBTITLE]       = $parsed_plist['items'][0]['metadata']['subtitle'];
                 $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
                 $newApp[self::INDEX_DATE]           = filectime($ipa);
                 $newApp[self::INDEX_DIR]            = $file;
                 $newApp[self::INDEX_IMAGE]          = substr($image, strpos($image, $file));
                 $newApp[self::INDEX_NOTES]          = $note ? nl2br(file_get_contents($note)) : '';
-                $newApp[self::INDEX_STATS]         = array();
+                $newApp[self::INDEX_STATS]          = array();
 
                 if ($provisioningProfile) {
                     $newApp[self::INDEX_PROFILE]        = $provisioningProfile;

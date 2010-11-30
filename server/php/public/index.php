@@ -53,7 +53,11 @@
                 </div>
                 <div class="column span-8">
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
+                  <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
+                  <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+                  <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
                     <div class="desktopbuttons">
@@ -112,7 +116,11 @@
                 </div>
                 <div class="column span-6">
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
+                <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
+                <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+                <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
                     <div class="desktopbuttons">
@@ -194,7 +202,11 @@
                     <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
+                <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
+                <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+                <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
                     <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>

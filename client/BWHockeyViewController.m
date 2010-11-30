@@ -284,16 +284,39 @@
         if (indexPath.row == 0) {
             // app name
             cell.textLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] : nil;
-			cell.detailTextLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] : nil;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else if (indexPath.row == 1) {
             // app version
+            
+            // if subtitle is set, then use it as main version number, since the version field is used for the build number
+            NSString *versionString = nil;
+            NSString *currentVersionString = nil;
+            
+            if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
+                versionString = [NSString stringWithFormat:@"%@ (%@)", 
+                                 [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE], 
+                                 [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION]
+                                 ];
+            } else {
+                versionString = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+            }
+
             cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", 
                                    NSLocalizedStringFromTable(@"HockeySectionAppNewVersion", @"Hockey", @"New Version"), 
-                                   [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION]];
+                                   versionString];
+            
+            if ([[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] != nil) {
+                currentVersionString = [NSString stringWithFormat:@"%@ (%@)", 
+                                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"], 
+                                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]
+                                 ];
+            } else {
+                currentVersionString = [NSString stringWithFormat:@"%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+            }
+
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@", 
                                          NSLocalizedStringFromTable(@"HockeySectionAppCurrentVersion", @"Hockey", @"Current Version"), 
-                                         [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+                                         currentVersionString];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else {
             // release notes
