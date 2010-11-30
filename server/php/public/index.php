@@ -1,5 +1,7 @@
-<?php 
-    require '../includes/main.php';
+<?php
+    require_once('config.php');
+    require(constant('HOCKEY_INCLUDE_DIR'));
+    
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 ?>
