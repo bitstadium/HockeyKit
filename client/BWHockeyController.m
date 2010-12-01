@@ -70,10 +70,22 @@
 	self.delegate = object;
 	self.betaCheckUrl = url;
 	
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkForBetaUpdate)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
+	BOOL shouldCheckForUpdateOnLaunch = YES;
+	
+	if([delegate respondsToSelector:@selector(shouldCheckForUpdateOnLaunch)])
+	{
+		shouldCheckForUpdateOnLaunch = [delegate shouldCheckForUpdateOnLaunch];
+	}
+	
+	
+	if(shouldCheckForUpdateOnLaunch)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(checkForBetaUpdate)
+													 name:UIApplicationDidBecomeActiveNotification
+												   object:nil];
+	}
+    
 }
 
 
@@ -108,12 +120,6 @@
 
 
 - (void)showBetaUpdateView {
-    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:[self hockeyViewController:YES]] autorelease];
-	
-    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
-        navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    }
     
     UIViewController *parentViewController = nil;
     
@@ -131,7 +137,14 @@
         parentViewController = [self.delegate rootViewController];
 	}
     
+	BWHockeyViewController *hockeyViewController = [self hockeyViewController:(nil == parentViewController) ? NO : YES];
+	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
+	
     if (parentViewController) {
+		navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+		if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
+			navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+		}
         [parentViewController presentModalViewController:navController animated:YES];        
     } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.

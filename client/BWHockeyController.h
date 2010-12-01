@@ -88,6 +88,9 @@ typedef enum {
 - (BOOL) sendCurrentData;	// if YES, the current user data is send: device type, iOS version, app version, UDID (default)
     						// if NO, no such data is send to the server
 
+- (BOOL)shouldCheckForUpdateOnLaunch;  //if YES, then an update check will be performed after the application becomes active (default)
+										//if NO, then the update check will not happen unless invoked explicitly
+
 
 - (UIViewController *) viewControllerForHockeyController:(BWHockeyController *)hockeyController;
     						// optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance
