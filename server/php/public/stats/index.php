@@ -53,7 +53,6 @@
                             <th>Last Check</th>
                         </tr>
             <?php 
-                array_multisort($app[iOSUpdater::INDEX_STATS], SORT_NUMERIC, SORT_DESC);
                 foreach ($app[iOSUpdater::INDEX_STATS] as $i => $device) :
                     echo "<tr>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_APPVERSION]."</td>";
