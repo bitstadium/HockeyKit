@@ -22,7 +22,7 @@
 "HockeyUpdateAvailable" = "Aktualisierung verfügbar";
 
 /* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
-"HockeyUpdateAlertText" = "Möchten Sie sich weitere Informationen zu der Aktualisierung ansehen? Sie können das auch zu einem späteren Zeitpunkt in den Programmeinstellungen nachholen.";
+"HockeyUpdateAlertText" = "Möchten Sie sich weitere Informationen zu der Aktualisierung ansehen?";
 
 
 /* Update details screen */

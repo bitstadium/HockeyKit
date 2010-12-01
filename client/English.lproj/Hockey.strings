@@ -22,7 +22,7 @@
 "HockeyUpdateAvailable" = "Update available";
 
 /* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
-"HockeyUpdateAlertText" = "Would you like to check out the new update? You can do this later on at any time in the In-App settings.";
+"HockeyUpdateAlertText" = "Would you like to check out the new update?";
 
 
 /* Update details screen */
