@@ -38,6 +38,7 @@
 @synthesize betaCheckUrl;
 @synthesize betaDictionary;
 @synthesize urlConnection;
+@synthesize checkInProgress;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -126,11 +127,6 @@
         parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
 	}
     
-    if (parentViewController == nil && [self.delegate respondsToSelector:@selector(rootViewController)]) {
-        // if we don't have an parentViewController we ask the delegate
-        parentViewController = [self.delegate rootViewController];
-	}
-    
     if (parentViewController) {
         [parentViewController presentModalViewController:navController animated:YES];        
     } else {
@@ -195,6 +191,7 @@
         // do another check, otherwise the update screen would show details of an already outdated version
     } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL && currentHockeyViewController == nil) {
         self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
+        checkInProgress = NO;
         return;
     } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY && currentHockeyViewController == nil) {
         // is there an update available but not installed yet? shall we remind?
@@ -204,6 +201,7 @@
             [dateOfLastHockeyCheck compare:[[[NSDate date] description] substringToIndex:10]] == NSOrderedSame) {
 
             self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
+            checkInProgress = NO;
             return;
         }
 
@@ -311,6 +309,10 @@
     
     checkInProgress = NO;
 
+    if (currentHockeyViewController != nil) {
+        [currentHockeyViewController redrawTableView];
+    }
+    
     [self registerOnline];
 }
 
@@ -369,11 +371,6 @@
         if (dataFound) {
             self.betaDictionary = [NSMutableDictionary dictionaryWithCapacity:5];
             
-            if ([feed objectForKey:BETA_UPDATE_PROFILE] != nil) {
-                [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_PROFILE]
-                                        forKey:BETA_UPDATE_PROFILE];
-            }
-            
             NSString *title = NSLocalizedStringFromTable(@"HockeyUnknownApp", @"Hockey", @"Unknown application");
             if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
                 title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
@@ -411,7 +408,7 @@
              [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame)
             ) {
             if (currentHockeyViewController != nil) {
-				[[currentHockeyViewController tableView] reloadData];                        
+				[currentHockeyViewController redrawTableView];                        
             }
             checkInProgress = NO;
 			return;
@@ -429,13 +426,14 @@
             differentVersion = ([result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame);
         }
         
-		if (differentVersion) {
-			if (currentHockeyViewController == nil) {
-				[self showCheckForBetaAlert];
-			} else {
-				[[currentHockeyViewController tableView] reloadData];                        
-			}
+		if (differentVersion && currentHockeyViewController == nil) {
+            [self showCheckForBetaAlert];
 		}
+        
+        if (currentHockeyViewController != nil) {
+            checkInProgress = NO;
+            [currentHockeyViewController redrawTableView];
+        }
 	}
     checkInProgress = NO;
 }

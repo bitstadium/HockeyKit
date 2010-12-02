@@ -30,7 +30,6 @@
     BWHockeyController *_hockeyController;
 
     NSDictionary *cellLayout;
-    int amountProfileRows;
     
     BOOL _modal;
 	UIStatusBarStyle _statusBarStyle;
@@ -41,5 +40,7 @@
 
 - (id)init:(BWHockeyController *)newHockeyController modal:(BOOL)newModal;
 - (id)init;
+
+- (void)redrawTableView;
 
 @end

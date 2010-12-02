@@ -55,22 +55,13 @@
 "HockeySectionAppButton" = "Install Update";
 
 
-/* Profile Section */
-
-/* Provisioning Profile */
-"HockeySectionProfileHeader" = "Provisioning Profile";
-
-/* Last Update */
-"HockeySectionProfileLastUpdate" = "Last Update";
-
-/* Install Profile */
-"HockeySectionProfileButton" = "Install Profile";
-
-
 /* Check For Updates Section */
 
 /* Check For Updates */
 "HockeySectionCheckHeader" = "Check for Updates";
+
+/* Checking... */
+"HockeySectionCheckProgress" = "Checking...";
 
 /* Check Now */
 "HockeySectionCheckButton" = "Check Now";

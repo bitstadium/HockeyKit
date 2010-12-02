@@ -1,0 +1,76 @@
+/* 
+   Hockey.strings
+   Hockey
+
+   Created by Andreas Linde on 11/15/10.
+   Copyright 2010 buzzworks.de. All rights reserved.
+ */
+
+
+/* Alert view */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Да";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Нет";
+
+/* Unknown application */
+"HockeyUnknownApp" = "Неизвестное приложение";
+
+/* Update available */
+"HockeyUpdateAvailable" = "Доступно обновление";
+
+/* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
+"HockeyUpdateAlertText" = "Желаете проверить обновления сейчас? Вы можете сделать это позже в любое время из настроек программы.";
+
+
+/* Update details screen */
+
+/* Update Details */
+"HockeyUpdateScreenTitle" = "Инфо об обновлении";
+
+
+/* Application Section */
+
+/* Application */
+"HockeySectionAppHeader" = "Приложение";
+
+/* New Version */
+"HockeySectionAppNewVersion" = "Новая версия";
+
+/* Current Version */
+"HockeySectionAppCurrentVersion" = "Текущая версия";
+
+/* Release Notes */
+"HockeySectionAppReleaseNotes" = "Инфо о версии";
+
+/* Same Version */
+"HockeySectionAppSameVersionButton" = "Таже версия";
+
+/* Visit the beta website on your Mac or PC to update */
+"HockeySectionAppWebsite" = "Посетите веб-сайт с Вашего Мас или РС, чтобы установить обновление";
+
+/* Install Update */
+"HockeySectionAppButton" = "Установить обновление";
+
+
+/* Check For Updates Section */
+
+/* Check For Updates */
+"HockeySectionCheckHeader" = "Проверить обновления";
+
+/* Checking... */
+"HockeySectionCheckProgress" = "Проверить...";
+
+/* Check Now */
+"HockeySectionCheckButton" = "Проверить сейчас";
+
+/* On Startup */
+"HockeySectionCheckStartup" = "При запуске";
+
+/* Daily */
+"HockeySectionCheckDaily" = "Ежедневно";
+
+/* Manually */
+"HockeySectionCheckManually" = "Вручную";

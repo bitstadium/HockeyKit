@@ -52,24 +52,13 @@
 }
 
 - (NSUInteger)sectionIndexOfSettings {
-    amountProfileRows = 0;
     if (
         self.hockeyController.betaDictionary == nil ||
         [self.hockeyController.betaDictionary count] == 0
         ) {
         return 0;
     } else {
-        
-        BOOL showProfile = NO;
-        if (self.hockeyController.delegate && [self.hockeyController.delegate respondsToSelector:@selector(showProfileData)])
-            showProfile = [(id)self.hockeyController.delegate showProfileData];
-
-        if (showProfile &&
-            [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] != nil) {
-            amountProfileRows = 2;
-        }
-        
-        return amountProfileRows + 2;
+        return 2;
     }    
 }
 
@@ -115,35 +104,74 @@
 	[[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
 }
 
+- (void)redrawTableView {
+    int currentNumberOfSections = [self.tableView numberOfSections];
+    int sectionsToShow = [self numberOfSectionsInTableView:self.tableView];
+    
+    [self.tableView beginUpdates];
+    
+    // show the rows that should be visible
+    // is this row visible?
+    for (int i = 0; i < sectionsToShow; i++) {
+        // is this row visible?
+        if (i < currentNumberOfSections) {
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:i]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        } else {
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:i]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+    
+    // do we need to remove rows?
+    if (currentNumberOfSections > 1) {
+        for (int i = 1; i < currentNumberOfSections; i++) {
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:i]
+                          withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+    
+    [self.tableView endUpdates];
+}
+
+
 #pragma mark -
 #pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return [self sectionIndexOfSettings] + 2;
+    if (self.hockeyController.checkInProgress) {
+        return 1;
+    } else {
+        return [self sectionIndexOfSettings] + 2;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    CGFloat rowHeight = 44;
+    if (self.hockeyController.checkInProgress)
+        return rowHeight;
+    
     int startIndexOfSettings = [self sectionIndexOfSettings];
     
-    CGFloat rowHeight = 44;
-    if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
+    if (indexPath.section == startIndexOfSettings - 1) {
         if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
             rowHeight = 88;
         }
     }
-
+    
     return rowHeight;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (self.hockeyController.checkInProgress)
+        return nil;
+    
     if (section == [self sectionIndexOfSettings])
         return NSLocalizedStringFromTable(@"HockeySectionCheckHeader", @"Hockey", @"Check For Updates");
-    else if (section == [self sectionIndexOfSettings] - 2 - amountProfileRows) {
+    else if (section == [self sectionIndexOfSettings] - 2) {
         return NSLocalizedStringFromTable(@"HockeySectionAppHeader", @"Hockey", @"Application");
-    } else if (section == [self sectionIndexOfSettings] - amountProfileRows) {
-        return NSLocalizedStringFromTable(@"HockeySectionProfileHeader", @"Hockey", @"Provisioning Profile");
     } else {
         return nil;
     }
@@ -151,6 +179,9 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (self.hockeyController.checkInProgress)
+        return 1;
+    
     int startIndexOfSettings = [self sectionIndexOfSettings];
     int numberOfSectionRows = 0;
     
@@ -160,21 +191,15 @@
     } else if (section == startIndexOfSettings) {
         // update check interval selection
         numberOfSectionRows = 3;
-    } else if (section == startIndexOfSettings - 1 - amountProfileRows) {
+    } else if (section == startIndexOfSettings - 1) {
         // install application button
         numberOfSectionRows = 1;
-    } else if (section == startIndexOfSettings - 2 - amountProfileRows) {
+    } else if (section == startIndexOfSettings - 2) {
         // last application update information
         if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_NOTES])
             numberOfSectionRows = 3;
         else
             numberOfSectionRows = 2;
-    } else if (section == startIndexOfSettings - 1 ) {
-        // install profile button
-        numberOfSectionRows = 1;
-    } else if (section == startIndexOfSettings - 2) {
-        // last profile update information
-        numberOfSectionRows = 1;
     }
     
     // Return the number of rows in the section.
@@ -192,25 +217,37 @@
     static NSString *BetaCell3Identifier = @"BetaCell3";
     // check cell
     static NSString *BetaCell4Identifier = @"BetaCell4";
-    // button cell
-    static NSString *BetaCell5Identifier = @"BetaCell5";
-
-    
-    int startIndexOfSettings = [self sectionIndexOfSettings];
 
     UITableViewCell *cell = nil;
 
     NSString *requiredIdentifier = BetaCell1Identifier;
     NSInteger cellStyle = UITableViewCellStyleSubtitle;
-    
+
+    if (self.hockeyController.checkInProgress) {
+        cell = [tableView dequeueReusableCellWithIdentifier:BetaCell3Identifier];
+        
+        if (cell == nil) {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:requiredIdentifier] autorelease];
+        }
+        
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckProgress", @"Hockey", @"Checking...");
+        cell.textLabel.textAlignment = UITextAlignmentCenter;        
+        cell.textLabel.textColor = [UIColor grayColor];
+        
+        return cell;
+    }
+
+    int startIndexOfSettings = [self sectionIndexOfSettings];
+
     // preselect the required cell style
-    if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows && indexPath.row == 2) {
+    if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
         // we need a one line cell with discloure
         requiredIdentifier = BetaCell2Identifier;
         cellStyle = UITableViewCellStyleDefault;
     } else if (indexPath.section == startIndexOfSettings + 1 ||
-        indexPath.section == startIndexOfSettings - 1 ||
-        indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
+        indexPath.section == startIndexOfSettings - 1) {
         // we need a button style
         requiredIdentifier = BetaCell3Identifier;
         cellStyle = UITableViewCellStyleDefault;
@@ -218,10 +255,6 @@
         // we need a check cell
         requiredIdentifier = BetaCell4Identifier;
         cellStyle = UITableViewCellStyleDefault;
-    } else if (amountProfileRows > 0 && indexPath.section == startIndexOfSettings - amountProfileRows) {
-        // we need a one line style with value
-        requiredIdentifier = BetaCell5Identifier;
-        cellStyle = UITableViewCellStyleValue1;
     }
     
     cell = [tableView dequeueReusableCellWithIdentifier:requiredIdentifier];
@@ -237,6 +270,8 @@
         // check again button
         cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionCheckButton", @"Hockey", @"Check Now");
         cell.textLabel.textAlignment = UITextAlignmentCenter;
+        cell.textLabel.textColor = [UIColor blackColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     } else if (indexPath.section == startIndexOfSettings) {
         // update check interval selection
         
@@ -260,7 +295,7 @@
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         }
-    } else if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
+    } else if (indexPath.section == startIndexOfSettings - 1) {
         
         if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
             cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppSameVersionButton", @"Hockey", @"Same Version");
@@ -279,11 +314,12 @@
             cell.textLabel.textColor = [UIColor blackColor];
             cell.textLabel.textAlignment = UITextAlignmentCenter;
         }
-    } else if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows) {
+    } else if (indexPath.section == startIndexOfSettings - 2) {
         // last application update information
         if (indexPath.row == 0) {
             // app name
             cell.textLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] : nil;
+            cell.detailTextLabel.text = nil;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         } else if (indexPath.row == 1) {
             // app version
@@ -323,22 +359,6 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppReleaseNotes", @"Hockey", @"Release Notes");
         }
-    } else if (indexPath.section == startIndexOfSettings - 1) {
-        // install profile button
-        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionProfileButton", @"Hockey", @"Install Profile");
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
-    } else if (indexPath.section == startIndexOfSettings - 2) {
-        // last profile update information
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionProfileLastUpdate", @"Hockey", @"Last Update");
-        
-        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-        
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_PROFILE] intValue]];
-        
-        cell.detailTextLabel.text = [dateFormatter stringFromDate:date];
     }
     
     return cell;
@@ -357,8 +377,10 @@
 
     if (indexPath.section == startIndexOfSettings + 1) {
         // check again button
-        // TODO: invoke check
-        [self.hockeyController checkForBetaUpdate:self];
+        if (!self.hockeyController.checkInProgress) {
+            [self.hockeyController checkForBetaUpdate:self];
+            [self redrawTableView];
+        }
     } else if (indexPath.section == startIndexOfSettings) {
         // update check interval selection
         if (indexPath.row == 0) {
@@ -375,16 +397,12 @@
         // persist the new value
         [[NSUserDefaults standardUserDefaults] synchronize];
         [tableView reloadData];
-    } else if (indexPath.section == startIndexOfSettings - 1 - amountProfileRows) {
+    } else if (indexPath.section == startIndexOfSettings - 1) {
         // install application button
         NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
         NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
         url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp URLEncodedString]];        
-    } else if (indexPath.section == startIndexOfSettings - 1) {
-        // install profile button
-        NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_PROFILE, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-        url = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
-    } else if (indexPath.section == startIndexOfSettings - 2 - amountProfileRows && indexPath.row == 2) {
+    } else if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
         // release notes in a webview
         
         NSMutableString *webString = [[[NSMutableString alloc] init] autorelease];

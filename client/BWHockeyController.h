@@ -55,6 +55,8 @@ typedef enum {
 @property (nonatomic, retain) NSMutableDictionary *betaDictionary;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
 
+@property (readonly) BOOL checkInProgress;
+
 + (BWHockeyController *)sharedHockeyController;
 
 - (void) setBetaURL:(NSString *)url;
@@ -77,13 +79,8 @@ typedef enum {
     						// HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
     						// HockeyComparisonResultGreater: alerts if the version on the server is greate
 
-- (UIViewController*) rootViewController; // returns the viewController used for displaying the Views in 3.2
-
 - (BOOL) showUpdateReminder;// if YES, the new version alert will be displayed always if the current version is outdated
     						// if NO, the alert will be displayed only once for each new update (default)
-
-- (BOOL) showProfileData;	// if YES, the provisioning profile data is also shown in the update screen, if it is available on the server
-    						// if NO, the provisioning profile data is not shown even if it is available on the server (default)
 
 - (BOOL) sendCurrentData;	// if YES, the current user data is send: device type, iOS version, app version, UDID (default)
     						// if NO, no such data is send to the server

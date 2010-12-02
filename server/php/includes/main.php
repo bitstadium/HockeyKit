@@ -37,7 +37,6 @@ class iOSUpdater
     // define keys for the returning json string
     const RETURN_RESULT   = 'result';
     const RETURN_NOTES    = 'notes';
-    const RETURN_PROFILE  = 'profile';
     const RETURN_TITLE    = 'title';
     const RETURN_SUBTITLE = 'subtitle';
 
@@ -266,8 +265,6 @@ class iOSUpdater
                 $this->json[self::RETURN_NOTES] = file_get_contents($appDirectory . $note);
             }
 
-            if ($provisioningProfile)
-                $this->json[self::RETURN_PROFILE] = filectime($appDirectory . $provisioningProfile);
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
 
             if ($parsed_plist['items'][0]['metadata']['subtitle'])

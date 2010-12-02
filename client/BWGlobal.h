@@ -27,7 +27,6 @@
 #define BETA_DOWNLOAD_TYPE_APP		@"app"
 
 #define BETA_UPDATE_RESULT		@"result"
-#define BETA_UPDATE_PROFILE		@"profile"
 #define BETA_UPDATE_TITLE		@"title"
 #define BETA_UPDATE_SUBTITLE	@"subtitle"
 #define BETA_UPDATE_NOTES		@"notes"
