@@ -16,6 +16,7 @@
         <!--[if IE]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
         <link rel="stylesheet" href="blueprint/plugins/buttons/screen.css" type="text/css" media="screen, projection">
         <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+        <link rel="alternate" type="application/rss+xml" title="iOS Apps Updates" href="feed.php" />
     </head>
     <body>
         <div id="container" class="container">
@@ -68,12 +69,6 @@
                 <?php } ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
                     </div>
-                    <div class="ipadbuttons">
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
-                <?php } ?>
-                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
-                    </div>
 
                 <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
                     <p><br/><br/></p>
@@ -125,12 +120,6 @@
                 <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
-                    <div class="desktopbuttons">
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Profile </a>
-                <?php } ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
-                    </div>
                     <div class="ipadbuttons">
                 <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
