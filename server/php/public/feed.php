@@ -23,7 +23,7 @@
     } else {
       echo $app[iOSUpdater::INDEX_VERSION];
     } ?></title>
-    <id><?php echo $app[iOSUpdater::INDEX_APP] ?></id>
+    <id><?php echo $app[iOSUpdater::INDEX_APP].$app[iOSUpdater::INDEX_SUBTITLE].$app[iOSUpdater::INDEX_VERSION] ?></id>
     <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
     <published><?php echo date('Y-m-d\TH:i:s\Z', $app[iOSUpdater::INDEX_DATE]) ?></published>
     <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[iOSUpdater::INDEX_DATE]) ?></updated>
