@@ -262,7 +262,7 @@ class iOSUpdater
 
             // add the latest release notes if available
             if ($note) {
-                $this->json[self::RETURN_NOTES] = file_get_contents($appDirectory . $note);
+                $this->json[self::RETURN_NOTES] = nl2br(file_get_contents($appDirectory . $note));
             }
 
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
