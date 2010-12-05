@@ -344,9 +344,12 @@
 		_receivedData = nil;
 		
 		self.urlConnection = nil;
+        checkInProgress = NO;
 		
         if (feed == nil || [feed count] == 0) {
-            checkInProgress = NO;
+            if (currentHockeyViewController != nil) {
+				[currentHockeyViewController redrawTableView];                        
+            }
 			return;
 		}
 		
@@ -410,7 +413,6 @@
             if (currentHockeyViewController != nil) {
 				[currentHockeyViewController redrawTableView];                        
             }
-            checkInProgress = NO;
 			return;
 		}
         
@@ -431,7 +433,6 @@
 		}
         
         if (currentHockeyViewController != nil) {
-            checkInProgress = NO;
             [currentHockeyViewController redrawTableView];
         }
 	}
