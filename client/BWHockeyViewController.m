@@ -223,7 +223,9 @@
     NSString *requiredIdentifier = BetaCell1Identifier;
     NSInteger cellStyle = UITableViewCellStyleSubtitle;
 
-    if (self.hockeyController.checkInProgress) {
+    if (self.hockeyController.checkInProgress && 
+        indexPath.section == 0 && 
+        indexPath.row == 0) {
         cell = [tableView dequeueReusableCellWithIdentifier:BetaCell3Identifier];
         
         if (cell == nil) {
@@ -295,8 +297,7 @@
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         }
-    } else if (indexPath.section == startIndexOfSettings - 1) {
-        
+    } else if (indexPath.section == startIndexOfSettings - 1) {        
         if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
             cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppSameVersionButton", @"Hockey", @"Same Version");
             cell.textLabel.textColor = [UIColor grayColor];
@@ -369,9 +370,13 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    int startIndexOfSettings = [self sectionIndexOfSettings];
-
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    if (self.hockeyController.checkInProgress) {
+        return;
+    }
+    
+    int startIndexOfSettings = [self sectionIndexOfSettings];
     
     NSString *url = nil;
 
@@ -398,10 +403,12 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         [tableView reloadData];
     } else if (indexPath.section == startIndexOfSettings - 1) {
-        // install application button
-        NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-        NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
-        url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp URLEncodedString]];        
+        if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
+            // install application button
+            NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
+            NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
+            url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp URLEncodedString]];
+        }
     } else if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
         // release notes in a webview
         

@@ -37,7 +37,7 @@
 "HockeySectionAppHeader" = "Programm";
 
 /* New Version */
-"HockeySectionAppNewVersion" = "Neue Version";
+"HockeySectionAppNewVersion" = "Neueste Version";
 
 /* Current Version */
 "HockeySectionAppCurrentVersion" = "Installierte Version";
@@ -45,8 +45,8 @@
 /* Release Notes */
 "HockeySectionAppReleaseNotes" = "Neuerungen";
 
-/* Same Version */
-"HockeySectionAppSameVersionButton" = "Identische Version";
+/* No Update Available */
+"HockeySectionAppSameVersionButton" = "Keine Aktualisierung verfügbar";
 
 /* Visit the beta website on your Mac or PC to update */
 "HockeySectionAppWebsite" = "Besuchen Sie die Beta Webseite auf ihrem Mac oder PC um die Aktualisierung durchzuführen.";
@@ -55,9 +55,9 @@
 "HockeySectionAppButton" = "Installieren";
 
 
-/* Check For Updates Section */
+/* Check for Update Section */
 
-/* Check For Updates */
+/* Check for Update */
 "HockeySectionCheckHeader" = "Nach Aktualisierung Prüfen";
 
 /* Checking... */

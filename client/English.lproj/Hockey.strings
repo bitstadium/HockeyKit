@@ -37,16 +37,16 @@
 "HockeySectionAppHeader" = "Application";
 
 /* New Version */
-"HockeySectionAppNewVersion" = "New Version";
+"HockeySectionAppNewVersion" = "Latest Version";
 
 /* Current Version */
-"HockeySectionAppCurrentVersion" = "Current Version";
+"HockeySectionAppCurrentVersion" = "Installed Version";
 
 /* Release Notes */
 "HockeySectionAppReleaseNotes" = "Release Notes";
 
-/* Same Version */
-"HockeySectionAppSameVersionButton" = "Same Version";
+/* No Update Available */
+"HockeySectionAppSameVersionButton" = "No Update Available";
 
 /* Visit the beta website on your Mac or PC to update */
 "HockeySectionAppWebsite" = "Visit the beta website on your Mac or PC to update";
@@ -55,10 +55,10 @@
 "HockeySectionAppButton" = "Install Update";
 
 
-/* Check For Updates Section */
+/* Check for Update Section */
 
-/* Check For Updates */
-"HockeySectionCheckHeader" = "Check for Updates";
+/* Check for Update */
+"HockeySectionCheckHeader" = "Check for Update";
 
 /* Checking... */
 "HockeySectionCheckProgress" = "Checking...";

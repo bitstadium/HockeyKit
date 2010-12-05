@@ -161,7 +161,7 @@
     if (checkInProgress) return;
     
     checkInProgress = YES;
-    
+        
     currentHockeyViewController = hockeyViewController;
     
     NSNumber *hockeyAutoUpdateSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting];
@@ -192,6 +192,9 @@
     } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL && currentHockeyViewController == nil) {
         self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
         checkInProgress = NO;
+        if (currentHockeyViewController != nil) {
+            [currentHockeyViewController redrawTableView];
+        }
         return;
     } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY && currentHockeyViewController == nil) {
         // is there an update available but not installed yet? shall we remind?
@@ -202,6 +205,9 @@
 
             self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
             checkInProgress = NO;
+            if (currentHockeyViewController != nil) {
+                [currentHockeyViewController redrawTableView];
+            }            
             return;
         }
 
@@ -240,9 +246,14 @@
                                               cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                           timeoutInterval:10.0];
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+
     if (!urlConnection) {
         checkInProgress = NO;
         [self registerOnline];
+    }
+
+    if (currentHockeyViewController != nil) {
+        [currentHockeyViewController redrawTableView];
     }
 }
 
@@ -348,7 +359,7 @@
 		
         if (feed == nil || [feed count] == 0) {
             if (currentHockeyViewController != nil) {
-				[currentHockeyViewController redrawTableView];                        
+				[currentHockeyViewController redrawTableView];
             }
 			return;
 		}
@@ -411,7 +422,7 @@
              [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame)
             ) {
             if (currentHockeyViewController != nil) {
-				[currentHockeyViewController redrawTableView];                        
+				[currentHockeyViewController redrawTableView];
             }
 			return;
 		}
