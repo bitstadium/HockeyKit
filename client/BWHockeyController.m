@@ -145,7 +145,7 @@
         parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
 	}
     
-    BWHockeyViewController *hockeyViewController = [self hockeyViewController:(nil == parentViewController) ? NO : YES];
+    BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
     UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
 
     if (parentViewController) {
