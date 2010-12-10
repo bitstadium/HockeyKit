@@ -30,6 +30,7 @@
 @interface BWHockeyController ()
 - (void)registerOnline;
 - (void)wentOnline:(NSNotification *)note;
+- (NSString *)_getDevicePlatform;
 @end
 
 @implementation BWHockeyController
@@ -103,6 +104,22 @@
 
 
     [super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Private
+
+
+- (NSString *)_getDevicePlatform
+{
+	size_t size;
+	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+	char *answer = malloc(size);
+	sysctlbyname("hw.machine", answer, &size, NULL, 0);
+	NSString *platform = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
+	free(answer);
+	return platform;
 }
 
 
@@ -232,15 +249,11 @@
     }
     
     if (sendCurrentData) {
-        size_t size = 256;
-        char *machine = malloc(sizeof(char) * size);
-        sysctlbyname("hw.machine", machine, &size, NULL, 0);
-                
         parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@", 
                      [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"],
                      [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"],
                      [[UIDevice currentDevice] systemVersion],
-                     [NSString stringWithCString:machine encoding:NSUTF8StringEncoding],
+                     [self _getDevicePlatform],
                      [[UIDevice currentDevice] uniqueIdentifier]
                      ];
     } else {
