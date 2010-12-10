@@ -250,8 +250,8 @@
     
     if (sendCurrentData) {
         parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@", 
-                     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"],
-                     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"],
+                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                      [[UIDevice currentDevice] systemVersion],
                      [self _getDevicePlatform],
                      [[UIDevice currentDevice] uniqueIdentifier]
