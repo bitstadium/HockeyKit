@@ -143,6 +143,7 @@
 		[[[[UIApplication sharedApplication] windows] objectAtIndex:0] addSubview:navController.view];
 		
 		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
+        [navController retain];
 	}
 }
 
