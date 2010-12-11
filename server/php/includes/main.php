@@ -27,6 +27,17 @@
 require('json.inc');
 require('plist.inc');
 
+function nl2br_skip_html($string)
+{
+	// remove any carriage returns (Windows)
+	$string = str_replace("\r", '', $string);
+
+	// replace any newlines that aren't preceded by a > with a <br />
+	$string = preg_replace('/(?<!>)\n/', "<br />\n", $string);
+
+	return $string;
+}
+
 class iOSUpdater
 {
     // define URL type parameter values
@@ -262,7 +273,7 @@ class iOSUpdater
 
             // add the latest release notes if available
             if ($note) {
-                $this->json[self::RETURN_NOTES] = nl2br(file_get_contents($appDirectory . $note));
+                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
             }
 
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
@@ -362,7 +373,7 @@ class iOSUpdater
                 $newApp[self::INDEX_DATE]           = filectime($ipa);
                 $newApp[self::INDEX_DIR]            = $file;
                 $newApp[self::INDEX_IMAGE]          = substr($image, strpos($image, $file));
-                $newApp[self::INDEX_NOTES]          = $note ? nl2br(file_get_contents($note)) : '';
+                $newApp[self::INDEX_NOTES]          = $note ? nl2br_skip_html(file_get_contents($note)) : '';
                 $newApp[self::INDEX_STATS]          = array();
 
                 if ($provisioningProfile) {

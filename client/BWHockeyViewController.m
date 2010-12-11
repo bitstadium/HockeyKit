@@ -418,9 +418,9 @@
         [webString appendString:@"<html xmlns=\"http://www.w3.org/1999/xhtml\">"];
         [webString appendString:@"<head>"];
         [webString appendString:@"<style type=\"text/css\">"];
-        [webString appendString:@" * {margin:0px; padding:0px; }  body { background-color:#FFF; color:#000; -webkit-text-size-adjust:none; font-size:18px; font-family:Helvetica; word-wrap:break-word; word-spacing:-0.075em; padding:8px; } p {min-height:1em; margin:0; white-space:pre-wrap;}"];
+        [webString appendString:@" body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px;} p {margin:0;} ul {padding-left: 18px;}"];
         [webString appendString:@"</style>"];
-        [webString appendString:@"<meta name=\"viewport\" content=\"user-scalable=no\" /></head>"];
+        [webString appendString:@"<meta name=\"viewport\" content=\"user-scalable=no width=device-width\" /></head>"];
         [webString appendString:@"<body>"];
         [webString appendString:[self.hockeyController.betaDictionary objectForKey:@"notes"]];
         [webString appendString:@"</body></html>"];
