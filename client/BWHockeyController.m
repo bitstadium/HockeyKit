@@ -133,6 +133,13 @@
 }
 
 
+- (void) unsetHockeyViewController {
+    if (currentHockeyViewController != nil) {
+        currentHockeyViewController = nil;
+    }
+}
+
+
 - (void)showBetaUpdateView {
     UIViewController *parentViewController = nil;
     
