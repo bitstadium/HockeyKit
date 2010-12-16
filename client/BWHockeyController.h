@@ -65,6 +65,7 @@ typedef enum {
 - (void) checkForBetaUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
 								// UIApplicationDidBecomeActiveNotification notification is sent by iOS
 - (BWHockeyViewController *) hockeyViewController:(BOOL)modal;
+- (void) unsetHockeyViewController;
 - (void) showBetaUpdateView;	// shows the update information screen
 
 @end
