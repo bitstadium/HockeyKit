@@ -37,6 +37,7 @@ Notes:
 - To automatically exclude the library from the AppStore version make sure to add access to the build configuration variable by adding "CONFIGURATION_$(CONFIGURATION)" to the preprocessor macros of all configurations in the project settings of your app.
 - Do not enter a link to the app icon in the organizer screen. Hockey will add that part into the PList automatically on the server, if there is a PNG file found (114pixel icons work on all devices!)
 - Make sure the IPA filename has no space in it. iOS is not able to call that URL correctly.
+- Don't make separate names per IPA file you make, because only the first file found per directory be served
 
 
 Acknowledgments:
