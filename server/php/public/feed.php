@@ -4,6 +4,7 @@
     
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+	$baseURL = str_replace("/feed.php", "/", $baseURL);
     echo '<?xml version="1.0" encoding="utf-8"?>';
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
