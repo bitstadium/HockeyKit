@@ -170,6 +170,9 @@ class iOSUpdater
         $platform = $device;
         
         switch ($device) {
+            case "i386":
+                $platform = "iPhone Simulator";
+                break;
             case "iPhone1,1":
                 $platform = "iPhone";
                 break;
