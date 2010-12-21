@@ -40,6 +40,10 @@ Notes:
 - Don't make separate names per IPA file you make, because only the first file found per directory be served
 
 
+IMPORTANT:
+- DO NOT include the hockey localization files of languages you do not support in the main app! So if you do not have a russian localization of your app, do NOT include the ru.lproj into your application, otherwise the app will show placeholders of your apps strings since it thinks there should be a russian localization for the rest of the app too.
+
+
 Acknowledgments:
 
 The following 3rd party open source libraries have been used:
