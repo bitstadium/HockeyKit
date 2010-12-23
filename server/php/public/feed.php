@@ -30,7 +30,7 @@
     <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[iOSUpdater::INDEX_DATE]) ?></updated>
     <content type="html" xml:base="http://<?php echo $_SERVER['SERVER_NAME'] ?>/" xml:lang="en"><![CDATA[
     <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
-        <p><img src="<?php echo $baseURL."/../".$app[iOSUpdater::INDEX_IMAGE] ?>"></p>
+        <p><img src="<?php echo $baseURL.$app[iOSUpdater::INDEX_IMAGE] ?>"></p>
     <?php } ?>
     <p><b>Application:</b> <?php echo $app[iOSUpdater::INDEX_APP] ?></p>
     <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
