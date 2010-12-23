@@ -27,6 +27,33 @@
 require('json.inc');
 require('plist.inc');
 
+define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
+
+  // Read a file and display its content chunk by chunk
+  function readfile_chunked($filename, $retbytes = TRUE) {
+    $buffer = '';
+    $cnt =0;
+    // $handle = fopen($filename, 'rb');
+    $handle = fopen($filename, 'rb');
+    if ($handle === false) {
+      return false;
+    }
+    while (!feof($handle)) {
+      $buffer = fread($handle, CHUNK_SIZE);
+      echo $buffer;
+      ob_flush();
+      flush();
+      if ($retbytes) {
+        $cnt += strlen($buffer);
+      }
+    }
+    $status = fclose($handle);
+    if ($retbytes && $status) {
+      return $cnt; // return num. bytes delivered like readfile() does.
+    }
+    return $status;
+}
+
 function nl2br_skip_html($string)
 {
 	// remove any carriage returns (Windows)
@@ -326,7 +353,7 @@ class iOSUpdater
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: '.filesize($filename).";\n");
-            readfile($filename);
+            readfile_chunked($filename);
         }
 
         exit();
