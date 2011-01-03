@@ -421,7 +421,13 @@
         [webString appendString:@"<style type=\"text/css\">"];
         [webString appendString:@" body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px;} p {margin:0;} ul {padding-left: 18px;}"];
         [webString appendString:@"</style>"];
-        [webString appendString:@"<meta name=\"viewport\" content=\"user-scalable=no width=device-width\" /></head>"];
+        
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            [webString appendString:@"<meta name=\"viewport\" content=\"user-scalable=no width=device-width\" /></head>"];
+        } else {
+            [webString appendFormat:@"<meta name=\"viewport\" content=\"user-scalable=no width=%d\" /></head>", CGRectGetWidth([[self view] bounds])];
+        }
+        
         [webString appendString:@"<body>"];
         [webString appendString:[self.hockeyController.betaDictionary objectForKey:@"notes"]];
         [webString appendString:@"</body></html>"];
