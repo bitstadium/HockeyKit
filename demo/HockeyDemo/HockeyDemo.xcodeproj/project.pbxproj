@@ -95,6 +95,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* HockeyDemo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HockeyDemo_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HockeyDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		AA8E0C6212D5B9B8004556B8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../../client/es.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +265,7 @@
 				French,
 				German,
 				ru,
+				es,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -345,6 +347,7 @@
 				1E2C07291291568800CCD438 /* English */,
 				1E2C072B1291569700CCD438 /* German */,
 				1E1DD57412A7B52500018802 /* ru */,
+				AA8E0C6212D5B9B8004556B8 /* es */,
 			);
 			name = Hockey.strings;
 			sourceTree = "<group>";
