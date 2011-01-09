@@ -101,7 +101,6 @@
 	[betaDictionary release];
 	[_receivedData release];
 
-
   [super dealloc];
 }
 
