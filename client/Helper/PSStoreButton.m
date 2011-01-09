@@ -169,7 +169,7 @@
 		[self.layer addSublayer:topBorderLayer];
 
     // main gradient layer
-    gradient_ = [CAGradientLayer layer];
+    gradient_ = [[CAGradientLayer layer] retain];
     gradient_.locations = [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:1.0], nil];//[NSNumber numberWithFloat:0.500], [NSNumber numberWithFloat:0.5001],
 		gradient_.frame = CGRectMake(0.75, 0.75, CGRectGetWidth(frame) - 1.5, CGRectGetHeight(frame) - 1.5);
 		gradient_.cornerRadius = 2.5;
