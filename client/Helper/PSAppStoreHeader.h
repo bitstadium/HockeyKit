@@ -7,7 +7,15 @@
 //
 
 @interface PSAppStoreHeader : UIView {
-
+  NSString *headerLabel_;
+  NSString *middleHeaderLabel_;
+  NSString *subHeaderLabel;
+  UIImage *iconImage_;
 }
+
+@property (nonatomic, copy) NSString *headerLabel;
+@property (nonatomic, copy) NSString *middleHeaderLabel;
+@property (nonatomic, copy) NSString *subHeaderLabel;
+@property (nonatomic, retain) UIImage *iconImage;
 
 @end

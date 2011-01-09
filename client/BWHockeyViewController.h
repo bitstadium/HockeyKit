@@ -25,16 +25,18 @@
 #import <UIKit/UIKit.h>
 #import "PSStoreButton.h"
 #import "PSTableViewController.h"
+#import "PSAppStoreHeader.h"
 
 @class BWHockeyController;
 
 @interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
-    BWHockeyController *_hockeyController;
+  BWHockeyController *_hockeyController;
 
-    NSDictionary *cellLayout;
+  NSDictionary *cellLayout;
 
-    BOOL _modal;
+  BOOL _modal;
 	UIStatusBarStyle _statusBarStyle;
+  PSAppStoreHeader *appStoreHeader_;
 }
 
 @property (nonatomic, retain) BWHockeyController *hockeyController;

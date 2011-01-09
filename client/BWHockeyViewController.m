@@ -108,11 +108,29 @@
 	return headerLayer;
 }
 
+#define kAppStoreViewHeight 70
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  self.view.backgroundColor = RGBCOLOR(140, 141, 142);
+  //self.view.backgroundColor = RGBCOLOR(140, 141, 142);
   self.tableView.backgroundColor = RGBCOLOR(200, 202, 204);
+
+  UIView *topView = [[[UIView alloc] initWithFrame:CGRectMake(0, -(600-kAppStoreViewHeight), self.view.frame.size.width, 600)] autorelease];
+  topView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+  topView.backgroundColor = RGBCOLOR(140, 141, 142);
+  [self.tableView addSubview:topView];
+//  self.tableView.contentInset = UIEdgeInsetsMake(600-kAppStoreViewHeight, 0, 0, 0);
+
+  // DEBUG
+  //  self.tableView.layer.borderColor = [[UIColor orangeColor] CGColor];
+  //self.tableView.layer.borderWidth = 2.0;
+
+
+  appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
+  appStoreHeader_.headerLabel = @"Angry Birds";
+  appStoreHeader_.middleHeaderLabel = @"Version 2.2.3";
+  appStoreHeader_.subHeaderLabel = @"01.01.2011";
+  self.tableView.tableHeaderView = appStoreHeader_;
 
   if (self.modal) {
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -121,12 +139,11 @@
   }
 
 
-  self.tableView.tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)] autorelease]; // space!
 
   PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithFrame:CGRectMake(0, 0, 85.0, 22.0)] autorelease];
   storeButton.buttonDelegate = self;
   storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreGreenColor] enabled:YES];
-  storeButton.center = CGPointMake(220, 15);
+  storeButton.center = CGPointMake(250, 35);
 	[self.tableView addSubview:storeButton];
 
 
@@ -179,6 +196,11 @@
   }
 
   [self.tableView endUpdates];
+}
+
+- (void)viewDidUnload {
+  [appStoreHeader_ release]; appStoreHeader_ = nil;
+  [super viewDidUnload];
 }
 
 
@@ -494,20 +516,9 @@
 #pragma mark -
 #pragma mark Memory management
 
-- (void)didReceiveMemoryWarning {
-  // Releases the view if it doesn't have a superview.
-  [super didReceiveMemoryWarning];
-
-  // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload {
-  // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-  // For example: self.myOutlet = nil;
-}
-
 
 - (void)dealloc {
+  [self viewDidUnload];
   [super dealloc];
 }
 
