@@ -37,10 +37,13 @@
 		28D7ACF80DDB3853001CB0EB /* HockeyDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* HockeyDemoViewController.m */; };
 		7837CF2912DA030C00BE3C22 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837CF2812DA030C00BE3C22 /* JSONKit.m */; };
 		7837CF7312DA132000BE3C22 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7837CF7212DA132000BE3C22 /* QuartzCore.framework */; };
-		7837CF7B12DA139500BE3C22 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837CF7A12DA139500BE3C22 /* NSString+URLEncoding.m */; };
 		7837CF8312DA19BA00BE3C22 /* PSStoreButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837CF8212DA19BA00BE3C22 /* PSStoreButton.m */; };
 		7837D1B512DA497700BE3C22 /* PSTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837D1B412DA497700BE3C22 /* PSTableViewController.m */; };
 		7837D1D112DA4B1100BE3C22 /* PSAppStoreHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837D1D012DA4B1100BE3C22 /* PSAppStoreHeader.m */; };
+		7837D2D512DA5CF900BE3C22 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837D2D412DA5CF900BE3C22 /* UIImage+RoundedCorner.m */; };
+		7837D2D812DA5D1000BE3C22 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837D2D712DA5D1000BE3C22 /* NSString+URLEncoding.m */; };
+		7837D2DA12DA673200BE3C22 /* AngryBirds.png in Resources */ = {isa = PBXBuildFile; fileRef = 7837D2D912DA673200BE3C22 /* AngryBirds.png */; };
+		7837D49012DA76E600BE3C22 /* UIImage+PSReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7837D48F12DA76E600BE3C22 /* UIImage+PSReflection.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,14 +84,19 @@
 		7837CF2712DA030C00BE3C22 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		7837CF2812DA030C00BE3C22 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		7837CF7212DA132000BE3C22 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		7837CF7912DA139500BE3C22 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
-		7837CF7A12DA139500BE3C22 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
 		7837CF8112DA19BA00BE3C22 /* PSStoreButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStoreButton.h; sourceTree = "<group>"; };
 		7837CF8212DA19BA00BE3C22 /* PSStoreButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStoreButton.m; sourceTree = "<group>"; };
 		7837D1B312DA497700BE3C22 /* PSTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTableViewController.h; sourceTree = "<group>"; };
 		7837D1B412DA497700BE3C22 /* PSTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTableViewController.m; sourceTree = "<group>"; };
 		7837D1CF12DA4B1100BE3C22 /* PSAppStoreHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSAppStoreHeader.h; sourceTree = "<group>"; };
 		7837D1D012DA4B1100BE3C22 /* PSAppStoreHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSAppStoreHeader.m; sourceTree = "<group>"; };
+		7837D2D312DA5CF900BE3C22 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
+		7837D2D412DA5CF900BE3C22 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
+		7837D2D612DA5D1000BE3C22 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
+		7837D2D712DA5D1000BE3C22 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
+		7837D2D912DA673200BE3C22 /* AngryBirds.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AngryBirds.png; sourceTree = "<group>"; };
+		7837D48E12DA76E600BE3C22 /* UIImage+PSReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+PSReflection.h"; sourceTree = "<group>"; };
+		7837D48F12DA76E600BE3C22 /* UIImage+PSReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+PSReflection.m"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HockeyDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		AA8E0C6212D5B9B8004556B8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../../client/es.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -189,6 +197,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7837D2D912DA673200BE3C22 /* AngryBirds.png */,
 				2899E5210DE3E06400AC0155 /* HockeyDemoViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */,
@@ -210,7 +219,12 @@
 		7837CF6B12DA12DA00BE3C22 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				7837CF7812DA139500BE3C22 /* NSString+URLEncoding */,
+				7837D2D612DA5D1000BE3C22 /* NSString+URLEncoding.h */,
+				7837D2D712DA5D1000BE3C22 /* NSString+URLEncoding.m */,
+				7837D2D312DA5CF900BE3C22 /* UIImage+RoundedCorner.h */,
+				7837D2D412DA5CF900BE3C22 /* UIImage+RoundedCorner.m */,
+				7837D48E12DA76E600BE3C22 /* UIImage+PSReflection.h */,
+				7837D48F12DA76E600BE3C22 /* UIImage+PSReflection.m */,
 				7837CF8112DA19BA00BE3C22 /* PSStoreButton.h */,
 				7837CF8212DA19BA00BE3C22 /* PSStoreButton.m */,
 				7837D1B312DA497700BE3C22 /* PSTableViewController.h */,
@@ -219,15 +233,6 @@
 				7837D1D012DA4B1100BE3C22 /* PSAppStoreHeader.m */,
 			);
 			path = Helper;
-			sourceTree = "<group>";
-		};
-		7837CF7812DA139500BE3C22 /* NSString+URLEncoding */ = {
-			isa = PBXGroup;
-			children = (
-				7837CF7912DA139500BE3C22 /* NSString+URLEncoding.h */,
-				7837CF7A12DA139500BE3C22 /* NSString+URLEncoding.m */,
-			);
-			path = "NSString+URLEncoding";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,6 +290,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* HockeyDemoViewController.xib in Resources */,
 				1E2C072A1291568800CCD438 /* Hockey.strings in Resources */,
+				7837D2DA12DA673200BE3C22 /* AngryBirds.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,10 +327,12 @@
 				1EB330EB122162200081CF8E /* HockeyDemoSettingsViewController.m in Sources */,
 				1EB3332112219D440081CF8E /* BWWebViewController.m in Sources */,
 				7837CF2912DA030C00BE3C22 /* JSONKit.m in Sources */,
-				7837CF7B12DA139500BE3C22 /* NSString+URLEncoding.m in Sources */,
 				7837CF8312DA19BA00BE3C22 /* PSStoreButton.m in Sources */,
 				7837D1B512DA497700BE3C22 /* PSTableViewController.m in Sources */,
 				7837D1D112DA4B1100BE3C22 /* PSAppStoreHeader.m in Sources */,
+				7837D2D512DA5CF900BE3C22 /* UIImage+RoundedCorner.m in Sources */,
+				7837D2D812DA5D1000BE3C22 /* NSString+URLEncoding.m in Sources */,
+				7837D49012DA76E600BE3C22 /* UIImage+PSReflection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

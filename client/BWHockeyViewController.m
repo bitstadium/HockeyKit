@@ -108,7 +108,7 @@
 	return headerLayer;
 }
 
-#define kAppStoreViewHeight 70
+#define kAppStoreViewHeight 90
 - (void)viewDidLoad {
   [super viewDidLoad];
 
@@ -130,6 +130,7 @@
   appStoreHeader_.headerLabel = @"Angry Birds";
   appStoreHeader_.middleHeaderLabel = @"Version 2.2.3";
   appStoreHeader_.subHeaderLabel = @"01.01.2011";
+  appStoreHeader_.iconImage = [UIImage imageNamed:@"AngryBirds.png"];
   self.tableView.tableHeaderView = appStoreHeader_;
 
   if (self.modal) {
@@ -143,7 +144,7 @@
   PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithFrame:CGRectMake(0, 0, 85.0, 22.0)] autorelease];
   storeButton.buttonDelegate = self;
   storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreGreenColor] enabled:YES];
-  storeButton.center = CGPointMake(250, 35);
+  storeButton.center = CGPointMake(250, 55);
 	[self.tableView addSubview:storeButton];
 
 
