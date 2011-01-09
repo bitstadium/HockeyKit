@@ -23,14 +23,16 @@
 //  THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
+#import "PSStoreButton.h"
+#import "PSTableViewController.h"
 
 @class BWHockeyController;
 
-@interface BWHockeyViewController : UITableViewController {
+@interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
     BWHockeyController *_hockeyController;
 
     NSDictionary *cellLayout;
-    
+
     BOOL _modal;
 	UIStatusBarStyle _statusBarStyle;
 }
