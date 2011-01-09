@@ -11,6 +11,8 @@
   NSString *middleHeaderLabel_;
   NSString *subHeaderLabel;
   UIImage *iconImage_;
+
+  UIImage *reflectedImage_;
 }
 
 @property (nonatomic, copy) NSString *headerLabel;
