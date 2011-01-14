@@ -272,34 +272,36 @@ class iOSUpdater
 
             $filename = $this->appDirectory."stats/".$bundleidentifier;
 
-            $content = @file_get_contents($filename);
+            if (is_dir($this->appDirectory."stats/")) {
+                $content = @file_get_contents($filename);
             
-            $lines = explode("\n", $content);
-            $content = "";
-            $found = false;
-            foreach ($lines as $i => $line) :
-                if ($line == "") continue;
-                $device = explode( ";;", $line);
+                $lines = explode("\n", $content);
+                $content = "";
+                $found = false;
+                foreach ($lines as $i => $line) :
+                    if ($line == "") continue;
+                    $device = explode( ";;", $line);
 
-                $newline = $line;
+                    $newline = $line;
                 
-                if (count($device) > 0) {
-                    // is this the same device?
-                    if ($device[0] == $udid) {
-                        $newline = $thisdevice;
-                        $found = true;
+                    if (count($device) > 0) {
+                        // is this the same device?
+                        if ($device[0] == $udid) {
+                            $newline = $thisdevice;
+                            $found = true;
+                        }
                     }
-                }
                 
-                $content .= $newline."\n";
-            endforeach;
+                    $content .= $newline."\n";
+                endforeach;
             
-            if (!$found) {
-                $content .= $thisdevice;
+                if (!$found) {
+                    $content .= $thisdevice;
+                }
+            
+                // write back the updated stats
+                file_put_contents($filename, $content);
             }
-            
-            // write back the updated stats
-            file_put_contents($filename, $content);
         }
 
         // notes file is optional, other files are required
