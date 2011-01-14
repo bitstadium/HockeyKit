@@ -26,6 +26,7 @@
 
 require('json.inc');
 require('plist.inc');
+require_once('config.inc');
 
 define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
 
@@ -68,9 +69,10 @@ function nl2br_skip_html($string)
 class iOSUpdater
 {
     // define URL type parameter values
-    const TYPE_PROFILE = 'profile';
-    const TYPE_APP     = 'app';
-    const TYPE_IPA     = 'ipa';
+    const TYPE_PROFILE  = 'profile';
+    const TYPE_APP      = 'app';
+    const TYPE_IPA      = 'ipa';
+    const TYPE_AUTH     = 'authorize';
 
     // define the json response format version
     const API_V1 = '1';
@@ -88,6 +90,9 @@ class iOSUpdater
     const RETURN_V2_NOTES           = 'notes';
     const RETURN_V2_TITLE           = 'title';
     const RETURN_V2_TIMESTAMP       = 'timestamp';
+    const RETURN_V2_AUTHCODE        = 'authcode';
+
+    const RETURN_V2_AUTH_FAILED     = 'FAILED';
 
     // define keys for the array to keep a list of available beta apps to be displayed in the web interface
     const INDEX_APP            = 'app';
@@ -173,7 +178,7 @@ class iOSUpdater
     
     protected function validateType($type)
     {
-        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA)))
+        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA, self::TYPE_AUTH)))
         {
             return $type;
         }
@@ -266,7 +271,7 @@ class iOSUpdater
         $osversion = isset($_GET['ios']) ? $_GET['ios'] : "";
         $platform = isset($_GET['platform']) ? $_GET['platform'] : "";
         
-        if ($udid) {
+        if ($udid && $type != self::TYPE_AUTH) {
             $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s");
             $content =  "";
 
@@ -400,6 +405,35 @@ class iOSUpdater
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: '.filesize($filename).";\n");
             readfile_chunked($filename);
+        } else if ($type == self::TYPE_AUTH && $api != self::API_V1 && $udid && $appversion) {
+            // check if the UDID is allowed to be used
+            $filename = $this->appDirectory."stats/".$bundleidentifier;
+
+            $this->json[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
+
+            $userlistfilename = $this->appDirectory."stats/userlist.txt";
+        
+            if (file_exists($filename)) {
+                $userlist = @file_get_contents($userlistfilename);
+                
+                $lines = explode("\n", $userlist);
+
+                foreach ($lines as $i => $line) :
+                    if ($line == "") continue;
+                    
+                    $device = explode(";", $line);
+                    
+                    if (count($device) > 0) {
+                        // is this the same device?
+                        if ($device[0] == $udid) {
+                            $this->json[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
+                            break;
+                        }
+                    }
+                endforeach;                
+            }
+            
+            return $this->sendJSONAndExit();
         }
 
         exit();
