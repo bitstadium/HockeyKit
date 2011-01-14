@@ -154,7 +154,7 @@
     if (self.hockeyController.checkInProgress)
         return rowHeight;
     
-    int startIndexOfSettings = [self sectionIndexOfSettings];
+    NSUInteger startIndexOfSettings = [self sectionIndexOfSettings];
     
     if (indexPath.section == startIndexOfSettings - 1) {
         if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
@@ -168,10 +168,11 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (self.hockeyController.checkInProgress)
         return nil;
+	NSInteger settingIndex = [self sectionIndexOfSettings];
     
-    if (section == [self sectionIndexOfSettings])
+    if (section == settingIndex)
         return NSLocalizedStringFromTable(@"HockeySectionCheckHeader", @"Hockey", @"Check For Updates");
-    else if (section == [self sectionIndexOfSettings] - 2) {
+    else if (section == settingIndex - 2) {
         return NSLocalizedStringFromTable(@"HockeySectionAppHeader", @"Hockey", @"Application");
     } else {
         return nil;
@@ -218,6 +219,9 @@
     static NSString *BetaCell3Identifier = @"BetaCell3";
     // check cell
     static NSString *BetaCell4Identifier = @"BetaCell4";
+	
+	NSString* lastHockeyCheck = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+	NSString* bundleVersion   = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
     UITableViewCell *cell = nil;
 
@@ -242,7 +246,7 @@
         return cell;
     }
 
-    int startIndexOfSettings = [self sectionIndexOfSettings];
+    NSUInteger startIndexOfSettings = [self sectionIndexOfSettings];
 
     // preselect the required cell style
     if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
@@ -299,7 +303,7 @@
             }
         }
     } else if (indexPath.section == startIndexOfSettings - 1) {        
-        if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
+        if ([lastHockeyCheck compare:bundleVersion] == NSOrderedSame) {
             cell.textLabel.text = NSLocalizedStringFromTable(@"HockeySectionAppSameVersionButton", @"Hockey", @"Same Version");
             cell.textLabel.textColor = [UIColor grayColor];
             cell.textLabel.textAlignment = UITextAlignmentCenter;
@@ -376,8 +380,10 @@
     if (self.hockeyController.checkInProgress) {
         return;
     }
-    
-    int startIndexOfSettings = [self sectionIndexOfSettings];
+	NSString* lastHockeyCheck = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+	NSString* bundleVersion   = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+
+    NSUInteger startIndexOfSettings = [self sectionIndexOfSettings];
     
     NSString *url = nil;
 
@@ -404,7 +410,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         [tableView reloadData];
     } else if (indexPath.section == startIndexOfSettings - 1) {
-        if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
+        if ([lastHockeyCheck compare:bundleVersion] != NSOrderedSame) {
             // install application button
             NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
             NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];

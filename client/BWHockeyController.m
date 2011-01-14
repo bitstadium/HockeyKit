@@ -213,9 +213,11 @@
     
     BOOL updatePending = NO;
     NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+	NSString* lastHockeyCheck = [dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION];
+	NSString* bundleVersion   = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
     if (showUpdateReminder && 
         dictionaryOfLastHockeyCheck && 
-        [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame) {
+        [bundleVersion compare:lastHockeyCheck] != NSOrderedSame) {
         updatePending = YES;
     }
     
