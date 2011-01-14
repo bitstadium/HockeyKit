@@ -76,11 +76,17 @@ class iOSUpdater
     const API_V1 = '1';
     const API_V2 = '2';
     
-    // define keys for the returning json string
+    // define keys for the returning json string api version 1
     const RETURN_RESULT   = 'result';
     const RETURN_NOTES    = 'notes';
     const RETURN_TITLE    = 'title';
     const RETURN_SUBTITLE = 'subtitle';
+
+    // define keys for the returning json string api version 2
+    const RETURN_V2_VERSION  = 'version';
+    const RETURN_V2_BUILD    = 'build';
+    const RETURN_V2_NOTES    = 'notes';
+    const RETURN_V2_TITLE    = 'title';
 
     // define keys for the array to keep a list of available beta apps to be displayed in the web interface
     const INDEX_APP            = 'app';
@@ -315,6 +321,8 @@ class iOSUpdater
             $latestversion = $parsed_plist['items'][0]['metadata']['bundle-version'];
             
             if ($api == self::API_V1) {
+                // this is API Version 1
+                
                 // add the latest release notes if available
                 if ($note) {
                     $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
@@ -329,18 +337,20 @@ class iOSUpdater
 
                 return $this->sendJSONAndExit();
             } else {
+                // this is API Version 2
+                
                 $newAppVersion = array();
                 // add the latest release notes if available
                 if ($note) {
-                    $newAppVersion[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $newAppVersion[self::RETURN_V2_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
                 }
 
-                $newAppVersion[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
+                $newAppVersion[self::RETURN_V2_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
 
                 if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	            $newAppVersion[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+    	            $newAppVersion[self::RETURN_V2_BUILD]   = $parsed_plist['items'][0]['metadata']['subtitle'];
 
-                $newAppVersion[self::RETURN_RESULT]  = $latestversion;
+                $newAppVersion[self::RETURN_V2_VERSION]  = $latestversion;
 
                 $this->json[] = $newAppVersion;
                 return $this->sendJSONAndExit();
