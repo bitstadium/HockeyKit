@@ -83,11 +83,11 @@ class iOSUpdater
     const RETURN_SUBTITLE = 'subtitle';
 
     // define keys for the returning json string api version 2
-    const RETURN_V2_VERSION   = 'version';
-    const RETURN_V2_BUILD     = 'build';
-    const RETURN_V2_NOTES     = 'notes';
-    const RETURN_V2_TITLE     = 'title';
-    const RETURN_V2_TIMESTAMP = 'timestamp';
+    const RETURN_V2_VERSION         = 'version';
+    const RETURN_V2_SHORTVERSION    = 'shortversion';
+    const RETURN_V2_NOTES           = 'notes';
+    const RETURN_V2_TITLE           = 'title';
+    const RETURN_V2_TIMESTAMP       = 'timestamp';
 
     // define keys for the array to keep a list of available beta apps to be displayed in the web interface
     const INDEX_APP            = 'app';
@@ -349,7 +349,7 @@ class iOSUpdater
                 $newAppVersion[self::RETURN_V2_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
 
                 if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	            $newAppVersion[self::RETURN_V2_BUILD]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+    	            $newAppVersion[self::RETURN_V2_SHORTVERSION]   = $parsed_plist['items'][0]['metadata']['subtitle'];
 
                 $newAppVersion[self::RETURN_V2_VERSION]  = $latestversion;
                 
