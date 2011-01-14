@@ -71,6 +71,10 @@ class iOSUpdater
     const TYPE_PROFILE = 'profile';
     const TYPE_APP     = 'app';
     const TYPE_IPA     = 'ipa';
+
+    // define the json response format version
+    const API_V1 = '1';
+    const API_V2 = '2';
     
     // define keys for the returning json string
     const RETURN_RESULT   = 'result';
@@ -92,7 +96,6 @@ class iOSUpdater
 
 
     // define keys for the array to keep a list of devices installed this app
-
     const DEVICE_USER       = 'user';
     const DEVICE_PLATFORM   = 'platform';
     const DEVICE_OSVERSION  = 'osversion';
@@ -114,6 +117,7 @@ class iOSUpdater
             $this->validateDir($_GET['bundleidentifier']) : null;
 
         $type = isset($_GET['type']) ? $this->validateType($_GET['type']) : null;
+        $api = isset($_GET['api']) ? $this->validateAPIVersion($_GET['api']) : self::API_V1;
 
         // if (!$bundleidentifier)
         // {
@@ -123,7 +127,7 @@ class iOSUpdater
         
         if ($bundleidentifier)
         {
-            return $this->deliver($bundleidentifier, $type);
+            return $this->deliver($bundleidentifier, $api, $type);
         }
         
         $this->show();
@@ -167,6 +171,15 @@ class iOSUpdater
             return $type;
         }
         return null;
+    }
+
+    protected function validateAPIVersion($api)
+    {
+        if (in_array($api, array(self::API_V1, self::API_V2)))
+        {
+            return $api;
+        }
+        return self::API_V1;
     }
     
     // map a device UDID into a username
@@ -232,7 +245,7 @@ class iOSUpdater
         return $platform;
     }
     
-    protected function deliver($bundleidentifier, $type)
+    protected function deliver($bundleidentifier, $api, $type)
     {
         $plist               = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.plist'));
         $ipa                 = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*.ipa'));
@@ -300,20 +313,38 @@ class iOSUpdater
 
             // get the bundle_version which we treat as build number
             $latestversion = $parsed_plist['items'][0]['metadata']['bundle-version'];
+            
+            if ($api == self::API_V1) {
+                // add the latest release notes if available
+                if ($note) {
+                    $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                }
 
-            // add the latest release notes if available
-            if ($note) {
-                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
+
+                if ($parsed_plist['items'][0]['metadata']['subtitle'])
+    	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+
+                $this->json[self::RETURN_RESULT]  = $latestversion;
+
+                return $this->sendJSONAndExit();
+            } else {
+                $newAppVersion = array();
+                // add the latest release notes if available
+                if ($note) {
+                    $newAppVersion[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                }
+
+                $newAppVersion[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
+
+                if ($parsed_plist['items'][0]['metadata']['subtitle'])
+    	            $newAppVersion[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+
+                $newAppVersion[self::RETURN_RESULT]  = $latestversion;
+
+                $this->json[] = $newAppVersion;
+                return $this->sendJSONAndExit();
             }
-
-            $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
-
-            if ($parsed_plist['items'][0]['metadata']['subtitle'])
-	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
-    
-            $this->json[self::RETURN_RESULT]  = $latestversion;
-
-            return $this->sendJSONAndExit();
 
         } else if ($type == self::TYPE_PROFILE) {
 
