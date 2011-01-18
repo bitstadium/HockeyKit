@@ -130,19 +130,21 @@ class iOSUpdater
 
         $type = isset($_GET['type']) ? $this->validateType($_GET['type']) : null;
         $api = isset($_GET['api']) ? $this->validateAPIVersion($_GET['api']) : self::API_V1;
-
+        
         // if (!$bundleidentifier)
         // {
         //     $this->json = array(self::RETURN_RESULT => -1);
         //     return $this->sendJSONAndExit();
         // }
         
-        if ($bundleidentifier)
+        // if a bundleidentifier is submitted and request coming from a client, return JSON
+        if ($bundleidentifier && strpos($_SERVER["HTTP_USER_AGENT"], 'CFNetwork') !== false)
         {
             return $this->deliver($bundleidentifier, $api, $type);
         }
         
-        $this->show();
+        // if a bundleidentifier is provided, only show that app
+        $this->show($bundleidentifier);
     }
     
     protected function array_orderby()
@@ -448,13 +450,19 @@ class iOSUpdater
         exit();
     }
     
-    protected function show()
+    protected function show($appBundleIdentifier)
     {
         // first get all the subdirectories, which do not have a file named "private" present
         if ($handle = opendir($this->appDirectory)) {
             while (($file = readdir($handle)) !== false) {
-                if (in_array($file, array('.', '..')) || !is_dir($this->appDirectory . $file) || glob($this->appDirectory . $file . '/private')) {
+                if (in_array($file, array('.', '..')) || !is_dir($this->appDirectory . $file) || (glob($this->appDirectory . $file . '/private') && !$appBundleIdentifier)) {
                     // skip if not a directory or has `private` file
+                    // but only if no bundle identifier is provided to this function
+                    continue;
+                }
+                
+                // if a bundle identifier is provided and the directory does not match, continue
+                if ($appBundleIdentifier && $file != $appBundleIdentifier) {
                     continue;
                 }
 
