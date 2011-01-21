@@ -2,45 +2,45 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
+    $apps = new AppUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 	$baseURL = str_replace("/feed.php", "/", $baseURL);
     echo '<?xml version="1.0" encoding="utf-8"?>';
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><?php echo $_SERVER['SERVER_NAME'] ?> iOS Apps Updates</title>
+  <title><?php echo $_SERVER['SERVER_NAME'] ?> Apps Updates</title>
   <subtitle></subtitle>
   <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
   <link rel="self" type="application/atom+xml" href="<?php echo $baseURL ?>/feed.php"/>
   <id><?php echo $baseURL ?></id>
 <?php 
-    foreach ($ios->applications as $i => $app) :
+    foreach ($apps->applications as $i => $app) :
 ?>
 
   <entry>
-    <title><?php echo $app[iOSUpdater::INDEX_APP] ?> V<?php 
-    if ($app[iOSUpdater::INDEX_SUBTITLE]) {
-      echo $app[iOSUpdater::INDEX_SUBTITLE]." (".$app[iOSUpdater::INDEX_VERSION].")";
+    <title><?php echo $app[AppUpdater::INDEX_APP] ?> V<?php 
+    if ($app[AppUpdater::INDEX_SUBTITLE]) {
+      echo $app[AppUpdater::INDEX_SUBTITLE]." (".$app[AppUpdater::INDEX_VERSION].")";
     } else {
-      echo $app[iOSUpdater::INDEX_VERSION];
+      echo $app[AppUpdater::INDEX_VERSION];
     } ?></title>
-    <id><?php echo $app[iOSUpdater::INDEX_APP].$app[iOSUpdater::INDEX_SUBTITLE].$app[iOSUpdater::INDEX_VERSION] ?></id>
+    <id><?php echo $app[AppUpdater::INDEX_APP].$app[AppUpdater::INDEX_SUBTITLE].$app[AppUpdater::INDEX_VERSION] ?></id>
     <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
-    <published><?php echo date('Y-m-d\TH:i:s\Z', $app[iOSUpdater::INDEX_DATE]) ?></published>
-    <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[iOSUpdater::INDEX_DATE]) ?></updated>
+    <published><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></published>
+    <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></updated>
     <content type="html" xml:base="http://<?php echo $_SERVER['SERVER_NAME'] ?>/" xml:lang="en"><![CDATA[
-    <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
-        <p><img src="<?php echo $baseURL.$app[iOSUpdater::INDEX_IMAGE] ?>"></p>
+    <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
+        <p><img src="<?php echo $baseURL.$app[AppUpdater::INDEX_IMAGE] ?>"></p>
     <?php } ?>
-    <p><b>Application:</b> <?php echo $app[iOSUpdater::INDEX_APP] ?></p>
-    <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
-      <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
+    <p><b>Application:</b> <?php echo $app[AppUpdater::INDEX_APP] ?></p>
+    <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
+      <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
     <?php } else { ?>
-      <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+      <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
     <?php } ?>
-    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
-    <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
-        <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
+    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
     <?php endif ?>]]></content>
   </entry>
 <?php 

@@ -2,7 +2,7 @@
     margin-top: 15px;
 }
 
-.old-ios, .new-ios, .ipad-ios4, .desktop, .desktopbuttons, .ipadbuttons, .hintdevice, .hintipad {
+.old-ios, .new-ios, .ipad-ios4, .desktop, .android, .desktopbuttons, .ipadbuttons, .hintdevice, .hintipad {
 	display: none;
 }
 
@@ -84,6 +84,39 @@
 
 .browser-ipad4 .span-8 {
     margin-left: 15px;
+}
+
+
+/* Android devices */
+
+.browser-android .android {
+    display: block;
+}
+
+.browser-android .container {
+	width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.browser-android .grid {
+    min-height: 330px;
+    text-align: center;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.browser-android .version {
+    min-height: 460px;
+}
+
+.browser-android .version .icon {
+    float: left;
+    padding-right: 10px;
+}
+
+.browser-android .version .button {
+    margin-left: 25px;
 }
 
 
