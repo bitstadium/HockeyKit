@@ -4,6 +4,7 @@
     
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+	$baseURL = substr($baseURL, 0, strrpos($baseURL, "/") + 1);
 ?>
 <!DOCTYPE html>
 <html>
