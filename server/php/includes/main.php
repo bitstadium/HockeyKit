@@ -138,7 +138,7 @@ class iOSUpdater
         // }
         
         // if a bundleidentifier is submitted and request coming from a client, return JSON
-        if ($bundleidentifier && strpos($_SERVER["HTTP_USER_AGENT"], 'CFNetwork') !== false)
+        if ($bundleidentifier && (strpos($_SERVER["HTTP_USER_AGENT"], 'CFNetwork') !== false || $type))
         {
             return $this->deliver($bundleidentifier, $api, $type);
         }
