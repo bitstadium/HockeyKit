@@ -422,7 +422,7 @@ class AppUpdater
             header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
-            header('Content-Length: '.filesize($filename).";\n");
+            header('Content-Length: '.filesize($filename)."\n");
             readfile($filename);
 
         } else if ($type == self::TYPE_APP) {
@@ -462,7 +462,7 @@ class AppUpdater
             header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
             header('Content-Type: application/vnd.android.package-archive apk;');
             header('Content-Transfer-Encoding: binary');
-            header('Content-Length: '.filesize($filename).";\n");
+            header('Content-Length: '.filesize($filename)."\n");
             readfile_chunked($filename);
             
         } else if ($type == self::TYPE_AUTH && $api != self::API_V1 && $udid && $appversion) {
