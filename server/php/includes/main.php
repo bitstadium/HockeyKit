@@ -121,6 +121,9 @@ class AppUpdater
     const FILE_COMMON_NOTES     = '.html';
     const FILE_COMMON_ICON      = '.png';
     
+    const FILE_VERSION_RESTRICT = '.team';                  // if present in a version subdirectory, defines the teams that do have access, comma separated
+    const FILE_USERLIST         = 'stats/userlist.txt';     // defines UDIDs, real names for stats, and comma separated the associated team names
+    
     // define version array structure
     const VERSIONS_COMMON_DATA      = 'common';
     const VERSIONS_SPECIFIC_DATA    = 'specific';
@@ -225,7 +228,7 @@ class AppUpdater
             
             $userelement = explode(";", $line);
 
-            if (count($userelement) == 2) {
+            if (count($userelement) >= 2) {
                 if ($userelement[0] == $user) {
                     $username = $userelement[1];
                     break;
@@ -234,6 +237,28 @@ class AppUpdater
         endforeach;
 
         return $username;
+    }
+    
+    // map a device UDID into a list of assigned teams
+    protected function mapTeam($user, $userlist)
+    {
+        $teams = "";
+        $lines = explode("\n", $userlist);
+
+        foreach ($lines as $i => $line) :
+            if ($line == "") continue;
+            
+            $userelement = explode(";", $line);
+
+            if (count($userelement) == 3) {
+                if ($userelement[0] == $user) {
+                    $teams = $userelement[2];
+                    break;
+                }
+            }
+        endforeach;
+
+        return $teams;
     }
     
     // map a device code into readable name
@@ -319,7 +344,7 @@ class AppUpdater
                 }
             
                 // write back the updated stats
-                file_put_contents($filename, $content);
+                @file_put_contents($filename, $content);
             }
         }
     }
@@ -503,7 +528,7 @@ class AppUpdater
 
         $this->json[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
 
-        $userlistfilename = $this->appDirectory."stats/userlist.txt";
+        $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
     
         if (file_exists($filename)) {
             $userlist = @file_get_contents($userlistfilename);
@@ -526,6 +551,36 @@ class AppUpdater
         }
         
         return $this->sendJSONAndExit();
+    }
+    
+    protected function checkProtectedVersion($restrict)
+    {
+        $allowed = false;
+        
+        $allowedTeams = @file_get_contents($restrict);
+        
+        if (strlen($allowedTeams) == 0) return true;
+        
+        $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
+        if ($udid) {
+            // now get the current user statistics
+            $userlist =  "";
+
+            $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
+            $userlist = @file_get_contents($userlistfilename);
+            $assignedTeams = $this->mapTeam($udid, $userlist);
+            if (strlen($assignedTeams) > 0) {
+                $teams = explode(",", $assignedTeams);
+                foreach ($teams as $team) {
+                    if (strpos($team, $allowedTeams) !== false) {
+                        $allowed = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return $allowed;
     }
     
     protected function getApplicationVersions($bundleidentifier)
@@ -568,21 +623,29 @@ class AppUpdater
             if (count($subDirs) > 0) {
                 foreach ($subDirs as $subDir) {
                     // iOS
-                    $ipa    = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_IOS_IPA));       // this file could be in a subdirectory per version
-                    $plist  = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_IOS_PLIST));     // this file could be in a subdirectory per version
+                    $ipa        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_IOS_IPA));             // this file could be in a subdirectory per version
+                    $plist      = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_IOS_PLIST));           // this file could be in a subdirectory per version
                     
                     // Android
-                    $apk    = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_APK));   // this file could be in a subdirectory per version
-                    $json   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_JSON));  // this file could be in a subdirectory per version
+                    $apk        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_APK));         // this file could be in a subdirectory per version
+                    $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_JSON));        // this file could be in a subdirectory per version
                     
                     // Common
-                    $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES));  // this file could be in a subdirectory per version
-                    
+                    $note       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES));        // this file could be in a subdirectory per version
+                    $restrict   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_RESTRICT));    // this file defines the teams allowed to access this version
+                                        
                     if ($ipa && $plist) {
                         $version = array();
                         $version[self::FILE_IOS_IPA] = $ipa;
                         $version[self::FILE_IOS_PLIST] = $plist;
                         $version[self::FILE_COMMON_NOTES] = $note;
+                        $version[self::FILE_VERSION_RESTRICT] = $restrict;
+                        
+                        // if this is a restricted version, check if the UDID is provided and allowed
+                        if ($restrict && !$this->checkProtectedVersion($restrict)) {
+                            continue;
+                        }
+                        
                         $allVersions[$subDir] = $version;
                     } else if ($apk && $json) {
                         $version = array();
@@ -675,6 +738,34 @@ class AppUpdater
         exit();
     }
     
+    protected function findPublicVersion($files)
+    {
+        $publicVersion = array();
+        
+        foreach ($files as $version => $fileSet) {
+            // since it is currently only supported on iOS, make it fix
+            $ipa = $fileSet[self::FILE_IOS_IPA];
+            $plist = $fileSet[self::FILE_IOS_PLIST];
+            $apk = $current[self::FILE_ANDROID_APK];
+            $json = $current[self::FILE_ANDROID_JSON];
+            $restrict = $fileSet[self::FILE_VERSION_RESTRICT];
+            
+            if ($apk) {
+                $publicVersion = $fileSet;
+                break;
+            }
+            
+            if ($ipa && $restrict && strlen(file_get_contents($restrict)) > 0) {
+                continue;
+            }
+            
+            $publicVersion = $fileSet;
+            break;
+        }
+        
+        return $publicVersion;
+    }
+    
     protected function show($appBundleIdentifier)
     {
         // first get all the subdirectories, which do not have a file named "private" present
@@ -699,18 +790,26 @@ class AppUpdater
                     continue;
                 }
                 
-                $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+                $current = $this->findPublicVersion($files[self::VERSIONS_SPECIFIC_DATA]);
+//                $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
                 $ipa = $current[self::FILE_IOS_IPA];
                 $plist = $current[self::FILE_IOS_PLIST];
                 $apk = $current[self::FILE_ANDROID_APK];
                 $json = $current[self::FILE_ANDROID_JSON];
                 $note = $current[self::FILE_COMMON_NOTES];
-
+                $restrict = $current[self::FILE_VERSION_RESTRICT];
+                
                 $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
                 $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
 
                 if (!$ipa && !$apk) {
                     continue;
+                }
+
+                // if this app version has any restrictions, don't show it on the web interface!
+                // we make it easy for now and do not check if the data makes sense and has users assigned to the defined team names
+                if ($restrict && strlen(file_get_contents($restrict)) > 0) {
+                    $current = $this->findPublicVersion($files);
                 }
                 
                 $newApp = array();
@@ -757,7 +856,7 @@ class AppUpdater
                 $userlist =  "";
 
                 $filename = $this->appDirectory."stats/".$file;
-                $userlistfilename = $this->appDirectory."stats/userlist.txt";
+                $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
         
                 if (file_exists($filename)) {
                     $userlist = @file_get_contents($userlistfilename);
