@@ -558,8 +558,8 @@ class AppUpdater
         $allowed = false;
         
         $allowedTeams = @file_get_contents($restrict);
-        
         if (strlen($allowedTeams) == 0) return true;
+        $allowedTeams = explode(",", $allowedTeams);
         
         $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
         if ($udid) {
@@ -572,7 +572,7 @@ class AppUpdater
             if (strlen($assignedTeams) > 0) {
                 $teams = explode(",", $assignedTeams);
                 foreach ($teams as $team) {
-                    if (strpos($team, $allowedTeams) !== false) {
+                    if (in_array($team, $allowedTeams)) {
                         $allowed = true;
                         break;
                     }
