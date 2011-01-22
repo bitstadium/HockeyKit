@@ -339,6 +339,7 @@
                 isAndroidDevice = true;
             }
             
+            isiPad4Device = false;
             if (isNewIOSDevice) {
                 className += "browser-ios4";
             } else if (isiPad4Device) {

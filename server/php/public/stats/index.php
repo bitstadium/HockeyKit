@@ -58,7 +58,11 @@
                 foreach ($app[AppUpdater::INDEX_STATS] as $i => $device) :
                     echo "<tr>";
                     echo "  <td>".$device[AppUpdater::DEVICE_APPVERSION]."</td>";
-                    echo "  <td>".$device[AppUpdater::DEVICE_USER]."</td>";
+					if (strlen($device[AppUpdater::DEVICE_USER]) > 15) {
+						echo "  <td title='".$device[AppUpdater::DEVICE_USER]."'>".substr($device[AppUpdater::DEVICE_USER],0,12)."...</td>";
+					} else {
+                    	echo "  <td>".$device[AppUpdater::DEVICE_USER]."</td>";
+					}
                     echo "  <td>".$device[AppUpdater::DEVICE_OSVERSION]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_PLATFORM]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_LASTCHECK]."</td>";
