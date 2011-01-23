@@ -492,14 +492,16 @@ class AppUpdater
     
     protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image)
     {
+        $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+        
         // send XML with url to app binary file
-        $ipa_url = dirname("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
+        $ipa_url = dirname($protocol."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
         if ($image) {
             $image_url =
-                dirname("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
+                dirname($protocol."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
                 $bundleidentifier . '/' . basename($image);
             $imagedict = "<dict><key>kind</key><string>display-image</string><key>needs-shine</key><false/><key>url</key><string>".$image_url."</string></dict></array>";
             $insertpos = strpos($plist_content, '</array>');
