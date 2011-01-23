@@ -30,7 +30,7 @@
                     <img class="icon" src="../<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
-                <div class="column span-8">
+                <div class="column span-7">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                   <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
                     <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
@@ -45,13 +45,14 @@
 
                 </div>
                 
-                <div class="column span-12">
+                <div class="column span-13">
                     <table>
                         <tr>
                             <th>Version</th>
                             <th>User</th>
                             <th>iOS</th>
                             <th>Device</th>
+                            <th>Lang</th>
                             <th>Last Check</th>
                         </tr>
             <?php 
@@ -65,6 +66,7 @@
 					}
                     echo "  <td>".$device[AppUpdater::DEVICE_OSVERSION]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_PLATFORM]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_LANGUAGE]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_LASTCHECK]."</td>";
                     echo "</tr>";
                 endforeach;

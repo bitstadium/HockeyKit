@@ -68,6 +68,16 @@ function nl2br_skip_html($string)
 
 class AppUpdater
 {
+    // define the parameters being sent by the client checking for a new version
+    const CLIENT_KEY_TYPE       = 'type';
+    const CLIENT_KEY_BUNDLEID   = 'bundleidentifier';
+    const CLIENT_KEY_APIVERSION = 'api';
+    const CLIENT_KEY_UDID       = 'udid';                   // iOS client only
+    const CLIENT_KEY_APPVERSION = 'version';
+    const CLIENT_KEY_IOSVERSION = 'ios';                    // iOS client only
+    const CLIENT_KEY_PLATFORM   = 'platform';
+    const CLIENT_KEY_LANGUAGE   = 'lang';
+    
     // define URL type parameter values
     const TYPE_PROFILE  = 'profile';
     const TYPE_APP      = 'app';
@@ -133,6 +143,7 @@ class AppUpdater
     const DEVICE_PLATFORM   = 'platform';
     const DEVICE_OSVERSION  = 'osversion';
     const DEVICE_APPVERSION = 'appversion';
+    const DEVICE_LANGUAGE   = 'language';
     const DEVICE_LASTCHECK  = 'lastcheck';
 
     protected $appDirectory;
@@ -146,11 +157,11 @@ class AppUpdater
 
         $this->appDirectory = $dir;
 
-        $bundleidentifier = isset($_GET['bundleidentifier']) ?
-            $this->validateDir($_GET['bundleidentifier']) : null;
+        $bundleidentifier = isset($_GET[self::CLIENT_KEY_BUNDLEID]) ?
+            $this->validateDir($_GET[self::CLIENT_KEY_BUNDLEID]) : null;
 
-        $type = isset($_GET['type']) ? $this->validateType($_GET['type']) : null;
-        $api = isset($_GET['api']) ? $this->validateAPIVersion($_GET['api']) : self::API_V1;
+        $type = isset($_GET[self::CLIENT_KEY_TYPE]) ? $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
+        $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ? $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
         
         // if a bundleidentifier is submitted and request coming from a client, return JSON
         if ($bundleidentifier && 
@@ -305,13 +316,14 @@ class AppUpdater
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
-        $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
-        $appversion = isset($_GET['version']) ? $_GET['version'] : "";
-        $osversion = isset($_GET['ios']) ? $_GET['ios'] : "";
-        $platform = isset($_GET['platform']) ? $_GET['platform'] : "";
+        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
+        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+        $osversion = isset($_GET[self::CLIENT_KEY_IOSVERSION]) ? $_GET[self::CLIENT_KEY_IOSVERSION] : "";
+        $platform = isset($_GET[self::CLIENT_KEY_PLATFORM]) ? $_GET[self::CLIENT_KEY_PLATFORM] : "";
+        $language = isset($_GET[self::CLIENT_KEY_LANGUAGE]) ? strtolower($_GET[self::CLIENT_KEY_LANGUAGE]) : "";
         
         if ($udid && $type != self::TYPE_AUTH) {
-            $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s");
+            $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language;
             $content =  "";
 
             $filename = $this->appDirectory."stats/".$bundleidentifier;
@@ -394,7 +406,7 @@ class AppUpdater
             } else {
                 // this is API Version 2
                 
-                $appversion = isset($_GET['version']) ? $_GET['version'] : "";
+                $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
                 
                 foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
                     $ipa = $version[self::FILE_IOS_IPA];
@@ -435,7 +447,7 @@ class AppUpdater
             
             // this is an Android app
             
-            $appversion = isset($_GET['version']) ? $_GET['version'] : "";
+            $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
             
             // API version is V2 by default, even if the client provides V1
             foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
@@ -520,8 +532,8 @@ class AppUpdater
     protected function deliverAuthenticationResponse($bundleidentifier)
     {
         // did we get any user data?
-        $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
-        $appversion = isset($_GET['version']) ? $_GET['version'] : "";
+        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
+        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
         
         // check if the UDID is allowed to be used
         $filename = $this->appDirectory."stats/".$bundleidentifier;
@@ -561,7 +573,7 @@ class AppUpdater
         if (strlen($allowedTeams) == 0) return true;
         $allowedTeams = explode(",", $allowedTeams);
         
-        $udid = isset($_GET['udid']) ? $_GET['udid'] : null;
+        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
         if ($udid) {
             // now get the current user statistics
             $userlist =  "";
@@ -587,6 +599,8 @@ class AppUpdater
     {
         $files = array();
         
+        $language = isset($_GET[self::CLIENT_KEY_LANGUAGE]) ? strtolower($_GET[self::CLIENT_KEY_LANGUAGE]) : "";
+        
         // iOS
         $ipa        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_IOS_IPA));
         $plist      = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_IOS_PLIST));
@@ -597,7 +611,12 @@ class AppUpdater
         $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_ANDROID_JSON));
 
         // Common
-        $note       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_NOTES));
+        if ($language != "") {
+            $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
+        }
+        if (!$note) {
+            $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_NOTES));   // the default language file should not have a language extension, so if en is default, never creaete a .html.en file!
+        }
         $icon       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_ICON));
         
         $allVersions = array();
@@ -631,7 +650,13 @@ class AppUpdater
                     $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_JSON));        // this file could be in a subdirectory per version
                     
                     // Common
-                    $note       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES));        // this file could be in a subdirectory per version
+                    unset($note);                                                                                                                   // this file could be in a subdirectory per version                    
+                    if ($language != "") {
+                        $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
+                    }
+                    if (!$note) {
+                        $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES));
+                    }
                     $restrict   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_RESTRICT));    // this file defines the teams allowed to access this version
                                         
                     if ($ipa && $plist) {
@@ -876,6 +901,7 @@ class AppUpdater
                         $newdevice[self::DEVICE_OSVERSION] = $device[2];
                         $newdevice[self::DEVICE_APPVERSION] = $device[3];
                         $newdevice[self::DEVICE_LASTCHECK] = $device[4];
+                        $newdevice[self::DEVICE_LANGUAGE] = $device[5];
                     
                         $newApp[self::INDEX_STATS][] = $newdevice;
                         endforeach;
