@@ -375,7 +375,7 @@ class AppUpdater
         
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
         $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
-
+        
         if ($ipa && $plist) {
             
             // this is an iOS app
@@ -499,6 +499,7 @@ class AppUpdater
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
+        
         if ($image) {
             $image_url =
                 dirname($protocol."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
@@ -507,6 +508,7 @@ class AppUpdater
             $insertpos = strpos($plist_content, '</array>');
             $plist_content = substr_replace($plist_content, $imagedict, $insertpos, 8);
         }
+
         header('content-type: application/xml');
         echo $plist_content;
     }
@@ -725,9 +727,9 @@ class AppUpdater
         $json = $current[self::FILE_ANDROID_JSON];
         $note = $current[self::FILE_COMMON_NOTES];
 
-        $profile = $files[self::FILE_IOS_PROFILE];
-        $image = $files[self::FILE_COMMON_ICON];
-
+        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
+        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+        
         // notes file is optional, other files are required
         if ((!$ipa || !$plist) && 
             (!$apk || !$json)) {
