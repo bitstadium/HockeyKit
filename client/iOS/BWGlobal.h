@@ -39,3 +39,5 @@
 #define kDictionaryOfLastHockeyCheck	@"DictionaryOfLastHockeyCheck"
 #define kDateOfLastHockeyCheck			@"DateOfLastHockeyCheck"
 #define kHockeyAutoUpdateSetting		@"HockeyAutoUpdateSetting"
+
+#define kHockeyBundleName @"Hockey.bundle"
