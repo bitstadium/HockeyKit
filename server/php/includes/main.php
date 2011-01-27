@@ -105,6 +105,7 @@ class AppUpdater
     const RETURN_V2_NOTES           = 'notes';
     const RETURN_V2_TITLE           = 'title';
     const RETURN_V2_TIMESTAMP       = 'timestamp';
+    const RETURN_V2_APPSIZE         = 'appsize';
     const RETURN_V2_AUTHCODE        = 'authcode';
 
     const RETURN_V2_AUTH_FAILED     = 'FAILED';
@@ -114,6 +115,7 @@ class AppUpdater
     const INDEX_VERSION         = 'version';
     const INDEX_SUBTITLE        = 'subtitle';
     const INDEX_DATE            = 'date';
+    const INDEX_APPSIZE         = 'appsize';
     const INDEX_NOTES           = 'notes';
     const INDEX_PROFILE         = 'profile';
     const INDEX_PROFILE_UPDATE  = 'profileupdate';
@@ -392,15 +394,15 @@ class AppUpdater
                 
                 // add the latest release notes if available
                 if ($note) {
-                    $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $this->json[self::RETURN_NOTES]     = nl2br_skip_html(file_get_contents($appDirectory . $note));
                 }
 
-                $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
+                $this->json[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
 
                 if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+    	            $this->json[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
 
-                $this->json[self::RETURN_RESULT]  = $latestversion;
+                $this->json[self::RETURN_RESULT]        = $latestversion;
 
                 return $this->sendJSONAndExit();
             } else {
@@ -424,18 +426,19 @@ class AppUpdater
                     $newAppVersion = array();
                     // add the latest release notes if available
                     if ($note) {
-                        $newAppVersion[self::RETURN_V2_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                        $newAppVersion[self::RETURN_V2_NOTES]           = nl2br_skip_html(file_get_contents($appDirectory . $note));
                     }
 
-                    $newAppVersion[self::RETURN_V2_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
+                    $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
 
                     if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	                $newAppVersion[self::RETURN_V2_SHORTVERSION]   = $parsed_plist['items'][0]['metadata']['subtitle'];
+    	                $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_plist['items'][0]['metadata']['subtitle'];
 
-                    $newAppVersion[self::RETURN_V2_VERSION]  = $thisVersion;
+                    $newAppVersion[self::RETURN_V2_VERSION]             = $thisVersion;
             
-                    $newAppVersion[self::RETURN_V2_TIMESTAMP]  = filectime($appDirectory . $ipa);;
-
+                    $newAppVersion[self::RETURN_V2_TIMESTAMP]           = filectime($appDirectory . $ipa);
+                    $newAppVersion[self::RETURN_V2_APPSIZE]             = filesize($appDirectory . $ipa);
+                    
                     $this->json[] = $newAppVersion;
                     
                     // only send the data until the current version if provided
@@ -461,15 +464,16 @@ class AppUpdater
                 $newAppVersion = array();
                 // add the latest release notes if available
                 if ($note) {
-                    $newAppVersion[self::RETURN_V2_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $newAppVersion[self::RETURN_V2_NOTES]       = nl2br_skip_html(file_get_contents($appDirectory . $note));
                 }
 
-                $newAppVersion[self::RETURN_V2_TITLE]   = $parsed_json['title'];
+                $newAppVersion[self::RETURN_V2_TITLE]           = $parsed_json['title'];
 
-                $newAppVersion[self::RETURN_V2_SHORTVERSION]  = $parsed_json['versionName'];
-                $newAppVersion[self::RETURN_V2_VERSION]  = $parsed_json['versionCode'];
+                $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_json['versionName'];
+                $newAppVersion[self::RETURN_V2_VERSION]         = $parsed_json['versionCode'];
         
-                $newAppVersion[self::RETURN_V2_TIMESTAMP]  = filectime($appDirectory . $apk);;
+                $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($appDirectory . $apk);
+                $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($appDirectory . $apk);
 
                 $this->json[] = $newAppVersion;
                 
@@ -860,7 +864,8 @@ class AppUpdater
                         $newApp[self::INDEX_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
                     $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
                     $newApp[self::INDEX_DATE]           = filectime($ipa);
-                
+                    $newApp[self::INDEX_APPSIZE]        = filesize($ipa);
+                    
                     if ($provisioningProfile) {
                         $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
                         $newApp[self::INDEX_PROFILE_UPDATE] = filectime($provisioningProfile);
@@ -878,6 +883,8 @@ class AppUpdater
                     $newApp[self::INDEX_SUBTITLE]   = $parsed_json['versionName'];
                     $newApp[self::INDEX_VERSION]    = $parsed_json['versionCode'];                    
                     $newApp[self::INDEX_DATE]       = filectime($apk);                
+                    $newApp[self::INDEX_APPSIZE]    = filesize($apk);
+                    
                     $newApp[self::INDEX_PLATFORM]   = self::APP_PLATFORM_ANDROID;
                 }
                 

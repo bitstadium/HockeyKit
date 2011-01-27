@@ -41,6 +41,10 @@
     padding-right: 10px;
 }
 
+.browser-ios4 .version .icon {
+    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+}
+
 .browser-ios4 .grid {
     min-height: 330px;
     text-align: center;
@@ -55,6 +59,7 @@
 .browser-ios4 .version .icon {
     float: left;
     padding-right: 10px;
+    margin-bottom: 35px;
 }
 
 .browser-ios4 .version .button {
@@ -99,6 +104,7 @@
     padding-right: 10px;
 }
 
+
 .browser-android .grid {
     min-height: 330px;
     text-align: center;
@@ -113,6 +119,7 @@
 .browser-android .version .icon {
     float: left;
     padding-right: 10px;
+    margin-bottom: 35px;
 }
 
 .browser-android .version .button {
