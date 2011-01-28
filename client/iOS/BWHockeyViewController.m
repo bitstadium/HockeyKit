@@ -45,6 +45,20 @@
 
 }
 
+// apply gloss
+- (UIImage *)addGloss:(UIImage *)image {
+  UIGraphicsBeginImageContext(image.size);
+
+  [image drawAtPoint:CGPointZero];
+  UIImage *iconGradient = [UIImage imageNamed:@"IconGradient.png"];
+  [iconGradient drawAtPoint:CGPointZero blendMode:kCGBlendModeNormal alpha:0.5];
+
+  UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+  UIGraphicsEndImageContext();
+
+  return result;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
@@ -152,7 +166,33 @@
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
   appStoreHeader_.subHeaderLabel = self.hockeyController.appDate ? [formatter stringFromDate:self.hockeyController.appDate] : nil;
-  appStoreHeader_.iconImage = [UIImage imageNamed:@"AngryBirds.png"];
+  //appStoreHeader_.iconImage = //[UIImage imageNamed:@"AngryBirds.png"];
+
+  NSString *iconString;
+  NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
+  if (!icons) {
+    iconString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFile"];
+  }else {
+    BOOL useHighResIcon = NO;
+    IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
+
+    for(NSString *icon in icons) {
+      iconString = icon;
+      UIImage *iconImage = [UIImage imageNamed:icon];
+
+      if(iconImage.size.height == 57 && !useHighResIcon) {
+        // found!
+        break;
+      }
+      if(iconImage.size.height == 114 && useHighResIcon) {
+        // found!
+        break;
+      }
+    }
+  }
+  appStoreHeader_.iconImage = [self addGloss:[UIImage imageNamed:iconString]];
+
+
   self.tableView.tableHeaderView = appStoreHeader_;
 
   if (self.modal) {

@@ -345,7 +345,7 @@ static inline BOOL IsEmpty(id thing) {
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[receivedData_ appendData:data];
+  [receivedData_ appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
