@@ -1,4 +1,4 @@
-/* 
+/*
    Hockey.strings
    Hockey
 
@@ -74,3 +74,5 @@
 
 /* Manually */
 "HockeySectionCheckManually" = "Manually";
+
+"HockeyVersion" = "Version";

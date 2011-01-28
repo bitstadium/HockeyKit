@@ -146,11 +146,10 @@
   //  self.tableView.layer.borderColor = [[UIColor orangeColor] CGColor];
   //self.tableView.layer.borderWidth = 2.0;
 
-
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
-  appStoreHeader_.headerLabel = @"Angry Birds";
-  appStoreHeader_.middleHeaderLabel = @"Version 2.2.3";
-  appStoreHeader_.subHeaderLabel = @"01.01.2011";
+  appStoreHeader_.headerLabel = self.hockeyController.appName;
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"HockeyVersion", @"Hockey", @"Hockey Version Header"), self.hockeyController.appVersion];
+  appStoreHeader_.subHeaderLabel = self.hockeyController.appDate;
   appStoreHeader_.iconImage = [UIImage imageNamed:@"AngryBirds.png"];
   self.tableView.tableHeaderView = appStoreHeader_;
 
@@ -536,11 +535,11 @@
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Rotation
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
   BOOL shouldAutorotate;
 
   if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
@@ -553,6 +552,11 @@
 
   return shouldAutorotate;
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark PSAppStoreHeaderDelegate
 
 - (void)storeButtonFired:(PSStoreButton *)button {
   NSLog(@"*************storeButtonFired*******************: %@", button);
