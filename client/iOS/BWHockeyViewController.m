@@ -147,7 +147,7 @@
 
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
   appStoreHeader_.headerLabel = self.hockeyController.appName;
-  NSString *appSize = [NSString stringWithFormat:@" , %@", self.hockeyController.appSizeInMB];
+  NSString *appSize = [NSString stringWithFormat:@", %@", self.hockeyController.appSizeInMB];
   appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyController.appVersion, appSize];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
