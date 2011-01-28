@@ -31,7 +31,6 @@
 #import "UIImage+HockeyAdditions.h"
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
-#define BWIMAGE(_URL) [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:BWPathForBundleResource(_URL)] autorelease]
 
 @implementation BWHockeyViewController
 
@@ -41,13 +40,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark private
-
-NSString* BWPathForBundleResource(NSString* relativePath) {
-  NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
-  NSString *resultingPath = [[resourcePath stringByAppendingPathComponent:kHockeyBundleName] stringByAppendingPathComponent:relativePath];
-  return resultingPath;
-}
-
 
 - (void)openSettings:(id)sender {
 
@@ -63,7 +55,7 @@ NSString* BWPathForBundleResource(NSString* relativePath) {
     self.modal = newModal;
     self.title = NSLocalizedStringFromTable(@"HockeyUpdateScreenTitle", @"Hockey", @"Update Details");
 
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:BWIMAGE(@"gear.png")
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"gear.png" bundle:kHockeyBundleName]
                                                                                style:UIBarButtonItemStyleBordered
                                                                               target:self
                                                                               action:@selector(openSettings:)] autorelease];

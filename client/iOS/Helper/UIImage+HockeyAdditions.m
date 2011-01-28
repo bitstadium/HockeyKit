@@ -84,45 +84,11 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
 }
 
 
-static NSMutableDictionary *UIImageCache;
-
-- (id)initWithContentsOfResolutionIndependentFile:(NSString *)path {
-  if ( [UIScreen instancesRespondToSelector:@selector(scale)] && (int)[[UIScreen mainScreen] scale] == 2.0 ) {
-    NSString *path2x = [[path stringByDeletingLastPathComponent]
-                        stringByAppendingPathComponent:[NSString stringWithFormat:@"%@@2x.%@",
-                                                        [[path lastPathComponent] stringByDeletingPathExtension],
-                                                        [path pathExtension]]];
-
-    if ( [[NSFileManager defaultManager] fileExistsAtPath:path2x] ) {
-      return [self initWithContentsOfFile:path2x];
-    }
-  }
-
-  return [self initWithContentsOfFile:path];
-}
-
-+ (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path {
-  return [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
-}
-
-
-+ (id)cachedImageWithContentsOfFile:(NSString *)path {
-  id result;
-  if (!UIImageCache)
-    UIImageCache = [[NSMutableDictionary alloc] init];
-  else {
-    result = [UIImageCache objectForKey:path];
-    if (result)
-      return result;
-  }
-  result = [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
-  if(result) [UIImageCache setObject:result forKey:path];
-  return result;
-}
-
-
-+ (void)clearCache {
-  [UIImageCache removeAllObjects];
++ (UIImage *)imageNamed:(NSString *)imageName bundle:(NSString *)bundleName {
+	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+	NSString *bundlePath = [resourcePath stringByAppendingPathComponent:bundleName];
+	NSString *imagePath = [bundlePath stringByAppendingPathComponent:imageName];
+	return [UIImage imageWithContentsOfFile:imagePath];
 }
 
 @end
