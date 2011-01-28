@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -264,7 +264,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HockeyDemo" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -313,7 +313,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\n# This has to match the name of the configuration you use for Ad-Hoc builds!\nadHocConfigurationName=\"Ad-Hoc\";\n\nexecutableName=\"My Application\";\nbundleDisplayName=\"My Application\";\n\nsymbolicationDirectoryPath=\"${PROJECT_DIR}/Development/CrashReporter/Symbolication\";\ndropboxDistributionDirectoryPath=\"/users/myusername/Dropbox/My Application Beta\";\n\nftpUsername=\"username\";\nftpPassword=\"password\";\nftpServerDirectoryPath=\"my-cool-server.com/httpdocs/beta\";\n\n\n\nif ([ \"${EFFECTIVE_PLATFORM_NAME}\" == \"-iphoneos\" ])\nthen\n\t\n\tapplicationPath=\"${CONFIGURATION_BUILD_DIR}/$executableName.app\";\n\tbundleVersion=$(defaults read \"$applicationPath/Info\" CFBundleVersion);\n\tbundleIdentifier=$(defaults read \"$applicationPath/Info\" CFBundleIdentifier);\n\t\n\t# Move .app file to a secure location\n  \tif !([ -e \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app\" ])\n     then\n\n       \tcp -r $applicationPath $symbolicationDirectoryPath;\n\t\tmv \"$symbolicationDirectoryPath/$executableName.app\" \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app\";\n\t\t\n     fi\n\n\t# Move .app.dSYM file to a secure location\n\tif !([ -e \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app.dSYM\" ])\n  \t   then\n\n       \tcp -r \"$applicationPath.dSYM\" $symbolicationDirectoryPath;\n\t\tmv \"$symbolicationDirectoryPath/$executableName.app.dSYM\" \"$symbolicationDirectoryPath/$bundleIdentifier $bundleVersion.app.dSYM\";\n\t\t\n     fi\n\n\n\tif ([ \"${BUILD_STYLE}\" == $adHocConfigurationName ])\n\tthen\n\t\tcd \"${CONFIGURATION_BUILD_DIR}\";\n\n\t\t# Archive the application for Ad-Hoc distribution\n\t\tmkdir \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\tcp -r $applicationPath \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\t(zip -qr \"$executableName.ipa\" Payload);\n\t\trm -rf \"${CONFIGURATION_BUILD_DIR}/Payload\";\n\t\t\n\t\t# Generate .plist file for wireless app distribution\n\t\techo \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n\t\t \t <!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n\t\t\t <plist version=\\\"1.0\\\">\n\t\t\t <dict>\n\t\t\t\t<key>items</key>\n\t\t\t\t<array>\n\t\t\t\t\t<dict>\n\t\t\t\t\t\t<key>assets</key>\n\t\t\t\t\t\t<array>\n\t\t\t\t\t\t\t<dict>\n\t\t\t\t\t\t\t\t<key>kind</key>\n\t\t\t\t\t\t\t\t<string>software-package</string>\n\t\t\t\t\t\t\t\t<key>url</key>\n\t\t\t\t\t\t\t\t<string>__URL__</string>\n\t\t\t\t\t\t\t</dict>\n\t\t\t\t\t\t</array>\n\t\t\t\t\t\t<key>metadata</key>\n\t\t\t\t\t\t<dict>\n\t\t\t\t\t\t\t<key>bundle-identifier</key>\n\t\t\t\t\t\t\t<string>$bundleIdentifier</string>\n\t\t\t\t\t\t\t<key>bundle-version</key>\n\t\t\t\t\t\t\t<string>$bundleVersion</string>\n\t\t\t\t\t\t\t<key>kind</key>\n\t\t\t\t\t\t\t<string>software</string>\n\t\t\t\t\t\t\t<key>title</key>\n\t\t\t\t\t\t\t<string>$bundleDisplayName</string>\n\t\t\t\t\t\t</dict>\n\t\t\t\t\t</dict>\n\t\t\t\t</array>\n\t\t\t </dict>\n\t\t\t </plist>\" > \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\";\n\t\t\n\t\t# Move the archived application to Dropbox\n\t\tcp \"$executableName.ipa\" \"$dropboxDistributionDirectoryPath/$executableName.ipa\";\n\n\t\t# Open Terminal and upload the .ipa and .plist files\n\t\techo \"Uploading $executableName.ipa and $executableName.plist to $ftpServerDirectoryPath...\";\n\t\t/usr/bin/osascript <<-EOF\t\t\t\n\t\t\ton isApplicationRunning(application)\n\t\t\t\ttell application \"System Events\" to (name of processes) contains application\n\t\t\tend isApplicationRunning\n\n\t\t\tif not (isApplicationRunning(\"Terminal\")) then\n\t\t\t\ttell application \"Terminal\"\n\t\t\t\t\tlaunch\n\t\t\t\t\tclose window 1\n\t\t\t\tend tell\n\t\t\tend if\n\n\t\t\ttell application \"Terminal\"\n\t\t\t\tdo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\\\" \\\"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.ipa\\\"\"\n\t\t\t\tdo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.plist\\\" \\\"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.plist\\\"\"\n\t\t\tend tell\n\t\tEOF\n\n\t\tcd \"${PROJECT_DIR}\";\n\tfi\nfi\n\nexit 0;";
+			shellScript = "#!/bin/sh\n\n# This has to match the name of the configuration you use for Ad-Hoc builds!\nadHocConfigurationName=\"AdHoc\"\nadHocCertificate=\"iPhone Distribution: Peter Steinberger\"\nprovisioningProfilePath=\"/Users/steipete/Library/MobileDevice/Provisioning Profiles/profile.mobileprovision\"\n\nexecutableName=\"HockeyDemo\"\nbundleDisplayName=\"HockeyDemo\"\n\narchiveDirectoryPath=\"${PROJECT_DIR}/Releases/Beta\";\ndropboxDistributionDirectoryPath=\"/users/myusername/Dropbox/My Application Beta\";\n\nuploadMethod=\"ftp\"\n\nftpUsername=\"steipete@worldviewmobileapp.com\";\nftpPassword=\"---\";\nftpServerDirectoryPath=\"worldviewmobileapp.com/\";\n\nscpUser=\"username\"\nscpHost=\"yourhost.com\"\nscpPath=\"/path/to/app\"\n\napplicationPath=\"${CONFIGURATION_BUILD_DIR}/$executableName.app\"\n\nif [[ \"${EFFECTIVE_PLATFORM_NAME}\" == \"-iphoneos\" && \"${BUILD_STYLE}\" == $adHocConfigurationName && -e $applicationPath ]]\nthen\n    bundleVersion=$(defaults read \"$applicationPath/Info\" CFBundleVersion)\n    bundleIdentifier=$(defaults read \"$applicationPath/Info\" CFBundleIdentifier)\n    \n    # Zip the app and dSYM\n    zipPath=\"${CONFIGURATION_BUILD_DIR}/$executableName $bundleVersion.zip\"\n    \n    zip -qr \"${CONFIGURATION_BUILD_DIR}/$executableName $bundleVersion.zip\" . -i ${CONFIGURATION_BUILD_DIR}/$executableName.app ${CONFIGURATION_BUILD_DIR}/$executableName.app.dSYM\n    \n    # Move new archive\n    if !([ -e \"$archiveDirectoryPath/$bundleIdentifier $bundleVersion.zip\" ])\n    then\n        mv \"$zipPath\" \"$archiveDirectoryPath\";\n    fi\n    \n    cd \"${CONFIGURATION_BUILD_DIR}\"\n\n    # Archive the application for Ad-Hoc distribution\n    /usr/bin/xcrun -sdk iphoneos PackageApplication \"$executableName.app\" -o \"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\" --sign \"$adHocCertificate\" --embed \"$provisioningProfilePath\"\n    \n    # Generate .plist file for wireless app distribution\n    echo \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n         <!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n         <plist version=\\\"1.0\\\">\n         <dict>\n            <key>items</key>\n            <array>\n                <dict>\n                    <key>assets</key>\n                    <array>\n                        <dict>\n                            <key>kind</key>\n                            <string>software-package</string>\n                            <key>url</key>\n                            <string>__URL__</string>\n                        </dict>\n                    </array>\n                    <key>metadata</key>\n                    <dict>\n                        <key>bundle-identifier</key>\n                        <string>$bundleIdentifier</string>\n                        <key>bundle-version</key>\n                        <string>$bundleVersion</string>\n                        <key>kind</key>\n                        <string>software</string>\n                        <key>title</key>\n                        <string>$bundleDisplayName</string>\n                    </dict>\n                </dict>\n            </array>\n         </dict>\n         </plist>\" > \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\";\n    \n    # Move the archived application to Dropbox\n    cp \"$executableName.ipa\" \"$dropboxDistributionDirectoryPath/$executableName.ipa\";\n    \n    # Open Terminal and upload the .ipa and .plist files\n    if ([ \"$uploadMethod\" == \"ftp\" ])\n    then\n        echo \"Uploading $executableName.ipa and $executableName.plist to $ftpServerDirectoryPath...\";\n        \n        /usr/bin/osascript <<-EOF           \non isApplicationRunning(application)\ntell application \"System Events\" to (name of processes) contains application\nend isApplicationRunning\n\nif not (isApplicationRunning(\"Terminal\")) then\ntell application \"Terminal\"\n    launch\n    close window 1\nend tell\nend if\n\ntell application \"Terminal\"\ndo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\\\" -u $ftpUsername:$ftpPassword \\\"ftp://$ftpServerDirectoryPath/$bundleIdentifier/$executableName.ipa\\\"\"\ndo script with command \"curl -T \\\"${CONFIGURATION_BUILD_DIR}/$executableName.plist\\\"  -u $ftpUsername:$ftpPassword \\\"ftp://$ftpServerDirectoryPath/$bundleIdentifier/$executableName.plist\\\"\"\nend tell\nEOF\n    elif [[ \"$uploadMethod\" == \"scp\" ]]\n    then\n        echo \"Uploading $executableName.ipa and $executableName.plist to $scpHost...\";\n        scp \"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\" $scpUser@$scpHost:\"$scpPath/$bundleIdentifier\"\n        scp \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\" $scpUser@$scpHost:\"$scpPath/$bundleIdentifier\"\n    fi\nfi";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -365,7 +365,7 @@
 			};
 			name = Debug;
 		};
-		1D6058950D05DD3E006BFB54 /* Release */ = {
+		1D6058950D05DD3E006BFB54 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -376,7 +376,7 @@
 				PRODUCT_NAME = HockeyDemo;
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = AdHoc;
 		};
 		4BB1774912298D8D00B3DC81 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -384,20 +384,20 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "HockeyDemo Script";
+				PRODUCT_NAME = HockeyDemo;
 			};
 			name = Debug;
 		};
-		4BB1774A12298D8D00B3DC81 /* Release */ = {
+		4BB1774A12298D8D00B3DC81 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = "HockeyDemo Script";
+				PRODUCT_NAME = HockeyDemo;
 				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = AdHoc;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -409,7 +409,7 @@
 					DEBUG,
 					"CONFIGURATION_$(CONFIGURATION)",
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
@@ -418,14 +418,14 @@
 			};
 			name = Debug;
 		};
-		C01FCF5008A954540054247B /* Release */ = {
+		C01FCF5008A954540054247B /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
@@ -433,7 +433,7 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 			};
-			name = Release;
+			name = AdHoc;
 		};
 /* End XCBuildConfiguration section */
 
@@ -442,28 +442,28 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
-				1D6058950D05DD3E006BFB54 /* Release */,
+				1D6058950D05DD3E006BFB54 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = AdHoc;
 		};
 		4BB1774F12298DBA00B3DC81 /* Build configuration list for PBXAggregateTarget "HockeyDemo Script" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4BB1774912298D8D00B3DC81 /* Debug */,
-				4BB1774A12298D8D00B3DC81 /* Release */,
+				4BB1774A12298D8D00B3DC81 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = AdHoc;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HockeyDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
-				C01FCF5008A954540054247B /* Release */,
+				C01FCF5008A954540054247B /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = AdHoc;
 		};
 /* End XCConfigurationList section */
 	};
