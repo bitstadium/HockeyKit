@@ -45,6 +45,12 @@
 		789C24C812EE291E00FDDD4C /* BWHockeyController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BC12EE291E00FDDD4C /* BWHockeyController.m */; };
 		789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */; };
 		789C257812EE34C300FDDD4C /* Hockey.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 789C257712EE34C300FDDD4C /* Hockey.bundle */; };
+		78D40D8612F2DA9000F39AC2 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8012F2DA9000F39AC2 /* Icon-72.png */; };
+		78D40D8712F2DA9000F39AC2 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8112F2DA9000F39AC2 /* Icon-Small-50.png */; };
+		78D40D8812F2DA9000F39AC2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8212F2DA9000F39AC2 /* Icon-Small.png */; };
+		78D40D8912F2DA9000F39AC2 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */; };
+		78D40D8A12F2DA9000F39AC2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8412F2DA9000F39AC2 /* Icon.png */; };
+		78D40D8B12F2DA9000F39AC2 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8512F2DA9000F39AC2 /* Icon@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +103,12 @@
 		789C24BD12EE291E00FDDD4C /* BWHockeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeyViewController.h; path = iOS/BWHockeyViewController.h; sourceTree = "<group>"; };
 		789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeyViewController.m; path = iOS/BWHockeyViewController.m; sourceTree = "<group>"; };
 		789C257712EE34C300FDDD4C /* Hockey.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Hockey.bundle; path = ../../client/iOS/Hockey.bundle; sourceTree = SOURCE_ROOT; };
+		78D40D8012F2DA9000F39AC2 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "Resources/Icon-72.png"; sourceTree = "<group>"; };
+		78D40D8112F2DA9000F39AC2 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "Resources/Icon-Small-50.png"; sourceTree = "<group>"; };
+		78D40D8212F2DA9000F39AC2 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small.png"; path = "Resources/Icon-Small.png"; sourceTree = "<group>"; };
+		78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small@2x.png"; path = "Resources/Icon-Small@2x.png"; sourceTree = "<group>"; };
+		78D40D8412F2DA9000F39AC2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/Icon.png; sourceTree = "<group>"; };
+		78D40D8512F2DA9000F39AC2 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/Icon@2x.png"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HockeyDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +190,12 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				78D40D8012F2DA9000F39AC2 /* Icon-72.png */,
+				78D40D8112F2DA9000F39AC2 /* Icon-Small-50.png */,
+				78D40D8212F2DA9000F39AC2 /* Icon-Small.png */,
+				78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */,
+				78D40D8412F2DA9000F39AC2 /* Icon.png */,
+				78D40D8512F2DA9000F39AC2 /* Icon@2x.png */,
 				789C257712EE34C300FDDD4C /* Hockey.bundle */,
 				7837D2D912DA673200BE3C22 /* AngryBirds.png */,
 				2899E5210DE3E06400AC0155 /* HockeyDemoViewController.xib */,
@@ -295,6 +313,12 @@
 				7837D2DA12DA673200BE3C22 /* AngryBirds.png in Resources */,
 				789C24C712EE291E00FDDD4C /* README.md in Resources */,
 				789C257812EE34C300FDDD4C /* Hockey.bundle in Resources */,
+				78D40D8612F2DA9000F39AC2 /* Icon-72.png in Resources */,
+				78D40D8712F2DA9000F39AC2 /* Icon-Small-50.png in Resources */,
+				78D40D8812F2DA9000F39AC2 /* Icon-Small.png in Resources */,
+				78D40D8912F2DA9000F39AC2 /* Icon-Small@2x.png in Resources */,
+				78D40D8A12F2DA9000F39AC2 /* Icon.png in Resources */,
+				78D40D8B12F2DA9000F39AC2 /* Icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
