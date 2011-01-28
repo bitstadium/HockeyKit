@@ -37,6 +37,7 @@ typedef enum {
 	id <BWHockeyControllerDelegate> delegate;
   NSString *betaCheckUrl;
   NSMutableDictionary *betaDictionary;
+  NSString *currentAppVersion_;
 
 	BWHockeyViewController *currentHockeyViewController;
 
@@ -46,10 +47,36 @@ typedef enum {
   BOOL dataFound;
 
   NSURLConnection *urlConnection;
+
+  BOOL sendUserData_;
+  BOOL showUpdateReminder_;
+  BOOL checkForUpdateOnLaunch_;
+  HockeyComparisonResult compareVersionType_;
 }
 
+// settings
+
+// if YES, the current user data is send: device type, iOS version, app version, UDID (default)
+// if NO, no such data is send to the server
+@property (nonatomic, assign, getter=isSendUserData) BOOL sendUserData;
+
+// if YES, the new version alert will be displayed always if the current version is outdated
+// if NO, the alert will be displayed only once for each new update (default)
+@property (nonatomic, assign, getter=isShowUpdateReminder) BOOL showUpdateReminder;
+
+//if YES, then an update check will be performed after the application becomes active (default)
+//if NO, then the update check will not happen unless invoked explicitly
+@property (nonatomic, assign, getter=isCheckForUpdateOnLaunch) BOOL checkForUpdateOnLaunch;
+
+// HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
+// HockeyComparisonResultGreater: alerts if the version on the server is greate
+@property (nonatomic, assign) HockeyComparisonResult compareVersionType;
+
+
+// delegate
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
 
+// internal
 @property (nonatomic, retain) NSString *betaCheckUrl;
 @property (nonatomic, retain) NSMutableDictionary *betaDictionary;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
@@ -57,6 +84,7 @@ typedef enum {
 @property (readonly) BOOL checkInProgress;
 
 // app properties (betaDictionary)
+- (NSString *)currentAppVersion;
 - (NSString *)appName;
 - (NSString *)appVersion;
 - (NSString *)appDate;
@@ -81,18 +109,6 @@ typedef enum {
 - (void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
 
 - (HockeyComparisonResult) compareVersionType;
-// HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
-// HockeyComparisonResultGreater: alerts if the version on the server is greate
-
-- (BOOL) showUpdateReminder;// if YES, the new version alert will be displayed always if the current version is outdated
-                            // if NO, the alert will be displayed only once for each new update (default)
-
-- (BOOL) sendCurrentData;	// if YES, the current user data is send: device type, iOS version, app version, UDID (default)
-                          // if NO, no such data is send to the server
-
-- (BOOL)shouldCheckForUpdateOnLaunch;  //if YES, then an update check will be performed after the application becomes active (default)
-                                       //if NO, then the update check will not happen unless invoked explicitly
-
 
 - (UIViewController *) viewControllerForHockeyController:(BWHockeyController *)hockeyController;
 // optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance

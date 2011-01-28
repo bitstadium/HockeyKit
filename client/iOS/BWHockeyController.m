@@ -39,6 +39,10 @@
 @synthesize betaDictionary;
 @synthesize urlConnection;
 @synthesize checkInProgress;
+@synthesize sendUserData = sendUserData_;
+@synthesize showUpdateReminder = showUpdateReminder_;
+@synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
+@synthesize compareVersionType = compareVersionType_;
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -57,6 +61,14 @@
     self.betaDictionary = nil;
     checkInProgress = NO;
     dataFound = NO;
+
+   currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+
+    // set defaults
+    sendUserData_ = YES;
+    showUpdateReminder_ = NO;
+    checkForUpdateOnLaunch_ = YES;
+    compareVersionType_ = HockeyComparisonResultDifferent;
   }
 
   return self;
@@ -71,13 +83,7 @@
 	self.delegate = object;
 	self.betaCheckUrl = url;
 
-	BOOL shouldCheckForUpdateOnLaunch = YES;
-
-	if ([delegate respondsToSelector:@selector(shouldCheckForUpdateOnLaunch)]) {
-		shouldCheckForUpdateOnLaunch = [delegate shouldCheckForUpdateOnLaunch];
-	}
-
-	if (shouldCheckForUpdateOnLaunch) {
+	if (self.isCheckForUpdateOnLaunch) {
 		[[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(checkForBetaUpdate)
                                                  name:UIApplicationDidBecomeActiveNotification
@@ -202,14 +208,9 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
   }
 
-  BOOL showUpdateReminder = NO;
-  if (self.delegate && [[self delegate] respondsToSelector:@selector(showUpdateReminder)]) {
-    showUpdateReminder = [[self delegate] showUpdateReminder];
-  }
-
   BOOL updatePending = NO;
   NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
-  if (showUpdateReminder &&
+  if (self.isShowUpdateReminder &&
       dictionaryOfLastHockeyCheck &&
       [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame) {
     updatePending = YES;
@@ -245,13 +246,8 @@
   self.betaDictionary = nil;
 
   NSString *parameter = nil;
-  BOOL sendCurrentData = YES;
 
-  if (self.delegate && [[self delegate] respondsToSelector:@selector(sendCurrentData)]) {
-    sendCurrentData = [[self delegate] sendCurrentData];
-  }
-
-  if (sendCurrentData) {
+  if (self.isSendUserData) {
     parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
                  [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                  [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
@@ -266,11 +262,9 @@
                  ];
   }
 
+  // build request & send
   NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
-
-  NSURLRequest *theRequest=[NSURLRequest requestWithURL:[NSURL URLWithString:url]
-                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                        timeoutInterval:10.0];
+  NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
   self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
 
   if (!urlConnection) {
@@ -370,11 +364,6 @@
 		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 
-    BOOL showUpdateReminder = NO;
-    if (self.delegate && [[self delegate] respondsToSelector:@selector(showUpdateReminder)]) {
-      showUpdateReminder = [[self delegate] showUpdateReminder];
-    }
-
 		if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
 			[(id)self.delegate connectionClosed];
 
@@ -443,38 +432,31 @@
 
 
 		if (!dataFound ||
-        (!showUpdateReminder &&
+        (!self.isShowUpdateReminder &&
          dictionaryOfLastHockeyCheck &&
          [result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] == NSOrderedSame) ||
-        (!showUpdateReminder &&
-         [result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame)
-        ) {
+        (!self.isShowUpdateReminder && [result compare:self.currentAppVersion] == NSOrderedSame)) {
       if (currentHockeyViewController != nil) {
-				[currentHockeyViewController redrawTableView];
+        [currentHockeyViewController redrawTableView];
       }
-			return;
-		}
-
-    BOOL differentVersion = NO;
-    HockeyComparisonResult versionComparator = HockeyComparisonResultDifferent;
-
-		if (self.delegate && [self.delegate respondsToSelector:@selector(compareVersionType)])
-			versionComparator = [(id)self.delegate compareVersionType];
-
-		if (versionComparator == HockeyComparisonResultGreater) {
-      differentVersion = ([result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] options:NSNumericSearch] == NSOrderedDescending);
-		} else {
-      differentVersion = ([result compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame);
+      return;
     }
 
-		if (differentVersion && currentHockeyViewController == nil) {
+    BOOL differentVersion = NO;
+    if (self.compareVersionType == HockeyComparisonResultGreater) {
+      differentVersion = ([result compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
+    } else {
+      differentVersion = ([result compare:self.currentAppVersion] != NSOrderedSame);
+    }
+
+    if (differentVersion && currentHockeyViewController == nil) {
       [self showCheckForBetaAlert];
-		}
+    }
 
     if (currentHockeyViewController != nil) {
       [currentHockeyViewController redrawTableView];
     }
-	}
+  }
   checkInProgress = NO;
 }
 
@@ -483,7 +465,7 @@
 #pragma mark RegisterOnline
 
 - (void)registerOnline {
-	[[NSNotificationCenter defaultCenter] addObserver:self
+  [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(wentOnline:)
                                                name:@"kNetworkReachabilityChangedNotification"
                                              object:nil];
@@ -491,15 +473,15 @@
 
 
 - (void)unregisterOnline {
-	[[NSNotificationCenter defaultCenter] removeObserver:self
+  [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:@"kNetworkReachabilityChangedNotification"
                                                 object:nil];
 }
 
 
 - (void)wentOnline:(NSNotification *)note {
-	[self unregisterOnline];
-	[self checkForBetaUpdate:NO];
+  [self unregisterOnline];
+  [self checkForBetaUpdate:NO];
 }
 
 
@@ -509,6 +491,10 @@
 
 - (NSString *)appVersion {
   return [self.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+}
+
+- (NSString *)currentAppVersion {
+  return currentAppVersion_;
 }
 
 - (NSString *)appDate {
