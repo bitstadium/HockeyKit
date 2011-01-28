@@ -15,9 +15,6 @@
 /* For dialogs no buttons */
 "HockeyNo" = "No";
 
-/* Unknown application */
-"HockeyUnknownApp" = "Unknown application";
-
 /* Update available */
 "HockeyUpdateAvailable" = "Update available";
 

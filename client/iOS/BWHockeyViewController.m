@@ -105,21 +105,20 @@
 
 }
 
-- (CAGradientLayer*) backgroundLayer {
-
+- (CAGradientLayer *)backgroundLayer {
 	UIColor *colorOne		= [UIColor colorWithWhite:0.9 alpha:1.0];
 	UIColor *colorTwo		= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.85 alpha:1.0];
-	UIColor *colorThree	    = [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.7 alpha:1.0];
-	UIColor *colorFour		= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.4 alpha:1.0];
+	UIColor *colorThree = [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.7 alpha:1.0];
+	UIColor *colorFour	= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.4 alpha:1.0];
 
-	NSArray *colors =  [NSArray arrayWithObjects:(id)colorOne.CGColor, colorTwo.CGColor, colorThree.CGColor, colorFour.CGColor, nil];
+	NSArray *colors     = [NSArray arrayWithObjects:(id)colorOne.CGColor, colorTwo.CGColor, colorThree.CGColor, colorFour.CGColor, nil];
 
 	NSNumber *stopOne		= [NSNumber numberWithFloat:0.0];
 	NSNumber *stopTwo		= [NSNumber numberWithFloat:0.02];
-	NSNumber *stopThree	    = [NSNumber numberWithFloat:0.99];
-	NSNumber *stopFour		= [NSNumber numberWithFloat:1.0];
+	NSNumber *stopThree = [NSNumber numberWithFloat:0.99];
+	NSNumber *stopFour  = [NSNumber numberWithFloat:1.0];
 
-	NSArray *locations = [NSArray arrayWithObjects:stopOne, stopTwo, stopThree, stopFour, nil];
+	NSArray *locations  = [NSArray arrayWithObjects:stopOne, stopTwo, stopThree, stopFour, nil];
 
 	CAGradientLayer *headerLayer = [CAGradientLayer layer];
 	//headerLayer.frame = CGRectMake(0.0, 0.0, 320.0, 77.0);
@@ -140,7 +139,7 @@
   topView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
   topView.backgroundColor = RGBCOLOR(140, 141, 142);
   [self.tableView addSubview:topView];
-//  self.tableView.contentInset = UIEdgeInsetsMake(600-kAppStoreViewHeight, 0, 0, 0);
+  //  self.tableView.contentInset = UIEdgeInsetsMake(600-kAppStoreViewHeight, 0, 0, 0);
 
   // DEBUG
   //  self.tableView.layer.borderColor = [[UIColor orangeColor] CGColor];
@@ -148,8 +147,10 @@
 
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
   appStoreHeader_.headerLabel = self.hockeyController.appName;
-  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"HockeyVersion", @"Hockey", @"Hockey Version Header"), self.hockeyController.appVersion];
-  appStoreHeader_.subHeaderLabel = self.hockeyController.appDate;
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@, %@", NSLocalizedStringFromTable(@"HockeyVersion", @"Hockey", @"Hockey Version Header"), self.hockeyController.appVersion, self.hockeyController.appSize];
+  NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+  [formatter setDateStyle:NSDateFormatterMediumStyle];
+  appStoreHeader_.subHeaderLabel = self.hockeyController.appDate ? [formatter stringFromDate:self.hockeyController.appDate] : nil;
   appStoreHeader_.iconImage = [UIImage imageNamed:@"AngryBirds.png"];
   self.tableView.tableHeaderView = appStoreHeader_;
 
@@ -159,22 +160,11 @@
                                                                                           action:@selector(onAction:)];
   }
 
-
-
   PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithFrame:CGRectMake(0, 0, 85.0, 22.0)] autorelease];
   storeButton.buttonDelegate = self;
   storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreGreenColor] enabled:YES];
   storeButton.center = CGPointMake(250, 55);
 	[self.tableView addSubview:storeButton];
-
-
-  /*
-   CAGradientLayer *bgLayer = [self backgroundLayer];
-   bgLayer.frame = self.view.bounds;
-
-   [self.view.layer addSublayer:bgLayer];
-   */
-
 }
 
 - (void) viewWillAppear:(BOOL)animated {

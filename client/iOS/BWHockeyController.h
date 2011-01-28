@@ -87,7 +87,8 @@ typedef enum {
 - (NSString *)currentAppVersion;
 - (NSString *)appName;
 - (NSString *)appVersion;
-- (NSString *)appDate;
+- (NSDate *)appDate;
+- (NSNumber *)appSize;
 
 + (BWHockeyController *)sharedHockeyController;
 

@@ -66,6 +66,12 @@
 #pragma mark -
 #pragma mark private
 
+static inline BOOL IsEmpty(id thing) {
+	return thing == nil ||
+  ([thing respondsToSelector:@selector(length)] && [(NSData *)thing length] == 0) ||
+  ([thing respondsToSelector:@selector(count)]  && [(NSArray *)thing count] == 0);
+}
+
 - (NSString *)getDevicePlatform_ {
 	size_t size;
 	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
@@ -86,6 +92,24 @@
 		[(id)self.delegate connectionClosed];
 }
 
+- (void)loadDefaultHockeyDict_ {
+  NSDictionary *savedHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+  if (savedHockeyCheck) {
+    betaDictionary = [[NSMutableDictionary alloc] initWithDictionary:savedHockeyCheck];
+  }else {
+    betaDictionary = [[NSMutableDictionary alloc] init];
+  }
+
+  // populate with default values
+  if (![betaDictionary objectForKey:BETA_UPDATE_TITLE]) {
+    [betaDictionary setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"] forKey:BETA_UPDATE_TITLE];
+  }
+
+  if (![betaDictionary objectForKey:BETA_UPDATE_VERSION]) {
+    [betaDictionary setObject:currentAppVersion_ forKey:BETA_UPDATE_VERSION];
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
@@ -93,7 +117,6 @@
 - (id)init {
 	if ((self = [super init])) {
     self.betaCheckUrl = nil;
-    self.betaDictionary = nil;
     checkInProgress = NO;
     dataFound = NO;
 
@@ -104,6 +127,8 @@
     showUpdateReminder_ = NO;
     checkForUpdateOnLaunch_ = YES;
     compareVersionType_ = HockeyComparisonResultDifferent;
+
+    [self loadDefaultHockeyDict_];
   }
 
   return self;
@@ -258,8 +283,6 @@
 
   }
 
-  self.betaDictionary = nil;
-
   NSMutableString *parameter = [NSMutableString stringWithFormat:@"?api=2&bundleidentifier=%@",
                                 [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 
@@ -328,106 +351,67 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
   [self connectionClosed_];
 	if ([self.receivedData length]) {
-    NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes]
-                                                         length:[receivedData_ length]
-                                                       encoding: NSUTF8StringEncoding] autorelease];
-
+    NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
     BWLog(@"Received API response: %@", responseString);
+
     NSError *error = nil;
-    NSDictionary *feed = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
+    NSArray *feedArray = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
     if (error) {
       BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
       // TODO: report error
     }
-		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
-		[[NSUserDefaults standardUserDefaults] synchronize];
 
     self.receivedData = nil;
 		self.urlConnection = nil;
     checkInProgress = NO;
 
-    if (feed == nil || [feed count] == 0) {
-      if (currentHockeyViewController != nil) {
-				[currentHockeyViewController redrawTableView];
-      }
+    // remember that we just checked the server
+		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+
+    if (IsEmpty(feedArray)) {
+      [currentHockeyViewController redrawTableView];
 			return;
 		}
 
-		// get the array of "stream" from the feed and cast to NSArray
-		id resultValue = [feed valueForKey:BETA_UPDATE_RESULT];
+    // version property is critical
+    NSDictionary *feed = [feedArray objectAtIndex:0];
+    NSString *version = [feed valueForKey:BETA_UPDATE_VERSION];
+    if (!IsEmpty(version)) {
+      // copy only certain items from the returning array
+      NSArray *propertiesToCopy = [NSArray arrayWithObjects:BETA_UPDATE_VERSION, BETA_UPDATE_TITLE, BETA_UPDATE_SUBTITLE, BETA_UPDATE_TIMESTAMP, BETA_UPDATE_APPSIZE, BETA_UPDATE_NOTES, nil];
+      for(NSString *propertyKey in propertiesToCopy) {
+        if ([feed objectForKey:propertyKey] != nil) {
+          NSString *propertyValue = (NSString *)[feed valueForKey:propertyKey];
+          [self.betaDictionary setObject:propertyValue forKey:propertyKey];
+        }
+        // don't allow NSNull
+        if ([feed objectForKey:propertyKey] == [NSNull null]) {
+          [self.betaDictionary removeObjectForKey:propertyKey];
+        }
+      }
 
-    dataFound = YES;
-
-    NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
-
-    NSString *result = nil;
-
-    if (![resultValue isKindOfClass:[NSString class]]) {
-      result = [NSString stringWithFormat:@"%i", [resultValue intValue]];
-    } else {
-      result = resultValue;
+      // save data in user defaults
+      [[NSUserDefaults standardUserDefaults] setObject:self.betaDictionary forKey:kDictionaryOfLastHockeyCheck];
     }
 
-    if ([result compare:@"-1"] == NSOrderedSame)
-      dataFound = NO;
-
-    if (dataFound) {
-      self.betaDictionary = [NSMutableDictionary dictionaryWithCapacity:5];
-
-      NSString *title = NSLocalizedStringFromTable(@"HockeyUnknownApp", @"Hockey", @"Unknown application");
-      if ([feed objectForKey:BETA_UPDATE_TITLE] != nil)
-        title = (NSString *)[feed valueForKey:BETA_UPDATE_TITLE];
-      [self.betaDictionary setObject:title
-                              forKey:BETA_UPDATE_TITLE];
-
-      if ([feed objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
-        [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_SUBTITLE]
-                                forKey:BETA_UPDATE_SUBTITLE];
-      }
-
-      if ([feed objectForKey:BETA_UPDATE_NOTES] != nil) {
-        [self.betaDictionary setObject:(NSString *)[feed valueForKey:BETA_UPDATE_NOTES]
-                                forKey:BETA_UPDATE_NOTES];
-      }
-
-      [self.betaDictionary setObject:result
-                              forKey:BETA_UPDATE_VERSION];
-
-      NSMutableDictionary *betaDictionaryMutableCopy = [self.betaDictionary mutableCopy];
-      for (NSString *key in self.betaDictionary) {
-        if ([self.betaDictionary objectForKey:key] == [NSNull null])
-          [betaDictionaryMutableCopy removeObjectForKey:key];
-      }
-      [[NSUserDefaults standardUserDefaults] setObject:betaDictionaryMutableCopy forKey:kDictionaryOfLastHockeyCheck];
-      [betaDictionaryMutableCopy release];
-    }
-
-
-		if (!dataFound ||
-        (!self.isShowUpdateReminder &&
-         dictionaryOfLastHockeyCheck &&
-         [result compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] == NSOrderedSame) ||
-        (!self.isShowUpdateReminder && [result compare:self.currentAppVersion] == NSOrderedSame)) {
-      if (currentHockeyViewController != nil) {
-        [currentHockeyViewController redrawTableView];
-      }
+		if (!dataFound || (!self.isShowUpdateReminder && [version compare:[self.betaDictionary objectForKey:BETA_UPDATE_VERSION]] == NSOrderedSame)) {
+      [currentHockeyViewController redrawTableView];
       return;
     }
 
     BOOL differentVersion = NO;
     if (self.compareVersionType == HockeyComparisonResultGreater) {
-      differentVersion = ([result compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
+      differentVersion = ([version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
     } else {
-      differentVersion = ([result compare:self.currentAppVersion] != NSOrderedSame);
+      differentVersion = ([version compare:self.currentAppVersion] != NSOrderedSame);
     }
 
-    if (differentVersion && currentHockeyViewController == nil) {
+    if (differentVersion && !currentHockeyViewController) {
       [self showCheckForBetaAlert];
     }
 
-    if (currentHockeyViewController != nil) {
-      [currentHockeyViewController redrawTableView];
-    }
+    [currentHockeyViewController redrawTableView];
   }
   checkInProgress = NO;
 }
@@ -472,8 +456,14 @@
   return currentAppVersion_;
 }
 
-- (NSString *)appDate {
-  return [self.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];
+- (NSDate *)appDate {
+  NSTimeInterval timestamp = (NSTimeInterval)[[self.betaDictionary objectForKey:BETA_UPDATE_TIMESTAMP] doubleValue];
+  NSDate *appDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+  return appDate;
+}
+
+- (NSNumber *)appSize {
+  return [self.betaDictionary objectForKey:BETA_UPDATE_APPSIZE];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -386,6 +386,7 @@
 				GCC_PREFIX_HEADER = HockeyDemo_Prefix.pch;
 				INFOPLIST_FILE = "HockeyDemo-Info.plist";
 				PRODUCT_NAME = HockeyDemo;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -398,6 +399,7 @@
 				GCC_PREFIX_HEADER = HockeyDemo_Prefix.pch;
 				INFOPLIST_FILE = "HockeyDemo-Info.plist";
 				PRODUCT_NAME = HockeyDemo;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = AdHoc;
@@ -449,6 +451,7 @@
 				GCC_PREFIX_HEADER = HockeyDemo_Prefix.pch;
 				INFOPLIST_FILE = "HockeyDemo-Info.plist";
 				PRODUCT_NAME = HockeyDemo;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = AppStore_Distribution;
