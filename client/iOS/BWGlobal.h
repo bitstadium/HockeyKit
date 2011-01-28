@@ -22,22 +22,38 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#import "BWHockeyController.h"
 
+// uncomment this line to enable NSLog-debugging output
+#define kHockeyDebugEnabled
+
+
+
+// API defines - do not change
 #define BETA_DOWNLOAD_TYPE_PROFILE	@"profile"
-#define BETA_DOWNLOAD_TYPE_APP		@"app"
+#define BETA_DOWNLOAD_TYPE_APP		  @"app"
 
-#define BETA_UPDATE_RESULT		@"result"
-#define BETA_UPDATE_TITLE		@"title"
-#define BETA_UPDATE_SUBTITLE	@"subtitle"
-#define BETA_UPDATE_NOTES		@"notes"
-#define BETA_UPDATE_VERSION		@"version"
+#define BETA_UPDATE_RESULT		 @"result"
+#define BETA_UPDATE_TITLE		   @"title"
+#define BETA_UPDATE_SUBTITLE	 @"subtitle"
+#define BETA_UPDATE_NOTES		   @"notes"
+#define BETA_UPDATE_VERSION		 @"version"
+#define BETA_UPDATE_TIMESTAMP	 @"timestamp"
+#define BETA_UPDATE_APPSIZE		 @"appsize"
 
 #define BETA_UPDATE_CHECK_STARTUP	0
 #define BETA_UPDATE_CHECK_DAILY		1
 #define BETA_UPDATE_CHECK_MANUAL	2
 
-#define kDictionaryOfLastHockeyCheck	@"DictionaryOfLastHockeyCheck"
-#define kDateOfLastHockeyCheck			@"DateOfLastHockeyCheck"
-#define kHockeyAutoUpdateSetting		@"HockeyAutoUpdateSetting"
+#define kDictionaryOfLastHockeyCheck @"DictionaryOfLastHockeyCheck"
+#define kDateOfLastHockeyCheck			 @"DateOfLastHockeyCheck"
+#define kHockeyAutoUpdateSetting		 @"HockeyAutoUpdateSetting"
 
 #define kHockeyBundleName @"Hockey.bundle"
+
+
+#ifdef kHockeyDebugEnabled
+#define BWLog(fmt, ...) NSLog((@"%s/%d " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#define BWLog(...)
+#endif

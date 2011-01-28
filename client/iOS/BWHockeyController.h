@@ -41,7 +41,7 @@ typedef enum {
 
 	BWHockeyViewController *currentHockeyViewController;
 
-	NSMutableData *_receivedData;
+	NSMutableData *receivedData_;
 
   BOOL checkInProgress;
   BOOL dataFound;

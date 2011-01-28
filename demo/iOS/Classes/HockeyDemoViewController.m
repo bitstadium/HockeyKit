@@ -52,10 +52,8 @@
 
 - (void)showSettings {
   HockeyDemoSettingsViewController *hockeySettingsViewController = [[[HockeyDemoSettingsViewController alloc] init] autorelease];
-
   UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:hockeySettingsViewController];
   navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-
   [self presentModalViewController:navController animated:YES];
 }
 

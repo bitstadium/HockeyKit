@@ -29,7 +29,10 @@
 @interface BWHockeyController ()
 - (void)registerOnline;
 - (void)wentOnline:(NSNotification *)note;
-- (NSString *)_getDevicePlatform;
+- (NSString *)getDevicePlatform_;
+- (void)connectionOpened_;
+- (void)connectionClosed_;
+@property (nonatomic, retain) NSMutableData *receivedData;
 @end
 
 @implementation BWHockeyController
@@ -39,10 +42,15 @@
 @synthesize betaDictionary;
 @synthesize urlConnection;
 @synthesize checkInProgress;
+@synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
 @synthesize showUpdateReminder = showUpdateReminder_;
 @synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
 @synthesize compareVersionType = compareVersionType_;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark static
 
 + (BWHockeyController *)sharedHockeyController {
 	static BWHockeyController *hockeyController = nil;
@@ -54,15 +62,42 @@
 	return hockeyController;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark private
+
+- (NSString *)getDevicePlatform_ {
+	size_t size;
+	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+	char *answer = malloc(size);
+	sysctlbyname("hw.machine", answer, &size, NULL, 0);
+	NSString *platform = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
+	free(answer);
+	return platform;
+}
+
+- (void)connectionOpened_ {
+  if ([self.delegate respondsToSelector:@selector(connectionOpened)])
+		[(id)self.delegate connectionOpened];
+}
+
+- (void)connectionClosed_ {
+  if ([self.delegate respondsToSelector:@selector(connectionClosed)])
+		[(id)self.delegate connectionClosed];
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark NSObject
+
 - (id)init {
-  self = [super init];
-	if (self != nil) {
+	if ((self = [super init])) {
     self.betaCheckUrl = nil;
     self.betaDictionary = nil;
     checkInProgress = NO;
     dataFound = NO;
 
-   currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+    currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
     // set defaults
     sendUserData_ = YES;
@@ -74,6 +109,21 @@
   return self;
 }
 
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+
+	self.delegate = nil;
+
+  [urlConnection cancel];
+  self.urlConnection = nil;
+
+	currentHockeyViewController = nil;
+  [betaCheckUrl release];
+	[betaDictionary release];
+	[receivedData_ release];
+
+  [super dealloc];
+}
 
 - (void)setBetaURL:(NSString *)url {
   [self setBetaURL:url delegate:nil];
@@ -89,41 +139,6 @@
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
 	}
-}
-
-
-- (void)dealloc {
-  [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                  name:UIApplicationDidBecomeActiveNotification
-                                                object:nil];
-
-	self.delegate = nil;
-
-  [urlConnection cancel];
-  self.urlConnection = nil;
-
-	currentHockeyViewController = nil;
-  [betaCheckUrl release];
-	[betaDictionary release];
-	[_receivedData release];
-
-  [super dealloc];
-}
-
-
-#pragma mark -
-#pragma mark Private
-
-
-- (NSString *)_getDevicePlatform
-{
-	size_t size;
-	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-	char *answer = malloc(size);
-	sysctlbyname("hw.machine", answer, &size, NULL, 0);
-	NSString *platform = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
-	free(answer);
-	return platform;
 }
 
 
@@ -188,11 +203,11 @@
 #pragma mark -
 #pragma mark RequestComments
 
-- (void) checkForBetaUpdate {
+- (void)checkForBetaUpdate {
   [self checkForBetaUpdate:nil];
 }
 
-- (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController {
+- (void)checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController {
   if (checkInProgress) return;
 
   checkInProgress = YES;
@@ -245,25 +260,22 @@
 
   self.betaDictionary = nil;
 
-  NSString *parameter = nil;
+  NSMutableString *parameter = [NSMutableString stringWithFormat:@"?api=2&bundleidentifier=%@",
+                                [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 
   if (self.isSendUserData) {
-    parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
-                 [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                 [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                 [[UIDevice currentDevice] systemVersion],
-                 [self _getDevicePlatform],
-                 [[UIDevice currentDevice] uniqueIdentifier],
-                 [[NSLocale preferredLanguages] objectAtIndex:0]
-                 ];
-  } else {
-    parameter = [NSString stringWithFormat:@"?bundleidentifier=%@",
-                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]
-                 ];
+    [parameter appendFormat:@"&version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
+     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+     [[UIDevice currentDevice] systemVersion],
+     [self getDevicePlatform_],
+     [[UIDevice currentDevice] uniqueIdentifier],
+     [[NSLocale preferredLanguages] objectAtIndex:0]
+     ];
   }
 
   // build request & send
   NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
+  BWLog(@"sending api request to %@", url);
   NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
   self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
 
@@ -277,29 +289,13 @@
   }
 }
 
-
-#pragma mark -
-#pragma mark UIAlertViewDelegate
-
-
-// invoke the selected action from the actionsheet for a location element
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-  if (buttonIndex == [alertView firstOtherButtonIndex]) {
-    // YES button has been clicked
-    [self showBetaUpdateView];
-  }
-}
-
-
 #pragma mark -
 #pragma mark NSURLRequest
 
 -(NSURLRequest *)connection:(NSURLConnection *)connection
             willSendRequest:(NSURLRequest *)request
-           redirectResponse:(NSURLResponse *)redirectResponse
-{
-	NSURLRequest *newRequest=request;
+           redirectResponse:(NSURLResponse *)redirectResponse {
+	NSURLRequest *newRequest = request;
 	if (redirectResponse) {
 		newRequest = nil;
 	}
@@ -307,70 +303,46 @@
 }
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-  if (self.delegate && [self.delegate respondsToSelector:@selector(connectionOpened)])
-		[(id)self.delegate connectionOpened];
-
-	if (_receivedData != nil)
-	{
-		[_receivedData release];
-    _receivedData = nil;
-	}
-
-	_receivedData = [[NSMutableData data] retain];
-	[_receivedData setLength:0];
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+  [self connectionOpened_];
+	self.receivedData = [NSMutableData data];
+	[receivedData_ setLength:0];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-	[_receivedData appendData:data];
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+	[receivedData_ appendData:data];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-  if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
-		[(id)self.delegate connectionClosed];
-
-	// release the connection, and the data object
-  [_receivedData release];
-  _receivedData = nil;
-
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+  [self connectionClosed_];
+	self.receivedData = nil;
   self.urlConnection = nil;
-
   checkInProgress = NO;
 
-  if (currentHockeyViewController != nil) {
-    [currentHockeyViewController redrawTableView];
-  }
+  [currentHockeyViewController redrawTableView];
 
   [self registerOnline];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-	if (_receivedData != nil && [_receivedData length] > 0) {
-    NSString *responseString = [[[NSString alloc] initWithBytes:[_receivedData bytes]
-                                                         length:[_receivedData length]
+// api call returned, parsing
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+  [self connectionClosed_];
+	if ([self.receivedData length]) {
+    NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes]
+                                                         length:[receivedData_ length]
                                                        encoding: NSUTF8StringEncoding] autorelease];
 
-
-
+    BWLog(@"Received API response: %@", responseString);
     NSError *error = nil;
     NSDictionary *feed = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
     if (error) {
+      BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
       // TODO: report error
     }
 		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 
-		if (self.delegate && [self.delegate respondsToSelector:@selector(connectionClosed)])
-			[(id)self.delegate connectionClosed];
-
-		// release the connection, and the data object
-		[_receivedData release];
-		_receivedData = nil;
-
+    self.receivedData = nil;
 		self.urlConnection = nil;
     checkInProgress = NO;
 
@@ -460,7 +432,7 @@
   checkInProgress = NO;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark RegisterOnline
 
@@ -484,6 +456,9 @@
   [self checkForBetaUpdate:NO];
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Properties
 
 - (NSString *)appName {
   return [self.betaDictionary objectForKey:BETA_UPDATE_TITLE];
@@ -499,6 +474,18 @@
 
 - (NSString *)appDate {
   return [self.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+
+// invoke the selected action from the actionsheet for a location element
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == [alertView firstOtherButtonIndex]) {
+    // YES button has been clicked
+    [self showBetaUpdateView];
+  }
 }
 
 @end

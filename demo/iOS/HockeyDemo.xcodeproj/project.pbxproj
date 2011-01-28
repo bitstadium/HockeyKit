@@ -148,7 +148,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1EB32F87122147E20081CF8E /* client */ = {
+		1EB32F87122147E20081CF8E /* HockeyClient */ = {
 			isa = PBXGroup;
 			children = (
 				789C24A612EE291E00FDDD4C /* BWWebViewController */,
@@ -160,20 +160,19 @@
 				789C24BD12EE291E00FDDD4C /* BWHockeyViewController.h */,
 				789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */,
 			);
-			name = client;
+			name = HockeyClient;
 			path = ../../client;
 			sourceTree = SOURCE_ROOT;
 		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1EB32F87122147E20081CF8E /* client */,
+				1EB32F87122147E20081CF8E /* HockeyClient */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				7837CF7212DA132000BE3C22 /* QuartzCore.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -208,6 +207,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7837CF7212DA132000BE3C22 /* QuartzCore.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,

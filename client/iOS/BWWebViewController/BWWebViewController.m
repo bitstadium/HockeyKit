@@ -13,24 +13,24 @@
 
 - (id)initWithHTMLString:(NSString *)aHtmlString
 {
-    if ((self = [super init])) {
-        self.title = NSLocalizedStringFromTable(@"HockeySectionAppReleaseNotes", @"Hockey", @"Release Notes");
-        self.webView = [[[UIWebView alloc] initWithFrame:CGRectZero] autorelease];
-        self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [self.webView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        [self.view addSubview:self.webView];
+  if ((self = [super init])) {
+    self.title = NSLocalizedStringFromTable(@"HockeySectionAppReleaseNotes", @"Hockey", @"Release Notes");
+    self.webView = [[[UIWebView alloc] initWithFrame:CGRectZero] autorelease];
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [self.webView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    [self.view addSubview:self.webView];
 
-        self.htmlString = aHtmlString;
-    }
-    return self;    
+    self.htmlString = aHtmlString;
+  }
+  return self;
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
-    [self.webView loadHTMLString:self.htmlString baseURL:nil];
+  [super viewWillAppear:animated];
+
+  [self.webView loadHTMLString:self.htmlString baseURL:nil];
 }
 
 
@@ -47,17 +47,17 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    BOOL shouldAutorotate;
-    
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait ||
-                            interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-                            interfaceOrientation == UIInterfaceOrientationLandscapeRight);
-    } else {
-        shouldAutorotate = YES;
-    }
-    
-    return shouldAutorotate;
+  BOOL shouldAutorotate;
+
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait ||
+                        interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
+                        interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+  } else {
+    shouldAutorotate = YES;
+  }
+
+  return shouldAutorotate;
 }
 
 
