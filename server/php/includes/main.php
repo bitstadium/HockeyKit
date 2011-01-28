@@ -488,7 +488,7 @@ class AppUpdater
     {
         // send latest profile for the given bundleidentifier
         header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
-        header('Content-Type: application/vnd.android.package-archive apk');
+        header('Content-Type: application/octet-stream');
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: '.filesize($filename)."\n");
         readfile($filename);
@@ -531,7 +531,7 @@ class AppUpdater
     {
         // send apk android application file
         header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
-        header('Content-Type: application/octet-stream');
+        header('Content-Type: application/vnd.android.package-archive');
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: '.filesize($filename)."\n");
         readfile_chunked($filename);
