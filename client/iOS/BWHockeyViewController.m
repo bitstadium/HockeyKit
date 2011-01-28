@@ -28,7 +28,7 @@
 #import "BWHockeyController.h"
 #import "BWWebViewController.h"
 #import "BWGlobal.h"
-#import "UIImage+PSReflection.h"
+#import "UIImage+HockeyAdditions.h"
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 #define BWIMAGE(_URL) [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:BWPathForBundleResource(_URL)] autorelease]
