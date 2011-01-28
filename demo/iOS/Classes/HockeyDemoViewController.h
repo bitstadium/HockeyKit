@@ -12,5 +12,7 @@
 
 }
 
+- (IBAction)openUpdateView;
+
 @end
 

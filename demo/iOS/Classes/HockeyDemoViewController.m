@@ -9,72 +9,58 @@
 #import "HockeyDemoViewController.h"
 #import "HockeyDemoSettingsViewController.h"
 
+#if !defined (CONFIGURATION_AppStore_Distribution)
+#import "BWHockeyController.h"
+#endif
+
+#define kAutoOpenHockey
+
 @implementation HockeyDemoViewController
 
-
-
-/*
-// The designated initializer. Override to perform setup that is required before the view is loaded.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-        // Custom initialization
-    }
-    return self;
+- (void)openUpdateViewAnimated:(BOOL)animated {
+#if !defined (CONFIGURATION_AppStore_Distribution)
+  BWHockeyViewController *hockeyViewController = [[BWHockeyController sharedHockeyController] hockeyViewController:YES];
+  UINavigationController *hockeyNavController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
+  [self presentModalViewController:hockeyNavController animated:animated];
+#endif
 }
-*/
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
+#ifdef kAutoOpenHockey
+- (void)openUpdateViewCaller {
+  [self openUpdateViewAnimated:NO];
 }
-*/
+#endif
 
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    self.navigationItem.leftBarButtonItem =  [[UIBarButtonItem alloc] initWithTitle:@"Settings"
-                                                                              style:UIBarButtonItemStyleBordered
-                                                                             target:self
-                                                                             action:@selector(showSettings)];
-                                                        
+  [super viewDidLoad];
+
+  self.navigationItem.leftBarButtonItem =  [[UIBarButtonItem alloc] initWithTitle:@"Settings"
+                                                                            style:UIBarButtonItemStyleBordered
+                                                                           target:self
+                                                                           action:@selector(showSettings)];
+
+#ifdef kAutoOpenHockey
+  // HACK - DEVELOPMENT AID
+  [self performSelector:@selector(openUpdateViewCaller) withObject:nil afterDelay:0.01];
+#endif
 }
-
-
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
-- (void)didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload {
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-}
-
 
 - (void)dealloc {
-    [super dealloc];
+  [super dealloc];
 }
 
 
 - (void)showSettings {
-    HockeyDemoSettingsViewController *hockeySettingsViewController = [[[HockeyDemoSettingsViewController alloc] init] autorelease];
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:hockeySettingsViewController];
-    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [self presentModalViewController:navController animated:YES];
+  HockeyDemoSettingsViewController *hockeySettingsViewController = [[[HockeyDemoSettingsViewController alloc] init] autorelease];
+
+  UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:hockeySettingsViewController];
+  navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+
+  [self presentModalViewController:navController animated:YES];
+}
+
+- (IBAction)openUpdateView {
+  [self openUpdateViewAnimated:YES];
 }
 
 @end
