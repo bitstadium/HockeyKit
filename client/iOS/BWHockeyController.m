@@ -189,9 +189,20 @@ static inline BOOL IsEmpty(id thing) {
     parentViewController = [[self delegate] viewControllerForHockeyController:self];
   }
 
+  UIWindow *visibleWindow = nil;
 	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
     // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
-    parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
+    for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
+      if (!window.hidden) {
+        visibleWindow = window;
+      }
+      if ([window rootViewController]) {
+        parentViewController = [window rootViewController];
+        visibleWindow = window;
+        BWLog(@"UIWindow with rootViewController found: %@", visibleWindow);
+        break;
+      }
+    }
 	}
 
   BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
@@ -206,7 +217,8 @@ static inline BOOL IsEmpty(id thing) {
   } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
-		[[[[UIApplication sharedApplication] windows] objectAtIndex:0] addSubview:navController.view];
+    BWLog(@"No rootViewController found, using UIWindow-approach: %@", visibleWindow);
+    [visibleWindow addSubview:navController.view];
 
 		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
     [navController retain];
