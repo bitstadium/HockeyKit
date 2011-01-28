@@ -57,12 +57,20 @@
                 </div>
                 <div class="column span-8">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                  <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
-                  <?php } else { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
-                  <?php } ?>
-                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+                    <p><b>Version:</b>
+                  <?php
+                    if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                        echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+                    } else {
+                        echo $app[AppUpdater::INDEX_VERSION];
+                    }
+                    echo "<br/>";
+                    if ($app[AppUpdater::INDEX_APPSIZE]) {
+                        echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+                    }
+                    echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+                  ?>
+                    </p>
 
                     <div class="desktopbuttons">
                 <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
@@ -121,12 +129,20 @@
                 </div>
                 <div class="column span-6">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
-                <?php } else { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
-                <?php } ?>
-                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+                    <p><b>Version:</b>
+                <?php
+                  if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                      echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+                  } else {
+                      echo $app[AppUpdater::INDEX_VERSION];
+                  }
+                  echo "<br/>";
+                  if ($app[AppUpdater::INDEX_APPSIZE]) {
+                      echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+                  }
+                  echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+                ?>
+                    </p>
 
                     <div class="ipadbuttons">
                 <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
@@ -217,12 +233,20 @@
                     <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
-                <?php } else { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
-                <?php } ?>
-                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+                    <p><b>Version:</b>
+                <?php
+                      if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                          echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+                      } else {
+                          echo $app[AppUpdater::INDEX_VERSION];
+                      }
+                      echo "<br/>";
+                      if ($app[AppUpdater::INDEX_APPSIZE]) {
+                          echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+                      }
+                      echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+                ?>
+                    </p>
                 <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>                    
                     <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
@@ -298,12 +322,20 @@
                         <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
                     <?php } ?>
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                    <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
-                        <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
-                    <?php } else { ?>
-                        <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
-                    <?php } ?>
-                        <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+                        <p><b>Version:</b>
+                    <?php
+                          if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                              echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+                          } else {
+                              echo $app[AppUpdater::INDEX_VERSION];
+                          }
+                          echo "<br/>";
+                          if ($app[AppUpdater::INDEX_APPSIZE]) {
+                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+                          }
+                          echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+                    ?>
+                        </p>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_APK . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Application</a>
                     <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
                         <p><br/><br/></p>
