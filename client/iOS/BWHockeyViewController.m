@@ -84,7 +84,7 @@
   }
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -147,7 +147,8 @@
 
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
   appStoreHeader_.headerLabel = self.hockeyController.appName;
-  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@, %@", BWLocalize(@"HockeyVersion"), self.hockeyController.appVersion, self.hockeyController.appSize];
+  NSString *appSize = [NSString stringWithFormat:@" , %@", self.hockeyController.appSizeInMB];
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyController.appVersion, appSize];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
   appStoreHeader_.subHeaderLabel = self.hockeyController.appDate ? [formatter stringFromDate:self.hockeyController.appDate] : nil;
@@ -214,7 +215,7 @@
   [super viewDidUnload];
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Table view data source
 
@@ -441,7 +442,7 @@
   return cell;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Table view delegate
 
@@ -545,7 +546,7 @@
 #pragma mark PSAppStoreHeaderDelegate
 
 - (void)storeButtonFired:(PSStoreButton *)button {
-  NSLog(@"*************storeButtonFired*******************: %@", button);
+  BWLog(@"************* storeButtonFired *******************: %@", button);
 
   if ([button.buttonData.label isEqual:@"Update"]) {
     [button setButtonData:[PSStoreButtonData dataWithLabel:@"Update 2" colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:YES];

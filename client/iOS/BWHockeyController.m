@@ -466,6 +466,16 @@ static inline BOOL IsEmpty(id thing) {
   return [self.betaDictionary objectForKey:BETA_UPDATE_APPSIZE];
 }
 
+- (NSString *)appSizeInMB {
+  if ([[self appSize] doubleValue]) {
+    double appSizeInMB = [[self appSize] doubleValue]/(1024*1024);
+    NSString *appSizeString = [NSString stringWithFormat:@"%.1f MB", appSizeInMB];
+    return appSizeString;
+  }
+
+  return nil;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark UIAlertViewDelegate
