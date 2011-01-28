@@ -252,12 +252,13 @@
   }
 
   if (sendCurrentData) {
-    parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@",
+    parameter = [NSString stringWithFormat:@"?bundleidentifier=%@&version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
                  [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                  [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                  [[UIDevice currentDevice] systemVersion],
                  [self _getDevicePlatform],
-                 [[UIDevice currentDevice] uniqueIdentifier]
+                 [[UIDevice currentDevice] uniqueIdentifier],
+                 [[NSLocale preferredLanguages] objectAtIndex:0]
                  ];
   } else {
     parameter = [NSString stringWithFormat:@"?bundleidentifier=%@",
