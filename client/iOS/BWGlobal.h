@@ -60,3 +60,18 @@
 NSBundle *hockeyBundle();
 
 #define BWLocalize(StringToken) NSLocalizedStringFromTableInBundle(StringToken, @"Hockey", hockeyBundle(), @"")
+
+
+// compatibility helper
+#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_2
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_2 478.61
+#endif
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 32000
+#define IF_3_2_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_3_2) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_3_2_OR_GREATER(...)
+#endif

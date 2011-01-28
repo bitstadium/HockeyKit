@@ -21,6 +21,7 @@
 #if !defined (CONFIGURATION_AppStore_Distribution)
   BWHockeyViewController *hockeyViewController = [[BWHockeyController sharedHockeyController] hockeyViewController:YES];
   UINavigationController *hockeyNavController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
+  IF_3_2_OR_GREATER(hockeyNavController.modalPresentationStyle = UIModalPresentationFormSheet;)
   [self presentModalViewController:hockeyNavController animated:animated];
 #endif
 }
