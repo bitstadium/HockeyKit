@@ -98,8 +98,8 @@ end tell
 end if
 
 tell application "Terminal"
-do script with command "curl -T \"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\" \"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.ipa\""
-do script with command "curl -T \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\" \"ftp://$ftpUsername:$ftpPassword@$ftpServerDirectoryPath/$bundleIdentifier/$executableName.plist\""
+do script with command "curl -T \"${CONFIGURATION_BUILD_DIR}/$executableName.ipa\" -u $ftpUsername:$ftpPassword \"ftp://$ftpServerDirectoryPath/$bundleIdentifier/$executableName.ipa\""
+do script with command "curl -T \"${CONFIGURATION_BUILD_DIR}/$executableName.plist\" -u $ftpUsername:$ftpPassword \"ftp://$ftpServerDirectoryPath/$bundleIdentifier/$executableName.plist\""
 end tell
 EOF
     elif [[ "$uploadMethod" == "scp" ]]
