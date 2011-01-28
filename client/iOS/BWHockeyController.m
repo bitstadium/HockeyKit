@@ -125,9 +125,7 @@
 #pragma mark BetaUpdateUI
 
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal {
-  return [[[BWHockeyViewController alloc] init:self
-                                         modal:modal]
-          autorelease];
+  return [[[BWHockeyViewController alloc] init:self modal:modal] autorelease];
 }
 
 
@@ -363,7 +361,11 @@
 
 
 
-    NSDictionary *feed = [responseString objectFromJSONString];
+    NSError *error = nil;
+    NSDictionary *feed = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
+    if (error) {
+      // TODO: report error
+    }
 		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 
@@ -499,5 +501,17 @@
 	[self checkForBetaUpdate:NO];
 }
 
+
+- (NSString *)appName {
+  return [self.betaDictionary objectForKey:BETA_UPDATE_TITLE];
+}
+
+- (NSString *)appVersion {
+  return [self.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+}
+
+- (NSString *)appDate {
+  return [self.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE];
+}
 
 @end
