@@ -51,6 +51,7 @@
 		78D40D8912F2DA9000F39AC2 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */; };
 		78D40D8A12F2DA9000F39AC2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8412F2DA9000F39AC2 /* Icon.png */; };
 		78D40D8B12F2DA9000F39AC2 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8512F2DA9000F39AC2 /* Icon@2x.png */; };
+		78D40FFC12F2FD6A00F39AC2 /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 		78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small@2x.png"; path = "Resources/Icon-Small@2x.png"; sourceTree = "<group>"; };
 		78D40D8412F2DA9000F39AC2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/Icon.png; sourceTree = "<group>"; };
 		78D40D8512F2DA9000F39AC2 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/Icon@2x.png"; sourceTree = "<group>"; };
+		78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWGlobal.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HockeyDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,6 +157,7 @@
 				789C24A912EE291E00FDDD4C /* Helper */,
 				789C24B612EE291E00FDDD4C /* JSON */,
 				789C24BA12EE291E00FDDD4C /* BWGlobal.h */,
+				78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */,
 				789C24BB12EE291E00FDDD4C /* BWHockeyController.h */,
 				789C24BC12EE291E00FDDD4C /* BWHockeyController.m */,
 				789C24BD12EE291E00FDDD4C /* BWHockeyViewController.h */,
@@ -361,6 +364,7 @@
 				789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */,
 				789C24C812EE291E00FDDD4C /* BWHockeyController.m in Sources */,
 				789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */,
+				78D40FFC12F2FD6A00F39AC2 /* BWGlobal.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

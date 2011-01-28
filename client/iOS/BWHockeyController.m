@@ -215,11 +215,11 @@ static inline BOOL IsEmpty(id thing) {
 
 
 - (void) showCheckForBetaAlert {
-  UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"HockeyUpdateAvailable", @"Hockey", @"Update available")
-                                                       message:NSLocalizedStringFromTable(@"HockeyUpdateAlertText", @"Hockey", @"Would you like to check out the new update? You can do this later on at any time in the In-App settings.")
+  UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
+                                                       message:BWLocalize(@"HockeyUpdateAlertText")
                                                       delegate:self
-                                             cancelButtonTitle:NSLocalizedStringFromTable(@"HockeyNo", @"Hockey", @"No")
-                                             otherButtonTitles:NSLocalizedStringFromTable(@"HockeyYes", @"Hockey", @"Yes"), nil
+                                             cancelButtonTitle:BWLocalize(@"HockeyNo")
+                                             otherButtonTitles:BWLocalize(@"HockeyYes"), nil
                              ] autorelease];
   [alertView show];
 }
