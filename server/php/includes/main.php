@@ -27,6 +27,33 @@
 require('json.inc');
 require('plist.inc');
 
+define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
+
+  // Read a file and display its content chunk by chunk
+  function readfile_chunked($filename, $retbytes = TRUE) {
+    $buffer = '';
+    $cnt =0;
+    // $handle = fopen($filename, 'rb');
+    $handle = fopen($filename, 'rb');
+    if ($handle === false) {
+      return false;
+    }
+    while (!feof($handle)) {
+      $buffer = fread($handle, CHUNK_SIZE);
+      echo $buffer;
+      ob_flush();
+      flush();
+      if ($retbytes) {
+        $cnt += strlen($buffer);
+      }
+    }
+    $status = fclose($handle);
+    if ($retbytes && $status) {
+      return $cnt; // return num. bytes delivered like readfile() does.
+    }
+    return $status;
+}
+
 function nl2br_skip_html($string)
 {
 	// remove any carriage returns (Windows)
@@ -170,6 +197,9 @@ class iOSUpdater
         $platform = $device;
         
         switch ($device) {
+            case "i386":
+                $platform = "iPhone Simulator";
+                break;
             case "iPhone1,1":
                 $platform = "iPhone";
                 break;
@@ -249,7 +279,7 @@ class iOSUpdater
             }
             
             // write back the updated stats
-            file_put_contents($filename, $content);
+            @file_put_contents($filename, $content);
         }
 
         // notes file is optional, other files are required
@@ -272,13 +302,13 @@ class iOSUpdater
             $latestversion = $parsed_plist['items'][0]['metadata']['bundle-version'];
 
             // add the latest release notes if available
-            if ($note) {
-                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($appDirectory . $note));
+            if ($note && file_exists($this->appDirectory . $note)) {
+                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($this->appDirectory . $note));
             }
 
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
 
-            if ($parsed_plist['items'][0]['metadata']['subtitle'])
+            if (array_key_exists('subtitle', $parsed_plist['items'][0]['metadata']))
 	            $this->json[self::RETURN_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
     
             $this->json[self::RETURN_RESULT]  = $latestversion;
@@ -288,7 +318,7 @@ class iOSUpdater
         } else if ($type == self::TYPE_PROFILE) {
 
             // send latest profile for the given bundleidentifier
-            $filename = $appDirectory  . $provisioningProfile;
+            $filename = $this->appDirectory  . $provisioningProfile;
             header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
@@ -296,17 +326,19 @@ class iOSUpdater
             readfile($filename);
 
         } else if ($type == self::TYPE_APP) {
-
+            $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+            $port = $_SERVER["SERVER_PORT"]=='80'?'':':'.$_SERVER["SERVER_PORT"];
+            
             // send XML with url to app binary file
-            $ipa_url =
-                dirname("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
-                $bundleidentifier . '/' . basename($ipa);
-
+            $ipa_url = 
+                dirname($protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI']) . 
+                '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
+            
             $plist_content = file_get_contents($plist);
             $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
             if ($image) {
                 $image_url =
-                    dirname("http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) . '/' .
+                    dirname($protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI']) . '/' .
                     $bundleidentifier . '/' . basename($image);
                 $imagedict = "<dict><key>kind</key><string>display-image</string><key>needs-shine</key><false/><key>url</key><string>".$image_url."</string></dict></array>";
                 $insertpos = strpos($plist_content, '</array>');
@@ -318,12 +350,12 @@ class iOSUpdater
         } else if ($type == self::TYPE_IPA) {
  
             // send latest profile for the given bundleidentifier
-            $filename = $appDirectory  . $ipa;
+            $filename = $this->appDirectory  . $ipa;
             header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
             header('Content-Length: '.filesize($filename).";\n");
-            readfile($filename);
+            readfile_chunked($filename);
         }
 
         exit();
@@ -331,8 +363,7 @@ class iOSUpdater
     
     protected function sendJSONAndExit()
     {
-        
-        ob_end_clean();
+        @ob_end_clean();
         header('Content-type: application/json');
         print json_encode($this->json);
         exit();
@@ -367,7 +398,7 @@ class iOSUpdater
 
                 // now get the application name from the plist
                 $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
-                if ($parsed_plist['items'][0]['metadata']['subtitle'])
+                if (array_key_exists('subtitle', $parsed_plist['items'][0]['metadata']))
                   $newApp[self::INDEX_SUBTITLE]       = $parsed_plist['items'][0]['metadata']['subtitle'];
                 $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
                 $newApp[self::INDEX_DATE]           = filectime($ipa);

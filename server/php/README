@@ -1,16 +1,18 @@
 Server Requirements:
 - PHP 5.x
 
+
 About:
 - This server part is required for handling update requests by the client framework
 - The server part can also be used without the client. It provides a web interface which beta testers can use to install the latest AdHoc provisioning profile and also the latest beta version via Safari right from the device.
 - It can handle multiple applications via different bundle identifiers (I highly suggest using different bundle identifiers for Debug, AdHoc Beta and AppStore release builds !!!)
+- The web interface is optimized for all device types (desktop computer, iPad, iPhone and iPod touch, iOS4 and iOS3)
 
 
 Installation PHP Server:
 - Copy the content of the public subfolder into a publicly accessible directory on your web server
 - Copy the content of the includes subfolder into a publicly not accessible directory (for security) on your web server
-- Adjust the path to the includes subfolder in line 27 of index.php
+- Adjust the relative path to the file main.php in the includes subfolder in config.php
 - Done
 
 
@@ -27,10 +29,13 @@ How to add a new application version:
 - Fill out the URL field and type "__URL__" (important !!)
 - Enter a title, this will be shown in the web interface and on the client
 - Version number will be taken automatically from the generated plist file
+- Note: Do not enter a link to the app icon in the organizer screen. Hockey will add that part into the PList automatically on the server, if there is a PNG file found (114pixel icons work on all devices!)
 - Note: The client does not check if the version number is actually a bigger number, it only checks if they are different, which should be fine anyway
 - Save it, two files will be saved, one .plist and one .ipa
 - Upload the plist file into the subdirectory on the server, it is important to have the extension ".plist" (mandatory)
 - Upload the application file into the subdirectory on the server, it is important to have the extension ".ipa" (mandatory)
+- If you want to web interface to show the app icon, upload the icon into the subdirectory on the server, it is important to have an extension ".ipa" (optional)
 - If you don't want this application to appear in the web interface, add a file named "private" (optional)
 - If you want to add release information to the web interface and the client, add a file with the extension ".html" which contains the release information as HTML (without header and body)
+- Note: Only the extensions of each file type are important, and only the first one found by PHP will be used!
 - Note: If one of the mandatory files do not exist in the directory, the update or installation will not be made available
