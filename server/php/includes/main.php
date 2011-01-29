@@ -407,24 +407,23 @@ class AppUpdater
             return $this->sendJSONAndExit();
         }
                         
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
         $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
         $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
         $apk   = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
         $json  = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
-        $note  = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
 
-        $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
-            $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] : null;
-        $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
-            $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
-        
         // notes file is optional, other files are required
         if ((!$ipa || !$plist) && 
             (!$apk || !$json)) {
             $this->json = array(self::RETURN_RESULT => -1);
             return $this->sendJSONAndExit();
         }
+
+        $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] : null;
+        $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
         
         $this->addStats($bundleidentifier);
         
@@ -494,7 +493,6 @@ class AppUpdater
                 }
                 
                 $current = $this->findPublicVersion($files[self::VERSIONS_SPECIFIC_DATA]);
-//                $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
                 $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
                 $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
                 $apk      = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;

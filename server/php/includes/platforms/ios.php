@@ -13,15 +13,10 @@ class iOSAppUpdater extends AbstractAppUpdater
         // check for available updates for the given bundleidentifier
         // and return a JSON string with the result values
 
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa = $current[self::FILE_IOS_IPA];
-        $plist = $current[self::FILE_IOS_PLIST];
-        $apk = $current[self::FILE_ANDROID_APK];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
-        
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+        $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
+        $note     = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
         
         if ($ipa && $plist) {
             
@@ -163,19 +158,17 @@ class iOSAppUpdater extends AbstractAppUpdater
         }
                         
         $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa = $current[self::FILE_IOS_IPA];
-        $plist = $current[self::FILE_IOS_PLIST];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
+        $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+        $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
 
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
-        
         // notes file is optional, other files are required
         if (!$ipa || !$plist) {
             $this->json = array(self::RETURN_RESULT => -1);
             return $this->sendJSONAndExit();
         }
+
+        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
+        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
         
         $this->addStats($bundleidentifier);
         

@@ -10,20 +10,13 @@ class AndroidAppUpdater extends AbstractAppUpdater
         // check for available updates for the given bundleidentifier
         // and return a JSON string with the result values
 
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa = $current[self::FILE_IOS_IPA];
-        $plist = $current[self::FILE_IOS_PLIST];
-        $apk = $current[self::FILE_ANDROID_APK];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
+        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $apk  = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
+        $json = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
         
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
         $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
         
         if ($apk && $json) {
-            
-            // this is an Android app
-            
             $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
             
             // API version is V2 by default, even if the client provides V1
@@ -67,13 +60,9 @@ class AndroidAppUpdater extends AbstractAppUpdater
             return $this->sendJSONAndExit();
         }
                         
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $apk = $current[self::FILE_ANDROID_APK];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
-
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $apk  = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
+        $json = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
         
         // notes file is optional, other files are required
         if (!$apk || !$json) {
