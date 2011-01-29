@@ -901,9 +901,9 @@ class AppUpdater
                     $content = file_get_contents($filename);
                     $lines = explode("\n", $content);
 
-                    foreach ($lines as $i => $line) :
+                    foreach ($lines as $i => $line) {
                         if ($line == "") continue;
-                    
+                        
                         $device = explode(";;", $line);
                     
                         $newdevice = array();
@@ -916,7 +916,7 @@ class AppUpdater
                         $newdevice[self::DEVICE_LANGUAGE] = $device[5];
                     
                         $newApp[self::INDEX_STATS][] = $newdevice;
-                        endforeach;
+                    }
                 
                     // sort by app version
                     $newApp[self::INDEX_STATS] = self::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_LASTCHECK, SORT_DESC);
