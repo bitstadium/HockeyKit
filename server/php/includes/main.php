@@ -617,7 +617,8 @@ class AppUpdater
         // Android
         $apk        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_ANDROID_APK));
         $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_ANDROID_JSON));
-
+        
+        $note = '';
         // Common
         if ($language != "") {
             $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
@@ -658,7 +659,7 @@ class AppUpdater
                     $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_JSON));        // this file could be in a subdirectory per version
                     
                     // Common
-                    unset($note);                                                                                                                   // this file could be in a subdirectory per version                    
+                    $note = '';                                                                                                                   // this file could be in a subdirectory per version                    
                     if ($language != "") {
                         $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
                     }
