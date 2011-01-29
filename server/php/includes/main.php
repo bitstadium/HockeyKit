@@ -57,13 +57,13 @@ define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
 
 function nl2br_skip_html($string)
 {
-	// remove any carriage returns (Windows)
-	$string = str_replace("\r", '', $string);
+    // remove any carriage returns (Windows)
+    $string = str_replace("\r", '', $string);
 
-	// replace any newlines that aren't preceded by a > with a <br />
-	$string = preg_replace('/(?<!>)\n/', "<br />\n", $string);
+    // replace any newlines that aren't preceded by a > with a <br />
+    $string = preg_replace('/(?<!>)\n/', "<br />\n", $string);
 
-	return $string;
+    return $string;
 }
 
 class AppUpdater
@@ -311,7 +311,7 @@ class AppUpdater
                 $platform = "iPod Touch 4th Gen";
                 break;
         }
-	
+        
         return $platform;
     }
 
@@ -400,7 +400,7 @@ class AppUpdater
                 $this->json[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
 
                 if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	            $this->json[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
+                    $this->json[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
 
                 $this->json[self::RETURN_RESULT]        = $latestversion;
 
@@ -432,7 +432,7 @@ class AppUpdater
                     $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
 
                     if ($parsed_plist['items'][0]['metadata']['subtitle'])
-    	                $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_plist['items'][0]['metadata']['subtitle'];
+                        $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_plist['items'][0]['metadata']['subtitle'];
 
                     $newAppVersion[self::RETURN_V2_VERSION]             = $thisVersion;
             
@@ -567,7 +567,7 @@ class AppUpdater
                         break;
                     }
                 }
-            endforeach;                
+            endforeach;
         }
         
         return $this->sendJSONAndExit();
@@ -659,7 +659,7 @@ class AppUpdater
                     $json       = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_ANDROID_JSON));        // this file could be in a subdirectory per version
                     
                     // Common
-                    $note = '';                                                                                                                   // this file could be in a subdirectory per version                    
+                    $note = '';                                                                                                                   // this file could be in a subdirectory per version
                     if ($language != "") {
                         $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
                     }
@@ -882,8 +882,8 @@ class AppUpdater
                     // now get the application name from the json file
                     $newApp[self::INDEX_APP]        = $parsed_json['title'];
                     $newApp[self::INDEX_SUBTITLE]   = $parsed_json['versionName'];
-                    $newApp[self::INDEX_VERSION]    = $parsed_json['versionCode'];                    
-                    $newApp[self::INDEX_DATE]       = filectime($apk);                
+                    $newApp[self::INDEX_VERSION]    = $parsed_json['versionCode'];
+                    $newApp[self::INDEX_DATE]       = filectime($apk);
                     $newApp[self::INDEX_APPSIZE]    = filesize($apk);
                     
                     $newApp[self::INDEX_PLATFORM]   = self::APP_PLATFORM_ANDROID;
