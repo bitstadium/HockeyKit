@@ -2,16 +2,17 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = new AppUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
+    $apps = AppUpdater::factory(dirname(__FILE__).DIRECTORY_SEPARATOR);
+    $apps->route();
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-	$baseURL = substr($baseURL, 0, strrpos($baseURL, "/") + 1);
+    $baseURL = substr($baseURL, 0, strrpos($baseURL, "/") + 1);
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <title>App Installer</title>
-    	<meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width" />
         <link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
         <link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
         <!--[if IE]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
@@ -59,7 +60,7 @@
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                     <p><b>Version:</b>
                   <?php
-                    if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                    if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
                         echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
                     } else {
                         echo $app[AppUpdater::INDEX_VERSION];
@@ -73,7 +74,7 @@
                     </p>
 
                     <div class="desktopbuttons">
-                <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
+                <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Download Profile </a>
                 <?php }
                       if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) { ?>
@@ -235,7 +236,7 @@
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                     <p><b>Version:</b>
                 <?php
-                      if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                      if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
                           echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
                       } else {
                           echo $app[AppUpdater::INDEX_VERSION];
@@ -247,7 +248,7 @@
                       echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                 ?>
                     </p>
-                <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>                    
+                    <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
                     <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                     <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . AppUpdater::TYPE_APP . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
@@ -257,7 +258,7 @@
                 <?php endif ?>
                 </div>
             <?php endforeach ?>
-        	</div>
+            </div>
 
                 <div class='android'>
 
@@ -343,7 +344,7 @@
                     <?php endif ?>
                     </div>
                 <?php endforeach ?>
-            	</div>
+                </div>
 
         <script>
         

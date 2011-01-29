@@ -2,7 +2,8 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = new AppUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
+    $apps = AppUpdater::factory(dirname(__FILE__).DIRECTORY_SEPARATOR);
+	$apps->route();
     $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 	$baseURL = str_replace("/feed.php", "/", $baseURL);
     echo '<?xml version="1.0" encoding="utf-8"?>';

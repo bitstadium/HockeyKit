@@ -24,47 +24,13 @@
 ##  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ##  THE SOFTWARE.
 
+date_default_timezone_set('UTC');
+
 require('json.inc');
 require('plist.inc');
 require_once('config.inc');
-
-define('CHUNK_SIZE', 1024*1024); // Size (in bytes) of tiles chunk
-
-  // Read a file and display its content chunk by chunk
-  function readfile_chunked($filename, $retbytes = TRUE) {
-    $buffer = '';
-    $cnt =0;
-    // $handle = fopen($filename, 'rb');
-    $handle = fopen($filename, 'rb');
-    if ($handle === false) {
-      return false;
-    }
-    while (!feof($handle)) {
-      $buffer = fread($handle, CHUNK_SIZE);
-      echo $buffer;
-      ob_flush();
-      flush();
-      if ($retbytes) {
-        $cnt += strlen($buffer);
-      }
-    }
-    $status = fclose($handle);
-    if ($retbytes && $status) {
-      return $cnt; // return num. bytes delivered like readfile() does.
-    }
-    return $status;
-}
-
-function nl2br_skip_html($string)
-{
-    // remove any carriage returns (Windows)
-    $string = str_replace("\r", '', $string);
-
-    // replace any newlines that aren't preceded by a > with a <br />
-    $string = preg_replace('/(?<!>)\n/', "<br />\n", $string);
-
-    return $string;
-}
+require_once('helper.php');
+require_once('logger.php');
 
 class AppUpdater
 {
@@ -148,32 +114,60 @@ class AppUpdater
     const DEVICE_LANGUAGE   = 'language';
     const DEVICE_LASTCHECK  = 'lastcheck';
 
+    const CONTENT_TYPE_APK = 'application/vnd.android.package-archive';
+
+
+    static public function factory($dir, $platform = '') {
+        
+        // route platform calls
+        if (
+            // iOS network requests, which means the client is calling, old versions don't add a custom user agent
+            strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false ||
+            // iOS hockey client is calling
+            strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/iOS') !== false
+        )
+        {
+            $platform = 'iOS';
+        }
+        elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/Android') !== false) // Android hockey client is calling
+        {
+            $platform = 'Android';
+        }
+        
+        if ($platform) {
+            if (!file_exists(strtolower("platforms/$platform.php"))) {
+                throw new Exception("Platform $platform does not exist.");
+            }
+        
+            require_once(strtolower("platforms/abstract.php"));
+            require_once(strtolower("platforms/$platform.php"));
+        }
+        
+        $klass = "{$platform}AppUpdater";
+        Logger::log("Factory: Creating $klass");
+        return new $klass($dir);
+    }
+
+
     protected $appDirectory;
     protected $json = array();
     public $applications = array();
 
     
-    function __construct($dir) {
-        
-        date_default_timezone_set('UTC');
-
+    protected function __construct($dir) {
         $this->appDirectory = $dir;
-
+    }
+    
+    public function route() {
         $bundleidentifier = isset($_GET[self::CLIENT_KEY_BUNDLEID]) ?
             $this->validateDir($_GET[self::CLIENT_KEY_BUNDLEID]) : null;
-
-        $type = isset($_GET[self::CLIENT_KEY_TYPE]) ? $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
-        $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ? $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
+        $type = isset($_GET[self::CLIENT_KEY_TYPE]) ?
+            $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
+        $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ?
+            $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
         
-        // if a bundleidentifier is submitted and request coming from a client, return JSON
-        if ($bundleidentifier && 
-            (
-                strpos($_SERVER["HTTP_USER_AGENT"], 'CFNetwork') !== false ||       // iOS network requests, which means the client is calling, old versions don't add a custom user agent
-                strpos($_SERVER["HTTP_USER_AGENT"], 'Hockey/iOS') !== false ||      // iOS hockey client is calling
-                strpos($_SERVER["HTTP_USER_AGENT"], 'Hockey/Android') !== false ||  // Android hockey client is calling
-                $type
-            ))
-        {
+        // if a bundleidentifier and type are requested, deliver that type.
+        if ($bundleidentifier && $type) {
             return $this->deliver($bundleidentifier, $api, $type);
         }
         
@@ -181,37 +175,19 @@ class AppUpdater
         $this->show($bundleidentifier);
     }
     
-    protected function array_orderby()
-    {
-        $args = func_get_args();
-        $data = array_shift($args);
-        foreach ($args as $n => $field) {
-            if (is_string($field)) {
-                $tmp = array();
-                foreach ($data as $key => $row)
-                    $tmp[$key] = $row[$field];
-                $args[$n] = $tmp;
-                }
-        }
-        $args[] = &$data;
-        @call_user_func_array('array_multisort', $args);
-        return array_pop($args);
-    }
-
-
     protected function validateDir($dir)
     {
-        // do not allow .. or / in the name and check if that path actually exists
-        if (
-            $dir &&
-            !preg_match('#(/|\.\.)#u', $dir) &&
-            file_exists($this->appDirectory.$dir))
-        {
-            return $dir;
-        }
-        return null;
+       // do not allow .. or / in the name and check if that path actually exists
+       if (
+           $dir &&
+           !preg_match('#(/|\.\.)#u', $dir) &&
+           file_exists($this->appDirectory.$dir))
+       {
+           return $dir;
+       }
+       return null;
     }
-    
+
     protected function validateType($type)
     {
         if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA, self::TYPE_AUTH, self::TYPE_APK)))
@@ -229,92 +205,8 @@ class AppUpdater
         }
         return self::API_V1;
     }
+  
     
-    // map a device UDID into a username
-    protected function mapUser($user, $userlist)
-    {
-        $username = $user;
-        $lines = explode("\n", $userlist);
-
-        foreach ($lines as $i => $line) :
-            if ($line == "") continue;
-            
-            $userelement = explode(";", $line);
-
-            if (count($userelement) >= 2) {
-                if ($userelement[0] == $user) {
-                    $username = $userelement[1];
-                    break;
-                }
-            }
-        endforeach;
-
-        return $username;
-    }
-    
-    // map a device UDID into a list of assigned teams
-    protected function mapTeam($user, $userlist)
-    {
-        $teams = "";
-        $lines = explode("\n", $userlist);
-
-        foreach ($lines as $i => $line) :
-            if ($line == "") continue;
-            
-            $userelement = explode(";", $line);
-
-            if (count($userelement) == 3) {
-                if ($userelement[0] == $user) {
-                    $teams = $userelement[2];
-                    break;
-                }
-            }
-        endforeach;
-
-        return $teams;
-    }
-    
-    // map a device code into readable name
-    protected function mapPlatform($device)
-    {
-        $platform = $device;
-        
-        switch ($device) {
-            case "i386":
-                $platform = "iPhone Simulator";
-                break;
-            case "iPhone1,1":
-                $platform = "iPhone";
-                break;
-            case "iPhone1,2":
-                $platform = "iPhone 3G";
-                break;
-            case "iPhone2,1":
-                $platform = "iPhone 3GS";
-                break;
-            case "iPhone3,1":
-                $platform = "iPhone 4";
-                break;
-            case "iPad1,1":
-                $platform = "iPad";
-                break;
-            case "iPod1,1":
-                $platform = "iPod Touch";
-                break;
-            case "iPod2,1":
-                $platform = "iPod Touch 2nd Gen";
-                break;
-            case "iPod3,1":
-                $platform = "iPod Touch 3rd Gen";
-                break;
-            case "iPod4,1":
-                $platform = "iPod Touch 4th Gen";
-                break;
-        }
-        
-        return $platform;
-    }
-
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
@@ -362,216 +254,6 @@ class AppUpdater
             }
         }
     }
-
-    protected function deliverJson($api, $files)
-    {
-        // check for available updates for the given bundleidentifier
-        // and return a JSON string with the result values
-
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa = $current[self::FILE_IOS_IPA];
-        $plist = $current[self::FILE_IOS_PLIST];
-        $apk = $current[self::FILE_ANDROID_APK];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
-        
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
-        
-        if ($ipa && $plist) {
-            
-            // this is an iOS app
-            if ($api == self::API_V1) {
-                // this is API Version 1
-                
-                // parse the plist file
-                $plistDocument = new DOMDocument();
-                $plistDocument->load($plist);
-                $parsed_plist = parsePlist($plistDocument);
-
-                // get the bundle_version which we treat as build number
-                $latestversion = $parsed_plist['items'][0]['metadata']['bundle-version'];
-                
-                // add the latest release notes if available
-                if ($note) {
-                    $this->json[self::RETURN_NOTES]     = nl2br_skip_html(file_get_contents($appDirectory . $note));
-                }
-
-                $this->json[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
-
-                if ($parsed_plist['items'][0]['metadata']['subtitle'])
-                    $this->json[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
-
-                $this->json[self::RETURN_RESULT]        = $latestversion;
-
-                return $this->sendJSONAndExit();
-            } else {
-                // this is API Version 2
-                
-                $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
-                
-                foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
-                    $ipa = $version[self::FILE_IOS_IPA];
-                    $plist = $version[self::FILE_IOS_PLIST];
-                    $note = $version[self::FILE_COMMON_NOTES];
-                    
-                    // parse the plist file
-                    $plistDocument = new DOMDocument();
-                    $plistDocument->load($plist);
-                    $parsed_plist = parsePlist($plistDocument);
-
-                    // get the bundle_version which we treat as build number
-                    $thisVersion = $parsed_plist['items'][0]['metadata']['bundle-version'];
-                    
-                    $newAppVersion = array();
-                    // add the latest release notes if available
-                    if ($note) {
-                        $newAppVersion[self::RETURN_V2_NOTES]           = nl2br_skip_html(file_get_contents($appDirectory . $note));
-                    }
-
-                    $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
-
-                    if ($parsed_plist['items'][0]['metadata']['subtitle'])
-                        $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_plist['items'][0]['metadata']['subtitle'];
-
-                    $newAppVersion[self::RETURN_V2_VERSION]             = $thisVersion;
-            
-                    $newAppVersion[self::RETURN_V2_TIMESTAMP]           = filectime($appDirectory . $ipa);
-                    $newAppVersion[self::RETURN_V2_APPSIZE]             = filesize($appDirectory . $ipa);
-                    
-                    $this->json[] = $newAppVersion;
-                    
-                    // only send the data until the current version if provided
-                    if ($appversion == $thisVersion) break;
-                }
-                return $this->sendJSONAndExit();
-            }
-        } else if ($apk && $json) {
-            
-            // this is an Android app
-            
-            $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
-            
-            // API version is V2 by default, even if the client provides V1
-            foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
-                $apk = $version[self::FILE_ANDROID_APK];
-                $json = $version[self::FILE_ANDROID_JSON];
-                $note = $version[self::FILE_COMMON_NOTES];
-                
-                // parse the json file
-                $parsed_json = json_decode(file_get_contents($appDirectory . $json), true);
-            
-                $newAppVersion = array();
-                // add the latest release notes if available
-                if ($note) {
-                    $newAppVersion[self::RETURN_V2_NOTES]       = nl2br_skip_html(file_get_contents($appDirectory . $note));
-                }
-
-                $newAppVersion[self::RETURN_V2_TITLE]           = $parsed_json['title'];
-
-                $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_json['versionName'];
-                $newAppVersion[self::RETURN_V2_VERSION]         = $parsed_json['versionCode'];
-        
-                $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($appDirectory . $apk);
-                $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($appDirectory . $apk);
-
-                $this->json[] = $newAppVersion;
-                
-                // only send the data until the current version if provided
-                if ($appversion == $parsed_json['versionCode']) break;
-            }
-            return $this->sendJSONAndExit();
-        }
-    }
-
-    protected function deliverIOSProfile($filename)
-    {
-        // send latest profile for the given bundleidentifier
-        header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
-        header('Content-Type: application/octet-stream');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Length: '.filesize($filename)."\n");
-        readfile($filename);
-    }
-    
-    protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image)
-    {
-        $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
-        
-        // send XML with url to app binary file
-        $ipa_url = dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
-
-        $plist_content = file_get_contents($plist);
-        $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
-        
-        if ($image) {
-            $image_url =
-                dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/' .
-                $bundleidentifier . '/' . basename($image);
-            $imagedict = "<dict><key>kind</key><string>display-image</string><key>needs-shine</key><false/><key>url</key><string>".$image_url."</string></dict></array>";
-            $insertpos = strpos($plist_content, '</array>');
-            $plist_content = substr_replace($plist_content, $imagedict, $insertpos, 8);
-        }
-
-        header('content-type: application/xml');
-        echo $plist_content;
-    }
-
-    protected function deliverIOSIPA($filename)
-    {
-        // send the ipa iOS application file
-        header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
-        header('Content-Type: application/octet-stream');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Length: '.filesize($filename)."\n");
-        readfile_chunked($filename);
-    }
-    
-    protected function deliverAndroidAPK($filename)
-    {
-        // send apk android application file
-        header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
-        header('Content-Type: application/vnd.android.package-archive');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Length: '.filesize($filename)."\n");
-        readfile_chunked($filename);
-    }
-    
-    protected function deliverAuthenticationResponse($bundleidentifier)
-    {
-        // did we get any user data?
-        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
-        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
-        
-        // check if the UDID is allowed to be used
-        $filename = $this->appDirectory."stats/".$bundleidentifier;
-
-        $this->json[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
-
-        $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
-    
-        if (file_exists($filename)) {
-            $userlist = @file_get_contents($userlistfilename);
-            
-            $lines = explode("\n", $userlist);
-
-            foreach ($lines as $i => $line) :
-                if ($line == "") continue;
-                
-                $device = explode(";", $line);
-                
-                if (count($device) > 0) {
-                    // is this the same device?
-                    if ($device[0] == $udid) {
-                        $this->json[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
-                        break;
-                    }
-                }
-            endforeach;
-        }
-        
-        return $this->sendJSONAndExit();
-    }
     
     protected function checkProtectedVersion($restrict)
     {
@@ -588,7 +270,7 @@ class AppUpdater
 
             $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
             $userlist = @file_get_contents($userlistfilename);
-            $assignedTeams = $this->mapTeam($udid, $userlist);
+            $assignedTeams = Helper::mapTeam($udid, $userlist);
             if (strlen($assignedTeams) > 0) {
                 $teams = explode(",", $assignedTeams);
                 foreach ($teams as $team) {
@@ -726,14 +408,16 @@ class AppUpdater
         }
                         
         $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa = $current[self::FILE_IOS_IPA];
-        $plist = $current[self::FILE_IOS_PLIST];
-        $apk = $current[self::FILE_ANDROID_APK];
-        $json = $current[self::FILE_ANDROID_JSON];
-        $note = $current[self::FILE_COMMON_NOTES];
+        $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+        $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
+        $apk   = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
+        $json  = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
+        $note  = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
 
-        $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+        $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] : null;
+        $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
         
         // notes file is optional, other files are required
         if ((!$ipa || !$plist) && 
@@ -744,20 +428,12 @@ class AppUpdater
         
         $this->addStats($bundleidentifier);
         
-        if (!$type) {
-            // the client requested the current available updates
-            $this->deliverJSON($api, $files);
-        } else if ($type == self::TYPE_PROFILE) {
-            $this->deliverIOSProfile($appDirectory . $profile);
-        } else if ($type == self::TYPE_APP) {
-            $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image);
-        } else if ($type == self::TYPE_IPA) {
-            $this->deliverIOSIPA($appDirectory . $ipa);
-        } else if ($type == self::TYPE_APK) {
-            $this->deliverAndroidAPK($appDirectory . $apk);//TODO
-        } else if ($type == self::TYPE_AUTH && $api != self::API_V1 && $udid && $appversion) {
-            // handle authentication request
-            $this->deliverAuthenticationResponse($bundleidentifier);
+        switch ($type) {
+            case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
+            case self::TYPE_APP:     $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image); break;
+            case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
+            case self::TYPE_APK:     Helper::sendFile($appDirectory . $apk, self::CONTENT_TYPE_APK); break;
+            default: break;
         }
 
         exit();
@@ -765,7 +441,6 @@ class AppUpdater
     
     protected function sendJSONAndExit()
     {
-        
         ob_end_clean();
         header('Content-type: application/json');
         print json_encode($this->json);
@@ -777,19 +452,13 @@ class AppUpdater
         $publicVersion = array();
         
         foreach ($files as $version => $fileSet) {
-            // since it is currently only supported on iOS, make it fix
-            $ipa = $fileSet[self::FILE_IOS_IPA];
-            $plist = $fileSet[self::FILE_IOS_PLIST];
-            $apk = $current[self::FILE_ANDROID_APK];
-            $json = $current[self::FILE_ANDROID_JSON];
-            $restrict = $fileSet[self::FILE_VERSION_RESTRICT];
-            
-            if ($apk) {
+            if (isset($fileSet[self::FILE_ANDROID_APK])) {
                 $publicVersion = $fileSet;
                 break;
             }
             
-            if ($ipa && $restrict && strlen(file_get_contents($restrict)) > 0) {
+            $restrict = isset($fileSet[self::FILE_VERSION_RESTRICT]) ? $fileSet[self::FILE_VERSION_RESTRICT] : null;
+            if (isset($fileSet[self::FILE_IOS_IPA]) && $restrict && filesize($restrict) > 0) {
                 continue;
             }
             
@@ -826,15 +495,17 @@ class AppUpdater
                 
                 $current = $this->findPublicVersion($files[self::VERSIONS_SPECIFIC_DATA]);
 //                $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-                $ipa = $current[self::FILE_IOS_IPA];
-                $plist = $current[self::FILE_IOS_PLIST];
-                $apk = $current[self::FILE_ANDROID_APK];
-                $json = $current[self::FILE_ANDROID_JSON];
-                $note = $current[self::FILE_COMMON_NOTES];
-                $restrict = $current[self::FILE_VERSION_RESTRICT];
+                $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+                $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
+                $apk      = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
+                $json     = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
+                $note     = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
+                $restrict = isset($current[self::FILE_VERSION_RESTRICT]) ? $current[self::FILE_VERSION_RESTRICT] : null;
                 
-                $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-                $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+                $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
+                    $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] : null;
+                $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
+                    $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
 
                 if (!$ipa && !$apk) {
                     continue;
@@ -850,7 +521,7 @@ class AppUpdater
 
                 $newApp[self::INDEX_DIR]            = $file;
                 $newApp[self::INDEX_IMAGE]          = substr($image, strpos($image, $file));
-                $newApp[self::INDEX_NOTES]          = $note ? nl2br_skip_html(file_get_contents($note)) : '';
+                $newApp[self::INDEX_NOTES]          = $note ? Helper::nl2br_skip_html(file_get_contents($note)) : '';
                 $newApp[self::INDEX_STATS]          = array();
 
                 if ($ipa) {
@@ -861,12 +532,13 @@ class AppUpdater
 
                     // now get the application name from the plist
                     $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
-                    if ($parsed_plist['items'][0]['metadata']['subtitle'])
+                    if (isset($parsed_plist['items'][0]['metadata']['subtitle']) && $parsed_plist['items'][0]['metadata']['subtitle'])
                         $newApp[self::INDEX_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
                     $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
                     $newApp[self::INDEX_DATE]           = filectime($ipa);
                     $newApp[self::INDEX_APPSIZE]        = filesize($ipa);
                     
+                    $provisioningProfile = null; // FIXME: $provisioningProfile was never initialized before?
                     if ($provisioningProfile) {
                         $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
                         $newApp[self::INDEX_PROFILE_UPDATE] = filectime($provisioningProfile);
@@ -908,8 +580,8 @@ class AppUpdater
                     
                         $newdevice = array();
 
-                        $newdevice[self::DEVICE_USER] = $this->mapUser($device[0], $userlist);
-                        $newdevice[self::DEVICE_PLATFORM] = $this->mapPlatform($device[1]);
+                        $newdevice[self::DEVICE_USER] = Helper::mapUser($device[0], $userlist);
+                        $newdevice[self::DEVICE_PLATFORM] = Helper::mapPlatform($device[1]);
                         $newdevice[self::DEVICE_OSVERSION] = $device[2];
                         $newdevice[self::DEVICE_APPVERSION] = $device[3];
                         $newdevice[self::DEVICE_LASTCHECK] = $device[4];
@@ -919,7 +591,7 @@ class AppUpdater
                     }
                 
                     // sort by app version
-                    $newApp[self::INDEX_STATS] = self::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_LASTCHECK, SORT_DESC);
+                    $newApp[self::INDEX_STATS] = Helper::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_LASTCHECK, SORT_DESC);
                 }
             
                 // add it to the array
