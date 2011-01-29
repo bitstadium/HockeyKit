@@ -23,20 +23,19 @@ Features:
 - Support for app icon on website and during installation on the device. place any .png file into the subdirectory (114x114 pixel works on all devices!)
 - Optional client side framework
 - Framework notifies users on startup of new updates, iOS4 users can install directly from within the client (In-App-Updates), iOS3 users will be hinted to the website
-- Framework optionally sends UDID, app version, iOS version, device type to the server, overview will appear automatically in /stats/ website (write access for PHP scripts required)
+- Framework optionally sends UDID, app version, iOS version, device type to the server, overview will appear automatically in /stats/ website (write access for PHP scripts required, usually write access for the unix group is enough)
 - Stats website supports replacing UDIDs with names by entering them into a userlist.txt file within the stats subdirectory
 - Bookmarklet to extract all UDIDs and names from iOS program portal device page available in the stats page
-- Template for an Xcode build script to upload all files to your server after a build (Beta Automatisation.sh)
+- Template for an Xcode build script to upload all files automatically to your server after a build (Beta Automatisation.sh)
 
 
 Notes:
-- The server can run stand alone, the client is optional
-- Beta testers need to run at least iOS 4 to benefit from the auto update functionality
-- Beta testers using iOS 3 will also be notified of updates within the app
+- The server can run stand alone, the iOS client library is optional
+- Beta testers need to run at least iOS 4 to benefit from the auto update functionality when using the client
+- Beta testers using iOS 3 will also be notified of updates within the app when using the client
 - The client framework optionally watches for Reachability notifications to detect if the device is online or not
 - To automatically exclude the library from the AppStore version make sure to add access to the build configuration variable by adding "CONFIGURATION_$(CONFIGURATION)" to the preprocessor macros of all configurations in the project settings of your app.
 - Do not enter a link to the app icon in the organizer screen. Hockey will add that part into the PList automatically on the server, if there is a PNG file found (114pixel icons work on all devices!)
-- Make sure the IPA filename has no space in it. iOS is not able to call that URL correctly.
 - Don't make separate names per IPA file you make, because only the first file found per directory be served
 
 
