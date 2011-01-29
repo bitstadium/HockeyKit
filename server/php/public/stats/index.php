@@ -57,10 +57,10 @@
                 foreach ($app[iOSUpdater::INDEX_STATS] as $i => $device) :
                     echo "<tr>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_APPVERSION]."</td>";
-					if (strlen($device[AppUpdater::DEVICE_USER]) > 15) {
-						echo "  <td title='".$device[AppUpdater::DEVICE_USER]."'>".substr($device[AppUpdater::DEVICE_USER],0,12)."...</td>";
+					if (strlen($device[iOSUpdater::DEVICE_USER]) > 15) {
+						echo "  <td title='".$device[iOSUpdater::DEVICE_USER]."'>".substr($device[iOSUpdater::DEVICE_USER],0,12)."...</td>";
 					} else {
-                    	echo "  <td>".$device[AppUpdater::DEVICE_USER]."</td>";
+                    	echo "  <td>".$device[iOSUpdater::DEVICE_USER]."</td>";
 					}
                     echo "  <td>".$device[iOSUpdater::DEVICE_OSVERSION]."</td>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_PLATFORM]."</td>";

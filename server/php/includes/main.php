@@ -142,7 +142,7 @@ class iOSUpdater
                 }
         }
         $args[] = &$data;
-        call_user_func_array('array_multisort', $args);
+        @call_user_func_array('array_multisort', $args);
         return array_pop($args);
     }
 
