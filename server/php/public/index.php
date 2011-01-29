@@ -3,7 +3,9 @@
     require(constant('HOCKEY_INCLUDE_DIR'));
     
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+    $port = $_SERVER["SERVER_PORT"]=='80'?'':':'.$_SERVER["SERVER_PORT"];
+    $baseURL = $protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -50,13 +52,13 @@
                     $column++;
             ?>
                 <div class="column span-3">
-                <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
+                <?php if ($app[iOSUpdater::INDEX_IMAGE] != "") { ?>
                     <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
                 <div class="column span-8">
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
-                  <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                  <?php if (array_key_exists(iOSUpdater::INDEX_SUBTITLE, $app)) { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
                   <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
@@ -64,13 +66,13 @@
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
                     <div class="desktopbuttons">
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
+                <?php if (array_key_exists(iOSUpdater::INDEX_PROFILE, $app)) { ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Profile </a>
                 <?php } ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_IPA . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Download Application</a>
                     </div>
 
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                <?php if ($app[iOSUpdater::INDEX_NOTES] != "") : ?>
                     <p><br/><br/></p>
                     <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
@@ -107,13 +109,13 @@
                     $column++;
             ?>
                 <div class="column span-3">
-                <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
+                <?php if ($app[iOSUpdater::INDEX_IMAGE] != "") { ?>
                     <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
                 <div class="column span-6">
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
-                <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                <?php if (array_key_exists(iOSUpdater::INDEX_SUBTITLE, $app)) { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
                 <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
@@ -121,13 +123,13 @@
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
 
                     <div class="ipadbuttons">
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>
+                <?php if (array_key_exists(iOSUpdater::INDEX_PROFILE, $app)) { ?>
                         <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                         <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
                     </div>
 
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                <?php if ($app[iOSUpdater::INDEX_NOTES] != "") : ?>
                     <p><br/><br/></p>
                     <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
@@ -161,7 +163,7 @@
             ?>
                     <div class="column span-4">
                         <a href="#<?php echo $app[iOSUpdater::INDEX_APP] ?>">
-            <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
+            <?php if ($app[iOSUpdater::INDEX_IMAGE] != "") { ?>
                             <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
             <?php } ?>
                             <h4><?php echo $app[iOSUpdater::INDEX_APP] ?></h4>
@@ -189,21 +191,21 @@
                 <div class="version">
                     <p class="borderbottom"></p>
                     <a name="<?php echo $app[iOSUpdater::INDEX_APP] ?>"><br/></a>
-                <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
+                <?php if ($app[iOSUpdater::INDEX_IMAGE] != "") { ?>
                     <img class="icon" src="<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
-                <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                <?php if (array_key_exists(iOSUpdater::INDEX_SUBTITLE, $app)) { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
                 <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
                 <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
-                <?php if ($app[iOSUpdater::INDEX_PROFILE]) { ?>                    
+                <?php if (array_key_exists(iOSUpdater::INDEX_PROFILE, $app)) { ?>                    
                     <a class="button" href="<?php echo $baseURL . 'index.php?type=' . iOSUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
                     <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . iOSUpdater::TYPE_APP . '&bundleidentifier=' . $app[iOSUpdater::INDEX_DIR]) ?>">Install Application</a>
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
+                <?php if ($app[iOSUpdater::INDEX_NOTES] != "") : ?>
                     <p><br/><br/></p>
                     <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>

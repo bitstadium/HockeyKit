@@ -3,7 +3,6 @@
     require('../' . constant('HOCKEY_INCLUDE_DIR'));
     
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR);
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,9 +29,9 @@
                     <img class="icon" src="../<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
-                <div class="column span-8">
+                <div class="column span-7">
                     <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
-                  <?php if ($app[iOSUpdater::INDEX_SUBTITLE]) { ?>
+                  <?php if (array_key_exists(iOSUpdater::INDEX_SUBTITLE, $app)) { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
                   <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
@@ -45,7 +44,7 @@
 
                 </div>
                 
-                <div class="column span-12">
+                <div class="column span-13">
                     <table>
                         <tr>
                             <th>Version</th>
@@ -58,7 +57,11 @@
                 foreach ($app[iOSUpdater::INDEX_STATS] as $i => $device) :
                     echo "<tr>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_APPVERSION]."</td>";
-                    echo "  <td>".$device[iOSUpdater::DEVICE_USER]."</td>";
+					if (strlen($device[AppUpdater::DEVICE_USER]) > 15) {
+						echo "  <td title='".$device[AppUpdater::DEVICE_USER]."'>".substr($device[AppUpdater::DEVICE_USER],0,12)."...</td>";
+					} else {
+                    	echo "  <td>".$device[AppUpdater::DEVICE_USER]."</td>";
+					}
                     echo "  <td>".$device[iOSUpdater::DEVICE_OSVERSION]."</td>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_PLATFORM]."</td>";
                     echo "  <td>".$device[iOSUpdater::DEVICE_LASTCHECK]."</td>";
