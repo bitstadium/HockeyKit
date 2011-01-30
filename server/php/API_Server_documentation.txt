@@ -61,26 +61,58 @@ UDID;Name;Comma separated list von Teamnamen
 (Teamnamen sind optional)
 
 
-API Definitionen:
-1) Eingabe:
-Parameter: keine
-App Type: iOS, Android
-Client: Browser
+# API Definitionen
 
-Ausgabe:
-- Webseite, angepasst auf aufrufenden Browser (siehe Javascript am Ende von index.php)
-- keine private deklarierten Versionen (iOS only)
+## Browser: Index
+
+* v2: `http://hockey/`
+* v1: `http://hockey/`
+
+### Input
+
+* none
+
+### Output
+
+* HTML
+* List of *public* Applications for all platforms
+* Platform filter with JavaScript
 
 
-2) Eingabe:
-Parameter: 
-    bundleidentifier
-App Type: iOS, Android
-Client: Browser
+## Browser: Single App
 
-Ausgabe:
-- pruefe ob das Verzeichnis existiert und User Agent (iOS, Android, Desktop) abhaengig eine App (Version) vorhanden ist, welche nicht private ist, wenn ja, zeige diese App mit Layout von 1) an
-- falls nicht, zeige einen Text an, a la "Es gibt hier nichts zu sehen"
+* v2: `http://hockey/app/de.buzzworks.worldview`,
+* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview`
+
+### Input
+
+* bundleidentifier = ([\w.-]+)
+
+### Output
+
+* HTML
+* App details for app matching bundle ID, highest non-private version.
+* If no matching bundle ID or all versions are non-public, show placeholder text
+
+
+## Platform Client: Status of an app
+
+* v2: `http://hockey/api/de.buzzworks.worldview`,
+* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview`
+
+### Input
+
+* bundleidentifier = ([\w.-]+)
+
+### Output
+
+* JSON
+* Success: `{"notes":release notes,"title":app title,"result":version number}`
+* Error: { result: "-1" }
+* Description of highest non-private app version
+
+
+## Platform Client: Status of an app (variants)
 
 
 3) Eingabe:
