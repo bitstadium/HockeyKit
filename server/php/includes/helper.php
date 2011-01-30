@@ -60,7 +60,7 @@ class Helper
     }
     
     // map a device UDID into a username
-    static protected function mapUser($user, $userlist)
+    static public function mapUser($user, $userlist)
     {
         $username = $user;
         $lines = explode("\n", $userlist);
@@ -82,7 +82,7 @@ class Helper
     }
     
     // map a device UDID into a list of assigned teams
-    static protected function mapTeam($user, $userlist)
+    static public function mapTeam($user, $userlist)
     {
         $teams = "";
         $lines = explode("\n", $userlist);
@@ -104,7 +104,7 @@ class Helper
     }
     
     // map a device code into readable name
-    static protected function mapPlatform($device)
+    static public function mapPlatform($device)
     {
         $platform = $device;
         
@@ -144,7 +144,7 @@ class Helper
         return $platform;
     }
     
-    public function sendFile($filename, $content_type = 'application/octet-stream')
+    static public function sendFile($filename, $content_type = 'application/octet-stream')
     {
         ob_end_clean();
         header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
@@ -155,6 +155,19 @@ class Helper
         exit;
     }
     
+    static public function sendJSONAndExit($content, $info = null)
+    {
+        // error case
+        if (is_numeric($content))
+        {
+            $content = array(AppUpdater::RETURN_RESULT => $content);
+        }
+        
+        ob_end_clean();
+        header('Content-type: application/json');
+        echo json_encode($content);
+        exit();
+    }
     
 }
 

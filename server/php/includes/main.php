@@ -116,6 +116,12 @@ class AppUpdater
 
     const CONTENT_TYPE_APK = 'application/vnd.android.package-archive';
 
+    const E_UNKNOWN_PLATFORM  = -1;
+    const E_NO_VERSIONS_FOUND = -1;
+    const E_FILES_INCOMPLETE  = -1;
+    const E_UNKNOWN_API       = -1;
+    const E_UNKNOWN_BUNDLE_ID = -1;
+
 
     static public function factory($dir, $platform = '') {
         
@@ -133,16 +139,14 @@ class AppUpdater
         {
             $platform = 'Android';
         }
-        
         if ($platform) {
-            if (!file_exists(strtolower("platforms/$platform.php"))) {
-                throw new Exception("Platform $platform does not exist.");
-            }
-        
             require_once(strtolower("platforms/abstract.php"));
-            require_once(strtolower("platforms/$platform.php"));
+            $included = include_once(strtolower("platforms/$platform.php"));
+            if (!$included) {
+                Logger::log("unknown platform: $platform");
+                Helper::sendJSONAndExit(self::E_UNKNOWN_PLATFORM, $platform);
+            }
         }
-        
         $klass = "{$platform}AppUpdater";
         Logger::log("Factory: Creating $klass");
         return new $klass($dir);
@@ -403,11 +407,11 @@ class AppUpdater
         $files = $this->getApplicationVersions($bundleidentifier);
 
         if (count($files) == 0) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("no versions found: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND, $bundleidentifier);
         }
-                        
-        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
         $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
         $apk   = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
@@ -416,8 +420,8 @@ class AppUpdater
         // notes file is optional, other files are required
         if ((!$ipa || !$plist) && 
             (!$apk || !$json)) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("uncomplete files: $bundleidentifier");
+            return Helper::sendJSONAndExit(self::E_FILES_INCOMPLETE, $bundleidentifier);
         }
 
         $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
@@ -435,14 +439,6 @@ class AppUpdater
             default: break;
         }
 
-        exit();
-    }
-    
-    protected function sendJSONAndExit()
-    {
-        ob_end_clean();
-        header('Content-type: application/json');
-        print json_encode($this->json);
         exit();
     }
     

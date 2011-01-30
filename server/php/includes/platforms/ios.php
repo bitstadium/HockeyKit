@@ -6,14 +6,12 @@
 class iOSAppUpdater extends AbstractAppUpdater
 {
 
-    protected function deliverJson($api, $files)
+    protected function deliverJSON($api, $files)
     {
-        // FIXME: duplicate code in if branch below
-        
         // check for available updates for the given bundleidentifier
         // and return a JSON string with the result values
 
-        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
         $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
         $note     = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
@@ -23,6 +21,7 @@ class iOSAppUpdater extends AbstractAppUpdater
             // this is an iOS app
             if ($api == self::API_V1) {
                 // this is API Version 1
+                $result = array();
                 
                 // parse the plist file
                 $plistDocument = new DOMDocument();
@@ -34,19 +33,20 @@ class iOSAppUpdater extends AbstractAppUpdater
                 
                 // add the latest release notes if available
                 if ($note) {
-                    $this->json[self::RETURN_NOTES]     = Helper::nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $result[self::RETURN_NOTES]     = Helper::nl2br_skip_html(file_get_contents($appDirectory . $note));
                 }
 
-                $this->json[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
+                $result[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
 
                 if ($parsed_plist['items'][0]['metadata']['subtitle'])
-                    $this->json[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
+                    $result[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
 
-                $this->json[self::RETURN_RESULT]        = $latestversion;
+                $result[self::RETURN_RESULT]        = $latestversion;
 
-                return $this->sendJSONAndExit();
+                return Helper::sendJSONAndExit($result);
             } else {
                 // this is API Version 2
+                $result = array();
                 
                 $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
                 
@@ -79,14 +79,16 @@ class iOSAppUpdater extends AbstractAppUpdater
                     $newAppVersion[self::RETURN_V2_TIMESTAMP]           = filectime($appDirectory . $ipa);
                     $newAppVersion[self::RETURN_V2_APPSIZE]             = filesize($appDirectory . $ipa);
                     
-                    $this->json[] = $newAppVersion;
+                    $result[] = $newAppVersion;
                     
                     // only send the data until the current version if provided
                     if ($appversion == $thisVersion) break;
                 }
-                return $this->sendJSONAndExit();
+                return Helper::sendJSONAndExit($result);
             }
         }
+        Logger::log("no versions found: ios/deliverJSON");
+        return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
     }
 
     protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image)
@@ -114,6 +116,7 @@ class iOSAppUpdater extends AbstractAppUpdater
 
     protected function deliverAuthenticationResponse($bundleidentifier)
     {
+        $result = array();
         // did we get any user data?
         $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
         $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
@@ -121,7 +124,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         // check if the UDID is allowed to be used
         $filename = $this->appDirectory."stats/".$bundleidentifier;
 
-        $this->json[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
+        $result[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
 
         $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
     
@@ -130,7 +133,7 @@ class iOSAppUpdater extends AbstractAppUpdater
             
             $lines = explode("\n", $userlist);
 
-            foreach ($lines as $i => $line) :
+            foreach ($lines as $i => $line) {
                 if ($line == "") continue;
                 
                 $device = explode(";", $line);
@@ -138,33 +141,32 @@ class iOSAppUpdater extends AbstractAppUpdater
                 if (count($device) > 0) {
                     // is this the same device?
                     if ($device[0] == $udid) {
-                        $this->json[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
+                        $result[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
                         break;
                     }
                 }
-            endforeach;
+            }
         }
         
-        return $this->sendJSONAndExit();
+        return Helper::sendJSONAndExit($result);
     }
     
     protected function deliver($bundleidentifier, $api, $type)
     {
         $files = $this->getApplicationVersions($bundleidentifier);
-
         if (count($files) == 0) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("no versions found: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
-                        
-        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
         $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
 
         // notes file is optional, other files are required
         if (!$ipa || !$plist) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("incomplete files: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_FILES_INCOMPLETE);
         }
 
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];

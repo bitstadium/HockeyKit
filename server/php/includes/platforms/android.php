@@ -5,18 +5,19 @@
 */
 class AndroidAppUpdater extends AbstractAppUpdater
 {
-    protected function deliverJson($api, $files)
+    protected function deliverJSON($api, $files)
     {
         // check for available updates for the given bundleidentifier
         // and return a JSON string with the result values
 
-        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $apk  = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
         $json = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
         
         $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
         
         if ($apk && $json) {
+            $result = array();
             $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
             
             // API version is V2 by default, even if the client provides V1
@@ -42,13 +43,15 @@ class AndroidAppUpdater extends AbstractAppUpdater
                 $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($appDirectory . $apk);
                 $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($appDirectory . $apk);
 
-                $this->json[] = $newAppVersion;
+                $result[] = $newAppVersion;
                 
                 // only send the data until the current version if provided
                 if ($appversion == $parsed_json['versionCode']) break;
             }
-            return $this->sendJSONAndExit();
+            return Helper::sendJSONAndExit($result);
         }
+        Logger::log("no versions found: android/deliverJSON");
+        return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
     }
 
     protected function deliver($bundleidentifier, $api, $type)
@@ -56,18 +59,18 @@ class AndroidAppUpdater extends AbstractAppUpdater
         $files = $this->getApplicationVersions($bundleidentifier);
 
         if (count($files) == 0) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("no versions found: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
                         
-        $current = array_shift($files[self::VERSIONS_SPECIFIC_DATA]);
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $apk  = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
         $json = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
         
         // notes file is optional, other files are required
         if (!$apk || !$json) {
-            $this->json = array(self::RETURN_RESULT => -1);
-            return $this->sendJSONAndExit();
+            Logger::log("files imcomplete: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_FILES_INCOMPLETE);
         }
         
         $this->addStats($bundleidentifier);
