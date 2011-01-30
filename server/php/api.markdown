@@ -35,8 +35,9 @@
 
 ## iOS client: Status of an app (v1 only)
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview`
-* v1 w/ some optional parameters: `http://hockey/?bundleidentifier=de.buzzworks.worldview&udid=f00`
+* v1:               `http://hockey/?bundleidentifier=<bundleidentifier>`
+* v1 Example:       `http://hockey/?bundleidentifier=de.buzzworks.worldview`
+* v1 w/ parameters: `http://hockey/?bundleidentifier=de.buzzworks.worldview&udid=f00`
 
 ### Input
 
@@ -56,13 +57,13 @@
 
 ## Any Platform Client: Status of an app (v2 only)
 
-* v2:         `http://hockey/api/status/<platform>/<bundleidentifier>`
-* v2 Example: `http://hockey/api/status/ios/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<platform>/status/<bundleidentifier>`
+* v2 Example: `http://hockey/api/ios/status/de.buzzworks.worldview`
 
 ### Input
 
-* bundleidentifier = ([\w.-]+)
 * platform = for now [`ios`, `android`]
+* bundleidentifier = ([\w.-]+)
 
 Optional parameters, *HTTP POST*.
 
@@ -83,13 +84,15 @@ Optional parameters, *HTTP POST*.
 
 ## iOS client: Download mobile provisioning profile
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=profile`
-* v2: `http://hockey/api/download/profile/de.buzzworks.worldview`
+* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=profile`
+* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
+* v2 Example: `http://hockey/api/ios/download/profile/de.buzzworks.worldview`
 
 ### Input
 
+* platform (v2 only)
 * bundleidentifier = `[\w.-]+`
-* type = `profile` (v1 only)
+* type = `profile`
 
 ### Output
 
@@ -99,13 +102,15 @@ Optional parameters, *HTTP POST*.
 
 ## iOS client: Download plist file
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=app`
-* v2: `http://hockey/api/download/plist/de.buzzworks.worldview`
+* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=app`
+* v2:         `http://hockey/api/<platform>/download/<type>/de.buzzworks.worldview`
+* v2 Example: `http://hockey/api/ios/download/plist/de.buzzworks.worldview`
 
 ### Input
 
+* platform (v2 only)
 * bundleidentifier = `[\w.-]+`
-* type = `app` (v1 only)
+* type = `app` (v1 only) / `plist` (v2 only)
 
 ### Output
 
@@ -115,13 +120,15 @@ Optional parameters, *HTTP POST*.
 
 ## iOS client: Download mobile App
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=ipa`
-* v2: `http://hockey/api/download/app/de.buzzworks.worldview`
+* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=ipa`
+* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
+* v2 Example: `http://hockey/api/ios/download/app/de.buzzworks.worldview`
 
 ### Input
 
+* platform (v2 only)
 * bundleidentifier = `[\w.-]+`
-* type = `ipa` (v1 only)
+* type = `ipa` (v1 only) / `app` (v2 only)
 
 ### Output
 
@@ -131,13 +138,15 @@ Optional parameters, *HTTP POST*.
 
 ## Android client: Download mobile App
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview-android&type=apk`
-* v2: `http://hockey/api/download/apk/de.buzzworks.worldview-android`
+* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview-android&type=apk`
+* v2:         `http://hockey/api/<platform>/download/<type>/de.buzzworks.worldview-android`
+* v2 Example: `http://hockey/api/android/download/app/de.buzzworks.worldview-android`
 
 ### Input
 
+* platform (v2 only)
 * bundleidentifier = `[\w.-]+`
-* type = `apk` (v1 only)
+* type = `apk` (v1 only) / `app` (v2 only)
 
 ### Output
 
@@ -147,15 +156,20 @@ Optional parameters, *HTTP POST*.
 
 ## iOS client: Authentication code retrieval
 
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=authorize`
-* v2: `http://hockey/api/authorize/de.buzzworks.worldview`
+* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=authorize&udid=f00&version=1.1`
+* v2:         `http://hockey/api/<platform>/authorize/<bundleidentifier>`
+* v2 Example: `http://hockey/api/ios/authorize/de.buzzworks.worldview`
 
 ### Input
 
+* platform (v2 only)
 * bundleidentifier = `[\w.-]+`
 * type = `authorize` (v1 only)
+
+Other Parameters (HTTP POST in v2, GET in v1)
+
 * udid
-* version ( = appversion)
+* version (= appversion)
 
 ### Output
 
@@ -163,9 +177,3 @@ Optional parameters, *HTTP POST*.
 * Error: `{"authcode":"FAILED"}`
 * Success: `{"authcode":"4970637a68200e12b779b6a0377c3937"}`
 
-
-
-
-
-# platform in URL `ios`/`android`
-# POST für API requests, optional versionsnummer v=2
