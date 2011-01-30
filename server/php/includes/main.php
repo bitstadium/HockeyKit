@@ -214,7 +214,10 @@ class AppUpdater
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
-        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
+        $udid =
+            isset($_GET[self::CLIENT_KEY_UDID]) &&
+            preg_match('/[1-9a-f]{40}/', $_GET[self::CLIENT_KEY_UDID]) ?
+                $_GET[self::CLIENT_KEY_UDID] : null;
         $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
         $osversion = isset($_GET[self::CLIENT_KEY_IOSVERSION]) ? $_GET[self::CLIENT_KEY_IOSVERSION] : "";
         $platform = isset($_GET[self::CLIENT_KEY_PLATFORM]) ? $_GET[self::CLIENT_KEY_PLATFORM] : "";
@@ -573,7 +576,6 @@ class AppUpdater
                         $device = explode(";;", $line);
                     
                         $newdevice = array();
-
                         $newdevice[self::DEVICE_USER] = Helper::mapUser($device[0], $userlist);
                         $newdevice[self::DEVICE_PLATFORM] = Helper::mapPlatform($device[1]);
                         $newdevice[self::DEVICE_OSVERSION] = $device[2];

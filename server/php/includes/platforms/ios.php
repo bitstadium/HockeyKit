@@ -114,12 +114,14 @@ class iOSAppUpdater extends AbstractAppUpdater
         echo $plist_content;
     }
 
-    protected function deliverAuthenticationResponse($bundleidentifier)
+    protected function deliverAuthenticationResponse($bundleidentifier = null, $udid = null, $appversion = null)
     {
         $result = array();
-        // did we get any user data?
-        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
-        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+        if (!$bundleidentifier)
+        {
+            $result[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
+            return Helper::sendJSONAndExit($result);
+        }
         
         // check if the UDID is allowed to be used
         $filename = $this->appDirectory."stats/".$bundleidentifier;
@@ -132,7 +134,6 @@ class iOSAppUpdater extends AbstractAppUpdater
             $userlist = @file_get_contents($userlistfilename);
             
             $lines = explode("\n", $userlist);
-
             foreach ($lines as $i => $line) {
                 if ($line == "") continue;
                 
@@ -171,18 +172,21 @@ class iOSAppUpdater extends AbstractAppUpdater
 
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
         $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
+        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+        
+        printf('bundle: %s api: %s udid: %s version: %s', $bundleidentifier, $api, $udid, $appversion);
         
         $this->addStats($bundleidentifier);
-        
         switch ($type) {
             case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
             case self::TYPE_APP:     $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image);
             case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
-                    $this->deliverAuthenticationResponse($bundleidentifier);
+                    $this->deliverAuthenticationResponse($bundleidentifier, $udid, $appversion);
                 } else {
-                    // ?
+                    $this->deliverAuthenticationResponse();
                 }
                 break;
             default: $this->deliverJSON($api, $files); break;
