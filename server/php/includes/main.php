@@ -318,12 +318,11 @@ class iOSUpdater
         } else if ($type == self::TYPE_PROFILE) {
 
             // send latest profile for the given bundleidentifier
-            $filename = $this->appDirectory  . $provisioningProfile;
-            header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
+            header('Content-Disposition: attachment; filename=' . urlencode(basename($provisioningProfile)));
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
-            header('Content-Length: '.filesize($filename).";\n");
-            readfile($filename);
+            header('Content-Length: '.filesize($provisioningProfile).";\n");
+            readfile($provisioningProfile);
 
         } else if ($type == self::TYPE_APP) {
             $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
@@ -348,14 +347,12 @@ class iOSUpdater
             echo $plist_content;
 
         } else if ($type == self::TYPE_IPA) {
- 
             // send latest profile for the given bundleidentifier
-            $filename = $this->appDirectory  . $ipa;
-            header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
+            header('Content-Disposition: attachment; filename=' . urlencode(basename($ipa)));
             header('Content-Type: application/octet-stream;');
             header('Content-Transfer-Encoding: binary');
-            header('Content-Length: '.filesize($filename).";\n");
-            readfile_chunked($filename);
+            header('Content-Length: '.filesize($ipa).";\n");
+            readfile_chunked($ipa);
         }
 
         exit();
