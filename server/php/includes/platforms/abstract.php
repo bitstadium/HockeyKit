@@ -7,7 +7,6 @@ abstract class AbstractAppUpdater extends AppUpdater
 {
 
     public function route() {
-        
         // clients always have to send bundleindentifier
         
         if (!isset($_GET[self::CLIENT_KEY_BUNDLEID]))

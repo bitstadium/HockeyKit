@@ -16,10 +16,11 @@
 * Platform filter with JavaScript
 
 
-## Browser: Single App
+## Browser: Single App (v2 only)
 
-* v2: `http://hockey/ios/app/de.buzzworks.worldview`
-* v1: `http://hockey/?bundleidentifier=de.buzzworks.worldview`
+* v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview`
+* v2:         `http://hockey/<platform>/app/<bundleidentifier>`
+* v2 Example: `http://hockey/ios/app/de.buzzworks.worldview`
 
 ### Input
 
@@ -31,6 +32,21 @@
 * HTML
 * App details for app matching bundle ID, highest non-private version.
 * If no matching bundle ID or all versions are non-public, show placeholder text
+
+
+## Browser: Download profile
+
+TODO
+
+
+## Browser: Download app
+
+TODO
+
+
+## Browser: Download plist
+
+TODO
 
 
 ## iOS client: Status of an app (v1 only)
@@ -52,7 +68,7 @@
 * JSON
 * Success: `{"notes":release notes,"title":app title,"result":version number}`
 * Error: `{ result: "-1" }`
-* Info of highest non-private app version
+* Info of highest app version
 
 
 ## Any Platform Client: Status of an app (v2 only)
@@ -80,7 +96,8 @@ Optional parameters, *HTTP POST*.
 * JSON
 * Success: ` [{"notes":release notes,"title":app title,"result":version number}, {"notes":release notes,"title":app title,"result":version number}, ...]`
 * Error: `{ result: "-1" }`
-* Info about non-private app versions (multiple versions, authentication and team membership by UDID)
+* Info about app versions (multiple versions, authentication and team membership by UDID)
+
 
 ## iOS client: Download mobile provisioning profile
 
@@ -136,17 +153,17 @@ Optional parameters, *HTTP POST*.
 * `.ipa` File
 
 
-## Android client: Download mobile App
+## Android client: Download mobile App (v2 only)
 
-* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview-android&type=apk`
-* v2:         `http://hockey/api/<platform>/download/<type>/de.buzzworks.worldview-android`
+* v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview-android&type=apk`
+* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
 * v2 Example: `http://hockey/api/android/download/app/de.buzzworks.worldview-android`
 
 ### Input
 
-* platform (v2 only)
+* platform
 * bundleidentifier = `[\w.-]+`
-* type = `apk` (v1 only) / `app` (v2 only)
+* type = `app`
 
 ### Output
 
@@ -154,17 +171,16 @@ Optional parameters, *HTTP POST*.
 * `.apk` File
 
 
-## iOS client: Authentication code retrieval
+## iOS client: Authentication code retrieval (v2 only)
 
-* v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=authorize&udid=f00&version=1.1`
+* v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=authorize&udid=f00&version=1.1`
 * v2:         `http://hockey/api/<platform>/authorize/<bundleidentifier>`
 * v2 Example: `http://hockey/api/ios/authorize/de.buzzworks.worldview`
 
 ### Input
 
-* platform (v2 only)
+* platform
 * bundleidentifier = `[\w.-]+`
-* type = `authorize` (v1 only)
 
 Other Parameters (HTTP POST in v2, GET in v1)
 

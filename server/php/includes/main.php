@@ -31,6 +31,7 @@ require('plist.inc');
 require_once('config.inc');
 require_once('helper.php');
 require_once('logger.php');
+require_once('router.php');
 
 class AppUpdater
 {
@@ -123,22 +124,8 @@ class AppUpdater
     const E_UNKNOWN_BUNDLE_ID = -1;
 
 
-    static public function factory($dir, $platform = '') {
+    static public function factory($platform) {
         
-        // route platform calls
-        if (
-            // iOS network requests, which means the client is calling, old versions don't add a custom user agent
-            strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false ||
-            // iOS hockey client is calling
-            strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/iOS') !== false
-        )
-        {
-            $platform = 'iOS';
-        }
-        elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/Android') !== false) // Android hockey client is calling
-        {
-            $platform = 'Android';
-        }
         if ($platform) {
             require_once(strtolower("platforms/abstract.php"));
             $included = include_once(strtolower("platforms/$platform.php"));
@@ -149,34 +136,51 @@ class AppUpdater
         }
         $klass = "{$platform}AppUpdater";
         Logger::log("Factory: Creating $klass");
-        return new $klass($dir);
+        return new $klass();
     }
 
 
-    protected $appDirectory;
-    protected $json = array();
+    public $appDirectory;
     public $applications = array();
 
     
-    protected function __construct($dir) {
-        $this->appDirectory = $dir;
+    protected function __construct() {
+        $this->appDirectory = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'public').DIRECTORY_SEPARATOR;
     }
     
-    public function route() {
-        $bundleidentifier = isset($_GET[self::CLIENT_KEY_BUNDLEID]) ?
-            $this->validateDir($_GET[self::CLIENT_KEY_BUNDLEID]) : null;
-        $type = isset($_GET[self::CLIENT_KEY_TYPE]) ?
-            $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
-        $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ?
-            $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
-        
-        // if a bundleidentifier and type are requested, deliver that type.
-        if ($bundleidentifier && $type) {
-            return $this->deliver($bundleidentifier, $api, $type);
+    public function execute($action, $arguments = array()) {
+        if (!method_exists($this, $action))
+        {
+            Router::get()->serve404();
         }
-        
-        // if a bundleidentifier is provided, only show that app
-        $this->show($bundleidentifier);
+        call_user_func(array($this, $action), $arguments);
+    }
+    
+    // public function route() {
+    //     $bundleidentifier = isset($_GET[self::CLIENT_KEY_BUNDLEID]) ?
+    //         $this->validateDir($_GET[self::CLIENT_KEY_BUNDLEID]) : null;
+    //     $type = isset($_GET[self::CLIENT_KEY_TYPE]) ?
+    //         $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
+    //     $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ?
+    //         $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
+    //     
+    //     // if a bundleidentifier and type are requested, deliver that type.
+    //     if ($bundleidentifier && $type) {
+    //         return $this->deliver($bundleidentifier, $api, $type);
+    //     }
+    //     
+    //     // if a bundleidentifier is provided, only show that app
+    //     $this->show($bundleidentifier);
+    // }
+
+    protected function index($arguments)
+    {
+        return $this->show(null);
+    }
+    
+    protected function app($arguments)
+    {
+        return $this->show($arguments['bundleidentifier']);
     }
     
     protected function validateDir($dir)
