@@ -1,3 +1,19 @@
+# Routing. v2 REST angehaucht, mod_rewrite rules
+
+* ✓ definieren
+* umsetzen v2
+* repair v1
+* remove _GET shit
+* remove _SERVER?
+* Input validation: e.g. deliviery of system files, no “..” in arguments for glob or such
+
+# Bugs
+
+* fix appDirectory stuff
+
+# Unit tests
+
+# Kommentare in csv files (userlist.txt, .team file)
 
 ✓ Refactor main.php into Abstract class and separate iOS and Android classes
 
@@ -7,15 +23,3 @@
 
 ✓ deliver methods
 
-# Unit tests
-
-# Kommentare in csv files (userlist.txt, .team file)
-
-# Routing. v2 REST angehaucht, mod_rewrite rules
-
-* ✓ definieren
-* umsetzen
-
-# Input validation: e.g. deliviery of system files, no “..” in paramters for glob or such, siehe routing
-
-# Abstraction to access GET parameters

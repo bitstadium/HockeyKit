@@ -296,7 +296,7 @@ class AppUpdater
         return $allowed;
     }
     
-    protected function getApplicationVersions($bundleidentifier)
+    protected function getApplicationVersions($bundleidentifier, $platform = null)
     {
         $files = array();
         
@@ -361,7 +361,7 @@ class AppUpdater
                     }
                     $restrict   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_RESTRICT));    // this file defines the teams allowed to access this version
                                         
-                    if ($ipa && $plist) {
+                    if ($ipa && $plist && (!$platform || $platform == 'ios')) {
                         $version = array();
                         $version[self::FILE_IOS_IPA] = $ipa;
                         $version[self::FILE_IOS_PLIST] = $plist;
@@ -374,7 +374,7 @@ class AppUpdater
                         }
                         
                         $allVersions[$subDir] = $version;
-                    } else if ($apk && $json) {
+                    } else if ($apk && $json && (!$platform || $platform == 'android')) {
                         $version = array();
                         $version[self::FILE_ANDROID_APK] = $apk;
                         $version[self::FILE_ANDROID_JSON] = $json;
@@ -382,6 +382,7 @@ class AppUpdater
                         $allVersions[$subDir] = $version;
                     }
                 }
+
                 if (count($allVersions) > 0) {
                     $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
                     $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] = $profile;

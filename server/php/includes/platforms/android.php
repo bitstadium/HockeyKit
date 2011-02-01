@@ -5,6 +5,51 @@
 */
 class AndroidAppUpdater extends AbstractAppUpdater
 {
+
+    protected function status($arguments) {
+        $api = self::API_V2;
+        $bundleidentifier = $arguments['bundleidentifier'];
+        
+        // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
+        $files = $this->getApplicationVersions($bundleidentifier, 'android');
+        
+        if (count($files) == 0) {
+            Logger::log("no versions found: $bundleidentifier $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
+        }
+
+        $this->addStats($bundleidentifier);
+        return $this->deliverJSON($api, $files);
+    }
+
+    protected function download($arguments) {
+        
+        $bundleidentifier = $arguments['bundleidentifier'];
+        $type             = $arguments['type'];
+        
+        $files = $this->getApplicationVersions($bundleidentifier, 'android');
+        if (count($files) == 0) {
+            Logger::log("no versions found: $bundleidentifier $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
+        }
+        $this->addStats($bundleidentifier);
+
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        
+        if ($type == 'app')
+        {
+            $file = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
+
+            if (!$file)
+            {
+                return Router::get()->serve404();
+            }
+            return Helper::sendFile($file, AppUpdater::CONTENT_TYPE_APK);
+        }
+        
+        return Router::get()->serve404();
+    }
+
     protected function deliverJSON($api, $files)
     {
         // check for available updates for the given bundleidentifier
@@ -69,7 +114,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
         
         // notes file is optional, other files are required
         if (!$apk || !$json) {
-            Logger::log("files imcomplete: $bundleidentifier $api $type");
+            Logger::log("files incomplete: $bundleidentifier $api $type");
             return Helper::sendJSONAndExit(self::E_FILES_INCOMPLETE);
         }
         

@@ -6,6 +6,66 @@
 class iOSAppUpdater extends AbstractAppUpdater
 {
 
+    protected function status($arguments) {
+        $api = self::API_V2;
+        $bundleidentifier = $arguments['bundleidentifier'];
+        
+        // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
+        $files = $this->getApplicationVersions($bundleidentifier);
+        if (count($files) == 0) {
+            Logger::log("no versions found: $bundleidentifier $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
+        }
+
+        $this->addStats($bundleidentifier);
+
+        return $this->deliverJSON($api, $files);
+    }
+    
+    protected function download($arguments) {
+        
+        $bundleidentifier = $arguments['bundleidentifier'];
+        $type             = $arguments['type'];
+        
+        $files = $this->getApplicationVersions($bundleidentifier);
+        if (count($files) == 0) {
+            Logger::log("no versions found: $bundleidentifier $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
+        }
+        $this->addStats($bundleidentifier);
+
+        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        
+        if ($type == 'plist')
+        {
+            $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+            $file = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
+            
+            if (!$file)
+            {
+                return Router::get()->serve404();
+            }
+            self::deliverIOSAppPlist($bundleidentifier, $file, $image);
+            exit();
+        }
+        elseif ($type == 'profile')
+        {
+            $file = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
+            return Helper::sendFile($file);
+        }
+        elseif ($type == 'app')
+        {
+            $file = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+
+            if (!$file)
+            {
+                return Router::get()->serve404();
+            }
+            return Helper::sendFile($file);
+        }
+        return Router::get()->serve404();
+    }
+    
     protected function deliverJSON($api, $files)
     {
         // check for available updates for the given bundleidentifier
@@ -91,7 +151,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
     }
 
-    protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image)
+    static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image)
     {
         $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
         
@@ -175,12 +235,10 @@ class iOSAppUpdater extends AbstractAppUpdater
         $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
         $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
         
-        printf('bundle: %s api: %s udid: %s version: %s', $bundleidentifier, $api, $udid, $appversion);
-        
         $this->addStats($bundleidentifier);
         switch ($type) {
             case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
-            case self::TYPE_APP:     $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image);
+            case self::TYPE_APP:     self::deliverIOSAppPlist($bundleidentifier, $plist, $image);
             case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
