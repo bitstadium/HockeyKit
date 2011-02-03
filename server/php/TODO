@@ -1,19 +1,25 @@
 # Routing. v2 REST angehaucht, mod_rewrite rules
 
 * ✓ definieren
-* umsetzen v2
+* ✓ umsetzen v2
+* ✓ remove _GET shit
 * repair v1
-* remove _GET shit
 * remove _SERVER?
 * Input validation: e.g. deliviery of system files, no “..” in arguments for glob or such
 
 # Bugs
 
-* fix appDirectory stuff
+* bug von andreas: server, not root, $this->appDirectory geht davon aus dass der server root / ist
+* fix appDirectory (ohne $this) stuff
 
 # Unit tests
 
 # Kommentare in csv files (userlist.txt, .team file)
+
+# code to server
+
+
+
 
 ✓ Refactor main.php into Abstract class and separate iOS and Android classes
 

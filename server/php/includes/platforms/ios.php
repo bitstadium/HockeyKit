@@ -11,7 +11,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         $bundleidentifier = $arguments['bundleidentifier'];
         
         // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
-        $files = $this->getApplicationVersions($bundleidentifier);
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
@@ -27,7 +27,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         $bundleidentifier = $arguments['bundleidentifier'];
         $type             = $arguments['type'];
         
-        $files = $this->getApplicationVersions($bundleidentifier);
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
@@ -64,6 +64,22 @@ class iOSAppUpdater extends AbstractAppUpdater
             return Helper::sendFile($file);
         }
         return Router::get()->serve404();
+    }
+    
+    protected function authorize($arguments)
+    {
+        $bundleidentifier = $arguments['bundleidentifier'];
+        
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
+        if (count($files) == 0) {
+            Logger::log("no versions found: $bundleidentifier $api $type");
+            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
+        }
+
+        $udid    = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/');
+        $version = Router::arg(self::CLIENT_KEY_APPVERSION);
+
+        return $this->deliverAuthenticationResponse($bundleidentifier, $udid, $version);
     }
     
     protected function deliverJSON($api, $files)
@@ -108,7 +124,7 @@ class iOSAppUpdater extends AbstractAppUpdater
                 // this is API Version 2
                 $result = array();
                 
-                $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+                $appversion =  Router::arg(self::CLIENT_KEY_APPVERSION);
                 
                 foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
                     $ipa = $version[self::FILE_IOS_IPA];
@@ -214,7 +230,7 @@ class iOSAppUpdater extends AbstractAppUpdater
     
     protected function deliver($bundleidentifier, $api, $type)
     {
-        $files = $this->getApplicationVersions($bundleidentifier);
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $api $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
@@ -231,9 +247,10 @@ class iOSAppUpdater extends AbstractAppUpdater
         }
 
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
-        $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
-        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
-        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+        $image   = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
+
+        $udid       = Router::arg(self::CLIENT_KEY_UDID);
+        $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
         
         $this->addStats($bundleidentifier);
         switch ($type) {

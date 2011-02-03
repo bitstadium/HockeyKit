@@ -60,6 +60,9 @@ class AppUpdater
     const APP_PLATFORM_IOS      = "iOS";
     const APP_PLATFORM_ANDROID  = "Android";
     
+    const PLATFORM_IOS      = "ios";
+    const PLATFORM_ANDROID  = "android";
+
     // define keys for the returning json string api version 1
     const RETURN_RESULT   = 'result';
     const RETURN_NOTES    = 'notes';
@@ -135,7 +138,7 @@ class AppUpdater
             }
         }
         $klass = "{$platform}AppUpdater";
-        Logger::log("Factory: Creating $klass");
+        // Logger::log("Factory: Creating $klass");
         return new $klass();
     }
 
@@ -218,14 +221,11 @@ class AppUpdater
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
-        $udid =
-            isset($_GET[self::CLIENT_KEY_UDID]) &&
-            preg_match('/[1-9a-f]{40}/', $_GET[self::CLIENT_KEY_UDID]) ?
-                $_GET[self::CLIENT_KEY_UDID] : null;
-        $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
-        $osversion = isset($_GET[self::CLIENT_KEY_IOSVERSION]) ? $_GET[self::CLIENT_KEY_IOSVERSION] : "";
-        $platform = isset($_GET[self::CLIENT_KEY_PLATFORM]) ? $_GET[self::CLIENT_KEY_PLATFORM] : "";
-        $language = isset($_GET[self::CLIENT_KEY_LANGUAGE]) ? strtolower($_GET[self::CLIENT_KEY_LANGUAGE]) : "";
+        $udid       = Router::arg_match(self::CLIENT_KEY_UDID, '/[1-9a-f]{40}/');
+        $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
+        $osversion  = Router::arg(self::CLIENT_KEY_IOSVERSION);
+        $platform   = Router::arg(self::CLIENT_KEY_PLATFORM);
+        $language   = Router::arg(self::CLIENT_KEY_LANGUAGE);
         
         if ($udid && $type != self::TYPE_AUTH) {
             $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language;
@@ -274,7 +274,7 @@ class AppUpdater
         if (strlen($allowedTeams) == 0) return true;
         $allowedTeams = explode(",", $allowedTeams);
         
-        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
+        $udid =  Router::arg(self::CLIENT_KEY_UDID);
         if ($udid) {
             // now get the current user statistics
             $userlist =  "";
@@ -300,7 +300,7 @@ class AppUpdater
     {
         $files = array();
         
-        $language = isset($_GET[self::CLIENT_KEY_LANGUAGE]) ? strtolower($_GET[self::CLIENT_KEY_LANGUAGE]) : "";
+        $language =  Router::arg(self::CLIENT_KEY_LANGUAGE);
         
         // iOS
         $ipa        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_IOS_IPA));
@@ -313,7 +313,7 @@ class AppUpdater
         
         $note = '';
         // Common
-        if ($language != "") {
+        if ($language) {
             $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
         }
         if (!$note) {
@@ -353,7 +353,7 @@ class AppUpdater
                     
                     // Common
                     $note = '';                                                                                                                   // this file could be in a subdirectory per version
-                    if ($language != "") {
+                    if ($language) {
                         $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES . '.' . $language));
                     }
                     if (!$note) {
@@ -361,7 +361,7 @@ class AppUpdater
                     }
                     $restrict   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_RESTRICT));    // this file defines the teams allowed to access this version
                                         
-                    if ($ipa && $plist && (!$platform || $platform == 'ios')) {
+                    if ($ipa && $plist && (!$platform || $platform == self::PLATFORM_IOS)) {
                         $version = array();
                         $version[self::FILE_IOS_IPA] = $ipa;
                         $version[self::FILE_IOS_PLIST] = $plist;
@@ -374,7 +374,7 @@ class AppUpdater
                         }
                         
                         $allVersions[$subDir] = $version;
-                    } else if ($apk && $json && (!$platform || $platform == 'android')) {
+                    } else if ($apk && $json && (!$platform || $platform == self::PLATFORM_ANDROID)) {
                         $version = array();
                         $version[self::FILE_ANDROID_APK] = $apk;
                         $version[self::FILE_ANDROID_JSON] = $json;

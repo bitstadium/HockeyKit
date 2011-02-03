@@ -11,7 +11,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
         $bundleidentifier = $arguments['bundleidentifier'];
         
         // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
-        $files = $this->getApplicationVersions($bundleidentifier, 'android');
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_ANDROID);
         
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
@@ -27,7 +27,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
         $bundleidentifier = $arguments['bundleidentifier'];
         $type             = $arguments['type'];
         
-        $files = $this->getApplicationVersions($bundleidentifier, 'android');
+        $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_ANDROID);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
@@ -63,7 +63,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
         
         if ($apk && $json) {
             $result = array();
-            $appversion = isset($_GET[self::CLIENT_KEY_APPVERSION]) ? $_GET[self::CLIENT_KEY_APPVERSION] : "";
+            $appversion =  Router::arg(self::CLIENT_KEY_APPVERSION);
             
             // API version is V2 by default, even if the client provides V1
             foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
