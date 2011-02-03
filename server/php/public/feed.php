@@ -2,14 +2,14 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = AppUpdater::factory(dirname(__FILE__).DIRECTORY_SEPARATOR);
-	$apps->route();
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-	$baseURL = str_replace("/feed.php", "/", $baseURL);
+    $router = Router::get();
+    $apps = $router->app;
+    $app->appDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR;
+    $baseURL = $router->baseUrl;
     echo '<?xml version="1.0" encoding="utf-8"?>';
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><?php echo $_SERVER['SERVER_NAME'] ?> Apps Updates</title>
+  <title><?php echo $router->servername; ?> Apps Updates</title>
   <subtitle></subtitle>
   <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
   <link rel="self" type="application/atom+xml" href="<?php echo $baseURL ?>/feed.php"/>
@@ -29,7 +29,7 @@
     <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
     <published><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></published>
     <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></updated>
-    <content type="html" xml:base="http://<?php echo $_SERVER['SERVER_NAME'] ?>/" xml:lang="en"><![CDATA[
+    <content type="html" xml:base="http://<?php echo $router->servername ?>/" xml:lang="en"><![CDATA[
     <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
         <p><img src="<?php echo $baseURL.$app[AppUpdater::INDEX_IMAGE] ?>"></p>
     <?php } ?>

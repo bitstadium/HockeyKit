@@ -33,7 +33,7 @@ class Router
         $instance = self::get();
         if (!isset($instance->args[$name]))
         {
-            Logger::log("arg $name not set");
+            Logger::log("arg `$name` not set");
             return $default;
         }
         return $instance->args[$name];
@@ -43,7 +43,7 @@ class Router
         $instance = self::get();
         if (!isset($instance->args[$name]))
         {
-            Logger::log("arg $name not set");
+            Logger::log("arg `$name` not set");
             return $default;
         }
         
@@ -60,30 +60,62 @@ class Router
     public $controller;
     public $action;
     public $arguments;
-    public $args       = array();
-    // protected $args_get   = array();
-    // protected $args_post  = array();
-    // protected $args_files = array();
+    public $api;
+    public $servername;
+    public $args          = array();
+    protected $args_get   = array();
+    protected $args_post  = array();
+    protected $args_files = array();
     
     protected function init() {
-        // $url = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-        // $this->baseURL = substr($url, 0, strrpos($url, "/") + 1);
-        $this->baseURL = '/';
 
-        $url = $_SERVER['REQUEST_URI'];
+        $path = dirname($_SERVER['SCRIPT_NAME']);
+        if ($path == '/') $path = '';
 
-        if ($pos = strpos($url, '?'))
-        {
-            $url = substr($url, 0, $pos);
+        $request = substr($_SERVER['REQUEST_URI'], strlen($path));
+        Logger::log($request);
+
+        if ($pos = strpos($request, '?')) {
+            $request = substr($request, 0, $pos);
         }
 
+        $this->collect_arguments();
+        
+        $protocol = 'http';
+        $default_port = 80;
+        if ($_SERVER['SERVER_PROTOCOL'] == 'https')
+        {
+            $protocol = 'https';
+            $default_port = 443;
+        }
+        $this->baseURL = sprintf(
+            '%s://%s%s%s/',
+            $protocol,
+            $_SERVER['SERVER_NAME'],
+            $_SERVER['SERVER_PORT'] != $default_port ? ':'.$_SERVER['SERVER_PORT'] : '',
+            $path
+        );
+        
+        $this->servername =  $_SERVER['SERVER_NAME'];
+        
+        $is_client = strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false;
+        $this->api = strpos($request, '/api/') === false || $is_client ?
+            AppUpdater::API_V1 : AppUpdater::API_V2;
+
+        if ($this->api == AppUpdater::API_V1)
+        {
+            return $this->routeV1($is_client);
+        }
+        
+        // find matching route
         foreach (self::$routes as $route => $info) {
-            if (self::match($url, $route, $info))
+            if (self::match($request, $route, $info))
             {
                 return $this->run();
             }
         }
         
+        // fallback: 404
         $this->serve404();
     }
     
@@ -143,7 +175,15 @@ class Router
         }
         
         // Logger::log("*** Match $controller/$action");
+        $this->controller = $controller;
+        $this->action     = $action;
+        $this->arguments  = $arguments;
         
+        return true;
+    }
+    
+    protected function collect_arguments()
+    {
         foreach ($_GET as $key => $value) {
             $this->args[$key] = $value;
             $this->args_get[$key] = $value;
@@ -154,12 +194,6 @@ class Router
             $this->args_post[$key] = $value;
             unset($_POST[$key]);
         }
-        
-        $this->controller = $controller;
-        $this->action     = $action;
-        $this->arguments  = $arguments;
-        
-        return true;
     }
     
     protected function run()
@@ -167,6 +201,23 @@ class Router
         $this->app = AppUpdater::factory($this->controller);
         $this->app->execute($this->action, $this->arguments);
     }
+    
+    protected function routeV1($is_client = false)
+    {
+        $bundleidentifier = self::arg_match(AppUpdater::CLIENT_KEY_BUNDLEID, '/^[\w-.]+$/');
+        $type             = self::arg_match(AppUpdater::CLIENT_KEY_TYPE, '/^(ipa|app|profile)$/');
+
+        if ($bundleidentifier && ($type || $is_client))
+        {
+            $this->app = AppUpdater::factory(AppUpdater::PLATFORM_IOS);
+            $this->app->deliver($bundleidentifier, AppUpdater::API_V1, $type);
+            exit;
+        }
+        
+        $this->app = AppUpdater::factory();
+        $this->app->show($bundleidentifier);
+    }
+    
     
     public function serve404()
     {

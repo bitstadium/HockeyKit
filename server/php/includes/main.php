@@ -127,7 +127,7 @@ class AppUpdater
     const E_UNKNOWN_BUNDLE_ID = -1;
 
 
-    static public function factory($platform) {
+    static public function factory($platform = null) {
         
         if ($platform) {
             require_once(strtolower("platforms/abstract.php"));
@@ -159,23 +159,6 @@ class AppUpdater
         call_user_func(array($this, $action), $arguments);
     }
     
-    // public function route() {
-    //     $bundleidentifier = isset($_GET[self::CLIENT_KEY_BUNDLEID]) ?
-    //         $this->validateDir($_GET[self::CLIENT_KEY_BUNDLEID]) : null;
-    //     $type = isset($_GET[self::CLIENT_KEY_TYPE]) ?
-    //         $this->validateType($_GET[self::CLIENT_KEY_TYPE]) : null;
-    //     $api = isset($_GET[self::CLIENT_KEY_APIVERSION]) ?
-    //         $this->validateAPIVersion($_GET[self::CLIENT_KEY_APIVERSION]) : self::API_V1;
-    //     
-    //     // if a bundleidentifier and type are requested, deliver that type.
-    //     if ($bundleidentifier && $type) {
-    //         return $this->deliver($bundleidentifier, $api, $type);
-    //     }
-    //     
-    //     // if a bundleidentifier is provided, only show that app
-    //     $this->show($bundleidentifier);
-    // }
-
     protected function index($arguments)
     {
         return $this->show(null);
@@ -472,7 +455,7 @@ class AppUpdater
         return $publicVersion;
     }
     
-    protected function show($appBundleIdentifier)
+    public function show($appBundleIdentifier)
     {
         // first get all the subdirectories, which do not have a file named "private" present
         if ($handle = opendir($this->appDirectory)) {

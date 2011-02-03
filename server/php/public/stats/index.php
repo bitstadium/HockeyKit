@@ -2,9 +2,10 @@
     require_once('../config.php');
     require('../' . constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = AppUpdater::factory(dirname(__FILE__).DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR);
-	$apps->route;
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+    $router = Router::get();
+    $apps = $router->app;
+    $app->appDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR;
+    $baseURL = $router->baseUrl;
 ?>
 <!DOCTYPE html>
 <html>

@@ -169,19 +169,30 @@ class iOSAppUpdater extends AbstractAppUpdater
 
     static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image)
     {
-        $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
-        
+        $r = Router::get();
         // send XML with url to app binary file
-        $ipa_url = dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
+        $ipa_url = $r->baseUrl .
+            ($r->api == self::API_V1 ? 
+                'index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier :
+                "api/ios/download/app/$bundleidentifier"
+            );
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
         
         if ($image) {
-            $image_url =
-                dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/' .
-                $bundleidentifier . '/' . basename($image);
-            $imagedict = "<dict><key>kind</key><string>display-image</string><key>needs-shine</key><false/><key>url</key><string>".$image_url."</string></dict></array>";
+            $image_url = $r->baseUrl . $bundleidentifier . '/' . basename($image);
+            $imagedict = <<<XML
+        <dict>
+                            <key>kind</key>
+                            <string>display-image</string>
+                            <key>needs-shine</key>
+                            <false/>
+                            <key>url</key>
+                            <string>$image_url</string>
+                        </dict>
+                </array>
+XML;
             $insertpos = strpos($plist_content, '</array>');
             $plist_content = substr_replace($plist_content, $imagedict, $insertpos, 8);
         }
@@ -228,7 +239,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         return Helper::sendJSONAndExit($result);
     }
     
-    protected function deliver($bundleidentifier, $api, $type)
+    public function deliver($bundleidentifier, $api, $type)
     {
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
@@ -251,11 +262,11 @@ class iOSAppUpdater extends AbstractAppUpdater
 
         $udid       = Router::arg(self::CLIENT_KEY_UDID);
         $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
-        
+
         $this->addStats($bundleidentifier);
         switch ($type) {
             case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
-            case self::TYPE_APP:     self::deliverIOSAppPlist($bundleidentifier, $plist, $image);
+            case self::TYPE_APP:     self::deliverIOSAppPlist($bundleidentifier, $plist, $image); break;
             case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
