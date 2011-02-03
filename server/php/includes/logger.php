@@ -19,8 +19,9 @@ class Logger
             isset($trace[0]['line']) ? $trace[0]['line'] : '?',
             $msg
         );
-
-        file_put_contents('../log/hockey.log', $msg."\n", FILE_APPEND);
+        
+        $path = dirname(dirname(__FILE__));
+        file_put_contents("$path/log/hockey.log", $msg."\n", FILE_APPEND);
     }
 }
 
