@@ -4,8 +4,8 @@
     
     $router = Router::get();
     $apps = $router->app;
-    $app->appDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR;
-    $baseURL = $router->baseUrl;
+    $app->appDirectory = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR;
+    $baseURL = $router->baseURL;
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,14 +34,14 @@
                 </div>
                 <div class="column span-7">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                  <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
+                  <?php if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) { ?>
                     <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
                   <?php } else { ?>
                     <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
                   <?php } ?>
                     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
 
-                <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+                <?php if (isset($app[AppUpdater::INDEX_NOTES]) && $app[AppUpdater::INDEX_NOTES]) : ?>
                     <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
 
