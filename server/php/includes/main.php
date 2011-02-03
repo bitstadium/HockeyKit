@@ -148,7 +148,7 @@ class AppUpdater
 
     
     protected function __construct() {
-        $this->appDirectory = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'public').DIRECTORY_SEPARATOR;
+        $this->appDirectory = dirname(dirname(__FILE__)).'/public/';
     }
     
     public function execute($action, $arguments = array()) {
@@ -423,10 +423,10 @@ class AppUpdater
         $this->addStats($bundleidentifier);
         
         switch ($type) {
-            case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
+            case self::TYPE_PROFILE: Helper::sendFile($profile); break;
             case self::TYPE_APP:     $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image); break;
-            case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
-            case self::TYPE_APK:     Helper::sendFile($appDirectory . $apk, self::CONTENT_TYPE_APK); break;
+            case self::TYPE_IPA:     Helper::sendFile($ipa); break;
+            case self::TYPE_APK:     Helper::sendFile($apk, self::CONTENT_TYPE_APK); break;
             default: break;
         }
 
