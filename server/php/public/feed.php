@@ -5,7 +5,7 @@
     $router = Router::get();
     $apps = $router->app;
     $app->appDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR;
-    $baseURL = $router->baseUrl;
+    $baseURL = $router->baseURL;
     echo '<?xml version="1.0" encoding="utf-8"?>';
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
@@ -34,7 +34,7 @@
         <p><img src="<?php echo $baseURL.$app[AppUpdater::INDEX_IMAGE] ?>"></p>
     <?php } ?>
     <p><b>Application:</b> <?php echo $app[AppUpdater::INDEX_APP] ?></p>
-    <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
+    <?php if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) { ?>
       <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
     <?php } else { ?>
       <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
