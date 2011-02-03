@@ -40,7 +40,7 @@
       <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
     <?php } ?>
     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
-    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+    <?php if (isset($app[AppUpdater::INDEX_NOTES]) && $app[AppUpdater::INDEX_NOTES]) : ?>
         <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
     <?php endif ?>]]></content>
   </entry>
