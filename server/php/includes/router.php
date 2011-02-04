@@ -83,7 +83,7 @@ class Router
         
         $protocol = 'http';
         $default_port = 80;
-        if ($_SERVER['SERVER_PROTOCOL'] == 'https')
+        if ($_SERVER['HTTPS'])
         {
             $protocol = 'https';
             $default_port = 443;
