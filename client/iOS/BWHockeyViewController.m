@@ -29,6 +29,7 @@
 #import "BWWebViewController.h"
 #import "BWGlobal.h"
 #import "UIImage+HockeyAdditions.h"
+#import "PSWebTableViewCell.h"
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 
@@ -64,7 +65,7 @@
 #pragma mark NSObject
 
 - (id)init:(BWHockeyController *)newHockeyController modal:(BOOL)newModal {
-  if ((self = [super initWithStyle:UITableViewStyleGrouped])) {
+  if ((self = [super initWithStyle:UITableViewStylePlain])) {
     self.hockeyController = newHockeyController;
     self.modal = newModal;
     self.title = BWLocalize(@"HockeyUpdateScreenTitle");
@@ -73,6 +74,9 @@
                                                                                style:UIBarButtonItemStyleBordered
                                                                               target:self
                                                                               action:@selector(openSettings:)] autorelease];
+    
+    cells_ = [[NSMutableArray alloc] initWithCapacity:5];
+
   }
   return self;
 }
@@ -83,6 +87,10 @@
 
 - (void)dealloc {
   [self viewDidUnload];
+  for (UITableViewCell *cell in cells_) {
+    [cell removeObserver:self forKeyPath:@"webViewSize"];
+  }
+  [cells_ release];
   [super dealloc];
 }
 
@@ -221,6 +229,8 @@
 }
 
 - (void)redrawTableView {
+ // [self.tableView reloadData];
+  /*
   int currentNumberOfSections = [self.tableView numberOfSections];
   int sectionsToShow = [self numberOfSectionsInTableView:self.tableView];
 
@@ -248,6 +258,7 @@
   }
 
   [self.tableView endUpdates];
+   */
 }
 
 - (void)viewDidUnload {
@@ -260,17 +271,29 @@
 #pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  // Return the number of sections.
+/*  // Return the number of sections.
   if (self.hockeyController.checkInProgress) {
     return 1;
   } else {
     return [self sectionIndexOfSettings] + 2;
   }
+ */
+  return 1;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  CGFloat rowHeight = 44;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+  CGFloat rowHeight = 0;
+  
+  if ([cells_ count] > indexPath.row) {
+    PSWebTableViewCell *cell = [cells_ objectAtIndex:indexPath.row];
+    rowHeight = cell.webViewSize.height;
+  }
+  
+  if (rowHeight == 0) {
+    BWLog(@"index: %d has zero height!", indexPath.row);
+    rowHeight = 44;
+  }
+  /*
   if (self.hockeyController.checkInProgress)
     return rowHeight;
 
@@ -280,26 +303,14 @@
     if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
       rowHeight = 88;
     }
-  }
+  }*/
 
   return rowHeight;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-  if (self.hockeyController.checkInProgress)
-    return nil;
-
-  if (section == [self sectionIndexOfSettings])
-    return BWLocalize(@"HockeySectionCheckHeader");
-  else if (section == [self sectionIndexOfSettings] - 2) {
-    return BWLocalize(@"HockeySectionAppHeader");
-  } else {
-    return nil;
-  }
-}
-
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return 5;
+  /*
   if (self.hockeyController.checkInProgress)
     return 1;
 
@@ -324,12 +335,90 @@
   }
 
   // Return the number of rows in the section.
-  return numberOfSectionRows;
+  return numberOfSectionRows;*/
+}
+
+static BOOL once = YES;
+- (void)hack {
+  
+  if (once) {
+//    [self.tableView beginUpdates];
+//[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade]; 
+//  [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+
+//    [self.tableView endUpdates];
+    once = NO;
+  }
+  
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+  NSInteger index = [cells_ indexOfObject:object];
+  [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];   
+  //[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 
+
 // Customize the appearance of table view cells.
+#define kWebCellIdentifier @"PSWebTableViewCell"
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+  if (![cells_ count]) {
+    
+    for(int i=0;i<5;i++) {
+      PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
+      cell.webViewContent = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_NOTES];
+      [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
+      [cell addWebView];
+      [cells_ addObject:cell];
+      
+      switch (i) {
+        case 0:
+          cell.webView.backgroundColor = [UIColor yellowColor];
+          break;
+        case 1:
+          cell.webView.backgroundColor = [UIColor orangeColor];
+          break;
+        case 2:
+          cell.webView.backgroundColor = [UIColor redColor];
+          break;
+        case 3:
+          cell.webView.backgroundColor = [UIColor greenColor];
+          break;
+        case 4:
+          cell.webView.backgroundColor = [UIColor blueColor];
+          break;
+        default:
+          break;
+      }
+    }
+  }
+  
+  
+  [self performSelector:@selector(hack) withObject:nil afterDelay:5.0];  
+  
+  return [cells_ objectAtIndex:indexPath.row];
+  
+  /*
+
+  PSWebTableViewCell *cell = (PSWebTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kWebCellIdentifier];
+  
+  if (!cell) {
+    cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
+  }
+   */
+  
+//  return cell;
+  
+  // HACK
+  
+  
+  /*
   // 2 lines cell
   static NSString *BetaCell1Identifier = @"BetaCell1";
   // 1 line cell with discolure
@@ -480,6 +569,8 @@
   }
 
   return cell;
+   */
+  return nil;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

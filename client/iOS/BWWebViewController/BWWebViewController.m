@@ -6,10 +6,12 @@
 @property (nonatomic, assign) UIWebView *webView;
 @end
 
+
 @implementation BWWebViewController
 
 @synthesize htmlString;
 @synthesize webView;
+
 
 - (id)initWithHTMLString:(NSString *)aHtmlString
 {

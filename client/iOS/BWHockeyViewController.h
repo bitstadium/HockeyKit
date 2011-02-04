@@ -37,6 +37,8 @@
   BOOL _modal;
 	UIStatusBarStyle _statusBarStyle;
   PSAppStoreHeader *appStoreHeader_;
+  
+  NSMutableArray *cells_;
 }
 
 @property (nonatomic, retain) BWHockeyController *hockeyController;
