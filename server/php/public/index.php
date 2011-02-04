@@ -3,8 +3,12 @@
     require(constant('HOCKEY_INCLUDE_DIR'));
     
     $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
-    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
-    $port = $_SERVER["SERVER_PORT"]=='80'?'':':'.$_SERVER["SERVER_PORT"];
+    $protocol = $_SERVER["HTTPS"]?'https':'http';
+    $port = '';
+    if ((($protocol=='http')&&($_SERVER["SERVER_PORT"]!='80')) ||
+        (($protocol=='https')&&($_SERVER["SERVER_PORT"]!='443'))) {
+      $port = ':'.$_SERVER["SERVER_PORT"];
+    }
     $baseURL = $protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
 ?>
 <!DOCTYPE html>

@@ -325,8 +325,12 @@ class iOSUpdater
             readfile($provisioningProfile);
 
         } else if ($type == self::TYPE_APP) {
-            $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
-            $port = $_SERVER["SERVER_PORT"]=='80'?'':':'.$_SERVER["SERVER_PORT"];
+           $protocol = $_SERVER["HTTPS"]?'https':'http';
+           $port = '';
+           if ((($protocol=='http')&&($_SERVER["SERVER_PORT"]!='80')) ||
+               (($protocol=='https')&&($_SERVER["SERVER_PORT"]!='443'))) {
+             $port = ':'.$_SERVER["SERVER_PORT"];
+           }
             
             // send XML with url to app binary file
             $ipa_url = 
