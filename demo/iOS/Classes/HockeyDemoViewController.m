@@ -13,7 +13,8 @@
 #import "BWHockeyManager.h"
 #endif
 
-#define kAutoOpenHockey
+// TODO: does not work correctly
+//#define kAutoOpenHockey
 
 @implementation HockeyDemoViewController
 
