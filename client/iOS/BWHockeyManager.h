@@ -96,6 +96,7 @@ typedef enum {
 
 - (NSString *)currentAppVersion;
 - (BWApp *)app;
+- (NSArray *)apps;
 
 + (BWHockeyManager *)sharedHockeyController;
 
