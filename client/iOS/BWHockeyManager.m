@@ -46,7 +46,7 @@
 - (void)connectionClosed_;
 @property (nonatomic, retain) NSMutableData *receivedData;
 @property (nonatomic, copy) NSDate *lastCheck;
-@property (nonatomic, copy) NSMutableArray *apps;
+@property (nonatomic, retain) NSMutableArray *apps;
 @end
 
 @implementation BWHockeyManager
@@ -284,7 +284,7 @@ static inline BOOL IsEmpty(id thing) {
   
   // do we need to update?
   BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;  
-  if (!updatePending && [self shouldCheckForUpdates] && !currentHockeyViewController) {
+  if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController) {
     BWLog(@"update not needed right now");
     checkInProgress = NO;
     [currentHockeyViewController redrawTableView];
@@ -365,7 +365,7 @@ static inline BOOL IsEmpty(id thing) {
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
   [self connectionClosed_];
   checkInProgress = NO;
-
+  
 	if ([self.receivedData length]) {
     NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
     BWLog(@"Received API response: %@", responseString);
@@ -416,7 +416,7 @@ static inline BOOL IsEmpty(id thing) {
       } else {
         differentVersion = ([self.app.version compare:self.currentAppVersion] != NSOrderedSame);
       }
-
+      
       if (differentVersion && !currentHockeyViewController) {
         [self showCheckForBetaAlert_];
       }
@@ -470,7 +470,7 @@ static inline BOOL IsEmpty(id thing) {
   
 	if (self.isCheckForUpdateOnLaunch) {
 		[[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkForBetaUpdate)
+                                             selector:@selector(checkForUpdate)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
 	}

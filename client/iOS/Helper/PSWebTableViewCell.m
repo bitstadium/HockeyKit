@@ -77,6 +77,13 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 #pragma mark -
 #pragma mark NSObject
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+  if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+    [self addWebView];
+  }
+  return self;
+}
+
 - (void)dealloc {
   [self removeWebView];
   [webViewContent_ release];

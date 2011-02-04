@@ -30,18 +30,18 @@
 @class BWHockeyManager;
 
 @interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
-  BWHockeyManager *_hockeyController;
+  BWHockeyManager *hockeyManager_;
 
   NSDictionary *cellLayout;
 
-  BOOL _modal;
-	UIStatusBarStyle _statusBarStyle;
+  BOOL modal_;
+	UIStatusBarStyle statusBarStyle_;
   PSAppStoreHeader *appStoreHeader_;
   
   NSMutableArray *cells_;
 }
 
-@property (nonatomic, retain) BWHockeyManager *hockeyController;
+@property (nonatomic, retain) BWHockeyManager *hockeyManager;
 @property (nonatomic, readwrite) BOOL modal;
 
 - (id)init:(BWHockeyManager *)newHockeyController modal:(BOOL)newModal;
