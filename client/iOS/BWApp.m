@@ -102,7 +102,7 @@
 
 // a valid app needs at least following properties: name, version, date
 - (BOOL)isValid {
-  BOOL valid = ![self.name length] && ![self.version length] && ![self.notes length];
+  BOOL valid = [self.name length] && [self.version length] && [self.notes length];
   return valid;
 }
 
