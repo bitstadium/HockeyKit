@@ -38,7 +38,7 @@
   // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
   // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  [[BWHockeyController sharedHockeyController] setBetaURL:@"http://worldviewmobileapp.com/apps/hockey/" delegate:self];
+  [[BWHockeyController sharedHockeyController] setBetaURL:@"http://alpha.buzzworks.de/" delegate:self];
 #endif
 
   return YES;
@@ -49,6 +49,5 @@
   [window release];
   [super dealloc];
 }
-
 
 @end

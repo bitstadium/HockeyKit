@@ -25,6 +25,7 @@
 #import "BWHockeyController.h"
 #import "JSONKit.h"
 #import <sys/sysctl.h>
+#import <Foundation/Foundation.h>
 
 @interface BWHockeyController ()
 - (void)registerOnline;
@@ -156,6 +157,12 @@ static inline BOOL IsEmpty(id thing) {
 
 - (void)setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)object {
 	self.delegate = object;
+  
+  // ensure url ends with a trailing slash
+  if (![url hasSuffix:@"/"]) {
+    url = [NSString stringWithFormat:@"%@/", url];
+  }
+  
 	self.betaCheckUrl = url;
 
 	if (self.isCheckForUpdateOnLaunch) {
@@ -295,24 +302,35 @@ static inline BOOL IsEmpty(id thing) {
 
   }
 
-  NSMutableString *parameter = [NSMutableString stringWithFormat:@"?api=2&bundleidentifier=%@",
+  NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/ios/status/%@",
                                 [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 
+  // build request & send
+  NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
+  BWLog(@"sending api request to %@", url);
+  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
+  [request setHTTPMethod:@"POST"];
+  // TODO: needed?w
+  [request setValue:@"/Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.05 Mobile/8A293 Safari/6531.22.7" forHTTPHeaderField:@"User-Agent"];
+  
+  // add additional statistics if user didn't disable flag
   if (self.isSendUserData) {
-    [parameter appendFormat:@"&version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
+    NSString *postDataString = [NSString stringWithFormat:@"version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
      [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
      [[UIDevice currentDevice] systemVersion],
      [self getDevicePlatform_],
      [[UIDevice currentDevice] uniqueIdentifier],
      [[NSLocale preferredLanguages] objectAtIndex:0]
      ];
+    BWLog(@"posting additional data: %@", postDataString);
+    NSData *requestData = [NSData dataWithBytes:[postDataString UTF8String] length:[postDataString length]];
+    NSString *postLength = [NSString stringWithFormat:@"%d", [postDataString length]];
+    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+    [request setHTTPBody:requestData];
   }
-
-  // build request & send
-  NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
-  BWLog(@"sending api request to %@", url);
-  NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
-  self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+  
+  self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 
   if (!urlConnection) {
     checkInProgress = NO;
