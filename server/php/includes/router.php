@@ -18,12 +18,12 @@ class Router
     static protected $instance;
     
     // there can only be one
-    static public function get() {
+    static public function get($options = null) {
         
         if (!self::$instance) {
             $class = __CLASS__;
             self::$instance = new $class();
-            self::$instance->init();
+            self::$instance->init($options);
         }
         
         return self::$instance;
@@ -67,7 +67,7 @@ class Router
     protected $args_post  = array();
     protected $args_files = array();
     
-    protected function init() {
+    protected function init($options) {
 
         $path = dirname($_SERVER['SCRIPT_NAME']);
         if ($path == '/') $path = '';
@@ -104,14 +104,14 @@ class Router
 
         if ($this->api == AppUpdater::API_V1)
         {
-            return $this->routeV1($is_client);
+            return $this->routeV1($options, $is_client);
         }
         
         // find matching route
         foreach (self::$routes as $route => $info) {
             if (self::match($request, $route, $info))
             {
-                return $this->run();
+                return $this->run($options);
             }
         }
         
@@ -196,25 +196,25 @@ class Router
         }
     }
     
-    protected function run()
+    protected function run($options)
     {
-        $this->app = AppUpdater::factory($this->controller);
+        $this->app = AppUpdater::factory($this->controller, $options);
         $this->app->execute($this->action, $this->arguments);
     }
     
-    protected function routeV1($is_client = false)
+    protected function routeV1($options, $is_client = false)
     {
         $bundleidentifier = self::arg_match(AppUpdater::CLIENT_KEY_BUNDLEID, '/^[\w-.]+$/');
         $type             = self::arg_match(AppUpdater::CLIENT_KEY_TYPE, '/^(ipa|app|profile)$/');
 
         if ($bundleidentifier && ($type || $is_client))
         {
-            $this->app = AppUpdater::factory(AppUpdater::PLATFORM_IOS);
+            $this->app = AppUpdater::factory(AppUpdater::PLATFORM_IOS, $options);
             $this->app->deliver($bundleidentifier, AppUpdater::API_V1, $type);
             exit;
         }
         
-        $this->app = AppUpdater::factory();
+        $this->app = AppUpdater::factory(null, $options);
         $this->app->show($bundleidentifier);
     }
     

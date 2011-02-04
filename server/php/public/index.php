@@ -2,9 +2,8 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $router = Router::get();
+    $router = Router::get(array('appDirectory' => dirname(__FILE__).DIRECTORY_SEPARATOR));
     $apps = $router->app;
-    $app->appDirectory = dirname(__FILE__).DIRECTORY_SEPARATOR;
     $b = $router->baseURL;
 ?>
 <!DOCTYPE html>

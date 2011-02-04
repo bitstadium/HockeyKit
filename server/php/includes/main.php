@@ -127,7 +127,7 @@ class AppUpdater
     const E_UNKNOWN_BUNDLE_ID = -1;
 
 
-    static public function factory($platform = null) {
+    static public function factory($platform = null, $options = null) {
         
         if ($platform) {
             require_once(strtolower("platforms/abstract.php"));
@@ -139,7 +139,7 @@ class AppUpdater
         }
         $klass = "{$platform}AppUpdater";
         // Logger::log("Factory: Creating $klass");
-        return new $klass();
+        return new $klass($options);
     }
 
 
@@ -147,8 +147,8 @@ class AppUpdater
     public $applications = array();
 
     
-    protected function __construct() {
-        $this->appDirectory = dirname(dirname(__FILE__)).'/public/';
+    protected function __construct($options) {
+        $this->appDirectory = $options['appDirectory'];
     }
     
     public function execute($action, $arguments = array()) {

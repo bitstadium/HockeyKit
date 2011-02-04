@@ -5,8 +5,8 @@
 * ✓ remove _GET shit
 * ✓ remove _SERVER?
 * ✓ repair v1
-* repair feed
-* repair stats
+* ✓ repair feed
+* ✓ repair stats
 * Input validation: e.g. deliviery of system files, no “..” in arguments for glob or such
 
 # Bugs
@@ -20,6 +20,7 @@
 
 # code to server
 
+# HTTPS/SSL Test
 
 # der request für das plist file braucht die UDID und im link der in die plist für __URL__ eingesetzt wird, muss die UDID dazu so dass der request für das IPA auch die UDID kennt und so die teamversionen anbieten kann
 
