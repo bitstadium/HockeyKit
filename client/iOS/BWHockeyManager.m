@@ -123,7 +123,8 @@ static inline BOOL IsEmpty(id thing) {
 }
 
 - (void)loadAppCache_ {
-  NSArray *savedHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
+  NSData *savedHockeyData = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
+  NSArray *savedHockeyCheck = [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
   if (savedHockeyCheck) {
     self.apps = [NSMutableArray arrayWithArray:savedHockeyCheck];
   }else {
@@ -133,7 +134,8 @@ static inline BOOL IsEmpty(id thing) {
 }
 
 - (void)saveAppCache_ {
-  [[NSUserDefaults standardUserDefaults] setObject:self.apps forKey:kArrayOfLastHockeyCheck]; 
+  NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.apps];
+  [[NSUserDefaults standardUserDefaults] setObject:data forKey:kArrayOfLastHockeyCheck]; 
 }
 
 - (void)updateViewController_ {
