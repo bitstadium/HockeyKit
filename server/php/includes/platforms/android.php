@@ -72,12 +72,12 @@ class AndroidAppUpdater extends AbstractAppUpdater
                 $note = $version[self::FILE_COMMON_NOTES];
                 
                 // parse the json file
-                $parsed_json = json_decode(file_get_contents($appDirectory . $json), true);
+                $parsed_json = json_decode(file_get_contents($json), true);
             
                 $newAppVersion = array();
                 // add the latest release notes if available
                 if ($note) {
-                    $newAppVersion[self::RETURN_V2_NOTES]       = Helper::nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $newAppVersion[self::RETURN_V2_NOTES]       = Helper::nl2br_skip_html(file_get_contents($note));
                 }
 
                 $newAppVersion[self::RETURN_V2_TITLE]           = $parsed_json['title'];
@@ -85,8 +85,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
                 $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_json['versionName'];
                 $newAppVersion[self::RETURN_V2_VERSION]         = $parsed_json['versionCode'];
         
-                $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($appDirectory . $apk);
-                $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($appDirectory . $apk);
+                $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($apk);
+                $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($apk);
 
                 $result[] = $newAppVersion;
                 
@@ -124,7 +124,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
             // the client requested the current available updates
             $this->deliverJSON($api, $files);
         } else if ($type == self::TYPE_APK) {
-            Helper::sendFile($appDirectory . $apk, AppUpdater::CONTENT_TYPE_APK); // TODO send android apk file
+            Helper::sendFile($apk, AppUpdater::CONTENT_TYPE_APK); // TODO send android apk file
         }
 
         exit();

@@ -109,7 +109,7 @@ class iOSAppUpdater extends AbstractAppUpdater
                 
                 // add the latest release notes if available
                 if ($note) {
-                    $result[self::RETURN_NOTES]     = Helper::nl2br_skip_html(file_get_contents($appDirectory . $note));
+                    $result[self::RETURN_NOTES]     = Helper::nl2br_skip_html(file_get_contents($note));
                 }
 
                 $result[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
@@ -142,7 +142,7 @@ class iOSAppUpdater extends AbstractAppUpdater
                     $newAppVersion = array();
                     // add the latest release notes if available
                     if ($note) {
-                        $newAppVersion[self::RETURN_V2_NOTES]           = Helper::nl2br_skip_html(file_get_contents($appDirectory . $note));
+                        $newAppVersion[self::RETURN_V2_NOTES]           = Helper::nl2br_skip_html(file_get_contents($note));
                     }
 
                     $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
@@ -152,8 +152,8 @@ class iOSAppUpdater extends AbstractAppUpdater
 
                     $newAppVersion[self::RETURN_V2_VERSION]             = $thisVersion;
             
-                    $newAppVersion[self::RETURN_V2_TIMESTAMP]           = filectime($appDirectory . $ipa);
-                    $newAppVersion[self::RETURN_V2_APPSIZE]             = filesize($appDirectory . $ipa);
+                    $newAppVersion[self::RETURN_V2_TIMESTAMP]           = filectime($ipa);
+                    $newAppVersion[self::RETURN_V2_APPSIZE]             = filesize($ipa);
                     
                     $result[] = $newAppVersion;
                     
@@ -265,9 +265,9 @@ XML;
 
         $this->addStats($bundleidentifier);
         switch ($type) {
-            case self::TYPE_PROFILE: Helper::sendFile($appDirectory . $profile); break;
+            case self::TYPE_PROFILE: Helper::sendFile($profile); break;
             case self::TYPE_APP:     self::deliverIOSAppPlist($bundleidentifier, $plist, $image); break;
-            case self::TYPE_IPA:     Helper::sendFile($appDirectory . $ipa); break;
+            case self::TYPE_IPA:     Helper::sendFile($ipa); break;
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
                     $this->deliverAuthenticationResponse($bundleidentifier, $udid, $appversion);
