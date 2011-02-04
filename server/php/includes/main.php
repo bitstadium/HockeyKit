@@ -204,7 +204,7 @@ class AppUpdater
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
-        $udid       = Router::arg_match(self::CLIENT_KEY_UDID, '/[1-9a-f]{40}/');
+        $udid       = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
         $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
         $osversion  = Router::arg(self::CLIENT_KEY_IOSVERSION);
         $platform   = Router::arg(self::CLIENT_KEY_PLATFORM);

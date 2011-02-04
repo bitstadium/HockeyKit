@@ -76,7 +76,7 @@ class iOSAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $udid    = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/');
+        $udid    = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
         $version = Router::arg(self::CLIENT_KEY_APPVERSION);
 
         return $this->deliverAuthenticationResponse($bundleidentifier, $udid, $version);
@@ -170,18 +170,19 @@ class iOSAppUpdater extends AbstractAppUpdater
     static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image)
     {
         $r = Router::get();
+        $udid = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
         // send XML with url to app binary file
-        $ipa_url = $r->baseUrl .
+        $ipa_url = $r->baseURL .
             ($r->api == self::API_V1 ? 
                 'index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier :
-                "api/ios/download/app/$bundleidentifier"
+                "api/ios/download/app/$bundleidentifier" . ($udid ? "?udid=$udid" : '')
             );
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
         
         if ($image) {
-            $image_url = $r->baseUrl . $bundleidentifier . '/' . basename($image);
+            $image_url = $r->baseURL . $bundleidentifier . '/' . basename($image);
             $imagedict = <<<XML
         <dict>
                             <key>kind</key>
