@@ -27,10 +27,10 @@
 #import "PSTableViewController.h"
 #import "PSAppStoreHeader.h"
 
-@class BWHockeyController;
+@class BWHockeyManager;
 
 @interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
-  BWHockeyController *_hockeyController;
+  BWHockeyManager *_hockeyController;
 
   NSDictionary *cellLayout;
 
@@ -41,10 +41,10 @@
   NSMutableArray *cells_;
 }
 
-@property (nonatomic, retain) BWHockeyController *hockeyController;
+@property (nonatomic, retain) BWHockeyManager *hockeyController;
 @property (nonatomic, readwrite) BOOL modal;
 
-- (id)init:(BWHockeyController *)newHockeyController modal:(BOOL)newModal;
+- (id)init:(BWHockeyManager *)newHockeyController modal:(BOOL)newModal;
 - (id)init;
 
 - (void)redrawTableView;

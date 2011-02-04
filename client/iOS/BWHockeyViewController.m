@@ -25,7 +25,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "NSString+URLEncoding.h"
 #import "BWHockeyViewController.h"
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
 #import "BWWebViewController.h"
 #import "BWGlobal.h"
 #import "UIImage+HockeyAdditions.h"
@@ -64,7 +64,7 @@
 #pragma mark -
 #pragma mark NSObject
 
-- (id)init:(BWHockeyController *)newHockeyController modal:(BOOL)newModal {
+- (id)init:(BWHockeyManager *)newHockeyController modal:(BOOL)newModal {
   if ((self = [super initWithStyle:UITableViewStylePlain])) {
     self.hockeyController = newHockeyController;
     self.modal = newModal;
@@ -82,7 +82,7 @@
 }
 
 - (id)init {
-	return [self init:[BWHockeyController sharedHockeyController] modal:NO];
+	return [self init:[BWHockeyManager sharedHockeyController] modal:NO];
 }
 
 - (void)dealloc {
@@ -94,17 +94,6 @@
   [super dealloc];
 }
 
-
-- (NSUInteger)sectionIndexOfSettings {
-  if (
-      self.hockeyController.betaDictionary == nil ||
-      [self.hockeyController.betaDictionary count] == 0
-      ) {
-    return 0;
-  } else {
-    return 2;
-  }
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -168,12 +157,12 @@
   //self.tableView.layer.borderWidth = 2.0;
 
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
-  appStoreHeader_.headerLabel = self.hockeyController.appName;
-  NSString *appSize = [NSString stringWithFormat:@", %@", self.hockeyController.appSizeInMB];
-  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyController.appVersion, appSize];
+  appStoreHeader_.headerLabel = self.hockeyController.app.name;
+  NSString *appSize = [NSString stringWithFormat:@", %@", self.hockeyController.app.sizeInMB];
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyController.app.version, appSize];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
-  appStoreHeader_.subHeaderLabel = self.hockeyController.appDate ? [formatter stringFromDate:self.hockeyController.appDate] : nil;
+  appStoreHeader_.subHeaderLabel = self.hockeyController.app.date ? [formatter stringFromDate:self.hockeyController.app.date] : nil;
   //appStoreHeader_.iconImage = //[UIImage imageNamed:@"AngryBirds.png"];
 
   NSString *iconString;
@@ -372,7 +361,7 @@ static BOOL once = YES;
     
     for(int i=0;i<5;i++) {
       PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
-      cell.webViewContent = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_NOTES];
+      cell.webViewContent = self.hockeyController.app.notes;
       [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
       [cell addWebView];
       [cells_ addObject:cell];
@@ -578,6 +567,7 @@ static BOOL once = YES;
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  /*
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
   if (self.hockeyController.checkInProgress) {
@@ -591,7 +581,7 @@ static BOOL once = YES;
   if (indexPath.section == startIndexOfSettings + 1) {
     // check again button
     if (!self.hockeyController.checkInProgress) {
-      [self.hockeyController checkForBetaUpdate:self];
+      [self.hockeyController checkForUpdate:self];
       [self redrawTableView];
     }
   } else if (indexPath.section == startIndexOfSettings) {
@@ -614,7 +604,7 @@ static BOOL once = YES;
     if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
       // install application button
       NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-      NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.betaCheckUrl, parameter];
+      NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.updateUrl, parameter];
       url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp bw_URLEncodedString]];
     }
   } else if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
@@ -649,6 +639,7 @@ static BOOL once = YES;
 	{
 		// there was an error trying to open the URL. for the moment we'll simply ignore it.
 	}
+   */
 }
 
 

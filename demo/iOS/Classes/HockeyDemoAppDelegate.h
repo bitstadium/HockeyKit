@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #if !defined (CONFIGURATION_AppStore_Distribution)
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
 #endif
 
 @class HockeyDemoViewController;

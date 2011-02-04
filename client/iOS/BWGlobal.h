@@ -22,29 +22,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
+#import "BWApp.h"
 
 // uncomment this line to enable NSLog-debugging output
 #define kHockeyDebugEnabled
 
-
-// API defines - do not change
-#define BETA_DOWNLOAD_TYPE_PROFILE	@"profile"
-#define BETA_DOWNLOAD_TYPE_APP		  @"app"
-
-#define BETA_UPDATE_RESULT		 @"result"
-#define BETA_UPDATE_TITLE		   @"title"
-#define BETA_UPDATE_SUBTITLE	 @"subtitle"
-#define BETA_UPDATE_NOTES		   @"notes"
-#define BETA_UPDATE_VERSION		 @"version"
-#define BETA_UPDATE_TIMESTAMP	 @"timestamp"
-#define BETA_UPDATE_APPSIZE		 @"appsize"
-
-#define BETA_UPDATE_CHECK_STARTUP	0
-#define BETA_UPDATE_CHECK_DAILY		1
-#define BETA_UPDATE_CHECK_MANUAL	2
-
-#define kDictionaryOfLastHockeyCheck @"DictionaryOfLastHockeyCheck"
+#define kArrayOfLastHockeyCheck      @"ArrayOfLastHockeyCheck"
 #define kDateOfLastHockeyCheck			 @"DateOfLastHockeyCheck"
 #define kHockeyAutoUpdateSetting		 @"HockeyAutoUpdateSetting"
 

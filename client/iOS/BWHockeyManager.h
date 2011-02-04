@@ -24,6 +24,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BWGlobal.h"
+#import "BWApp.h"
 #import "BWHockeyViewController.h"
 
 typedef enum {
@@ -31,12 +32,19 @@ typedef enum {
 	HockeyComparisonResultGreater
 } HockeyComparisonResult;
 
+typedef enum {
+  HockeyUpdateCheckStartup,
+  HockeyUpdateCheckDaily,
+  HockeyUpdateCheckManually
+} HockeyUpdateSetting;
+
 @protocol BWHockeyControllerDelegate;
 
-@interface BWHockeyController : NSObject <UIAlertViewDelegate> {
+@interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
 	id <BWHockeyControllerDelegate> delegate;
-  NSString *betaCheckUrl;
-  NSMutableDictionary *betaDictionary;
+  NSMutableArray *apps_;
+
+  NSString *updateUrl_;
   NSString *currentAppVersion_;
 
 	BWHockeyViewController *currentHockeyViewController;
@@ -47,11 +55,12 @@ typedef enum {
   BOOL dataFound;
 
   NSURLConnection *urlConnection;
-
+  NSDate *lastCheck_;
   BOOL sendUserData_;
   BOOL showUpdateReminder_;
   BOOL checkForUpdateOnLaunch_;
   HockeyComparisonResult compareVersionType_;
+  HockeyUpdateSetting updateSetting_;
 }
 
 // settings
@@ -62,7 +71,7 @@ typedef enum {
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update (default)
-@property (nonatomic, assign, getter=isShowUpdateReminder) BOOL showUpdateReminder;
+@property (nonatomic, assign) BOOL alwaysShowUpdateReminder;
 
 //if YES, then an update check will be performed after the application becomes active (default)
 //if NO, then the update check will not happen unless invoked explicitly
@@ -72,31 +81,28 @@ typedef enum {
 // HockeyComparisonResultGreater: alerts if the version on the server is greate
 @property (nonatomic, assign) HockeyComparisonResult compareVersionType;
 
+// see HockeyUpdateSetting-enum. Will be saved in user defaults.
+@property (nonatomic, assign) HockeyUpdateSetting updateSetting;
+
 
 // delegate
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
 
 // internal
-@property (nonatomic, retain) NSString *betaCheckUrl;
-@property (nonatomic, retain) NSMutableDictionary *betaDictionary;
+@property (nonatomic, retain) NSString *updateUrl;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
 
 @property (readonly) BOOL checkInProgress;
 
-// app properties (betaDictionary)
 - (NSString *)currentAppVersion;
-- (NSString *)appName;
-- (NSString *)appVersion;
-- (NSDate *)appDate;
-- (NSNumber *)appSize;
-- (NSString *)appSizeInMB;
+- (BWApp *)app;
 
-+ (BWHockeyController *)sharedHockeyController;
++ (BWHockeyManager *)sharedHockeyController;
 
-- (void) setBetaURL:(NSString *)url;
-- (void) setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
-- (void) checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController;
-- (void) checkForBetaUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
+- (void) setUpdateURL:(NSString *)url;
+- (void) setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
+- (void) checkForUpdate:(BWHockeyViewController *)hockeyViewController;
+- (void) checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
                               // UIApplicationDidBecomeActiveNotification notification is sent by iOS
 - (BWHockeyViewController *) hockeyViewController:(BOOL)modal;
 - (void) unsetHockeyViewController;
@@ -112,7 +118,7 @@ typedef enum {
 
 - (HockeyComparisonResult) compareVersionType;
 
-- (UIViewController *) viewControllerForHockeyController:(BWHockeyController *)hockeyController;
+- (UIViewController *) viewControllerForHockeyController:(BWHockeyManager *)hockeyController;
 // optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "HockeyDemoSettingsViewController.h"
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
 
 @implementation HockeyDemoSettingsViewController
 
@@ -85,7 +85,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  BWHockeyViewController *hockeyViewController = [[BWHockeyController sharedHockeyController] hockeyViewController:NO];
+  BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyController] hockeyViewController:NO];
   // ...
   // Pass the selected object to the new view controller.
   [self.navigationController pushViewController:hockeyViewController animated:YES];

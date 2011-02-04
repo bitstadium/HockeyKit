@@ -22,44 +22,59 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
 #import "JSONKit.h"
 #import <sys/sysctl.h>
 #import <Foundation/Foundation.h>
 
-@interface BWHockeyController ()
+// API defines - do not change
+#define BETA_DOWNLOAD_TYPE_PROFILE	@"profile"
+#define BETA_DOWNLOAD_TYPE_APP		  @"app"
+#define BETA_UPDATE_RESULT          @"result"
+#define BETA_UPDATE_TITLE           @"title"
+#define BETA_UPDATE_SUBTITLE        @"subtitle"
+#define BETA_UPDATE_NOTES           @"notes"
+#define BETA_UPDATE_VERSION         @"version"
+#define BETA_UPDATE_TIMESTAMP       @"timestamp"
+#define BETA_UPDATE_APPSIZE         @"appsize"
+
+@interface BWHockeyManager ()
 - (void)registerOnline;
 - (void)wentOnline:(NSNotification *)note;
 - (NSString *)getDevicePlatform_;
 - (void)connectionOpened_;
 - (void)connectionClosed_;
 @property (nonatomic, retain) NSMutableData *receivedData;
+@property (nonatomic, copy) NSDate *lastCheck;
+@property (nonatomic, copy) NSMutableArray *apps;
 @end
 
-@implementation BWHockeyController
+@implementation BWHockeyManager
 
 @synthesize delegate;
-@synthesize betaCheckUrl;
-@synthesize betaDictionary;
+@synthesize updateUrl = updateUrl_;
 @synthesize urlConnection;
 @synthesize checkInProgress;
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
-@synthesize showUpdateReminder = showUpdateReminder_;
+@synthesize alwaysShowUpdateReminder = showUpdateReminder_;
 @synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
 @synthesize compareVersionType = compareVersionType_;
+@synthesize lastCheck = lastCheck_;
+@synthesize updateSetting = updateSetting_;
+@synthesize apps = apps_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark static
 
-+ (BWHockeyController *)sharedHockeyController {
-	static BWHockeyController *hockeyController = nil;
-
++ (BWHockeyManager *)sharedHockeyController {
+	static BWHockeyManager *hockeyController = nil;
+  
 	if (hockeyController == nil) {
-		hockeyController = [[BWHockeyController alloc] init];
+		hockeyController = [[BWHockeyManager alloc] init];
 	}
-
+  
 	return hockeyController;
 }
 
@@ -93,22 +108,36 @@ static inline BOOL IsEmpty(id thing) {
 		[(id)self.delegate connectionClosed];
 }
 
-- (void)loadDefaultHockeyDict_ {
-  NSDictionary *savedHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
+- (void)clearAppCache_ {
+  [self.apps removeAllObjects];
+}
+
+- (void)checkAndWriteDefaultAppCache_ {
+  // populate with default values (if empty)
+  if (IsEmpty(self.apps)) {
+    BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
+    defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+    defaultApp.version = currentAppVersion_;
+    [self.apps addObject:defaultApp];
+  }  
+}
+
+- (void)loadAppCache_ {
+  NSArray *savedHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
   if (savedHockeyCheck) {
-    betaDictionary = [[NSMutableDictionary alloc] initWithDictionary:savedHockeyCheck];
+    self.apps = [NSMutableArray arrayWithArray:savedHockeyCheck];
   }else {
-    betaDictionary = [[NSMutableDictionary alloc] init];
+    self.apps = [NSMutableArray array];
   }
+  [self checkAndWriteDefaultAppCache_];
+}
 
-  // populate with default values
-  if (![betaDictionary objectForKey:BETA_UPDATE_TITLE]) {
-    [betaDictionary setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"] forKey:BETA_UPDATE_TITLE];
-  }
+- (void)saveAppCache_ {
+  [[NSUserDefaults standardUserDefaults] setObject:self.apps forKey:kArrayOfLastHockeyCheck]; 
+}
 
-  if (![betaDictionary objectForKey:BETA_UPDATE_VERSION]) {
-    [betaDictionary setObject:currentAppVersion_ forKey:BETA_UPDATE_VERSION];
-  }
+- (void)updateViewController_ {
+  [currentHockeyViewController redrawTableView]; 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,63 +146,45 @@ static inline BOOL IsEmpty(id thing) {
 
 - (id)init {
 	if ((self = [super init])) {
-    self.betaCheckUrl = nil;
+    self.updateUrl = nil;
     checkInProgress = NO;
     dataFound = NO;
-
+    
     currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-
+    
     // set defaults
     sendUserData_ = YES;
     showUpdateReminder_ = NO;
     checkForUpdateOnLaunch_ = YES;
     compareVersionType_ = HockeyComparisonResultDifferent;
-
-    [self loadDefaultHockeyDict_];
+    
+    // load update setting from user defaults and check value
+    self.updateSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
+    
+    [self loadAppCache_];
   }
-
+  
   return self;
 }
 
 - (void)dealloc {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-
+  
 	self.delegate = nil;
-
+  
   [urlConnection cancel];
   self.urlConnection = nil;
-
+  
 	currentHockeyViewController = nil;
-  [betaCheckUrl release];
-	[betaDictionary release];
+  [updateUrl_ release];
+	[apps_ release];
 	[receivedData_ release];
-
+  [lastCheck_ release];
+  
   [super dealloc];
 }
 
-- (void)setBetaURL:(NSString *)url {
-  [self setBetaURL:url delegate:nil];
-}
-
-- (void)setBetaURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)object {
-	self.delegate = object;
-  
-  // ensure url ends with a trailing slash
-  if (![url hasSuffix:@"/"]) {
-    url = [NSString stringWithFormat:@"%@/", url];
-  }
-  
-	self.betaCheckUrl = url;
-
-	if (self.isCheckForUpdateOnLaunch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkForBetaUpdate)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
-	}
-}
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark BetaUpdateUI
 
@@ -181,21 +192,17 @@ static inline BOOL IsEmpty(id thing) {
   return [[[BWHockeyViewController alloc] init:self modal:modal] autorelease];
 }
 
-
-- (void) unsetHockeyViewController {
-  if (currentHockeyViewController != nil) {
-    currentHockeyViewController = nil;
-  }
+- (void)unsetHockeyViewController {
+  currentHockeyViewController = nil;
 }
-
 
 - (void)showBetaUpdateView {
   UIViewController *parentViewController = nil;
-
+  
   if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
     parentViewController = [[self delegate] viewControllerForHockeyController:self];
   }
-
+  
   UIWindow *visibleWindow = nil;
 	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
     // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
@@ -211,29 +218,29 @@ static inline BOOL IsEmpty(id thing) {
       }
     }
 	}
-
+  
   BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
   UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
-
+  
   if (parentViewController) {
     if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
       navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     }
-
+    
     [parentViewController presentModalViewController:navController animated:YES];
   } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
     BWLog(@"No rootViewController found, using UIWindow-approach: %@", visibleWindow);
     [visibleWindow addSubview:navController.view];
-
+    
 		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
     [navController retain];
 	}
 }
 
 
-- (void) showCheckForBetaAlert {
+- (void)showCheckForBetaAlert_ {
   UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
                                                        message:BWLocalize(@"HockeyUpdateAlertText")
                                                       delegate:self
@@ -243,85 +250,67 @@ static inline BOOL IsEmpty(id thing) {
   [alertView show];
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark RequestComments
 
-- (void)checkForBetaUpdate {
-  [self checkForBetaUpdate:nil];
+- (BOOL)shouldCheckForUpdates {
+  BOOL checkForUpdate = NO;
+  switch (self.updateSetting) {
+    case HockeyUpdateCheckStartup:
+      checkForUpdate = YES;
+      break;
+    case HockeyUpdateCheckDaily:
+      checkForUpdate = [[[self.lastCheck description] substringToIndex:10] compare:[[[NSDate date] description] substringToIndex:10]] != NSOrderedSame;
+      break;
+    case HockeyUpdateCheckManually:
+      checkForUpdate = NO;
+      break;     
+    default:
+      break;
+  }
+  return checkForUpdate;
 }
 
-- (void)checkForBetaUpdate:(BWHockeyViewController *)hockeyViewController {
+- (void)checkForUpdate {
+  [self checkForUpdate:nil];
+}
+
+- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController {
   if (checkInProgress) return;
-
+  
   checkInProgress = YES;
-
   currentHockeyViewController = hockeyViewController;
-
-  NSNumber *hockeyAutoUpdateSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting];
-  NSString *dateOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDateOfLastHockeyCheck];
-
-  if (hockeyAutoUpdateSetting == nil) {
-    hockeyAutoUpdateSetting = [NSNumber numberWithInt:BETA_UPDATE_CHECK_STARTUP];
-    [[NSUserDefaults standardUserDefaults] setObject:hockeyAutoUpdateSetting forKey:kHockeyAutoUpdateSetting];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-  }
-
-  BOOL updatePending = NO;
-  NSDictionary *dictionaryOfLastHockeyCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDictionaryOfLastHockeyCheck];
-  if (self.isShowUpdateReminder &&
-      dictionaryOfLastHockeyCheck &&
-      [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] compare:[dictionaryOfLastHockeyCheck objectForKey:BETA_UPDATE_VERSION]] != NSOrderedSame) {
-    updatePending = YES;
-  }
-
-  if (updatePending) {
-    // we need to show an alert view any way, but in the meantime there could have been a new check, so whatever the user set
-    // do another check, otherwise the update screen would show details of an already outdated version
-  } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL && currentHockeyViewController == nil) {
-    self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
+  
+  // do we need to update?
+  BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;  
+  if (!updatePending && [self shouldCheckForUpdates] && !currentHockeyViewController) {
+    BWLog(@"update not needed right now");
     checkInProgress = NO;
-    if (currentHockeyViewController != nil) {
-      [currentHockeyViewController redrawTableView];
-    }
+    [currentHockeyViewController redrawTableView];
     return;
-  } else if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY && currentHockeyViewController == nil) {
-    // is there an update available but not installed yet? shall we remind?
-
-    // now check if the last check wasn't done today
-    if (dateOfLastHockeyCheck != nil &&
-        [dateOfLastHockeyCheck compare:[[[NSDate date] description] substringToIndex:10]] == NSOrderedSame) {
-
-      self.betaDictionary = [dictionaryOfLastHockeyCheck mutableCopy];
-      checkInProgress = NO;
-      if (currentHockeyViewController != nil) {
-        [currentHockeyViewController redrawTableView];
-      }
-      return;
-    }
-
   }
-
+  
   NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/ios/status/%@",
                                 [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-
+  
   // build request & send
-  NSString *url = [NSString stringWithFormat:@"%@%@", self.betaCheckUrl, parameter];
+  NSString *url = [NSString stringWithFormat:@"%@%@", self.updateUrl, parameter];
   BWLog(@"sending api request to %@", url);
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
   [request setHTTPMethod:@"POST"];
-  // TODO: needed?w
+  // TODO: change to someting smaller
   [request setValue:@"/Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.05 Mobile/8A293 Safari/6531.22.7" forHTTPHeaderField:@"User-Agent"];
   
   // add additional statistics if user didn't disable flag
   if (self.isSendUserData) {
     NSString *postDataString = [NSString stringWithFormat:@"version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
-     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-     [[UIDevice currentDevice] systemVersion],
-     [self getDevicePlatform_],
-     [[UIDevice currentDevice] uniqueIdentifier],
-     [[NSLocale preferredLanguages] objectAtIndex:0]
-     ];
+                                [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                                [[UIDevice currentDevice] systemVersion],
+                                [self getDevicePlatform_],
+                                [[UIDevice currentDevice] uniqueIdentifier],
+                                [[NSLocale preferredLanguages] objectAtIndex:0]
+                                ];
     BWLog(@"posting additional data: %@", postDataString);
     NSData *requestData = [NSData dataWithBytes:[postDataString UTF8String] length:[postDataString length]];
     NSString *postLength = [NSString stringWithFormat:@"%d", [postDataString length]];
@@ -331,30 +320,25 @@ static inline BOOL IsEmpty(id thing) {
   }
   
   self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-
   if (!urlConnection) {
     checkInProgress = NO;
     [self registerOnline];
   }
-
-  if (currentHockeyViewController != nil) {
-    [currentHockeyViewController redrawTableView];
-  }
+  
+  [currentHockeyViewController redrawTableView];
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSURLRequest
 
--(NSURLRequest *)connection:(NSURLConnection *)connection
-            willSendRequest:(NSURLRequest *)request
-           redirectResponse:(NSURLResponse *)redirectResponse {
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
 	NSURLRequest *newRequest = request;
 	if (redirectResponse) {
 		newRequest = nil;
 	}
 	return newRequest;
 }
-
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
   [self connectionOpened_];
@@ -371,79 +355,75 @@ static inline BOOL IsEmpty(id thing) {
 	self.receivedData = nil;
   self.urlConnection = nil;
   checkInProgress = NO;
-
+  
   [currentHockeyViewController redrawTableView];
-
+  
   [self registerOnline];
 }
 
 // api call returned, parsing
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
   [self connectionClosed_];
+  checkInProgress = NO;
+
 	if ([self.receivedData length]) {
     NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
     BWLog(@"Received API response: %@", responseString);
-
+    
     NSError *error = nil;
     NSArray *feedArray = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
     if (error) {
       BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
       // TODO: report error
     }
-
+    
     self.receivedData = nil;
 		self.urlConnection = nil;
-    checkInProgress = NO;
-
+    
     // remember that we just checked the server
-		[[NSUserDefaults standardUserDefaults] setObject:[[[NSDate date] description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
-		[[NSUserDefaults standardUserDefaults] synchronize];
-
+    self.lastCheck = [NSDate date];
+    
+    // server returned empty response?
     if (IsEmpty(feedArray)) {
-      [currentHockeyViewController redrawTableView];
+      BWLog(@"Warning: Server returned empty response");
+      [self updateViewController_];
 			return;
 		}
-
-    // version property is critical
-    NSDictionary *feed = [feedArray objectAtIndex:0];
-    NSString *version = [feed valueForKey:BETA_UPDATE_VERSION];
-    if (!IsEmpty(version)) {
-      // copy only certain items from the returning array
-      NSArray *propertiesToCopy = [NSArray arrayWithObjects:BETA_UPDATE_VERSION, BETA_UPDATE_TITLE, BETA_UPDATE_SUBTITLE, BETA_UPDATE_TIMESTAMP, BETA_UPDATE_APPSIZE, BETA_UPDATE_NOTES, nil];
-      for(NSString *propertyKey in propertiesToCopy) {
-        if ([feed objectForKey:propertyKey] != nil) {
-          NSString *propertyValue = (NSString *)[feed valueForKey:propertyKey];
-          [self.betaDictionary setObject:propertyValue forKey:propertyKey];
-        }
-        // don't allow NSNull
-        if ([feed objectForKey:propertyKey] == [NSNull null]) {
-          [self.betaDictionary removeObjectForKey:propertyKey];
-        }
+    
+    NSString *currentAppCacheVersion = [[[self app].version copy] autorelease];
+    
+    // clear cache and reload with new data
+    [self clearAppCache_];
+    for (NSDictionary *dict in feedArray) {
+      BWApp *app = [BWApp appFromDict:dict];
+      if ([app isValid]) {
+        [apps_ addObject:app];
+      }else {
+        BWLog(@"Error: Invalid App data received from server!");
+      }
+    }
+    [self checkAndWriteDefaultAppCache_];
+    [self saveAppCache_];          
+    
+    BOOL newVersionAvailable = [[self app].version compare:[self currentAppVersion]] != NSOrderedSame;
+    BOOL newVersionDiffersFromCachedVersion = [[self app].version compare:currentAppCacheVersion] != NSOrderedSame;
+    
+    if (newVersionAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
+      
+      BOOL differentVersion = NO;
+      if (self.compareVersionType == HockeyComparisonResultGreater) {
+        differentVersion = ([self.app.version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
+      } else {
+        differentVersion = ([self.app.version compare:self.currentAppVersion] != NSOrderedSame);
       }
 
-      // save data in user defaults
-      [[NSUserDefaults standardUserDefaults] setObject:self.betaDictionary forKey:kDictionaryOfLastHockeyCheck];
+      if (differentVersion && !currentHockeyViewController) {
+        [self showCheckForBetaAlert_];
+      }
+      
+      [self updateViewController_];
     }
-
-		if (!dataFound || (!self.isShowUpdateReminder && [version compare:[self.betaDictionary objectForKey:BETA_UPDATE_VERSION]] == NSOrderedSame)) {
-      [currentHockeyViewController redrawTableView];
-      return;
-    }
-
-    BOOL differentVersion = NO;
-    if (self.compareVersionType == HockeyComparisonResultGreater) {
-      differentVersion = ([version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
-    } else {
-      differentVersion = ([version compare:self.currentAppVersion] != NSOrderedSame);
-    }
-
-    if (differentVersion && !currentHockeyViewController) {
-      [self showCheckForBetaAlert];
-    }
-
-    [currentHockeyViewController redrawTableView];
   }
-  checkInProgress = NO;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -467,43 +447,62 @@ static inline BOOL IsEmpty(id thing) {
 
 - (void)wentOnline:(NSNotification *)note {
   [self unregisterOnline];
-  [self checkForBetaUpdate:NO];
+  [self checkForUpdate:NO];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Properties
 
-- (NSString *)appName {
-  return [self.betaDictionary objectForKey:BETA_UPDATE_TITLE];
+- (void)setUpdateURL:(NSString *)url {
+  [self setUpdateURL:url delegate:nil];
 }
 
-- (NSString *)appVersion {
-  return [self.betaDictionary objectForKey:BETA_UPDATE_VERSION];
+- (void)setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)object {
+	self.delegate = object;
+  
+  // ensure url ends with a trailing slash
+  if (![url hasSuffix:@"/"]) {
+    url = [NSString stringWithFormat:@"%@/", url];
+  }
+  
+	self.updateUrl = url;
+  
+	if (self.isCheckForUpdateOnLaunch) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(checkForBetaUpdate)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
+	}
 }
 
 - (NSString *)currentAppVersion {
   return currentAppVersion_;
 }
 
-- (NSDate *)appDate {
-  NSTimeInterval timestamp = (NSTimeInterval)[[self.betaDictionary objectForKey:BETA_UPDATE_TIMESTAMP] doubleValue];
-  NSDate *appDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
-  return appDate;
-}
-
-- (NSNumber *)appSize {
-  return [self.betaDictionary objectForKey:BETA_UPDATE_APPSIZE];
-}
-
-- (NSString *)appSizeInMB {
-  if ([[self appSize] doubleValue]) {
-    double appSizeInMB = [[self appSize] doubleValue]/(1024*1024);
-    NSString *appSizeString = [NSString stringWithFormat:@"%.1f MB", appSizeInMB];
-    return appSizeString;
+- (void)setUpdateSetting:(HockeyUpdateSetting)anUpdateSetting {
+  if (anUpdateSetting < 0 || anUpdateSetting > HockeyUpdateCheckManually) {
+    updateSetting_ = HockeyUpdateCheckStartup;
   }
+  
+  updateSetting_ = anUpdateSetting;
+  [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:updateSetting_] forKey:kHockeyAutoUpdateSetting];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
-  return nil;
+- (void)setLastCheck:(NSDate *)aLastCheck {
+  if (lastCheck_ != aLastCheck) {
+    [lastCheck_ release];
+    lastCheck_ = [aLastCheck copy];
+    
+		[[NSUserDefaults standardUserDefaults] setObject:[[lastCheck_ description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
+		[[NSUserDefaults standardUserDefaults] synchronize];  
+  }
+}
+
+- (BWApp *)app {
+  BWApp *app = [apps_ objectAtIndex:0];
+  return app;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

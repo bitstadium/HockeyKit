@@ -33,6 +33,8 @@
 		28D7ACF80DDB3853001CB0EB /* HockeyDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* HockeyDemoViewController.m */; };
 		7837CF7312DA132000BE3C22 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7837CF7212DA132000BE3C22 /* QuartzCore.framework */; };
 		784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */; };
+		784B961D12FC645300FF906D /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B961C12FC645300FF906D /* BWGlobal.m */; };
+		784B962112FC65FD00FF906D /* BWApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B962012FC65FD00FF906D /* BWApp.m */; };
 		7852F1DD12F32585007991B8 /* IconGradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 7852F1DB12F32585007991B8 /* IconGradient.png */; };
 		7852F1DE12F32585007991B8 /* IconGradient@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7852F1DC12F32585007991B8 /* IconGradient@2x.png */; };
 		789C24BF12EE291E00FDDD4C /* BWWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24A812EE291E00FDDD4C /* BWWebViewController.m */; };
@@ -44,7 +46,7 @@
 		789C24C512EE291E00FDDD4C /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B512EE291E00FDDD4C /* UIImage+RoundedCorner.m */; };
 		789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B812EE291E00FDDD4C /* JSONKit.m */; };
 		789C24C712EE291E00FDDD4C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 789C24B912EE291E00FDDD4C /* README.md */; };
-		789C24C812EE291E00FDDD4C /* BWHockeyController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BC12EE291E00FDDD4C /* BWHockeyController.m */; };
+		789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */; };
 		789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */; };
 		789C257812EE34C300FDDD4C /* Hockey.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 789C257712EE34C300FDDD4C /* Hockey.bundle */; };
 		78D40D8612F2DA9000F39AC2 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8012F2DA9000F39AC2 /* Icon-72.png */; };
@@ -53,7 +55,6 @@
 		78D40D8912F2DA9000F39AC2 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */; };
 		78D40D8A12F2DA9000F39AC2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8412F2DA9000F39AC2 /* Icon.png */; };
 		78D40D8B12F2DA9000F39AC2 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 78D40D8512F2DA9000F39AC2 /* Icon@2x.png */; };
-		78D40FFC12F2FD6A00F39AC2 /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,9 @@
 		7837CF7212DA132000BE3C22 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		784B93BE12FC39B000FF906D /* PSWebTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSWebTableViewCell.h; sourceTree = "<group>"; };
 		784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSWebTableViewCell.m; sourceTree = "<group>"; };
+		784B961C12FC645300FF906D /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGlobal.m; path = iOS/BWGlobal.m; sourceTree = "<group>"; };
+		784B961F12FC65FD00FF906D /* BWApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWApp.h; sourceTree = "<group>"; };
+		784B962012FC65FD00FF906D /* BWApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWApp.m; sourceTree = "<group>"; };
 		7852F1DB12F32585007991B8 /* IconGradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = IconGradient.png; path = ../../client/iOS/IconGradient.png; sourceTree = SOURCE_ROOT; };
 		7852F1DC12F32585007991B8 /* IconGradient@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "IconGradient@2x.png"; path = "../../client/iOS/IconGradient@2x.png"; sourceTree = SOURCE_ROOT; };
 		789C24A712EE291E00FDDD4C /* BWWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWWebViewController.h; sourceTree = "<group>"; };
@@ -104,8 +108,8 @@
 		789C24B812EE291E00FDDD4C /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		789C24B912EE291E00FDDD4C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		789C24BA12EE291E00FDDD4C /* BWGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWGlobal.h; path = iOS/BWGlobal.h; sourceTree = "<group>"; };
-		789C24BB12EE291E00FDDD4C /* BWHockeyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeyController.h; path = iOS/BWHockeyController.h; sourceTree = "<group>"; };
-		789C24BC12EE291E00FDDD4C /* BWHockeyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeyController.m; path = iOS/BWHockeyController.m; sourceTree = "<group>"; };
+		789C24BB12EE291E00FDDD4C /* BWHockeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeyManager.h; path = iOS/BWHockeyManager.h; sourceTree = "<group>"; };
+		789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeyManager.m; path = iOS/BWHockeyManager.m; sourceTree = "<group>"; };
 		789C24BD12EE291E00FDDD4C /* BWHockeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeyViewController.h; path = iOS/BWHockeyViewController.h; sourceTree = "<group>"; };
 		789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeyViewController.m; path = iOS/BWHockeyViewController.m; sourceTree = "<group>"; };
 		789C257712EE34C300FDDD4C /* Hockey.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Hockey.bundle; path = ../../client/iOS/Hockey.bundle; sourceTree = SOURCE_ROOT; };
@@ -115,7 +119,6 @@
 		78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small@2x.png"; path = "Resources/Icon-Small@2x.png"; sourceTree = "<group>"; };
 		78D40D8412F2DA9000F39AC2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/Icon.png; sourceTree = "<group>"; };
 		78D40D8512F2DA9000F39AC2 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/Icon@2x.png"; sourceTree = "<group>"; };
-		78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWGlobal.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HockeyDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HockeyDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -158,13 +161,14 @@
 		1EB32F87122147E20081CF8E /* HockeyClient */ = {
 			isa = PBXGroup;
 			children = (
+				784B961E12FC65F200FF906D /* Model */,
 				789C24A612EE291E00FDDD4C /* BWWebViewController */,
 				789C24A912EE291E00FDDD4C /* Helper */,
 				789C24B612EE291E00FDDD4C /* JSON */,
 				789C24BA12EE291E00FDDD4C /* BWGlobal.h */,
-				78D40FFB12F2FD6A00F39AC2 /* BWGlobal.m */,
-				789C24BB12EE291E00FDDD4C /* BWHockeyController.h */,
-				789C24BC12EE291E00FDDD4C /* BWHockeyController.m */,
+				784B961C12FC645300FF906D /* BWGlobal.m */,
+				789C24BB12EE291E00FDDD4C /* BWHockeyManager.h */,
+				789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */,
 				789C24BD12EE291E00FDDD4C /* BWHockeyViewController.h */,
 				789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */,
 			);
@@ -222,6 +226,15 @@
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		784B961E12FC65F200FF906D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				784B961F12FC65FD00FF906D /* BWApp.h */,
+				784B962012FC65FD00FF906D /* BWApp.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 		789C24A612EE291E00FDDD4C /* BWWebViewController */ = {
@@ -374,10 +387,11 @@
 				789C24C412EE291E00FDDD4C /* UIImage+HockeyAdditions.m in Sources */,
 				789C24C512EE291E00FDDD4C /* UIImage+RoundedCorner.m in Sources */,
 				789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */,
-				789C24C812EE291E00FDDD4C /* BWHockeyController.m in Sources */,
+				789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */,
 				789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */,
-				78D40FFC12F2FD6A00F39AC2 /* BWGlobal.m in Sources */,
 				784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */,
+				784B961D12FC645300FF906D /* BWGlobal.m in Sources */,
+				784B962112FC65FD00FF906D /* BWApp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
