@@ -57,6 +57,7 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 
 - (void)showWebView {
 	webView_.hidden = NO;
+  self.textLabel.text = @"";
 	[self setNeedsDisplay];
 }
 
@@ -79,7 +80,7 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
   if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
-    [self addWebView];
+    //[self addWebView];
   }
   return self;
 }

@@ -221,36 +221,39 @@
 }
 
 - (void)redrawTableView {
-  if (![cells_ count]) {
+  [cells_ removeAllObjects];
+  
+  for (BWApp *app in self.hockeyManager.apps) {
+    PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
+    cell.webViewContent = app.notes;
+    [cell addWebView];
+    // hack
+    cell.textLabel.text = app.version;
     
-    for (BWApp *app in self.hockeyManager.apps) {
-      PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
-      cell.webViewContent = app.notes;
-      [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
-      [cells_ addObject:cell];
-      
-      /*
-       switch (i) {
-       case 0:
-       cell.webView.backgroundColor = [UIColor yellowColor];
-       break;
-       case 1:
-       cell.webView.backgroundColor = [UIColor orangeColor];
-       break;
-       case 2:
-       cell.webView.backgroundColor = [UIColor redColor];
-       break;
-       case 3:
-       cell.webView.backgroundColor = [UIColor greenColor];
-       break;
-       case 4:
-       cell.webView.backgroundColor = [UIColor blueColor];
-       break;
-       default:
-       break;
-       }
-       */
-    }
+    [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
+    [cells_ addObject:cell];
+    
+    /*
+     switch (i) {
+     case 0:
+     cell.webView.backgroundColor = [UIColor yellowColor];
+     break;
+     case 1:
+     cell.webView.backgroundColor = [UIColor orangeColor];
+     break;
+     case 2:
+     cell.webView.backgroundColor = [UIColor redColor];
+     break;
+     case 3:
+     cell.webView.backgroundColor = [UIColor greenColor];
+     break;
+     case 4:
+     cell.webView.backgroundColor = [UIColor blueColor];
+     break;
+     default:
+     break;
+     }
+     */
   }
   
   
