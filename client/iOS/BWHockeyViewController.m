@@ -156,22 +156,24 @@
   // DEBUG
   //  self.tableView.layer.borderColor = [[UIColor orangeColor] CGColor];
   //self.tableView.layer.borderWidth = 2.0;
-  
+
+  BWApp *app = self.hockeyManager.app;
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
-  appStoreHeader_.headerLabel = self.hockeyManager.app.name;
-  NSString *shortVersion = self.hockeyManager.app.shortVersion ? [NSString stringWithFormat:@" (%@)", self.hockeyManager.app.shortVersion] : @"";
-  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyManager.app.version, shortVersion];
+  appStoreHeader_.headerLabel = app.name;
+  NSString *shortVersion = app.shortVersion ? [NSString stringWithFormat:@"%@ ", app.shortVersion] : @"";
+  NSString *version = [shortVersion length] ? [NSString stringWithFormat:@"(%@)",app.version] : app.version;
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortVersion, version];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
   NSMutableString *subHeaderString = [NSMutableString string];
-  if (self.hockeyManager.app.date) {
-    [subHeaderString appendString:[formatter stringFromDate:self.hockeyManager.app.date]];
+  if (app.date) {
+    [subHeaderString appendString:[formatter stringFromDate:app.date]];
   }
-  if (self.hockeyManager.app.size) {
+  if (app.size) {
     if ([subHeaderString length]) {
-      [subHeaderString appendString:@", "];
+      [subHeaderString appendString:@" - "];
     }
-    [subHeaderString appendString:self.hockeyManager.app.sizeInMB];
+    [subHeaderString appendString:app.sizeInMB];
   }
   appStoreHeader_.subHeaderLabel = subHeaderString;
   
