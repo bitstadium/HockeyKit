@@ -35,7 +35,6 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 
 - (void)addWebView {
 	if(webViewContent_) {
-//		CGSize eventTextSize = [self getSizeForEventText];
     CGRect webViewRect = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
 		if(!webView_) {
 			webView_ = [[[UIWebView alloc] initWithFrame:webViewRect] retain];
@@ -44,6 +43,7 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 			webView_.backgroundColor = [UIColor clearColor];
 			webView_.opaque = NO;
 			webView_.delegate = self;
+      webView_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
       
       for(UIView* subView in webView_.subviews){
         if([subView isKindOfClass:[UIScrollView class]]){
@@ -96,7 +96,6 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
   if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
-    //[self addWebView];
   }
   return self;
 }
@@ -107,6 +106,18 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
   [super dealloc];
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UIView
+
+- (void)setFrame:(CGRect)aFrame {
+  BOOL needChange = !CGRectEqualToRect(aFrame, self.frame);
+  [super setFrame:aFrame];
+  
+  if (needChange) {
+    [self addWebView];
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -126,9 +137,11 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 	if(navigationType == UIWebViewNavigationTypeOther)
 		return YES;
 	
+  /*
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Link!" message:@"You touched a link!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 	[alert show];
 	[alert release];
+   */
 	
 	return NO;
 }

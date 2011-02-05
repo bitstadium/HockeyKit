@@ -634,6 +634,10 @@
   return shouldAutorotate;
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+  // update all cells
+  [cells_ makeObjectsPerformSelector:@selector(addWebView)];  
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

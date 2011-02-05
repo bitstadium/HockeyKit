@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface PSWebTableViewCell : UITableViewCell <UIWebViewDelegate> {
   UIWebView *webView_;
   NSString *webViewContent_;
