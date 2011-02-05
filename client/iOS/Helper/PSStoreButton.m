@@ -142,12 +142,13 @@
 - (id)initWithFrame:(CGRect)frame {
   if ((self = [super initWithFrame:frame])) {
     // resizing
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    self.autoresizesSubviews = YES;
+    //self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    //self.autoresizesSubviews = YES;
 		self.layer.needsDisplayOnBoundsChange = YES;
 
     // setup title label
     [self.titleLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+    //self.titleLabel.backgroundColor = [UIColor redColor];
 
     // register for touch events
     [self addTarget:self action:@selector(touchedUpOutside:) forControlEvents:UIControlEventTouchUpOutside];
