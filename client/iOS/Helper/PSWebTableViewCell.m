@@ -44,7 +44,23 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 			webView_.backgroundColor = [UIColor clearColor];
 			webView_.opaque = NO;
 			webView_.delegate = self;
-		}
+      
+      for(UIView* subView in webView_.subviews){
+        if([subView isKindOfClass:[UIScrollView class]]){
+          // disable scrolling
+          UIScrollView *sv = (UIScrollView *)subView;
+          sv.scrollEnabled = NO;
+          sv.bounces = NO;
+          
+          // hide shadow
+          for (UIView* shadowView in [subView subviews]) {
+            if ([shadowView isKindOfClass:[UIImageView class]]) {
+              shadowView.hidden = YES;
+            }            
+          }
+        }
+      }
+    }
 		else
 			webView_.frame = webViewRect;
 		
