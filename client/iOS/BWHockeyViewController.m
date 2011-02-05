@@ -159,12 +159,21 @@
   
   appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
   appStoreHeader_.headerLabel = self.hockeyManager.app.name;
-  NSString *appSize = [NSString stringWithFormat:@", %@", self.hockeyManager.app.sizeInMB];
-  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyManager.app.version, appSize];
+  NSString *shortVersion = self.hockeyManager.app.shortVersion ? [NSString stringWithFormat:@" (%@)", self.hockeyManager.app.shortVersion] : @"";
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), self.hockeyManager.app.version, shortVersion];
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
-  appStoreHeader_.subHeaderLabel = self.hockeyManager.app.date ? [formatter stringFromDate:self.hockeyManager.app.date] : nil;
-  //appStoreHeader_.iconImage = //[UIImage imageNamed:@"AngryBirds.png"];
+  NSMutableString *subHeaderString = [NSMutableString string];
+  if (self.hockeyManager.app.date) {
+    [subHeaderString appendString:[formatter stringFromDate:self.hockeyManager.app.date]];
+  }
+  if (self.hockeyManager.app.size) {
+    if ([subHeaderString length]) {
+      [subHeaderString appendString:@", "];
+    }
+    [subHeaderString appendString:self.hockeyManager.app.sizeInMB];
+  }
+  appStoreHeader_.subHeaderLabel = subHeaderString;
   
   NSString *iconString;
   NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
