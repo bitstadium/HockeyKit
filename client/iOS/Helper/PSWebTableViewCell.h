@@ -20,5 +20,6 @@
 @property (nonatomic, copy) NSString *webViewContent;
 @property (nonatomic, assign) CGSize webViewSize;
 
+- (void)addWebView;
 
 @end

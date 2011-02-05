@@ -112,12 +112,11 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 #pragma mark -
 #pragma mark UITableViewCell
 
-/*
 - (void)prepareForReuse {
 	[self removeWebView];
   self.webViewContent = nil;
 	[super prepareForReuse];
-}*/
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -147,13 +146,11 @@ body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
   frame.size = fittingSize;
   webView_.frame = frame;
   
-  self.webViewSize = fittingSize;
-  BWLog(@"web view size: %f, %f", fittingSize.width, fittingSize.height);
+//  BWLog(@"web view size: %f, %f", fittingSize.width, fittingSize.height);
   
   NSString *output = [webView_ stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight;"];
-  BWLog(@"web view size V2: %@", output);
+//  BWLog(@"web view size V2: %@", output);
   
-  // HACK
   self.webViewSize = CGSizeMake(fittingSize.width, [output integerValue]);
 }
 

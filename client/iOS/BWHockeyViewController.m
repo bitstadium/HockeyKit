@@ -322,7 +322,7 @@
   }
   
   if (rowHeight == 0) {
-    BWLog(@"index: %d has zero height!", indexPath.row);
+    //BWLog(@"index: %d has zero height!", indexPath.row);
     rowHeight = 44;
   }
   /*
