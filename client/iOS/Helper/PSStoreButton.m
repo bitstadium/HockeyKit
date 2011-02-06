@@ -16,6 +16,7 @@
 #endif
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define PS_MIN_HEIGHT 20.0f
 #define PS_MAX_WIDTH 120.0f
 #define PS_PADDING 12.0f
 
@@ -53,10 +54,8 @@
 
 
 @interface PSStoreButton ()
-
 // call when buttonData was updated
 - (void)updateButtonAnimated:(BOOL)animated;
-
 @end
 
 
@@ -64,6 +63,7 @@
 
 @synthesize buttonData = buttonData_;
 @synthesize buttonDelegate = buttonDelegate_;
+@synthesize customPadding = customPadding_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -90,7 +90,7 @@
     // hide text, then start animation
     [self setTitle:@"" forState:UIControlStateNormal];
     [UIView beginAnimations:@"storeButtonUpdate" context:nil];
-    [UIView setAnimationDuration:0.25];
+    [UIView setAnimationDuration:0.25f];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
   }else {
@@ -110,29 +110,41 @@
     [self setTitleColor:RGBCOLOR(148,150,151) forState:UIControlStateNormal];
   }
 
-  // calculate new width
-  CGSize constr = (CGSize){.height = self.frame.size.height, .width = PS_MAX_WIDTH};
-	CGSize newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font constrainedToSize:constr lineBreakMode:UILineBreakModeMiddleTruncation];
-	CGFloat newWidth = newSize.width + (PS_PADDING * 2);
-	CGFloat diff = self.frame.size.width - newWidth;
+  // calculate optimal new size
+  CGSize sizeThatFits = [self sizeThatFits:CGSizeZero];
 
-	for (CALayer *la in self.layer.sublayers) {
-		CGRect cr = la.bounds;
-		cr.size.width = cr.size.width;
-		cr.size.width = newWidth;
-		la.bounds = cr;
-		[la layoutIfNeeded];
+  // move sublayer (can't be animated explcitely)
+  for (CALayer *aLayer in self.layer.sublayers) {
+    CGRect oldFrame = aLayer.frame;
+    CGRect newFrame = oldFrame;
+    newFrame.size.width = sizeThatFits.width;
+    
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0.25f];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    aLayer.frame = newFrame;
+    [CATransaction commit];
 	}
-
-	CGRect cr = self.frame;
-	cr.size.width = cr.size.width;
-	cr.size.width = newWidth;
-	self.frame = cr;
-	self.titleEdgeInsets = UIEdgeInsetsMake(2.0, self.titleEdgeInsets.left + diff, 0.0, 0.0);
-
+  
+  // set outer frame changes
+  self.titleEdgeInsets = UIEdgeInsetsMake(2.0, self.titleEdgeInsets.left, 0.0, 0.0);
+  CGRect cr = self.frame;
+  cr.origin.y = customPadding_.y;
+  cr.origin.x = self.superview.frame.size.width - sizeThatFits.width - customPadding_.x*2;
+  cr.size.width = sizeThatFits.width;
+  self.frame = cr;
+  
   if (animated) {
     [UIView commitAnimations];
   }
+}
+
+- (void)alignToSuperview {
+  [self sizeToFit];
+  CGRect cr = self.frame;
+  cr.origin.y = customPadding_.y;
+  cr.origin.x = self.superview.frame.size.width - cr.size.width - customPadding_.x*2;
+  self.frame = cr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,14 +153,10 @@
 
 - (id)initWithFrame:(CGRect)frame {
   if ((self = [super initWithFrame:frame])) {
-    // resizing
-    //self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    //self.autoresizesSubviews = YES;
 		self.layer.needsDisplayOnBoundsChange = YES;
 
     // setup title label
     [self.titleLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
-    //self.titleLabel.backgroundColor = [UIColor redColor];
 
     // register for touch events
     [self addTarget:self action:@selector(touchedUpOutside:) forControlEvents:UIControlEventTouchUpOutside];
@@ -181,11 +189,46 @@
   return self;
 }
 
+- (id)initWithPadding:(CGPoint)padding {
+ if ((self = [self initWithFrame:CGRectMake(0, 0, 40, PS_MIN_HEIGHT)])) {
+   customPadding_ = padding;
+ }
+  return self;
+}
+
 - (void)dealloc {
   [buttonData_ release];
   [gradient_ release];
 
   [super dealloc];
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UIView
+
+- (CGSize)sizeThatFits:(CGSize)size {
+  CGSize constr = (CGSize){.height = self.frame.size.height, .width = PS_MAX_WIDTH};
+	CGSize newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font constrainedToSize:constr lineBreakMode:UILineBreakModeMiddleTruncation];
+	CGFloat newWidth = newSize.width + (PS_PADDING * 2);
+  CGFloat newHeight = PS_MIN_HEIGHT > newSize.height ? PS_MIN_HEIGHT : newSize.height;
+	//CGFloat diff = self.frame.size.width - newWidth;
+  
+  CGSize sizeThatFits = CGSizeMake(newWidth, newHeight);
+  return sizeThatFits;
+}
+
+- (void)setFrame:(CGRect)rect {
+  [super setFrame:rect];
+
+  // copy frame changes to sublayers
+  for (CALayer *aLayer in self.layer.sublayers) {
+		CGRect rect = aLayer.frame;
+		rect.size.width = self.frame.size.width;
+    rect.size.height = self.frame.size.height;
+		aLayer.frame = rect;
+		[aLayer layoutIfNeeded];
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

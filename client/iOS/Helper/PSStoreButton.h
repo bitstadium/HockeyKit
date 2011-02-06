@@ -10,6 +10,7 @@
 
 // defines a button action set (data container)
 @interface PSStoreButtonData : NSObject {
+  CGPoint customPadding_;
   NSString *label_;
   NSArray *colors_;
   BOOL enabled_;
@@ -37,7 +38,11 @@
   id<PSStoreButtonDelegate> buttonDelegate_;
 
   CAGradientLayer *gradient_;
+  CGPoint customPadding_;
 }
+
+- (id)initWithFrame:(CGRect)frame;
+- (id)initWithPadding:(CGPoint)padding;
 
 // action delegate
 @property (nonatomic, assign) id<PSStoreButtonDelegate> buttonDelegate;
@@ -45,6 +50,10 @@
 // change the button layer
 @property (nonatomic, retain) PSStoreButtonData *buttonData;
 - (void)setButtonData:(PSStoreButtonData *)aButtonData animated:(BOOL)animated;
+
+// align helper
+@property (nonatomic, assign) CGPoint customPadding;
+- (void)alignToSuperview;
 
 // helpers to mimic an AppStore button
 + (NSArray *)appStoreGreenColor;
