@@ -172,11 +172,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         $r = Router::get();
         $udid = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
         // send XML with url to app binary file
-        $ipa_url = $r->baseURL .
-            ($r->api == self::API_V1 ? 
-                'index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier :
-                "api/ios/download/app/$bundleidentifier" . ($udid ? "?udid=$udid" : '')
-            );
+        $ipa_url = $r->baseURL . "api/ios/download/app/$bundleidentifier" . ($udid ? "?udid=$udid" : '');
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
