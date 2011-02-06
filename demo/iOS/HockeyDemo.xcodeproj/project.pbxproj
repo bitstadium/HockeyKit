@@ -35,8 +35,6 @@
 		784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */; };
 		784B961D12FC645300FF906D /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B961C12FC645300FF906D /* BWGlobal.m */; };
 		784B967F12FC912B00FF906D /* BWApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B967E12FC912B00FF906D /* BWApp.m */; };
-		7852F1DD12F32585007991B8 /* IconGradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 7852F1DB12F32585007991B8 /* IconGradient.png */; };
-		7852F1DE12F32585007991B8 /* IconGradient@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7852F1DC12F32585007991B8 /* IconGradient@2x.png */; };
 		789C24BF12EE291E00FDDD4C /* BWWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24A812EE291E00FDDD4C /* BWWebViewController.m */; };
 		789C24C012EE291E00FDDD4C /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AB12EE291E00FDDD4C /* NSString+URLEncoding.m */; };
 		789C24C112EE291E00FDDD4C /* PSAppStoreHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AD12EE291E00FDDD4C /* PSAppStoreHeader.m */; };
@@ -88,8 +86,6 @@
 		784B961C12FC645300FF906D /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGlobal.m; path = iOS/BWGlobal.m; sourceTree = "<group>"; };
 		784B967D12FC912B00FF906D /* BWApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWApp.h; path = iOS/BWApp.h; sourceTree = "<group>"; };
 		784B967E12FC912B00FF906D /* BWApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWApp.m; path = iOS/BWApp.m; sourceTree = "<group>"; };
-		7852F1DB12F32585007991B8 /* IconGradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = IconGradient.png; path = ../../client/iOS/IconGradient.png; sourceTree = SOURCE_ROOT; };
-		7852F1DC12F32585007991B8 /* IconGradient@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "IconGradient@2x.png"; path = "../../client/iOS/IconGradient@2x.png"; sourceTree = SOURCE_ROOT; };
 		789C24A712EE291E00FDDD4C /* BWWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWWebViewController.h; sourceTree = "<group>"; };
 		789C24A812EE291E00FDDD4C /* BWWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWWebViewController.m; sourceTree = "<group>"; };
 		789C24AA12EE291E00FDDD4C /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
@@ -207,8 +203,6 @@
 				78D40D8312F2DA9000F39AC2 /* Icon-Small@2x.png */,
 				78D40D8412F2DA9000F39AC2 /* Icon.png */,
 				78D40D8512F2DA9000F39AC2 /* Icon@2x.png */,
-				7852F1DB12F32585007991B8 /* IconGradient.png */,
-				7852F1DC12F32585007991B8 /* IconGradient@2x.png */,
 				789C257712EE34C300FDDD4C /* Hockey.bundle */,
 				2899E5210DE3E06400AC0155 /* HockeyDemoViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
@@ -345,8 +339,6 @@
 				78D40D8912F2DA9000F39AC2 /* Icon-Small@2x.png in Resources */,
 				78D40D8A12F2DA9000F39AC2 /* Icon.png in Resources */,
 				78D40D8B12F2DA9000F39AC2 /* Icon@2x.png in Resources */,
-				7852F1DD12F32585007991B8 /* IconGradient.png in Resources */,
-				7852F1DE12F32585007991B8 /* IconGradient@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
