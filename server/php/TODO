@@ -1,5 +1,12 @@
-# Routing. v2 REST angehaucht, mod_rewrite rules
+# Kommentare in .team file
 
+# code to my server
+
+# HTTPS/SSL Test
+
+# Unit tests
+
+* ✓ Routing. v2 REST angehaucht, mod_rewrite rules
 * ✓ definieren
 * ✓ umsetzen v2
 * ✓ remove _GET shit
@@ -9,24 +16,10 @@
 * ✓ repair stats
 * ✓ bug von andreas: server, not root, $this->appDirectory geht davon aus dass der server root / ist
 * ✓ fix appDirectory (ohne $this) stuff
-
-# Unit tests
-
-# Kommentare in csv files (userlist.txt, .team file)
-
-# code to server
-
-# HTTPS/SSL Test
-
-# der request für das plist file braucht die UDID und im link der in die plist für __URL__ eingesetzt wird, muss die UDID dazu so dass der request für das IPA auch die UDID kennt und so die teamversionen anbieten kann
-
-* ach noch was, müsste mal schauen was passiert wenn man mit .htaccess passwortschutz einbaut, für nen bundleidentifier und/oder für alles -> sollte fuer PHP gar nix machen, aber waer sehr praktisch um den direkten download zu unterbinden
-
-✓ Refactor main.php into Abstract class and separate iOS and Android classes
-
-✓ Helper methods to Helper/Utility class, static
-
-✓ detect and remove duplicate code
-
-✓ deliver methods
-
+* ✓ Kommentare in userlist.txt
+* ✓ der request für das plist file braucht die UDID und im link der in die plist für __URL__ eingesetzt wird, muss die UDID dazu so dass der request für das IPA auch die UDID kennt und so die teamversionen anbieten kann
+* ✓ ach noch was, müsste mal schauen was passiert wenn man mit .htaccess passwortschutz einbaut, für nen bundleidentifier und/oder für alles -> sollte fuer PHP gar nix machen, aber waer sehr praktisch um den direkten download zu unterbinden
+* ✓ Refactor main.php into Abstract class and separate iOS and Android classes
+* ✓ Helper methods to Helper/Utility class, static
+* ✓ detect and remove duplicate code
+* ✓ deliver methods

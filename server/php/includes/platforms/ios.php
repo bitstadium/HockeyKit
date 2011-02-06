@@ -204,37 +204,16 @@ XML;
 
     protected function deliverAuthenticationResponse($bundleidentifier = null, $udid = null, $appversion = null)
     {
-        $result = array();
+        $result[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
         if (!$bundleidentifier)
         {
-            $result[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
             return Helper::sendJSONAndExit($result);
         }
         
-        // check if the UDID is allowed to be used
-        $filename = $this->appDirectory."stats/".$bundleidentifier;
-
-        $result[self::RETURN_V2_AUTHCODE] = self::RETURN_V2_AUTH_FAILED;
-
-        $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
-    
-        if (file_exists($filename)) {
-            $userlist = @file_get_contents($userlistfilename);
-            
-            $lines = explode("\n", $userlist);
-            foreach ($lines as $i => $line) {
-                if ($line == "") continue;
-                
-                $device = explode(";", $line);
-                
-                if (count($device) > 0) {
-                    // is this the same device?
-                    if ($device[0] == $udid) {
-                        $result[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
-                        break;
-                    }
-                }
-            }
+        $users = self::parseUserList();
+        if (isset($users[$udid]))
+        {
+            $result[self::RETURN_V2_AUTHCODE] = md5(HOCKEY_AUTH_SECRET . $appversion. $bundleidentifier . $udid);
         }
         
         return Helper::sendJSONAndExit($result);

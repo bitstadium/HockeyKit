@@ -51,56 +51,12 @@ class Helper
                 $tmp = array();
                 foreach ($data as $key => $row)
                     $tmp[$key] = $row[$field];
-                $args[$n] = $tmp;
+                    $args[$n] = $tmp;
                 }
         }
         $args[] = &$data;
         @call_user_func_array('array_multisort', $args);
         return array_pop($args);
-    }
-    
-    // map a device UDID into a username
-    static public function mapUser($user, $userlist)
-    {
-        $username = $user;
-        $lines = explode("\n", $userlist);
-
-        foreach ($lines as $i => $line) :
-            if ($line == "") continue;
-            
-            $userelement = explode(";", $line);
-
-            if (count($userelement) >= 2) {
-                if ($userelement[0] == $user) {
-                    $username = $userelement[1];
-                    break;
-                }
-            }
-        endforeach;
-
-        return $username;
-    }
-    
-    // map a device UDID into a list of assigned teams
-    static public function mapTeam($user, $userlist)
-    {
-        $teams = "";
-        $lines = explode("\n", $userlist);
-
-        foreach ($lines as $i => $line) :
-            if ($line == "") continue;
-            
-            $userelement = explode(";", $line);
-
-            if (count($userelement) == 3) {
-                if ($userelement[0] == $user) {
-                    $teams = $userelement[2];
-                    break;
-                }
-            }
-        endforeach;
-
-        return $teams;
     }
     
     // map a device code into readable name

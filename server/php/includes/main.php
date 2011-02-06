@@ -251,32 +251,18 @@ class AppUpdater
     
     protected function checkProtectedVersion($restrict)
     {
-        $allowed = false;
-        
         $allowedTeams = @file_get_contents($restrict);
         if (strlen($allowedTeams) == 0) return true;
-        $allowedTeams = explode(",", $allowedTeams);
-        
-        $udid =  Router::arg(self::CLIENT_KEY_UDID);
-        if ($udid) {
-            // now get the current user statistics
-            $userlist =  "";
 
-            $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
-            $userlist = @file_get_contents($userlistfilename);
-            $assignedTeams = Helper::mapTeam($udid, $userlist);
-            if (strlen($assignedTeams) > 0) {
-                $teams = explode(",", $assignedTeams);
-                foreach ($teams as $team) {
-                    if (in_array($team, $allowedTeams)) {
-                        $allowed = true;
-                        break;
-                    }
-                }
-            }
+        $allowedTeams = explode(",", $allowedTeams);
+        $udid = Router::arg(self::CLIENT_KEY_UDID);
+        $users = self::parseUserList();
+
+        if ($udid && isset($users[$udid])) {
+            return count(array_intersect($users[$udid]['teams'], $allowedTeams)) > 0;
         }
         
-        return $allowed;
+        return false;
     }
     
     protected function getApplicationVersions($bundleidentifier, $platform = null)
@@ -547,13 +533,10 @@ class AppUpdater
                 }
                 
                 // now get the current user statistics
-                $userlist =  "";
-
                 $filename = $this->appDirectory."stats/".$file;
-                $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
         
                 if (file_exists($filename)) {
-                    $userlist = @file_get_contents($userlistfilename);
+                    $users = self::parseUserList();
                 
                     $content = file_get_contents($filename);
                     $lines = explode("\n", $content);
@@ -564,12 +547,12 @@ class AppUpdater
                         $device = explode(";;", $line);
                     
                         $newdevice = array();
-                        $newdevice[self::DEVICE_USER] = Helper::mapUser($device[0], $userlist);
-                        $newdevice[self::DEVICE_PLATFORM] = Helper::mapPlatform($device[1]);
-                        $newdevice[self::DEVICE_OSVERSION] = $device[2];
+                        $newdevice[self::DEVICE_USER]       = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
+                        $newdevice[self::DEVICE_PLATFORM]   = Helper::mapPlatform($device[1]);
+                        $newdevice[self::DEVICE_OSVERSION]  = $device[2];
                         $newdevice[self::DEVICE_APPVERSION] = $device[3];
-                        $newdevice[self::DEVICE_LASTCHECK] = $device[4];
-                        $newdevice[self::DEVICE_LANGUAGE] = $device[5];
+                        $newdevice[self::DEVICE_LASTCHECK]  = $device[4];
+                        $newdevice[self::DEVICE_LANGUAGE]   = $device[5];
                     
                         $newApp[self::INDEX_STATS][] = $newdevice;
                     }
@@ -583,6 +566,32 @@ class AppUpdater
             }
             closedir($handle);
         }
+    }
+    
+    protected function parseUserList()
+    {
+        $users = array();
+        $userlistfilename = $this->appDirectory.self::FILE_USERLIST;
+        
+        $lines = @file($userlistfilename);
+        if (!$lines)
+        {
+            return $users;
+        }
+        foreach ($lines as $line)
+        {
+            @list($udid, $name, $teams) = explode(";", $line);
+            if (!$udid || isset($users[$udid])) continue;
+
+            $teams = array_filter(array_map('trim', explode(',', $teams)));
+            $users[$udid] = array(
+                'udid'  => $udid,
+                'name'  => $name ? $name : '-',
+                'teams' => $teams,
+            );
+        }
+            
+        return $users;
     }
 }
 
