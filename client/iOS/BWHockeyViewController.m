@@ -49,11 +49,12 @@
 
 // apply gloss
 - (UIImage *)addGloss:(UIImage *)image {
-  UIGraphicsBeginImageContext(image.size);
+  IF_IOS4_OR_GREATER(UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);)
+  IF_PRE_IOS4(UIGraphicsBeginImageContext(image.size);)
   
   [image drawAtPoint:CGPointZero];
-  UIImage *iconGradient = [UIImage imageNamed:@"IconGradient.png"];
-  [iconGradient drawAtPoint:CGPointZero blendMode:kCGBlendModeNormal alpha:0.5];
+  UIImage *iconGradient = [UIImage imageNamed:@"IconGradient.png" bundle:kHockeyBundleName];
+  [iconGradient drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:0.5];
   
   UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
   UIGraphicsEndImageContext();
@@ -201,7 +202,6 @@
   }
   appStoreHeader_.iconImage = [self addGloss:[UIImage imageNamed:iconString]];
   
-  
   self.tableView.tableHeaderView = appStoreHeader_;
   
   if (self.modal) {
@@ -210,11 +210,12 @@
                                                                                           action:@selector(onAction:)];
   }
   
-  PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithFrame:CGRectMake(0, 0, 85.0, 22.0)] autorelease];
+  PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(10, 45)] autorelease];
+  storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
   storeButton.buttonDelegate = self;
   storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreGreenColor] enabled:YES];
-  storeButton.center = CGPointMake(250, 55);
 	[self.tableView addSubview:storeButton];
+  [storeButton alignToSuperview];
   
   [self redrawTableView];
 }
@@ -243,32 +244,7 @@
     
     [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
     [cells_ addObject:cell];
-    
-    /*
-     switch (i) {
-     case 0:
-     cell.webView.backgroundColor = [UIColor yellowColor];
-     break;
-     case 1:
-     cell.webView.backgroundColor = [UIColor orangeColor];
-     break;
-     case 2:
-     cell.webView.backgroundColor = [UIColor redColor];
-     break;
-     case 3:
-     cell.webView.backgroundColor = [UIColor greenColor];
-     break;
-     case 4:
-     cell.webView.backgroundColor = [UIColor blueColor];
-     break;
-     default:
-     break;
-     }
-     */
   }
-  
-  
-  
   
   // [self.tableView reloadData];
   /*
@@ -324,20 +300,8 @@
   }
   
   if (rowHeight == 0) {
-    //BWLog(@"index: %d has zero height!", indexPath.row);
     rowHeight = 44;
   }
-  /*
-   if (self.hockeyController.checkInProgress)
-   return rowHeight;
-   
-   int startIndexOfSettings = [self sectionIndexOfSettings];
-   
-   if (indexPath.section == startIndexOfSettings - 1) {
-   if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
-   rowHeight = 88;
-   }
-   }*/
   
   return rowHeight;
 }
