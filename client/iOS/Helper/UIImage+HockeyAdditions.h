@@ -10,6 +10,8 @@
 
 - (UIImage *)ps_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha;
 
+- (id)initWithContentsOfResolutionIndependentFile:(NSString *)path;
++ (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path;
 + (UIImage *)imageNamed:(NSString *)imageName bundle:(NSString *)bundleName;
 
 @end
