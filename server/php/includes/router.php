@@ -221,7 +221,7 @@ class Router
     
     public function serve404()
     {
-        ob_end_clean();
+        @ob_end_clean();
         header('HTTP/1.1 404 Not Found');
         exit('404');
     }
