@@ -34,7 +34,8 @@ class iOSAppUpdater extends AbstractAppUpdater
         }
         $this->addStats($bundleidentifier);
 
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
+        $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
         if ($type == 'plist')
         {
@@ -61,7 +62,10 @@ class iOSAppUpdater extends AbstractAppUpdater
             {
                 return Router::get()->serve404();
             }
-            return Helper::sendFile($file);
+
+            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.'/'.basename($file));
+            ob_end_clean();
+            exit;
         }
         return Router::get()->serve404();
     }

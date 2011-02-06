@@ -5,7 +5,7 @@
 */
 class Helper
 {
-    const CHUNK_SIZE = 1048576; // Size (in bytes) of tiles chunk
+    const CHUNK_SIZE = 65536; // Size (in bytes) of tiles chunk
 
     // Read a file and display its content chunk by chunk
     static public function readfile_chunked($filename, $retbytes = TRUE) {

@@ -34,7 +34,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
         }
         $this->addStats($bundleidentifier);
 
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
+        $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
         if ($type == 'app')
         {
@@ -44,7 +45,10 @@ class AndroidAppUpdater extends AbstractAppUpdater
             {
                 return Router::get()->serve404();
             }
-            return Helper::sendFile($file, AppUpdater::CONTENT_TYPE_APK);
+            // return Helper::sendFile($file, AppUpdater::CONTENT_TYPE_APK);
+            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.'/'.basename($file));
+            ob_end_clean();
+            exit;
         }
         
         return Router::get()->serve404();
