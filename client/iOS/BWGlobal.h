@@ -85,3 +85,6 @@ __VA_ARGS__ \
 }
 
 BOOL isIPad();
+
+// more speed on json decoding
+#define JK_ENABLE_CF_TRANSFER_OWNERSHIP_CALLBACKS
