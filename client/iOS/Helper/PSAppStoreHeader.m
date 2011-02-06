@@ -15,10 +15,10 @@
 #define kLightGrayColor RGBCOLOR(200, 202, 204)
 #define kDarkGrayColor  RGBCOLOR(140, 141, 142)
 
-#define kImageHeight 60
+#define kImageHeight 57
 #define kReflectionHeight 20
 #define kImageBorderRadius 10
-#define kImageMargin 10
+#define kImageMargin 8
 #define kTextRow kImageMargin*2 + kImageHeight
 
 @implementation PSAppStoreHeader
@@ -70,7 +70,7 @@
   // draw header name
   UIColor *mainTextColor = RGBCOLOR(0,0,0);
   UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
-  UIFont *mainFont = [UIFont boldSystemFontOfSize:17];
+  UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
 	UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
 	UIFont *smallFont = [UIFont systemFontOfSize:12];
 
@@ -89,11 +89,13 @@
 
   // middle
   [secondaryTextColor set];
-  [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 20, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
+  [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 28, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
 
   // sub
   [secondaryTextColor set];
-  [subHeaderLabel drawInRect:CGRectMake(kTextRow, kImageMargin + 35, globalWidth-kTextRow, 20) withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
+//  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont minFontSize:12 actualFontSize:nil lineBreakMode:UILineBreakModeTailTruncation baselineAdjustment:UIBaselineAdjustmentNone];
+  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
+//  [subHeaderLabel drawInRect:CGRectMake(kTextRow, kImageMargin + 45, globalWidth-kTextRow, 20) withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
 
   CGColorRelease(myColor);
   CGColorSpaceRelease(myColorSpace);
