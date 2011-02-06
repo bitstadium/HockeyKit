@@ -1,11 +1,10 @@
 # Kommentare in .team file
 
-# code to my server
-
-# HTTPS/SSL Test
-
 # Unit tests
 
+* ✓ redirect zum ausliefern der ipa/apk
+* ✓ code to my server
+* ✓ HTTPS/SSL Test
 * ✓ Routing. v2 REST angehaucht, mod_rewrite rules
 * ✓ definieren
 * ✓ umsetzen v2
