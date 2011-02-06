@@ -494,12 +494,12 @@ class AppUpdater
         readfile($filename);
     }
     
-    protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image)
+    protected function deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image, $udid)
     {
         $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
         
         // send XML with url to app binary file
-        $ipa_url = dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier;
+        $ipa_url = dirname($protocol."://".$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER['REQUEST_URI']) . '/index.php?type=' . self::TYPE_IPA . '&amp;bundleidentifier=' . $bundleidentifier . '&amp;udid=' . $udid;
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
@@ -688,11 +688,6 @@ class AppUpdater
                         $allVersions[$subDir] = $version;
                     }
                 }
-                if (count($allVersions) > 0) {
-                    $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
-                    $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] = $profile;
-                    $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
-                }
             }
         } else {
             $version = array();
@@ -712,6 +707,13 @@ class AppUpdater
                 $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
             }
         }
+        
+        if (count($allVersions) > 0) {
+            $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] = $profile;
+            $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
+        }
+        
         return $files;
     }
     
@@ -730,6 +732,7 @@ class AppUpdater
         $apk = $current[self::FILE_ANDROID_APK];
         $json = $current[self::FILE_ANDROID_JSON];
         $note = $current[self::FILE_COMMON_NOTES];
+        $udid = isset($_GET[self::CLIENT_KEY_UDID]) ? $_GET[self::CLIENT_KEY_UDID] : null;
 
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
         $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
@@ -749,7 +752,7 @@ class AppUpdater
         } else if ($type == self::TYPE_PROFILE) {
             $this->deliverIOSProfile($appDirectory . $profile);
         } else if ($type == self::TYPE_APP) {
-            $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image);
+            $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image, $udid);
         } else if ($type == self::TYPE_IPA) {
             $this->deliverIOSIPA($appDirectory . $ipa);
         } else if ($type == self::TYPE_APK) {
@@ -866,9 +869,9 @@ class AppUpdater
                     $newApp[self::INDEX_DATE]           = filectime($ipa);
                     $newApp[self::INDEX_APPSIZE]        = filesize($ipa);
                     
-                    if ($provisioningProfile) {
-                        $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
-                        $newApp[self::INDEX_PROFILE_UPDATE] = filectime($provisioningProfile);
+                    if ($profile) {
+                        $newApp[self::INDEX_PROFILE]        = $profile;
+                        $newApp[self::INDEX_PROFILE_UPDATE] = filectime($profile);
                     }
                     $newApp[self::INDEX_PLATFORM]       = self::APP_PLATFORM_IOS;
                     
