@@ -36,14 +36,16 @@ require_once('router.php');
 class AppUpdater
 {
     // define the parameters being sent by the client checking for a new version
-    const CLIENT_KEY_TYPE       = 'type';
-    const CLIENT_KEY_BUNDLEID   = 'bundleidentifier';
-    const CLIENT_KEY_APIVERSION = 'api';
-    const CLIENT_KEY_UDID       = 'udid';                   // iOS client only
-    const CLIENT_KEY_APPVERSION = 'version';
-    const CLIENT_KEY_IOSVERSION = 'ios';                    // iOS client only
-    const CLIENT_KEY_PLATFORM   = 'platform';
-    const CLIENT_KEY_LANGUAGE   = 'lang';
+    const CLIENT_KEY_TYPE           = 'type';
+    const CLIENT_KEY_BUNDLEID       = 'bundleidentifier';
+    const CLIENT_KEY_APIVERSION     = 'api';
+    const CLIENT_KEY_UDID           = 'udid';                   // iOS client only
+    const CLIENT_KEY_APPVERSION     = 'version';
+    const CLIENT_KEY_IOSVERSION     = 'ios';                    // iOS client only
+    const CLIENT_KEY_PLATFORM       = 'platform';
+    const CLIENT_KEY_LANGUAGE       = 'lang';
+    const CLIENT_KEY_INSTALLDATE    = 'installdate';
+    const CLIENT_KEY_USAGETIME      = 'usagetime';
     
     // define URL type parameter values
     const TYPE_PROFILE  = 'profile';
@@ -111,12 +113,14 @@ class AppUpdater
     const VERSIONS_SPECIFIC_DATA    = 'specific';
     
     // define keys for the array to keep a list of devices installed this app
-    const DEVICE_USER       = 'user';
-    const DEVICE_PLATFORM   = 'platform';
-    const DEVICE_OSVERSION  = 'osversion';
-    const DEVICE_APPVERSION = 'appversion';
-    const DEVICE_LANGUAGE   = 'language';
-    const DEVICE_LASTCHECK  = 'lastcheck';
+    const DEVICE_USER           = 'user';
+    const DEVICE_PLATFORM       = 'platform';
+    const DEVICE_OSVERSION      = 'osversion';
+    const DEVICE_APPVERSION     = 'appversion';
+    const DEVICE_LANGUAGE       = 'language';
+    const DEVICE_LASTCHECK      = 'lastcheck';
+    const DEVICE_INSTALLDATE    = 'installdate';
+    const DEVICE_USAGETIME      = 'usagetime';
 
     const CONTENT_TYPE_APK = 'application/vnd.android.package-archive';
 
@@ -204,14 +208,16 @@ class AppUpdater
     protected function addStats($bundleidentifier)
     {
         // did we get any user data?
-        $udid       = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
-        $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
-        $osversion  = Router::arg(self::CLIENT_KEY_IOSVERSION);
-        $platform   = Router::arg(self::CLIENT_KEY_PLATFORM);
-        $language   = Router::arg(self::CLIENT_KEY_LANGUAGE);
+        $udid           = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
+        $appversion     = Router::arg(self::CLIENT_KEY_APPVERSION);
+        $osversion      = Router::arg(self::CLIENT_KEY_IOSVERSION);
+        $platform       = Router::arg(self::CLIENT_KEY_PLATFORM);
+        $language       = Router::arg(self::CLIENT_KEY_LANGUAGE);
+        $installdate    = Router::arg(self::CLIENT_KEY_INSTALLDATE);
+        $usagetime      = Router::arg(self::CLIENT_KEY_USAGETIME);
         
         if ($udid && $type != self::TYPE_AUTH) {
-            $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language;
+            $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language.";;".$installdate.";;".$usagetime;
             $content =  "";
 
             $filename = $this->appDirectory."stats/".$bundleidentifier;
@@ -547,18 +553,20 @@ class AppUpdater
                         $device = explode(";;", $line);
                     
                         $newdevice = array();
-                        $newdevice[self::DEVICE_USER]       = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
-                        $newdevice[self::DEVICE_PLATFORM]   = Helper::mapPlatform($device[1]);
-                        $newdevice[self::DEVICE_OSVERSION]  = $device[2];
-                        $newdevice[self::DEVICE_APPVERSION] = $device[3];
-                        $newdevice[self::DEVICE_LASTCHECK]  = $device[4];
-                        $newdevice[self::DEVICE_LANGUAGE]   = $device[5];
+                        $newdevice[self::DEVICE_USER]           = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
+                        $newdevice[self::DEVICE_PLATFORM]       = Helper::mapPlatform($device[1]);
+                        $newdevice[self::DEVICE_OSVERSION]      = $device[2];
+                        $newdevice[self::DEVICE_APPVERSION]     = $device[3];
+                        $newdevice[self::DEVICE_LASTCHECK]      = $device[4];
+                        $newdevice[self::DEVICE_LANGUAGE]       = $device[5];
+                        $newdevice[self::DEVICE_INSTALLDATE]    = $device[6];
+                        $newdevice[self::DEVICE_USAGETIME]      = $device[7];
                     
                         $newApp[self::INDEX_STATS][] = $newdevice;
                     }
                 
                     // sort by app version
-                    $newApp[self::INDEX_STATS] = Helper::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_LASTCHECK, SORT_DESC);
+                    $newApp[self::INDEX_STATS] = Helper::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_INSTALLDATE, SORT_DESC, self::DEVICE_LASTCHECK, SORT_DESC);
                 }
             
                 // add it to the array
