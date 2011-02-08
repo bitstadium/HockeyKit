@@ -145,3 +145,16 @@
 .browser-desktop .span-8 {
     margin-left: 15px;
 }
+
+/* Stats page */
+
+.appgridelement {
+    text-align:center;
+    float:left;
+    height:100px;
+}
+
+.appgridicon {
+    max-height:75px;
+    max-width:75px;
+}

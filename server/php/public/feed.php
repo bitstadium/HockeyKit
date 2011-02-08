@@ -2,13 +2,13 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = new AppUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-	$baseURL = str_replace("/feed.php", "/", $baseURL);
+    $router = Router::get(array('appDirectory' => dirname(__FILE__).DIRECTORY_SEPARATOR));
+    $apps = $router->app;
+    $baseURL = $router->baseURL;
     echo '<?xml version="1.0" encoding="utf-8"?>';
 ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><?php echo $_SERVER['SERVER_NAME'] ?> Apps Updates</title>
+  <title><?php echo $router->servername; ?> Apps Updates</title>
   <subtitle></subtitle>
   <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
   <link rel="self" type="application/atom+xml" href="<?php echo $baseURL ?>/feed.php"/>
@@ -28,18 +28,18 @@
     <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
     <published><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></published>
     <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></updated>
-    <content type="html" xml:base="http://<?php echo $_SERVER['SERVER_NAME'] ?>/" xml:lang="en"><![CDATA[
+    <content type="html" xml:base="http://<?php echo $router->servername ?>/" xml:lang="en"><![CDATA[
     <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
         <p><img src="<?php echo $baseURL.$app[AppUpdater::INDEX_IMAGE] ?>"></p>
     <?php } ?>
     <p><b>Application:</b> <?php echo $app[AppUpdater::INDEX_APP] ?></p>
-    <?php if ($app[AppUpdater::INDEX_SUBTITLE]) { ?>
+    <?php if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) { ?>
       <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
     <?php } else { ?>
       <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
     <?php } ?>
     <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
-    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+    <?php if (isset($app[AppUpdater::INDEX_NOTES]) && $app[AppUpdater::INDEX_NOTES]) : ?>
         <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
     <?php endif ?>]]></content>
   </entry>

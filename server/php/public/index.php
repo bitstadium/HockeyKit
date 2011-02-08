@@ -2,22 +2,22 @@
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
     
-    $apps = new AppUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR);
-    $baseURL = "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-	$baseURL = substr($baseURL, 0, strrpos($baseURL, "/") + 1);
+    $router = Router::get(array('appDirectory' => dirname(__FILE__).DIRECTORY_SEPARATOR));
+    $apps = $router->app;
+    $b = $router->baseURL;
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <title>App Installer</title>
-    	<meta name="viewport" content="width=device-width" />
-        <link rel="stylesheet" href="blueprint/screen.css" type="text/css" media="screen, projection">
-        <link rel="stylesheet" href="blueprint/print.css" type="text/css" media="print">
-        <!--[if IE]><link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-        <link rel="stylesheet" href="blueprint/plugins/buttons/screen.css" type="text/css" media="screen, projection">
-        <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-        <link rel="alternate" type="application/rss+xml" title="App Updates" href="feed.php" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="<?php echo $b ?>blueprint/screen.css" type="text/css" media="screen, projection">
+        <link rel="stylesheet" href="<?php echo $b ?>blueprint/print.css" type="text/css" media="print">
+        <!--[if IE]><link rel="stylesheet" href="<?php echo $b ?>blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+        <link rel="stylesheet" href="<?php echo $b ?>blueprint/plugins/buttons/screen.css" type="text/css" media="screen, projection">
+        <link rel="stylesheet" type="text/css" href="<?php echo $b ?>css/stylesheet.css">
+        <link rel="alternate" type="application/rss+xml" title="App Updates" href="<?php echo $b ?>feed.php" />
     </head>
     <body>
         <div id="container" class="container">
@@ -37,7 +37,7 @@
 
                 <p class='hintdevice'>Visit this page directly from your your iPad, iPhone, iPod touch or Android device and you will be able to install an app directly on your device. (requires iOS 4.0 or later)</p>
 
-                <p class='hintdevice'><strong>iOS:</strong> If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="itunes-installation.html">manually</a> via iTunes.
+                <p class='hintdevice'><strong>iOS:</strong> If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="<?php echo $b ?>itunes-installation.html">manually</a> via iTunes.
                 </p>
                 
                 <p class='hintipad'>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
@@ -52,14 +52,14 @@
             ?>
                 <div class="column span-3">
                 <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                    <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                    <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
                 <div class="column span-8">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                     <p><b>Version:</b>
                   <?php
-                    if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                    if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
                         echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
                     } else {
                         echo $app[AppUpdater::INDEX_VERSION];
@@ -73,14 +73,14 @@
                     </p>
 
                     <div class="desktopbuttons">
-                <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Download Profile </a>
-                <?php }
-                      if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) { ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_IPA . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
-                <?php } else if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) { ?>
-                    <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_APK . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
-                <?php } ?>
+                <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) : ?>
+                        <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Download Profile </a>
+                <?php endif;
+                      if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
+                        <a class="button" href="<?php echo $b . 'api/ios/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
+                <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
+                    <a class="button" href="<?php echo $b . 'api/android/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
+                <?php endif ?>
                     </div>
 
                 <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
@@ -106,7 +106,7 @@
 
                 <p class='hintdevice'>Visit this page directly from your your iPad, iPhone, or iPod touch and you will be able to install an app directly on your device. (requires iOS 4.0 or later)</p>
 
-                <p class='hintdevice'>If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="itunes-installation.html">manually</a> via iTunes.
+                <p class='hintdevice'>If your device does not have iOS 4.0 or later, please download the provisioning profile and the application on your computer from this page and install it <a href="<?php echo $b ?>itunes-installation.html">manually</a> via iTunes.
                 </p>
                 
                 <p class='hintipad'>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
@@ -124,7 +124,7 @@
             ?>
                 <div class="column span-3">
                 <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                    <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                    <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
                 <div class="column span-6">
@@ -146,9 +146,9 @@
 
                     <div class="ipadbuttons">
                 <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
+                        <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
-                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . AppUpdater::TYPE_APP . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
+                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/ios/download/plist/' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
                     </div>
 
                 <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
@@ -198,7 +198,7 @@
                     <div class="column span-4">
                         <a href="#<?php echo $app[AppUpdater::INDEX_APP] ?>">
             <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                            <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                            <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
             <?php } ?>
                             <h4><?php echo $app[AppUpdater::INDEX_APP] ?></h4>
                         </a>
@@ -230,12 +230,12 @@
                     <p class="borderbottom"></p>
                     <a name="<?php echo $app[AppUpdater::INDEX_APP] ?>"><br/></a>
                 <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                    <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                    <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                     <p><b>Version:</b>
                 <?php
-                      if ($app[AppUpdater::INDEX_SUBTITLE]) {
+                      if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
                           echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
                       } else {
                           echo $app[AppUpdater::INDEX_VERSION];
@@ -247,17 +247,17 @@
                       echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                 ?>
                     </p>
-                <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>                    
-                    <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_PROFILE . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
+                    <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
+                    <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
                 <?php } ?>
-                    <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($baseURL . 'index.php?type=' . AppUpdater::TYPE_APP . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
+                    <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/ios/download/plist/' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
                 <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
                     <p><br/><br/></p>
                     <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
                 </div>
             <?php endforeach ?>
-        	</div>
+            </div>
 
                 <div class='android'>
 
@@ -287,7 +287,7 @@
                         <div class="column span-4">
                             <a href="#<?php echo $app[AppUpdater::INDEX_APP] ?>">
                 <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                                <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                                <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                                 <h4><?php echo $app[AppUpdater::INDEX_APP] ?></h4>
                             </a>
@@ -319,7 +319,7 @@
                         <p class="borderbottom"></p>
                         <a name="<?php echo $app[AppUpdater::INDEX_APP] ?>"><br/></a>
                     <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                        <img class="icon" src="<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                        <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                     <?php } ?>
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                         <p><b>Version:</b>
@@ -336,14 +336,14 @@
                           echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                     ?>
                         </p>
-                        <a class="button" href="<?php echo $baseURL . 'index.php?type=' . AppUpdater::TYPE_APK . '&bundleidentifier=' . $app[AppUpdater::INDEX_DIR] ?>">Install Application</a>
+                        <a class="button" href="<?php echo $b . 'api/android/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Install Application</a>
                     <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
                         <p><br/><br/></p>
                         <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
                     <?php endif ?>
                     </div>
                 <?php endforeach ?>
-            	</div>
+                </div>
 
         <script>
         
@@ -371,7 +371,6 @@
                 isAndroidDevice = true;
             }
             
-            isiPad4Device = false;
             if (isNewIOSDevice) {
                 className += "browser-ios4";
             } else if (isiPad4Device) {
@@ -385,7 +384,6 @@
             }
 
             document.getElementsByTagName('body')[0].className = className;
-            
         </script>
         <script>/mobile/i.test(navigator.userAgent) && !window.location.hash && setTimeout(function () {
                 window.scrollTo(0, 1);
