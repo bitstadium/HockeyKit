@@ -14,11 +14,11 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
 	CGImageRef theCGImage = NULL;
 
 	// gradient is always black-white and the mask must be in the gray colorspace
-  CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
 
 	// create the bitmap context
 	CGContextRef gradientBitmapContext = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh,
-                                                             8, 0, colorSpace, kCGImageAlphaNone);
+                                                               8, 0, colorSpace, kCGImageAlphaNone);
 
 	// define the start and end grayscale values (with the alpha, even though
 	// our bitmap context doesn't support alpha the gradient requires it)
@@ -34,7 +34,7 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
 
 	// draw the gradient into the gray bitmap context
 	CGContextDrawLinearGradient(gradientBitmapContext, grayScaleGradient, gradientStartPoint,
-                              gradientEndPoint, kCGGradientDrawsAfterEndLocation);
+                                gradientEndPoint, kCGGradientDrawsAfterEndLocation);
 	CGGradientRelease(grayScaleGradient);
 
 	// convert the context into a CGImageRef and release the context
@@ -42,23 +42,23 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
 	CGContextRelease(gradientBitmapContext);
 
 	// return the imageref containing the gradient
-  return theCGImage;
+    return theCGImage;
 }
 
 CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
-  CGSize size = CGSizeMake(pixelsWide, pixelsHigh);
-  if (UIGraphicsBeginImageContextWithOptions != NULL) {
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
-  }
-  else {
-    UIGraphicsBeginImageContext(size);
-  }
+    CGSize size = CGSizeMake(pixelsWide, pixelsHigh);
+    if (UIGraphicsBeginImageContextWithOptions != NULL) {
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+    }
+    else {
+        UIGraphicsBeginImageContext(size);
+    }
 
-  return UIGraphicsGetCurrentContext();
+    return UIGraphicsGetCurrentContext();
 }
 
 - (UIImage *)ps_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha {
-  if(height == 0)
+    if(height == 0)
 		return nil;
 
 	// create a bitmap graphics context the size of the image
@@ -84,22 +84,22 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
 }
 
 - (id)initWithContentsOfResolutionIndependentFile:(NSString *)path {
-  if ([UIScreen instancesRespondToSelector:@selector(scale)] && (int)[[UIScreen mainScreen] scale] == 2.0) {
-    NSString *path2x = [[path stringByDeletingLastPathComponent]
-                        stringByAppendingPathComponent:[NSString stringWithFormat:@"%@@2x.%@",
-                                                        [[path lastPathComponent] stringByDeletingPathExtension],
-                                                        [path pathExtension]]];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path2x]) {
-      return [self initWithContentsOfFile:path2x];
+    if ([UIScreen instancesRespondToSelector:@selector(scale)] && (int)[[UIScreen mainScreen] scale] == 2.0) {
+        NSString *path2x = [[path stringByDeletingLastPathComponent]
+                            stringByAppendingPathComponent:[NSString stringWithFormat:@"%@@2x.%@",
+                                                            [[path lastPathComponent] stringByDeletingPathExtension],
+                                                            [path pathExtension]]];
+
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path2x]) {
+            return [self initWithContentsOfFile:path2x];
+        }
     }
-  }
-  
-  return [self initWithContentsOfFile:path];
+
+    return [self initWithContentsOfFile:path];
 }
 
 + (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path {
-  return [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
+    return [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
 }
 
 

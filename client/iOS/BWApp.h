@@ -14,7 +14,7 @@
   NSString *shortVersion_;
   NSString *notes_;
   NSDate *date_;
-  NSNumber *size_;  
+  NSNumber *size_;
 }
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *version;
@@ -23,6 +23,8 @@
 @property (nonatomic, copy) NSDate *date;
 @property (nonatomic, copy) NSNumber *size;
 
+- (NSString *)versionString;
+- (NSString *)dateString;
 - (NSString *)sizeInMB;
 - (void)setDateWithTimestamp:(NSTimeInterval)timestamp;
 - (BOOL)isValid;

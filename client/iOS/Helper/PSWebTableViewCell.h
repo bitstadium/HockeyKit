@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface PSWebTableViewCell : UITableViewCell <UIWebViewDelegate> {
-  UIWebView *webView_;
-  NSString *webViewContent_;
-  
-  CGSize webViewSize_;
+    UIWebView *webView_;
+    NSString *webViewContent_;
+
+    CGSize webViewSize_;
 }
 
 @property (nonatomic, retain) UIWebView *webView;

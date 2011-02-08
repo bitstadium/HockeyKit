@@ -33,20 +33,20 @@
 #pragma mark NSObject
 
 - (id)initWithFrame:(CGRect)frame {
-  if ((self = [super initWithFrame:frame])) {
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    self.backgroundColor = kLightGrayColor;
-  }
-  return self;
+    if ((self = [super initWithFrame:frame])) {
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        self.backgroundColor = kLightGrayColor;
+    }
+    return self;
 }
 
 - (void)dealloc {
-  [headerLabel_ release];
-  [middleHeaderLabel_ release];
-  [subHeaderLabel release];
-  [iconImage_ release];
+    [headerLabel_ release];
+    [middleHeaderLabel_ release];
+    [subHeaderLabel release];
+    [iconImage_ release];
 
-  [super dealloc];
+    [super dealloc];
 }
 
 
@@ -55,50 +55,50 @@
 #pragma mark UIView
 
 - (void)drawRect:(CGRect)rect {
-  CGRect bounds = self.bounds;
-  CGFloat globalWidth = self.frame.size.width;
-  CGContextRef context = UIGraphicsGetCurrentContext();
+    CGRect bounds = self.bounds;
+    CGFloat globalWidth = self.frame.size.width;
+    CGContextRef context = UIGraphicsGetCurrentContext();
 
-  // draw the gradient
-  NSArray *colors = [NSArray arrayWithObjects:(id)kDarkGrayColor.CGColor, (id)kLightGrayColor.CGColor, nil];
-  CGGradientRef gradient = CGGradientCreateWithColors(CGColorGetColorSpace((CGColorRef)[colors objectAtIndex:0]), (CFArrayRef)colors, (CGFloat[2]){0, 1});
-  CGPoint top = CGPointMake(CGRectGetMidX(bounds), bounds.origin.y);
-  CGPoint bottom = CGPointMake(CGRectGetMidX(bounds), CGRectGetMaxY(bounds)-kReflectionHeight);
-  CGContextDrawLinearGradient(context, gradient, top, bottom, 0);
-  CGGradientRelease(gradient);
+    // draw the gradient
+    NSArray *colors = [NSArray arrayWithObjects:(id)kDarkGrayColor.CGColor, (id)kLightGrayColor.CGColor, nil];
+    CGGradientRef gradient = CGGradientCreateWithColors(CGColorGetColorSpace((CGColorRef)[colors objectAtIndex:0]), (CFArrayRef)colors, (CGFloat[2]){0, 1});
+    CGPoint top = CGPointMake(CGRectGetMidX(bounds), bounds.origin.y);
+    CGPoint bottom = CGPointMake(CGRectGetMidX(bounds), CGRectGetMaxY(bounds)-kReflectionHeight);
+    CGContextDrawLinearGradient(context, gradient, top, bottom, 0);
+    CGGradientRelease(gradient);
 
-  // draw header name
-  UIColor *mainTextColor = RGBCOLOR(0,0,0);
-  UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
-  UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
+    // draw header name
+    UIColor *mainTextColor = RGBCOLOR(0,0,0);
+    UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
+    UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
 	UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
 	UIFont *smallFont = [UIFont systemFontOfSize:12];
 
-  float myColorValues[] = {255, 255, 255, .8};
-  CGColorSpaceRef myColorSpace = CGColorSpaceCreateDeviceRGB();
-  CGColorRef myColor = CGColorCreate(myColorSpace, myColorValues);
-  CGContextSetShadowWithColor (context, CGSizeMake(1, 1), 1, myColor);
+    float myColorValues[] = {255, 255, 255, .8};
+    CGColorSpaceRef myColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorRef myColor = CGColorCreate(myColorSpace, myColorValues);
+    CGContextSetShadowWithColor (context, CGSizeMake(1, 1), 1, myColor);
 
-  // icon
-  [iconImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin)];
-  [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
+    // icon
+    [iconImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin)];
+    [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
 
-  // header
-  [mainTextColor set];
-  [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
+    // header
+    [mainTextColor set];
+    [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
 
-  // middle
-  [secondaryTextColor set];
-  [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 28, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
+    // middle
+    [secondaryTextColor set];
+    [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 28, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
 
-  // sub
-  [secondaryTextColor set];
-//  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont minFontSize:12 actualFontSize:nil lineBreakMode:UILineBreakModeTailTruncation baselineAdjustment:UIBaselineAdjustmentNone];
-  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
-//  [subHeaderLabel drawInRect:CGRectMake(kTextRow, kImageMargin + 45, globalWidth-kTextRow, 20) withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
+    // sub
+    [secondaryTextColor set];
+    //  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont minFontSize:12 actualFontSize:nil lineBreakMode:UILineBreakModeTailTruncation baselineAdjustment:UIBaselineAdjustmentNone];
+    [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
+    //  [subHeaderLabel drawInRect:CGRectMake(kTextRow, kImageMargin + 45, globalWidth-kTextRow, 20) withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
 
-  CGColorRelease(myColor);
-  CGColorSpaceRelease(myColorSpace);
+    CGColorRelease(myColor);
+    CGColorSpaceRelease(myColorSpace);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,21 +106,21 @@
 #pragma mark Properties
 
 - (void)setIconImage:(UIImage *)anIconImage {
-  if (iconImage_ != anIconImage) {
-    [iconImage_ release];
+    if (iconImage_ != anIconImage) {
+        [iconImage_ release];
 
-    // scale, make borders and reflection
-    iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) method:MGImageResizeScale honorScaleFactor:YES];
-    iconImage_ = [[iconImage_ bw_roundedCornerImage:kImageBorderRadius borderSize:0.0] retain];
-//    iconImage_ = [anIconImage retain];
+        // scale, make borders and reflection
+        iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) method:MGImageResizeScale honorScaleFactor:YES];
+        iconImage_ = [[iconImage_ bw_roundedCornerImage:kImageBorderRadius borderSize:0.0] retain];
+        //    iconImage_ = [anIconImage retain];
 
-    // create reflected image
-    [reflectedImage_ release];
-    reflectedImage_ = nil;
-    if (anIconImage) {
-      reflectedImage_ = [[iconImage_ ps_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
+        // create reflected image
+        [reflectedImage_ release];
+        reflectedImage_ = nil;
+        if (anIconImage) {
+            reflectedImage_ = [[iconImage_ ps_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
+        }
     }
-  }
 }
 
 @end

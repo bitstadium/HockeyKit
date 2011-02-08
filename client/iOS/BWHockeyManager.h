@@ -33,34 +33,35 @@ typedef enum {
 } HockeyComparisonResult;
 
 typedef enum {
-  HockeyUpdateCheckStartup,
-  HockeyUpdateCheckDaily,
-  HockeyUpdateCheckManually
+    HockeyUpdateCheckStartup,
+    HockeyUpdateCheckDaily,
+    HockeyUpdateCheckManually
 } HockeyUpdateSetting;
 
 @protocol BWHockeyControllerDelegate;
 
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
 	id <BWHockeyControllerDelegate> delegate;
-  NSMutableArray *apps_;
+    NSMutableArray *apps_;
 
-  NSString *updateUrl_;
-  NSString *currentAppVersion_;
+    NSString *updateUrl_;
+    NSString *currentAppVersion_;
 
 	BWHockeyViewController *currentHockeyViewController;
 
 	NSMutableData *receivedData_;
 
-  BOOL checkInProgress;
-  BOOL dataFound;
+    BOOL checkInProgress;
+    BOOL dataFound;
+    BOOL updateAvailable_;
 
-  NSURLConnection *urlConnection;
-  NSDate *lastCheck_;
-  BOOL sendUserData_;
-  BOOL showUpdateReminder_;
-  BOOL checkForUpdateOnLaunch_;
-  HockeyComparisonResult compareVersionType_;
-  HockeyUpdateSetting updateSetting_;
+    NSURLConnection *urlConnection;
+    NSDate *lastCheck_;
+    BOOL sendUserData_;
+    BOOL showUpdateReminder_;
+    BOOL checkForUpdateOnLaunch_;
+    HockeyComparisonResult compareVersionType_;
+    HockeyUpdateSetting updateSetting_;
 }
 
 // settings
@@ -84,6 +85,8 @@ typedef enum {
 // see HockeyUpdateSetting-enum. Will be saved in user defaults.
 @property (nonatomic, assign) HockeyUpdateSetting updateSetting;
 
+// is an update available?
+@property (nonatomic, readonly, getter=isUpdateAvailable) BOOL updateAvailable;
 
 // delegate
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
@@ -104,7 +107,7 @@ typedef enum {
 - (void) setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
 - (void) checkForUpdate:(BWHockeyViewController *)hockeyViewController;
 - (void) checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
-                              // UIApplicationDidBecomeActiveNotification notification is sent by iOS
+// UIApplicationDidBecomeActiveNotification notification is sent by iOS
 - (BWHockeyViewController *) hockeyViewController:(BOOL)modal;
 - (void) unsetHockeyViewController;
 - (void) showBetaUpdateView;	// shows the update information screen

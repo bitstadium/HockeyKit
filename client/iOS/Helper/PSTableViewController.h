@@ -11,9 +11,9 @@
 // custom reimplementation of UITableViewController for more flexibility
 @interface PSTableViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
 @private
-  BOOL useShadows;
-  UITableView *tableView;
-  UITableViewStyle _tableViewStyle;
+    BOOL useShadows;
+    UITableView *tableView;
+    UITableViewStyle _tableViewStyle;
 }
 
 @property (nonatomic, retain) UITableView *tableView;

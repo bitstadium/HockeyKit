@@ -27,18 +27,30 @@
 #import "PSTableViewController.h"
 #import "PSAppStoreHeader.h"
 
+typedef enum {
+	AppStoreButtonStateNone,
+	AppStoreButtonStateCheck,
+	AppStoreButtonStateSearching,
+	AppStoreButtonStateUpdate,
+	AppStoreButtonStateInstalling
+} AppStoreButtonState;
+
+
 @class BWHockeyManager;
 
 @interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
-  BWHockeyManager *hockeyManager_;
+    BWHockeyManager *hockeyManager_;
 
-  NSDictionary *cellLayout;
+    NSDictionary *cellLayout;
 
-  BOOL modal_;
+    BOOL modal_;
 	UIStatusBarStyle statusBarStyle_;
-  PSAppStoreHeader *appStoreHeader_;
-  
-  NSMutableArray *cells_;
+    PSAppStoreHeader *appStoreHeader_;
+    PSStoreButton *appStoreButton_;
+
+    AppStoreButtonState appStoreButtonState_;
+
+    NSMutableArray *cells_;
 }
 
 @property (nonatomic, retain) BWHockeyManager *hockeyManager;
