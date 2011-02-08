@@ -53,24 +53,27 @@
                 foreach ($apps->applications as $i => $app) :
             ?>
                 <div class="column span-23" id="app<?php echo $i ?>" style="display:none;">
-                <div class="column span-4">
+                <div class="column span-3">
                 <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
-                    <img class="icon" src="../<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
+                    <img class="appgridicon" src="../<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
-                <div class="column span-18">
+                <div class="column span-6">
                     <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                   <?php if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)</p>
+                    	<b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)
                   <?php } else { ?>
-                    <p><b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?></p>
+                    	<b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?>
                   <?php } ?>
-                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?></p>
+                      	<br/>
+						<b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?>
+					
+                </div>
 
+                <div class="column span-13">
                 <?php if (isset($app[AppUpdater::INDEX_NOTES]) && $app[AppUpdater::INDEX_NOTES]) : ?>
                     <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
-
                 </div>
                 
                 <div class="column span-23">
