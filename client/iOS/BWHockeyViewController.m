@@ -255,9 +255,9 @@
         } else {
             NSString *installed = @"";
             if ([app.version compare: [self.hockeyManager currentAppVersion]] == NSOrderedSame) {
-                installed = @"<span style=\"float:right;\"><b>INSTALLED</b></span>";
+                installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
             }
-            cell.webViewContent = [NSString stringWithFormat: @"<p><b>%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];
+            cell.webViewContent = [NSString stringWithFormat: @"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];
         }
         [cell addWebView];
         // hack
