@@ -102,13 +102,12 @@
 }
 
 - (void)showPreviousVersionAction {
-    //BWLog(@"DO STH");
     showAllVersions_ = YES;    
     [self redrawTableView];
 }
 
 - (void)showHidePreviousVersionsButton {
-    BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1;
+    BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1 && !showAllVersions_;
     
     if(multipleVersionButtonNeeded) {
         // align at the bottom if tableview is small
