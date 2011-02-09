@@ -96,10 +96,10 @@
     }else {
         [self setTitle:self.buttonData.label forState:UIControlStateNormal];
     }
-
+    
     self.enabled = self.buttonData.isEnabled;
     gradient_.colors = self.buttonData.colors;
-
+    
     // show white or gray text, depending on the state
     if (self.buttonData.isEnabled) {
         [self setTitleShadowColor:[UIColor colorWithWhite:0.200 alpha:1.000] forState:UIControlStateNormal];
@@ -109,23 +109,23 @@
         [self.titleLabel setShadowOffset:CGSizeMake(0.0, 0.0)];
         [self setTitleColor:RGBCOLOR(148,150,151) forState:UIControlStateNormal];
     }
-
+    
     // calculate optimal new size
     CGSize sizeThatFits = [self sizeThatFits:CGSizeZero];
-
+    
     // move sublayer (can't be animated explcitely)
     for (CALayer *aLayer in self.layer.sublayers) {
         CGRect oldFrame = aLayer.frame;
         CGRect newFrame = oldFrame;
         newFrame.size.width = sizeThatFits.width;
-
+        
         [CATransaction begin];
         [CATransaction setAnimationDuration:0.25f];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         aLayer.frame = newFrame;
         [CATransaction commit];
 	}
-
+    
     // set outer frame changes
     self.titleEdgeInsets = UIEdgeInsetsMake(2.0, self.titleEdgeInsets.left, 0.0, 0.0);
     CGRect cr = self.frame;
@@ -133,7 +133,7 @@
     cr.origin.x = self.superview.frame.size.width -  sizeThatFits.width - customPadding_.x * 2;
     cr.size.width = sizeThatFits.width;
     self.frame = cr;
-
+    
     if (animated) {
         [UIView commitAnimations];
     }
