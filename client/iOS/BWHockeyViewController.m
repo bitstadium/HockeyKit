@@ -43,8 +43,47 @@
 #pragma mark -
 #pragma mark private
 
-- (void)openSettings:(id)sender {
+- (void)closeSettings {
+    [settingsSheet_ dismissWithClickedButtonIndex:[settingPicker_ selectedRowInComponent:0] animated:YES];
+}
 
+- (void)openSettings:(id)sender {
+    [settingPicker_ release];
+    [settingsSheet_ release];
+    
+    settingsSheet_ = [[UIActionSheet alloc] initWithTitle:@"Settings"
+                                                 delegate:self
+                                        cancelButtonTitle:nil
+                                   destructiveButtonTitle:nil
+                                        otherButtonTitles:nil];
+    
+    settingPicker_ = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0, 44.0, 0.0, 0.0)];
+    settingPicker_.showsSelectionIndicator = YES;
+    settingPicker_.dataSource = self;
+    settingPicker_.delegate = self;
+    [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
+
+    UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)] autorelease];
+    pickerToolbar.barStyle = UIBarStyleBlackOpaque;
+    [pickerToolbar sizeToFit];
+    
+    NSMutableArray *barItems = [[[NSMutableArray alloc] init] autorelease];
+    
+    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    [barItems addObject:flexSpace];
+    
+    UIBarButtonItem *doneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(closeSettings)];
+    [barItems addObject:doneBtn];
+    
+    [pickerToolbar setItems:barItems animated:YES];
+    
+    [settingsSheet_ addSubview:pickerToolbar];
+    [settingsSheet_ addSubview:settingPicker_];
+    [settingsSheet_ showInView:self.view];
+    
+    [UIView beginAnimations:nil context:nil];
+    [settingsSheet_ setBounds:CGRectMake(0, 0, 320, 485)];
+    [UIView commitAnimations];
 }
 
 // apply gloss
@@ -651,6 +690,50 @@
      */
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UIPickerView delegate
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    if (row == 0) {
+        // on startup
+        return BWLocalize(@"HockeySectionCheckStartup");
+    } else if (row == 1) {
+        // daily    
+        return BWLocalize(@"HockeySectionCheckDaily");
+    } else {
+        // manually
+        return BWLocalize(@"HockeySectionCheckManually");
+    }
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return 3;
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    if (row == 0) {
+        // on startup
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckStartup] forKey:kHockeyAutoUpdateSetting];
+        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckStartup];
+    } else if (row == 1) {
+        // daily
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckDaily] forKey:kHockeyAutoUpdateSetting];
+        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckDaily];
+    } else {
+        // manually
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckManually] forKey:kHockeyAutoUpdateSetting];
+        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckManually];
+    }
+    
+    // persist the new value
+    [[NSUserDefaults standardUserDefaults] synchronize];    
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -38,7 +38,7 @@ typedef enum {
 
 @class BWHockeyManager;
 
-@interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate> {
+@interface BWHockeyViewController : PSTableViewController <PSStoreButtonDelegate, UIActionSheetDelegate, UIPickerViewDelegate, UIPickerViewDataSource> {
     BWHockeyManager *hockeyManager_;
 
     NSDictionary *cellLayout;
@@ -49,6 +49,9 @@ typedef enum {
     PSAppStoreHeader *appStoreHeader_;
     PSStoreButton *appStoreButton_;
 
+    UIActionSheet *settingsSheet_;
+    UIPickerView *settingPicker_;
+    
     AppStoreButtonState appStoreButtonState_;
 
     NSMutableArray *cells_;
