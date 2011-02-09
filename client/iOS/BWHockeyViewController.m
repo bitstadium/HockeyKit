@@ -111,8 +111,10 @@
     BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1;
     
     if(multipleVersionButtonNeeded) {
-        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
-        footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        // align at the bottom if tableview is small
+        NSUInteger footerViewSize = self.tableView.frame.size.height < self.view.frame.size.height ? 200 : 100;// TODO
+        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, footerViewSize)];
+        footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
         IF_IOS4_OR_GREATER(
                            //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
@@ -122,12 +124,14 @@
         footerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
         [footerButton setTitle:BWLocalize(@"ShowPreviousVersions") forState:UIControlStateNormal];
         [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
-        footerButton.frame = CGRectMake(0, 50, self.view.frame.size.width, 40);
+        footerButton.frame = CGRectMake(0, footerViewSize-44, self.view.frame.size.width, 44);
         footerButton.backgroundColor = RGBCOLOR(183,183,183);
         [footerView addSubview:footerButton];
         self.tableView.tableFooterView = footerView;
+    }else {
+        self.tableView.tableFooterView = nil;
     }
 }
 
@@ -318,6 +322,10 @@
 }
 
 - (void)redrawTableView {
+    // clean up and remove any pending overservers
+    for (UITableViewCell *cell in cells_) {
+        [cell removeObserver:self forKeyPath:@"webViewSize"];
+    }
     [cells_ removeAllObjects];
 
     if ([self.hockeyManager isUpdateAvailable]) {
