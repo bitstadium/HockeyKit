@@ -57,18 +57,26 @@ typedef enum {
 
     NSURLConnection *urlConnection;
     NSDate *lastCheck_;
+    NSDate *usageStartTimestsamp_;
+
     BOOL sendUserData_;
     BOOL showUpdateReminder_;
     BOOL checkForUpdateOnLaunch_;
+    BOOL sendUsageTime_;
     HockeyComparisonResult compareVersionType_;
     HockeyUpdateSetting updateSetting_;
 }
 
 // settings
+// The setting values need to be adjusted before defining the URL with setUpdateURL: !
 
 // if YES, the current user data is send: device type, iOS version, app version, UDID (default)
 // if NO, no such data is send to the server
 @property (nonatomic, assign, getter=isSendUserData) BOOL sendUserData;
+
+// if YES, the the users usage time of the app to the service, only in 15 minute granularity! (default)
+// if NO, no such data is send to the server
+@property (nonatomic, assign, getter=isSendUsageTime) BOOL sendUsageTime;
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update (default)

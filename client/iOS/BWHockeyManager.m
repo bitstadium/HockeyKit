@@ -44,6 +44,12 @@
 - (NSString *)getDevicePlatform_;
 - (void)connectionOpened_;
 - (void)connectionClosed_;
+
+- (void)startUsage;
+- (void)stopUsage;
+- (NSString *)currentUsageString;
+- (NSString *)installationDateString;
+
 @property (nonatomic, retain) NSMutableData *receivedData;
 @property (nonatomic, copy) NSDate *lastCheck;
 @property (nonatomic, retain) NSMutableArray *apps;
@@ -57,6 +63,7 @@
 @synthesize checkInProgress;
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
+@synthesize sendUsageTime = sendUsageTime_;
 @synthesize alwaysShowUpdateReminder = showUpdateReminder_;
 @synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
 @synthesize compareVersionType = compareVersionType_;
@@ -107,6 +114,61 @@ static inline BOOL IsEmpty(id thing) {
 - (void)connectionClosed_ {
     if ([self.delegate respondsToSelector:@selector(connectionClosed)])
 		[(id)self.delegate connectionClosed];
+}
+
+- (void)startUsage {
+    usageStartTimestsamp_ = [[NSDate alloc] init];
+
+    BOOL newVersion = NO;
+    
+    if (![[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString]) {
+        newVersion = YES;
+    } else {
+        if ([[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
+            newVersion = YES;
+        }
+    }
+    
+    if (newVersion) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSinceReferenceDate]] forKey:kDateOfVersionInstallation];
+        [[NSUserDefaults standardUserDefaults] setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:kUsageTimeForVersionString];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithDouble:0] forKey:kUsageTimeOfCurrentVersion];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }    
+}
+
+- (void)stopUsage {
+    double timeDifference = [[NSDate date] timeIntervalSinceReferenceDate] - [usageStartTimestsamp_ timeIntervalSinceReferenceDate];
+    double previousTimeDifference = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
+
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithDouble:previousTimeDifference + timeDifference] forKey:kUsageTimeOfCurrentVersion];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSString *)currentUsageString {
+    double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
+
+    if (currentUsageTime > 0 && self.isSendUsageTime) {
+        double days = trunc(currentUsageTime / (60 * 60 * 24));
+        double hours = trunc((currentUsageTime - (days * 60 * 60 * 24)) / (60 * 60));
+        double minutes = trunc((currentUsageTime - (hours * 60 * 60)) / 60);
+        
+        if (minutes <= 15) minutes = 15;
+        else if (minutes <= 30) minutes = 30;
+        else if (minutes <= 45) minutes = 45;
+        else if (minutes < 60) { minutes = 0; hours+=1; }
+        else minutes = 0;
+        
+        return [NSString stringWithFormat:@"%.0fd %.0fh %.0fm", days, hours, minutes];
+    } else {
+        return @"";
+    }
+}
+
+- (NSString *)installationDateString {
+    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setDateFormat:@"MM/dd/yyyy"];
+    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kDateOfVersionInstallation] doubleValue]]];
 }
 
 - (void)clearAppCache_ {
@@ -168,6 +230,7 @@ static inline BOOL IsEmpty(id thing) {
 
         // set defaults
         sendUserData_ = YES;
+        sendUsageTime_ = YES;
         showUpdateReminder_ = NO;
         checkForUpdateOnLaunch_ = YES;
         compareVersionType_ = HockeyComparisonResultDifferent;
@@ -176,6 +239,8 @@ static inline BOOL IsEmpty(id thing) {
         self.updateSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
 
         [self loadAppCache_];
+
+        [self startUsage];
     }
 
     return self;
@@ -183,6 +248,8 @@ static inline BOOL IsEmpty(id thing) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 
 	self.delegate = nil;
 
@@ -194,6 +261,7 @@ static inline BOOL IsEmpty(id thing) {
 	[apps_ release];
 	[receivedData_ release];
     [lastCheck_ release];
+    [usageStartTimestsamp_ release];
 
     [super dealloc];
 }
@@ -317,12 +385,14 @@ static inline BOOL IsEmpty(id thing) {
 
     // add additional statistics if user didn't disable flag
     if (self.isSendUserData) {
-        NSString *postDataString = [NSString stringWithFormat:@"version=%@&ios=%@&platform=%@&udid=%@&lang=%@",
+        NSString *postDataString = [NSString stringWithFormat:@"version=%@&ios=%@&platform=%@&udid=%@&lang=%@&usagetime=%@&installdate=%@",
                                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                     [[UIDevice currentDevice] systemVersion],
                                     [self getDevicePlatform_],
-                                    [[UIDevice currentDevice] uniqueIdentifier],
-                                    [[NSLocale preferredLanguages] objectAtIndex:0]
+                                    @"710fb31679b4eb484b854684ab1562ced857062c", // [[UIDevice currentDevice] uniqueIdentifier],
+                                    [[NSLocale preferredLanguages] objectAtIndex:0],
+                                    [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                                    [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
                                     ];
         BWLog(@"posting additional data: %@", postDataString);
         NSData *requestData = [NSData dataWithBytes:[postDataString UTF8String] length:[postDataString length]];
@@ -477,6 +547,16 @@ static inline BOOL IsEmpty(id thing) {
     }
 
 	self.updateUrl = url;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startUsage)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(stopUsage)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
 
 	if (self.isCheckForUpdateOnLaunch) {
 		[[NSNotificationCenter defaultCenter] addObserver:self

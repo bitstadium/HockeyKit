@@ -28,9 +28,12 @@
 // uncomment this line to enable NSLog-debugging output
 #define kHockeyDebugEnabled
 
-#define kArrayOfLastHockeyCheck      @"ArrayOfLastHockeyCheck"
-#define kDateOfLastHockeyCheck			 @"DateOfLastHockeyCheck"
-#define kHockeyAutoUpdateSetting		 @"HockeyAutoUpdateSetting"
+#define kArrayOfLastHockeyCheck		@"ArrayOfLastHockeyCheck"
+#define kDateOfLastHockeyCheck		@"DateOfLastHockeyCheck"
+#define kDateOfVersionInstallation	@"DateOfVersionInstallation"
+#define kUsageTimeOfCurrentVersion	@"UsageTimeOfCurrentVersion"
+#define kUsageTimeForVersionString	@"kUsageTimeForVersionString"
+#define kHockeyAutoUpdateSetting	@"HockeyAutoUpdateSetting"
 
 #define kHockeyBundleName @"Hockey.bundle"
 
