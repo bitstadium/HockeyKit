@@ -74,23 +74,24 @@
 	UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
 	UIFont *smallFont = [UIFont systemFontOfSize:12];
 
-    float myColorValues[] = {255, 255, 255, .8};
+    float myColorValues[] = {255, 255, 255, .6};
     CGColorSpaceRef myColorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef myColor = CGColorCreate(myColorSpace, myColorValues);
-    CGContextSetShadowWithColor (context, CGSizeMake(1, 1), 1, myColor);
 
     // icon
     [iconImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin)];
     [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
 
     // header
+    CGContextSetShadowWithColor (context, CGSizeMake(2, 2), 0, myColor);
     [mainTextColor set];
     [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
 
     // middle
     [secondaryTextColor set];
     [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 28, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
-
+    CGContextSetShadowWithColor(context, CGSizeZero, 0, nil);
+    
     // sub
     [secondaryTextColor set];
     //  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont minFontSize:12 actualFontSize:nil lineBreakMode:UILineBreakModeTailTruncation baselineAdjustment:UIBaselineAdjustmentNone];
