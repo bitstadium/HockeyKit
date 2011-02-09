@@ -201,8 +201,19 @@
             }
         }
     }
-    appStoreHeader_.iconImage = [self addGloss:[UIImage imageNamed:iconString]];
-
+    
+    BOOL addGloss = YES;
+    NSNumber *prerendered = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIPrerenderedIcon"];
+    if (prerendered) {
+        addGloss = ![prerendered boolValue];
+    }
+    
+    if (addGloss) {
+        appStoreHeader_.iconImage = [self addGloss:[UIImage imageNamed:iconString]];
+    } else {
+        appStoreHeader_.iconImage = [UIImage imageNamed:iconString];
+    }
+    
     self.tableView.tableHeaderView = appStoreHeader_;
 
     if (self.modal) {
