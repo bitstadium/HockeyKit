@@ -573,7 +573,7 @@ static inline BOOL IsEmpty(id thing) {
 }
 
 - (void)setUpdateSetting:(HockeyUpdateSetting)anUpdateSetting {
-    if (anUpdateSetting < 0 || anUpdateSetting > HockeyUpdateCheckManually) {
+    if (anUpdateSetting > HockeyUpdateCheckManually) {
         updateSetting_ = HockeyUpdateCheckStartup;
     }
 
