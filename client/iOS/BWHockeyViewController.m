@@ -106,14 +106,37 @@
     [self redrawTableView];
 }
 
+#define kMinPreviousVersionButtonHeight 100
+- (void)realignPreviousVersionButton {
+
+    // manually collect actual table height size
+    NSUInteger tableViewContentHeight = 0;
+    for (int i=0; i < [self tableView:self.tableView numberOfRowsInSection:0]; i++) {
+        tableViewContentHeight += [self tableView:self.tableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+    }
+    tableViewContentHeight += self.tableView.tableHeaderView.frame.size.height;
+    
+    NSUInteger footerViewSize = kMinPreviousVersionButtonHeight;
+    NSUInteger frameHeight = self.view.frame.size.height;
+    if(tableViewContentHeight < frameHeight && (frameHeight - tableViewContentHeight > 100)) {
+        footerViewSize = frameHeight - tableViewContentHeight;
+    }
+        
+    // update footer view
+    if(self.tableView.tableFooterView) {
+        CGRect frame = self.tableView.tableFooterView.frame;
+        frame.size.height = footerViewSize;
+        self.tableView.tableFooterView.frame = frame;
+    }
+}
+
 - (void)showHidePreviousVersionsButton {
     BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1 && !showAllVersions_;
     
     if(multipleVersionButtonNeeded) {
         // align at the bottom if tableview is small
-        NSUInteger footerViewSize = self.tableView.frame.size.height < self.view.frame.size.height ? 200 : 100;// TODO
-        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, footerViewSize)];
-        footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMinPreviousVersionButtonHeight)];
+        footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
         IF_IOS4_OR_GREATER(
                            //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
@@ -125,10 +148,11 @@
         [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
-        footerButton.frame = CGRectMake(0, footerViewSize-44, self.view.frame.size.width, 44);
+        footerButton.frame = CGRectMake(0, kMinPreviousVersionButtonHeight-44, self.view.frame.size.width, 44);
         footerButton.backgroundColor = RGBCOLOR(183,183,183);
         [footerView addSubview:footerButton];
         self.tableView.tableFooterView = footerView;
+        [self realignPreviousVersionButton];
     }else {
         self.tableView.tableFooterView = nil;
     }
@@ -436,6 +460,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     NSInteger index = [cells_ indexOfObject:object];
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [self realignPreviousVersionButton];
 }
 
 // Customize the appearance of table view cells.
