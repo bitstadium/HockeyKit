@@ -72,10 +72,12 @@
         self.modal = newModal;
         self.title = BWLocalize(@"HockeyUpdateScreenTitle");
 
-        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"gear.png" bundle:kHockeyBundleName]
-                                                                                   style:UIBarButtonItemStyleBordered
-                                                                                  target:self
-                                                                                  action:@selector(openSettings:)] autorelease];
+        if ([self.hockeyManager isShowUserSettings]) {
+            self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"gear.png" bundle:kHockeyBundleName]
+                                                                                       style:UIBarButtonItemStyleBordered
+                                                                                      target:self
+                                                                                      action:@selector(openSettings:)] autorelease];
+        }
 
         cells_ = [[NSMutableArray alloc] initWithCapacity:5];
 

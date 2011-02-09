@@ -65,6 +65,7 @@ typedef enum {
     BOOL sendUsageTime_;
     HockeyComparisonResult compareVersionType_;
     HockeyUpdateSetting updateSetting_;
+    BOOL showUserSettings_;
 }
 
 // settings
@@ -82,6 +83,10 @@ typedef enum {
 // if NO, the alert will be displayed only once for each new update (default)
 @property (nonatomic, assign) BOOL alwaysShowUpdateReminder;
 
+// if YES, the user can change the HockeyUpdateSetting value (default)
+// if NO, the user can not change it, and the default or developer defined value will be used
+@property (nonatomic, assign, getter=isShowUserSettings) BOOL showUserSettings;
+
 //if YES, then an update check will be performed after the application becomes active (default)
 //if NO, then the update check will not happen unless invoked explicitly
 @property (nonatomic, assign, getter=isCheckForUpdateOnLaunch) BOOL checkForUpdateOnLaunch;
@@ -91,6 +96,7 @@ typedef enum {
 @property (nonatomic, assign) HockeyComparisonResult compareVersionType;
 
 // see HockeyUpdateSetting-enum. Will be saved in user defaults.
+// default value: HockeyUpdateCheckStartup
 @property (nonatomic, assign) HockeyUpdateSetting updateSetting;
 
 // is an update available?

@@ -68,6 +68,7 @@
 @synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
 @synthesize compareVersionType = compareVersionType_;
 @synthesize lastCheck = lastCheck_;
+@synthesize showUserSettings = showUserSettings_;
 @synthesize updateSetting = updateSetting_;
 @synthesize apps = apps_;
 @synthesize updateAvailable = updateAvailable_;
@@ -233,6 +234,7 @@ static inline BOOL IsEmpty(id thing) {
         sendUsageTime_ = YES;
         showUpdateReminder_ = NO;
         checkForUpdateOnLaunch_ = YES;
+        showUserSettings_ = YES;
         compareVersionType_ = HockeyComparisonResultDifferent;
 
         // load update setting from user defaults and check value
