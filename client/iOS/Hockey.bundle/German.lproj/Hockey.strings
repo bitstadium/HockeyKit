@@ -74,3 +74,5 @@
 
 /* Manually */
 "HockeySectionCheckManually" = "Manuell";
+
+"ShowPreviousVersions" = "Zeige frühere Versionen...";

@@ -62,6 +62,36 @@
     return result;
 }
 
+- (void)showPreviousVersionAction {
+    //BWLog(@"DO STH");
+    showAllVersions_ = YES;    
+    [self redrawTableView];
+}
+
+- (void)showHidePreviousVersionsButton {
+    BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1;
+    
+    if(multipleVersionButtonNeeded) {
+        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
+        footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        IF_IOS4_OR_GREATER(
+                           //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
+                           footerButton.layer.shadowColor = [[UIColor blackColor] CGColor];
+                           footerButton.layer.shadowRadius = 2.0f;
+                           )
+        footerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        [footerButton setTitle:BWLocalize(@"ShowPreviousVersions") forState:UIControlStateNormal];
+        [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
+        footerButton.frame = CGRectMake(0, 50, self.view.frame.size.width, 40);
+        footerButton.backgroundColor = RGBCOLOR(183,183,183);
+        [footerView addSubview:footerButton];
+        self.tableView.tableFooterView = footerView;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
@@ -278,7 +308,15 @@
 
         [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
         [cells_ addObject:cell];
+        
+        // stop on first app if we don't show all versions
+        if (!showAllVersions_) {
+            break;
+        }
     }
+    
+    [self showHidePreviousVersionsButton];
+    [self.tableView reloadData];
 
     // [self.tableView reloadData];
     /*
@@ -341,7 +379,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [cells_ count];
+    NSInteger cellCount = [cells_ count];
+    return cellCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
