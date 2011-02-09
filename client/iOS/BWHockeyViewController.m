@@ -63,7 +63,7 @@
     settingPicker_.delegate = self;
     [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
 
-    UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)] autorelease];
+    UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)] autorelease];
     pickerToolbar.barStyle = UIBarStyleBlackOpaque;
     [pickerToolbar sizeToFit];
     
@@ -82,7 +82,14 @@
     [settingsSheet_ showInView:self.view];
     
     [UIView beginAnimations:nil context:nil];
-    [settingsSheet_ setBounds:CGRectMake(0, 0, 320, 485)];
+    [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+40)];
+    if(self.view.frame.size.width > 320) { // ugly partial landscape fix
+        CGRect frame = settingPicker_.frame;
+        frame.origin.y = 32;
+        settingPicker_.frame = frame;
+        [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+10)];
+    }
+        
     [UIView commitAnimations];
 }
 
