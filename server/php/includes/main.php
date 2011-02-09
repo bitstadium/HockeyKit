@@ -205,7 +205,7 @@ class AppUpdater
     }
   
     
-    protected function addStats($bundleidentifier)
+    protected function addStats($bundleidentifier, $type)
     {
         // did we get any user data?
         $udid           = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
@@ -372,6 +372,7 @@ class AppUpdater
                 $version[self::FILE_COMMON_NOTES] = $note;
                 $allVersions[] = $version;
                 $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
+                $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] = $profile;
                 $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
             } else if ($apk && $json) {
                 $version[self::FILE_ANDROID_APK] = $apk;
@@ -381,12 +382,6 @@ class AppUpdater
                 $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
                 $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
             }
-        }
-        
-        if (count($allVersions) > 0) {
-            $files[self::VERSIONS_SPECIFIC_DATA] = $allVersions;
-            $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] = $profile;
-            $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] = $icon;
         }
         
         return $files;
@@ -419,7 +414,7 @@ class AppUpdater
         $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
             $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
         
-        $this->addStats($bundleidentifier);
+        $this->addStats($bundleidentifier, $type);
         
         switch ($type) {
             case self::TYPE_PROFILE: Helper::sendFile($profile); break;
