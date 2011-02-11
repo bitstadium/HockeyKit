@@ -74,12 +74,12 @@
 
                     <div class="desktopbuttons">
                 <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) : ?>
-                        <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Download Profile </a>
+                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Download Profile </a>
                 <?php endif;
                       if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
-                        <a class="button" href="<?php echo $b . 'api/ios/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
+                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=ipa">Download Application</a>
                 <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
-                    <a class="button" href="<?php echo $b . 'api/android/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Download Application</a>
+                    <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=apk">Download Application</a>
                 <?php endif ?>
                     </div>
 
@@ -146,9 +146,9 @@
 
                     <div class="ipadbuttons">
                 <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
-                        <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
+                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
                 <?php } ?>
-                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/ios/download/plist/' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
+                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR]) ?>?format=plist">Install Application</a>
                     </div>
 
                 <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
@@ -248,9 +248,9 @@
                 ?>
                     </p>
                     <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
-                    <a class="button" href="<?php echo $b . 'api/ios/download/profile/' . $app[AppUpdater::INDEX_DIR] ?>">Install Profile</a>
+                    <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
                 <?php } ?>
-                    <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/ios/download/plist/' . $app[AppUpdater::INDEX_DIR]) ?>">Install Application</a>
+                    <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR]) ?>?format=plist">Install Application</a>
                 <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
                     <p><br/><br/></p>
                     <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
@@ -336,7 +336,7 @@
                           echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                     ?>
                         </p>
-                        <a class="button" href="<?php echo $b . 'api/android/download/app/' . $app[AppUpdater::INDEX_DIR] ?>">Install Application</a>
+                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=apk">Install Application</a>
                     <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
                         <p><br/><br/></p>
                         <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
