@@ -19,19 +19,19 @@
 ## Browser: Single App (v2 only)
 
 * v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview`
-* v2:         `http://hockey/<platform>/app/<bundleidentifier>`
-* v2 Example: `http://hockey/ios/app/de.buzzworks.worldview`
+* v2:         `http://hockey/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/apps/de.buzzworks.worldview`
 
 ### Input
 
 * bundleidentifier = `([\w.-]+)`
-* platform (v2 only)
 
 ### Output
 
 * HTML
 * App details for app matching bundle ID, highest non-private version.
 * If no matching bundle ID or all versions are non-public, show placeholder text
+* If multiple platforms share the same bundle identifier, show them all
 
 
 ## Browser: Download profile
@@ -58,6 +58,9 @@ TODO
 ### Input
 
 * bundleidentifier = `[\w.-]+`
+
+Optional parameters
+
 * udid = `[1-9a-f]{40}` (*optional*, UDID of user’s device, for statistics)
 * version               (*optional*, version of app running on user’s device, for statistics)
 * ios                   (*optional*, OS version of user’s device, for statistics)
@@ -73,23 +76,33 @@ TODO
 
 ## Any Platform Client: Status of an app (v2 only)
 
-* v2:         `http://hockey/api/<platform>/status/<bundleidentifier>`
-* v2 Example: `http://hockey/api/ios/status/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
 ### Input
 
-* platform = for now [`ios`, `android`]
+* apiversion = for now 2
 * bundleidentifier = ([\w.-]+)
 
-Optional parameters, *HTTP POST*.
+Optional parameters, *HTTP GET/POST*.
 
 * udid = `[1-9a-f]{40}` (*semi-optional* (authentication), UDID of user’s device, for *statistics*, *authentication* and *team membership*)
-* version               (*iOS only*, version of app running on user’s device, for *statistics*)
-* ios                   (*iOS only*, OS version of user’s device, for *statistics*)
-* device                (*iOS only*, Device type of user’s device [e.g. “i386”, “iPhone1,1”, “iPod4,1”, “iPad1,1”], for *statistics*)
-* lang                  (*iOS only*, 2 letter language code, for *statistics*)
+* format = 'json'       (return requested data in json format)
+  = 'json'              (return requested data in json format)
+  = 'plist'             (text download of the iOS distribution manifest)
+  = 'mobileprovision'   (binary download of the iOS mobile provisioning profile)
+  = 'ipa'               (binary download of the iOS ipa package)
+  = 'apk'               (binary download of the Android apk package)
+* authorize = 'yes'     (*iOS only*, request authorization code for running the requested app version on the requested device)
+* app_version           (version of app running on user’s device, for *statistics*)
+* os                    (OS name of user’s device, for *statistics*)
+* os_version            (OS version of user’s device, for *statistics*)
+* device                (Device type of user’s device [e.g. “i386”, “iPhone1,1”, “iPod4,1”, “iPad1,1”], for *statistics*)
+* lang                  (2 letter language code, for *statistics*)
+* first_start_at        (first start of an app version as a string, for *statistics*)
+* usage_time            (amount of time a version is in usage, ?d ?h ?m, where minutes are in max. 15 minute granularity, for *statistics*)
 
-**NOTICE**: former parameter `platform` changed to `device`, new parameter `platform` added!
+**NOTICE**: former parameter `platform` changed to `device`!
 
 ### Output
 
@@ -102,14 +115,18 @@ Optional parameters, *HTTP POST*.
 ## iOS client: Download mobile provisioning profile
 
 * v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=profile`
-* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
-* v2 Example: `http://hockey/api/ios/download/profile/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
-### Input
+### API V2 Input
 
-* platform (v2 only)
-* bundleidentifier = `[\w.-]+`
-* type = `profile`
+* apiversion = for now 2
+* bundleidentifier = ([\w.-]+)
+
+Other Parameters (HTTP POST/GET)
+
+* format = 'mobileprovision'   (binary download of the iOS mobile provisioning profile)
+
 
 ### Output
 
@@ -120,14 +137,18 @@ Optional parameters, *HTTP POST*.
 ## iOS client: Download plist file
 
 * v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=app`
-* v2:         `http://hockey/api/<platform>/download/<type>/de.buzzworks.worldview`
-* v2 Example: `http://hockey/api/ios/download/plist/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
-### Input
+### API V2 Input *HTTP GET/POST*
 
-* platform (v2 only)
-* bundleidentifier = `[\w.-]+`
-* type = `app` (v1 only) / `plist` (v2 only)
+* apiversion = for now 2
+* bundleidentifier = ([\w.-]+)
+* format = 'plist'     (binary download of the iOS ipa package)
+
+Optional parameters
+
+* udid = `[1-9a-f]{40}` (*semi-optional* (authentication), UDID of user’s device, for *statistics*, *authentication* and *team membership*)
 
 ### Output
 
@@ -138,14 +159,18 @@ Optional parameters, *HTTP POST*.
 ## iOS client: Download mobile App
 
 * v1:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=ipa`
-* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
-* v2 Example: `http://hockey/api/ios/download/app/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
-### Input
+### API V2 Input *HTTP GET/POST*
 
-* platform (v2 only)
-* bundleidentifier = `[\w.-]+`
-* type = `ipa` (v1 only) / `app` (v2 only)
+* apiversion = for now 2
+* bundleidentifier = ([\w.-]+)
+* format = 'ipa'        (binary download of the iOS ipa package)
+
+Optional parameters
+
+* udid = `[1-9a-f]{40}` (*semi-optional* (authentication), UDID of user’s device, for *statistics*, *authentication* and *team membership*)
 
 ### Output
 
@@ -155,15 +180,14 @@ Optional parameters, *HTTP POST*.
 
 ## Android client: Download mobile App (v2 only)
 
-* v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview-android&type=apk`
-* v2:         `http://hockey/api/<platform>/download/<type>/<bundleidentifier>`
-* v2 Example: `http://hockey/api/android/download/app/de.buzzworks.worldview-android`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
-### Input
+### API V2 Input *HTTP GET/POST*
 
-* platform
-* bundleidentifier = `[\w.-]+`
-* type = `app`
+* apiversion = for now 2
+* bundleidentifier = ([\w.-]+)
+* format = 'apk'        (binary download of the Android apk package)
 
 ### Output
 
@@ -171,21 +195,22 @@ Optional parameters, *HTTP POST*.
 * `.apk` File
 
 
-## iOS client: Authentication code retrieval (v2 only)
+## iOS client: Authentication code retrieval (v2 only, iOS only)
 
-* v-:         `http://hockey/?bundleidentifier=de.buzzworks.worldview&type=authorize&udid=f00&version=1.1`
-* v2:         `http://hockey/api/<platform>/authorize/<bundleidentifier>`
-* v2 Example: `http://hockey/api/ios/authorize/de.buzzworks.worldview`
+* v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
+* v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
 ### Input
 
-* platform
-* bundleidentifier = `[\w.-]+`
+* apiversion = for now 2
+* bundleidentifier = ([\w.-]+)
 
-Other Parameters (HTTP POST in v2, GET in v1)
+Other Parameters (HTTP POST/GET)
 
-* udid
-* version (= appversion)
+* udid = `[1-9a-f]{40}` (*semi-optional* (authentication), UDID of user’s device, for *statistics*, *authentication* and *team membership*)
+* format = 'json'       (return requested data in json format)
+* authorize = 'yes'     (*iOS only*, request authorization code for running the requested app version on the requested device)
+* app_version           (version of app running on user’s device, for *statistics*)
 
 ### Output
 

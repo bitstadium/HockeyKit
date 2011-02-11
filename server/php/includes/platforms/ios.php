@@ -8,36 +8,33 @@ class iOSAppUpdater extends AbstractAppUpdater
 
     protected function status($arguments) {
         $api = self::API_V2;
-        $bundleidentifier = $arguments['bundleidentifier'];
+        $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
         
-        // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $this->addStats($bundleidentifier);
+        $this->addStats($bundleidentifier, null);
 
         return $this->deliverJSON($api, $files);
     }
     
     protected function download($arguments) {
-        
-        $bundleidentifier = $arguments['bundleidentifier'];
-        $type             = $arguments['type'];
+        $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
+        $format           = $arguments[self::PARAM_2_FORMAT];
         
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
-        $this->addStats($bundleidentifier);
 
         $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
         $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
-        if ($type == 'plist')
+        if ($format == self::PARAM_2_FORMAT_VALUE_PLIST) // || $type == self::PARAM_1_TYPE_VALUE_APP)
         {
             $image = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
             $file = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
@@ -49,12 +46,12 @@ class iOSAppUpdater extends AbstractAppUpdater
             self::deliverIOSAppPlist($bundleidentifier, $file, $image);
             exit();
         }
-        elseif ($type == 'profile')
+        elseif ($format == self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION) // || $type == self::PARAM_1_TYPE_VALUE_PROFILE)
         {
             $file = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
             return Helper::sendFile($file);
         }
-        elseif ($type == 'app')
+        elseif ($format == self::PARAM_2_FORMAT_VALUE_IPA) // || $type == self::PARAM_1_TYPE_VALUE_IPA)
         {
             $file = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
 
@@ -62,17 +59,19 @@ class iOSAppUpdater extends AbstractAppUpdater
             {
                 return Router::get()->serve404();
             }
+            
+            return Helper::sendFile($file);
 
-            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.'/'.basename($file));
-            ob_end_clean();
-            exit;
+//            if ($dir == 0) $dir = ""; else $dir .= '/';
+//            @ob_end_clean();
+//            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.basename($file));
         }
         return Router::get()->serve404();
     }
     
     protected function authorize($arguments)
     {
-        $bundleidentifier = $arguments['bundleidentifier'];
+        $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
         
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
@@ -80,8 +79,8 @@ class iOSAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $udid    = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
-        $version = Router::arg(self::CLIENT_KEY_APPVERSION);
+        $udid    = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
+        $version = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
 
         return $this->deliverAuthenticationResponse($bundleidentifier, $udid, $version);
     }
@@ -118,7 +117,7 @@ class iOSAppUpdater extends AbstractAppUpdater
 
                 $result[self::RETURN_TITLE]         = $parsed_plist['items'][0]['metadata']['title'];
 
-                if ($parsed_plist['items'][0]['metadata']['subtitle'])
+                if (array_key_exists('subtitle', $parsed_plist['items'][0]['metadata']) && $parsed_plist['items'][0]['metadata']['subtitle'])
                     $result[self::RETURN_SUBTITLE]  = $parsed_plist['items'][0]['metadata']['subtitle'];
 
                 $result[self::RETURN_RESULT]        = $latestversion;
@@ -128,7 +127,7 @@ class iOSAppUpdater extends AbstractAppUpdater
                 // this is API Version 2
                 $result = array();
                 
-                $appversion =  Router::arg(self::CLIENT_KEY_APPVERSION);
+                $appversion = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
                 
                 foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
                     $ipa = $version[self::FILE_IOS_IPA];
@@ -151,7 +150,7 @@ class iOSAppUpdater extends AbstractAppUpdater
 
                     $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
 
-                    if ($parsed_plist['items'][0]['metadata']['subtitle'])
+                    if (array_key_exists('subtitle', $parsed_plist['items'][0]['metadata']) && $parsed_plist['items'][0]['metadata']['subtitle'])
                         $newAppVersion[self::RETURN_V2_SHORTVERSION]    = $parsed_plist['items'][0]['metadata']['subtitle'];
 
                     $newAppVersion[self::RETURN_V2_VERSION]             = $thisVersion;
@@ -174,9 +173,9 @@ class iOSAppUpdater extends AbstractAppUpdater
     static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image)
     {
         $r = Router::get();
-        $udid = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
+        $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
         // send XML with url to app binary file
-        $ipa_url = $r->baseURL . "api/ios/download/app/$bundleidentifier" . ($udid ? "?udid=$udid" : '');
+        $ipa_url = $r->baseURL . "api/2/apps/$bundleidentifier?format=" . self::PARAM_2_FORMAT_VALUE_IPA . ($udid ? "&udid=$udid" : '');
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
@@ -219,14 +218,14 @@ XML;
         return Helper::sendJSONAndExit($result);
     }
     
-    public function deliver($bundleidentifier, $api, $type)
+    public function deliver($bundleidentifier, $api, $format)
     {
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $api $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
-
+        
         $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
         $ipa   = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
         $plist = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
@@ -240,14 +239,15 @@ XML;
         $profile = $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE];
         $image   = $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON];
 
-        $udid       = Router::arg(self::CLIENT_KEY_UDID);
-        $appversion = Router::arg(self::CLIENT_KEY_APPVERSION);
+        $udid       = Router::arg(self::PARAM_2_UDID);
+        $appversion = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
 
-        $this->addStats($bundleidentifier);
-        switch ($type) {
-            case self::TYPE_PROFILE: Helper::sendFile($profile); break;
-            case self::TYPE_APP:     self::deliverIOSAppPlist($bundleidentifier, $plist, $image); break;
-            case self::TYPE_IPA:     Helper::sendFile($ipa); break;
+        $this->addStats($bundleidentifier, null);
+        switch ($format) {
+            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:    Helper::sendFile($profile); break;
+            case self::PARAM_2_FORMAT_VALUE_PLIST:              self::deliverIOSAppPlist($bundleidentifier, $plist, $image); break;
+            case self::PARAM_2_FORMAT_VALUE_IPA:                Helper::sendFile($ipa); break;
+/*
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
                     $this->deliverAuthenticationResponse($bundleidentifier, $udid, $appversion);
@@ -255,6 +255,7 @@ XML;
                     $this->deliverAuthenticationResponse();
                 }
                 break;
+*/
             default: $this->deliverJSON($api, $files); break;
         }
 

@@ -21,7 +21,7 @@ class Logger
         );
         
         $path = dirname(dirname(__FILE__));
-        file_put_contents("$path/log/hockey.log", $msg."\n", FILE_APPEND);
+        @file_put_contents("$path/log/hockey.log", $msg."\n", FILE_APPEND);
     }
 }
 

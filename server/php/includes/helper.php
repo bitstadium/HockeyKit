@@ -102,7 +102,7 @@ class Helper
     
     static public function sendFile($filename, $content_type = 'application/octet-stream')
     {
-        ob_end_clean();
+        @ob_end_clean();
         header('Content-Disposition: attachment; filename=' . urlencode(basename($filename)));
         header("Content-Type: $content_type");
         header('Content-Transfer-Encoding: binary');
@@ -119,7 +119,7 @@ class Helper
             $content = array(AppUpdater::RETURN_RESULT => $content);
         }
         
-        ob_end_clean();
+        @ob_end_clean();
         header('Content-type: application/json');
         echo json_encode($content);
         exit();

@@ -35,25 +35,38 @@ require_once('router.php');
 
 class AppUpdater
 {
-    // define the parameters being sent by the client checking for a new version
-    const CLIENT_KEY_TYPE           = 'type';
-    const CLIENT_KEY_BUNDLEID       = 'bundleidentifier';
-    const CLIENT_KEY_APIVERSION     = 'api';
-    const CLIENT_KEY_UDID           = 'udid';                   // iOS client only
-    const CLIENT_KEY_APPVERSION     = 'version';
-    const CLIENT_KEY_IOSVERSION     = 'ios';                    // iOS client only
-    const CLIENT_KEY_PLATFORM       = 'platform';
-    const CLIENT_KEY_LANGUAGE       = 'lang';
-    const CLIENT_KEY_INSTALLDATE    = 'installdate';
-    const CLIENT_KEY_USAGETIME      = 'usagetime';
+    // define the API V1 paramater keys (only the parameters that differ from V2, iOS only)
+    const PARAM_1_TYPE          = 'type';
+    const PARAM_1_IDENTIFIER    = 'bundleidentifier';
+    const PARAM_1_DEVICE        = 'platform';
+    const PARAM_1_APP_VERSION   = 'version';
+    const PARAM_1_OS_VERSION    = 'ios';
     
     // define URL type parameter values
-    const TYPE_PROFILE  = 'profile';
-    const TYPE_APP      = 'app';
-    const TYPE_IPA      = 'ipa';
-    const TYPE_APK      = 'apk';
-    const TYPE_AUTH     = 'authorize';
+    const PARAM_1_TYPE_VALUE_PROFILE    = 'profile';
+    const PARAM_1_TYPE_VALUE_APP        = 'app';
+    const PARAM_1_TYPE_VALUE_IPA        = 'ipa';
 
+    // define the API V2 paramater keys
+    const PARAM_2_IDENTIFIER    = 'bundleidentifier';
+    const PARAM_2_FORMAT        = 'format';
+    const PARAM_2_UDID          = 'udid';                   // iOS client only
+    const PARAM_2_DEVICE        = 'device';
+    const PARAM_2_APP_VERSION   = 'app_version';
+    const PARAM_2_OS            = 'os';
+    const PARAM_2_OS_VERSION    = 'os_version';
+    const PARAM_2_LANGUAGE      = 'lang';
+    const PARAM_2_FIRST_START   = 'first_start_at';
+    const PARAM_2_USAGE_TIME    = 'usage_time';
+    
+    // define the API V2 paramater values
+    const PARAM_2_FORMAT_VALUE_JSON             = 'json';
+    const PARAM_2_FORMAT_VALUE_MOBILEPROVISION  = 'mobileprovision';
+    const PARAM_2_FORMAT_VALUE_PLIST            = 'plist';
+    const PARAM_2_FORMAT_VALUE_IPA              = 'ipa';
+    const PARAM_2_FORMAT_VALUE_APK              = 'apk';
+    
+    
     // define the json response format version
     const API_V1 = '1';
     const API_V2 = '2';
@@ -185,39 +198,21 @@ class AppUpdater
        }
        return null;
     }
-
-    protected function validateType($type)
-    {
-        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA, self::TYPE_AUTH, self::TYPE_APK)))
-        {
-            return $type;
-        }
-        return null;
-    }
-
-    protected function validateAPIVersion($api)
-    {
-        if (in_array($api, array(self::API_V1, self::API_V2)))
-        {
-            return $api;
-        }
-        return self::API_V1;
-    }
-  
     
-    protected function addStats($bundleidentifier, $type)
+    protected function addStats($bundleidentifier, $format)
     {
         // did we get any user data?
-        $udid           = Router::arg_match(self::CLIENT_KEY_UDID, '/^[0-9a-f]{40}$/i');
-        $appversion     = Router::arg(self::CLIENT_KEY_APPVERSION);
-        $osversion      = Router::arg(self::CLIENT_KEY_IOSVERSION);
-        $platform       = Router::arg(self::CLIENT_KEY_PLATFORM);
-        $language       = Router::arg(self::CLIENT_KEY_LANGUAGE);
-        $installdate    = Router::arg(self::CLIENT_KEY_INSTALLDATE);
-        $usagetime      = Router::arg(self::CLIENT_KEY_USAGETIME);
+        $udid           = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
+        $appversion     = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
+        $osversion      = Router::arg(self::PARAM_2_OS_VERSION) != null ? Router::arg(self::PARAM_2_OS_VERSION) : Router::arg(self::PARAM_1_OS_VERSION);
+        $osname         = Router::arg(self::PARAM_2_OS) != null ? Router::arg(self::PARAM_2_OS) : "iOS";
+        $device         = Router::arg(self::PARAM_2_DEVICE) != null ? Router::arg(self::PARAM_2_DEVICE) : Router::arg(self::PARAM_1_DEVICE);
+        $language       = Router::arg(self::PARAM_2_LANGUAGE) != null ? Router::arg(self::PARAM_2_LANGUAGE) : "";
+        $firststartdate = Router::arg(self::PARAM_2_FIRST_START) != null ? Router::arg(self::PARAM_2_FIRST_START) : "";
+        $usagetime      = Router::arg(self::PARAM_2_USAGE_TIME) != null ? Router::arg(self::PARAM_2_USAGE_TIME) : "";
         
-        if ($udid && $type != self::TYPE_AUTH) {
-            $thisdevice = $udid.";;".$platform.";;".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language.";;".$installdate.";;".$usagetime;
+        if ($udid) {
+            $thisdevice = $udid.";;".$device.";;".$osname." ".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language.";;".$firststartdate.";;".$usagetime;
             $content =  "";
 
             $filename = $this->appDirectory."stats/".$bundleidentifier;
@@ -231,12 +226,11 @@ class AppUpdater
                 foreach ($lines as $i => $line) :
                     if ($line == "") continue;
                     $device = explode( ";;", $line);
-
                     $newline = $line;
                 
                     if (count($device) > 0) {
                         // is this the same device?
-                        if ($device[0] == $udid) {
+                        if (strcmp($device[0],$udid) == 0) {
                             $newline = $thisdevice;
                             $found = true;
                         }
@@ -261,7 +255,7 @@ class AppUpdater
         if (strlen($allowedTeams) == 0) return true;
 
         $allowedTeams = explode(",", $allowedTeams);
-        $udid = Router::arg(self::CLIENT_KEY_UDID);
+        $udid = Router::arg(self::PARAM_2_UDID);
         $users = self::parseUserList();
 
         if ($udid && isset($users[$udid])) {
@@ -275,7 +269,7 @@ class AppUpdater
     {
         $files = array();
         
-        $language =  Router::arg(self::CLIENT_KEY_LANGUAGE);
+        $language = Router::arg(self::PARAM_2_LANGUAGE);
         
         // iOS
         $ipa        = @array_shift(glob($this->appDirectory.$bundleidentifier . '/*' . self::FILE_IOS_IPA));
@@ -387,12 +381,12 @@ class AppUpdater
         return $files;
     }
     
-    protected function deliver($bundleidentifier, $api, $type)
+    protected function deliver($bundleidentifier, $api, $format)
     {
         $files = $this->getApplicationVersions($bundleidentifier);
 
         if (count($files) == 0) {
-            Logger::log("no versions found: $bundleidentifier $api $type");
+            Logger::log("no versions found: $bundleidentifier $api $format");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND, $bundleidentifier);
         }
         
@@ -414,13 +408,13 @@ class AppUpdater
         $image = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON]) ?
             $files[self::VERSIONS_COMMON_DATA][self::FILE_COMMON_ICON] : null;
         
-        $this->addStats($bundleidentifier, $type);
+        $this->addStats($bundleidentifier, $format);
         
-        switch ($type) {
-            case self::TYPE_PROFILE: Helper::sendFile($profile); break;
-            case self::TYPE_APP:     $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image); break;
-            case self::TYPE_IPA:     Helper::sendFile($ipa); break;
-            case self::TYPE_APK:     Helper::sendFile($apk, self::CONTENT_TYPE_APK); break;
+        switch ($format) {
+            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:    Helper::sendFile($profile); break;
+            case self::PARAM_2_FORMAT_VALUE_PLIST:              $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image); break;
+            case self::PARAM_2_FORMAT_VALUE_IPA:                Helper::sendFile($ipa); break;
+            case self::PARAM_2_FORMAT_VALUE_APK:                Helper::sendFile($apk, self::CONTENT_TYPE_APK); break;
             default: break;
         }
 

@@ -8,9 +8,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
 
     protected function status($arguments) {
         $api = self::API_V2;
-        $bundleidentifier = $arguments['bundleidentifier'];
+        $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
         
-        // return $this->deliver($arguments['bundleidentifier'], self::API_V2, '');
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_ANDROID);
         
         if (count($files) == 0) {
@@ -18,36 +17,38 @@ class AndroidAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $this->addStats($bundleidentifier);
+        $this->addStats($bundleidentifier, null);
         return $this->deliverJSON($api, $files);
     }
 
     protected function download($arguments) {
         
-        $bundleidentifier = $arguments['bundleidentifier'];
-        $type             = $arguments['type'];
+        $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
+        $format           = $arguments[self::PARAM_2_FORMAT];
         
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_ANDROID);
         if (count($files) == 0) {
             Logger::log("no versions found: $bundleidentifier $type");
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
-        $this->addStats($bundleidentifier);
 
         $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
         $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
-        if ($type == 'app')
+        if ($format == self::PARAM_2_FORMAT_VALUE_APK)
         {
             $file = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
-
+            
             if (!$file)
             {
                 return Router::get()->serve404();
             }
-            // return Helper::sendFile($file, AppUpdater::CONTENT_TYPE_APK);
-            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.'/'.basename($file));
-            ob_end_clean();
+
+            @ob_end_clean();
+            return Helper::sendFile($file, self::CONTENT_TYPE_APK);
+//            if ($dir == 0) $dir = ""; else $dir .= '/';
+//            @ob_end_clean();
+//            header('Location: ' . Router::get()->baseURL.$bundleidentifier.'/'.$dir.basename($file));
             exit;
         }
         
@@ -67,7 +68,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
         
         if ($apk && $json) {
             $result = array();
-            $appversion =  Router::arg(self::CLIENT_KEY_APPVERSION);
+            $appversion =  Router::arg(self::PARAM_2_APP_VERSION);
             
             // API version is V2 by default, even if the client provides V1
             foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
@@ -101,46 +102,6 @@ class AndroidAppUpdater extends AbstractAppUpdater
         }
         Logger::log("no versions found: android/deliverJSON");
         return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
-    }
-
-    protected function deliver($bundleidentifier, $api, $type)
-    {
-        $files = $this->getApplicationVersions($bundleidentifier);
-
-        if (count($files) == 0) {
-            Logger::log("no versions found: $bundleidentifier $api $type");
-            return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
-        }
-                        
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $apk  = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;
-        $json = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
-        
-        // notes file is optional, other files are required
-        if (!$apk || !$json) {
-            Logger::log("files incomplete: $bundleidentifier $api $type");
-            return Helper::sendJSONAndExit(self::E_FILES_INCOMPLETE);
-        }
-        
-        $this->addStats($bundleidentifier);
-        
-        if (!$type) {
-            // the client requested the current available updates
-            $this->deliverJSON($api, $files);
-        } else if ($type == self::TYPE_APK) {
-            Helper::sendFile($apk, AppUpdater::CONTENT_TYPE_APK); // TODO send android apk file
-        }
-
-        exit();
-    }
-    
-    protected function validateType($type)
-    {
-        if (in_array($type, array(self::TYPE_PROFILE, self::TYPE_APP, self::TYPE_IPA, self::TYPE_AUTH, self::TYPE_APK)))
-        {
-            return $type;
-        }
-        return null;
     }
 }
 

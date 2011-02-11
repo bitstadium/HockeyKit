@@ -7,12 +7,11 @@ class Router
 {
     static $routes = array(
         '/' => '/index',
-        '/app/:bundleidentifier@^[\w-.]+$' => '/app',
-        '/api/ios/status/:bundleidentifier@^[\w-.]+$' => 'ios/status',
-        '/api/ios/download/:type@(profile|plist|app)/:bundleidentifier@^[\w-.]+$' => 'ios/download',
+        '/apps' => '/index',
+        '/apps/' => '/index',
+        '/apps/:bundleidentifier@^[\w-.]+$' => '/app',
+        '/api/2/apps/:bundleidentifier@^[\w-.]+$' => '/api',
         '/api/ios/authorize/:bundleidentifier@^[\w-.]+$' => 'ios/authorize',
-        '/api/android/status/:bundleidentifier@^[\w-.]+$' => 'android/status',
-        '/api/android/download/:type@app/:bundleidentifier@^[\w-.]+$' => 'android/download',
     );
 
     static protected $instance;
@@ -78,7 +77,7 @@ class Router
         if ($pos = strpos($request, '?')) {
             $request = substr($request, 0, $pos);
         }
-
+        
         $this->collect_arguments();
         
         $protocol = 'http';
@@ -97,16 +96,17 @@ class Router
         );
         
         $this->servername =  $_SERVER['SERVER_NAME'];
-        
-        $is_client = strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false;
-        $this->api = strpos($request, '/api/') === false || $is_client ?
+
+        $is_v1_client = strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false;
+
+        $this->api = (strpos($request, '/api/') === false) || $is_v1_client ?
             AppUpdater::API_V1 : AppUpdater::API_V2;
 
         if ($this->api == AppUpdater::API_V1)
         {
-            return $this->routeV1($options, $is_client);
+            return $this->routeV1($options, $is_v1_client);
         }
-        
+
         // find matching route
         foreach (self::$routes as $route => $info) {
             if (self::match($request, $route, $info))
@@ -198,17 +198,67 @@ class Router
     
     protected function run($options)
     {
-        $this->app = AppUpdater::factory($this->controller, $options);
-        $this->app->execute($this->action, $this->arguments);
+        if ($this->action == "api") {
+            $format = self::arg_match(AppUpdater::PARAM_2_FORMAT, '/^(' . AppUpdater::PARAM_2_FORMAT_VALUE_JSON . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_PLIST . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_IPA . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_APK . ')$/');
+            if ($format) {
+                switch ($format) {
+                    case AppUpdater::PARAM_2_FORMAT_VALUE_JSON: 
+                        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/Android') !== false)
+                            $this->controller = AppUpdater::PLATFORM_ANDROID;
+                        else
+                            $this->controller = AppUpdater::PLATFORM_IOS;
+                        $this->action = "status";
+                        break;
+                    case AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION: 
+                        $this->controller = AppUpdater::PLATFORM_IOS;
+                        $this->action = "download";
+                        break;
+                    case AppUpdater::PARAM_2_FORMAT_VALUE_PLIST: 
+                        $this->controller = AppUpdater::PLATFORM_IOS;
+                        $this->action = "download";
+                        break;
+                    case AppUpdater::PARAM_2_FORMAT_VALUE_IPA: 
+                        $this->controller = AppUpdater::PLATFORM_IOS;
+                        $this->action = "download";
+                        break;
+                    case AppUpdater::PARAM_2_FORMAT_VALUE_APK: 
+                        $this->controller = AppUpdater::PLATFORM_ANDROID;
+                        $this->action = "download";
+                        break;
+                    default: break;
+                }
+                $this->app = AppUpdater::factory($this->controller, $options);
+                $this->app->execute($this->action, array_merge($this->arguments, $this->args));
+            } else {
+                $this->app = AppUpdater::factory(null, $options);
+                $this->app->execute($this->action, array_merge($this->arguments, $this->args));
+            }
+        } else {
+            $this->app = AppUpdater::factory($this->controller, $options);
+            $this->app->execute($this->action, array_merge($this->arguments, $this->args));
+        }
     }
     
     protected function routeV1($options, $is_client = false)
     {
-        $bundleidentifier = self::arg_match(AppUpdater::CLIENT_KEY_BUNDLEID, '/^[\w-.]+$/');
-        $type             = self::arg_match(AppUpdater::CLIENT_KEY_TYPE, '/^(ipa|app|profile)$/');
+        $bundleidentifier = self::arg_match(AppUpdater::PARAM_1_IDENTIFIER, '/^[\w-.]+$/');
+        $type             = self::arg_match(AppUpdater::PARAM_1_TYPE, '/^(' . AppUpdater::PARAM_1_TYPE_VALUE_IPA . '|' . AppUpdater::PARAM_1_TYPE_VALUE_APP . '|' .AppUpdater::PARAM_1_TYPE_VALUE_PROFILE . ')$/');
 
         if ($bundleidentifier && ($type || $is_client))
         {
+            switch ($type) {
+                case AppUpdater::PARAM_1_TYPE_VALUE_IPA: 
+                    $type = AppUpdater::PARAM_2_FORMAT_VALUE_IPA;
+                    break;
+                case AppUpdater::PARAM_1_TYPE_VALUE_APP: 
+                    $type = AppUpdater::PARAM_2_FORMAT_VALUE_PLIST;
+                    break;
+                case AppUpdater::PARAM_1_TYPE_VALUE_PROFILE: 
+                    $type = AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION;
+                    break;
+                default: break;
+            }
+            
             $this->app = AppUpdater::factory(AppUpdater::PLATFORM_IOS, $options);
             $this->app->deliver($bundleidentifier, AppUpdater::API_V1, $type);
             exit;
