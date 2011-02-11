@@ -18,7 +18,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.single"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single"
 
 **Expected Result:**
 
@@ -31,7 +31,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.single&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
 
 **Expected Result:**
 
@@ -46,7 +46,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.single&type=app"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=app"
 
 **Expected Result:**
 
@@ -63,7 +63,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/beta/temp/api/2/apps/test.ios.single?format=ipa</string>
+								<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa</string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -71,7 +71,7 @@ Get the iOS plist manifest file
                             <key>needs-shine</key>
                             <false/>
                             <key>url</key>
-                            <string>http://localhost/beta/temp/test.ios.single/app.png</string>
+                            <string>http://localhost/hockey/test.ios.single/app.png</string>
                         </dict>
                 </array>
 						<key>metadata</key>
@@ -99,7 +99,7 @@ Get the iOS mobile provisioning file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.single&type=profile"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=profile"
 
 **Expected Result:**
 
@@ -112,7 +112,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.single&type=ipa"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=ipa"
 
 **Expected Result:**
 
@@ -125,7 +125,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.multiple"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple"
 
 **Expected Result:**
 
@@ -138,7 +138,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.multiple&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
 
 **Expected Result:**
 	{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","subtitle":"2.0","result":"1"}
@@ -152,7 +152,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.multiple&type=app"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=app"
 
 **Expected Result:**
 
@@ -169,7 +169,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=ipa</string>
+								<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa</string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -177,7 +177,7 @@ Get the iOS plist manifest file
                             <key>needs-shine</key>
                             <false/>
                             <key>url</key>
-                            <string>http://localhost/beta/temp/test.ios.multiple/app.png</string>
+                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
                         </dict>
                 </array>
 						<key>metadata</key>
@@ -205,7 +205,7 @@ Get the iOS mobile provisioning file
 
 **Request:**
 	
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.multiple&type=profile"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=profile"
 
 **Expected Result:**
 
@@ -218,7 +218,7 @@ Get the iOS mobile provisioning file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.multiple&type=ipa"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=ipa"
 
 **Expected Result:**
 
@@ -232,7 +232,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.restrictions"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions"
 
 **Expected Result:**
 
@@ -245,7 +245,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.restrictions&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
 
 **Expected Result:**
 
@@ -260,7 +260,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.restrictions&type=app"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=app"
 
 **Expected Result:**
 	
@@ -277,7 +277,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa</string>
+								<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -285,7 +285,7 @@ Get the iOS plist manifest file
                             <key>needs-shine</key>
                             <false/>
                             <key>url</key>
-                            <string>http://localhost/beta/temp/test.ios.restrictions/app.png</string>
+                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
                         </dict>
                 </array>
 						<key>metadata</key>
@@ -313,7 +313,7 @@ Get the iOS mobile provisioning file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.restrictions&type=profile"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=profile"
 
 **Expected Result:**
 
@@ -326,7 +326,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "CFNetwork" "http://localhost/beta/temp/index.php?bundleidentifier=test.ios.restrictions&type=ipa"
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=ipa"
 
 **Expected Result:**
 
@@ -342,7 +342,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.single?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
 
 **Expected Result:**
 
@@ -357,7 +357,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.single?format=plist"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=plist"
 
 **Expected Result:**
 
@@ -374,7 +374,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.single?format=ipa</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -382,7 +382,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.single/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.single/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -411,7 +411,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.single?format=plist&udid=1234567890123456789012345678901234567890"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=plist&udid=1234567890123456789012345678901234567890"
 
 **Expected Result:**
 
@@ -428,7 +428,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.single?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa&udid=1234567890123456789012345678901234567890</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -436,7 +436,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.single/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.single/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -464,7 +464,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.single?format=mobileprovision"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=mobileprovision"
 
 **Expected Result:**
 
@@ -477,7 +477,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.single?format=ipa"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=ipa"
 
 **Expected Result:**
 
@@ -490,7 +490,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
 
 **Expected Result:**
 
@@ -505,7 +505,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=plist"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=plist"
 
 **Expected Result:**
 
@@ -522,7 +522,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=ipa</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -530,7 +530,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.multiple/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -558,7 +558,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=plist&udid=1234567890123456789012345678901234567890"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=plist&udid=1234567890123456789012345678901234567890"
 
 **Expected Result:**
 	
@@ -575,7 +575,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa&udid=1234567890123456789012345678901234567890</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -583,7 +583,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.multiple/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -611,7 +611,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.multiple?format=ipa"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa"
 
 **Expected Result:**
 
@@ -624,7 +624,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
 
 **Expected Result:**
 
@@ -639,7 +639,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=plist"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist"
 
 **Expected Result:**
 
@@ -656,7 +656,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -664,7 +664,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.restrictions/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -692,7 +692,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567890"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567890"
 
 **Expected Result:**
 
@@ -709,7 +709,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567890</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -717,7 +717,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.restrictions/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -745,7 +745,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa"
 
 **Expected Result:**
 
@@ -758,7 +758,7 @@ Get all available versions and update the stats file.
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567891&app_version=1&os:iOS&os_version=4.3.1&lang=de&first_start_at=now&usage_time=15m&device=iPhone3,1"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567891&app_version=1&os:iOS&os_version=4.3.1&lang=de&first_start_at=now&usage_time=15m&device=iPhone3,1"
 
 **Expected Result:**
 
@@ -773,7 +773,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=plist"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist"
 
 **Expected Result:**
 
@@ -790,7 +790,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -798,7 +798,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.restrictions/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -826,7 +826,7 @@ Get the iOS plist manifest file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567891"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567891"
 
 **Expected Result:**
 
@@ -843,7 +843,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891</string>
+									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891</string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -851,7 +851,7 @@ Get the iOS plist manifest file
 	                            <key>needs-shine</key>
 	                            <false/>
 	                            <key>url</key>
-	                            <string>http://localhost/beta/temp/test.ios.restrictions/app.png</string>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
 	                        </dict>
 	                </array>
 							<key>metadata</key>
@@ -879,7 +879,7 @@ Get the iOS ipa package file
 
 **Request:**
 
-	curl -A "Hockey/iOS" "http://localhost/beta/temp/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891"
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891"
 
 **Expected Result:**
 
@@ -895,7 +895,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "Hockey/Android" "http://localhost/beta/temp/api/2/apps/test.android.single?format=json&app_version=1&os:Android&os_version=2.3.1&lang=en&first_start_at=now&usage_time=15m&device=NexusS"
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.single?format=json&app_version=1&os:Android&os_version=2.3.1&lang=en&first_start_at=now&usage_time=15m&device=NexusS"
 
 **Expected Result:**
 
@@ -908,7 +908,7 @@ Get the android package file
 
 **Request:**
 
-	curl -A "Hockey/Android" "http://localhost/beta/temp/api/2/apps/test.android.single?format=apk"
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.single?format=apk"
 
 **Expected Result:**
 
@@ -921,7 +921,7 @@ Get all available versions
 
 **Request:**
 
-	curl -A "Hockey/Android" "http://localhost/beta/temp/api/2/apps/test.android.multiple?format=json&app_version=1&os:Android&os_version=2.3.1&lang=de&first_start_at=now&usage_time=15m&device=NexusS"
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.multiple?format=json&app_version=1&os:Android&os_version=2.3.1&lang=de&first_start_at=now&usage_time=15m&device=NexusS"
 
 **Expected Result:**
 
@@ -934,7 +934,7 @@ Get the android package file
 
 **Request:**
 
-	curl -A "Hockey/Android" "http://localhost/beta/temp/api/2/apps/test.android.multiple?format=apk"
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.multiple?format=apk"
 
 **Expected Result:**
 
