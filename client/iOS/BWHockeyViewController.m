@@ -189,7 +189,7 @@
 }
 
 - (id)init {
-	return [self init:[BWHockeyManager sharedHockeyController] modal:NO];
+	return [self init:[BWHockeyManager sharedHockeyManager] modal:NO];
 }
 
 - (void)dealloc {

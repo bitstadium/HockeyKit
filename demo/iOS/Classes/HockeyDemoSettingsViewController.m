@@ -85,7 +85,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyController] hockeyViewController:NO];
+  BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyManager] hockeyViewController:NO];
   // ...
   // Pass the selected object to the new view controller.
   [self.navigationController pushViewController:hockeyViewController animated:YES];

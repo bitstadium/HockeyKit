@@ -115,7 +115,7 @@ typedef enum {
 - (BWApp *)app;
 - (NSArray *)apps;
 
-+ (BWHockeyManager *)sharedHockeyController;
++ (BWHockeyManager *)sharedHockeyManager;
 
 - (void) setUpdateURL:(NSString *)url;
 - (void) setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;

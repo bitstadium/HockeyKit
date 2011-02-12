@@ -77,25 +77,19 @@
 #pragma mark -
 #pragma mark static
 
-+ (BWHockeyManager *)sharedHockeyController {
-	static BWHockeyManager *hockeyController = nil;
++ (BWHockeyManager *)sharedHockeyManager {
+	static BWHockeyManager *hockeyManager = nil;
 
-	if (hockeyController == nil) {
-		hockeyController = [[BWHockeyManager alloc] init];
+	if (hockeyManager == nil) {
+		hockeyManager = [[BWHockeyManager alloc] init];
 	}
 
-	return hockeyController;
+	return hockeyManager;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark private
-
-static inline BOOL IsEmpty(id thing) {
-	return thing == nil ||
-    ([thing respondsToSelector:@selector(length)] && [(NSData *)thing length] == 0) ||
-    ([thing respondsToSelector:@selector(count)]  && [(NSArray *)thing count] == 0);
-}
 
 - (NSString *)getDevicePlatform_ {
 	size_t size;
@@ -178,7 +172,7 @@ static inline BOOL IsEmpty(id thing) {
 
 - (void)checkAndWriteDefaultAppCache_ {
     // populate with default values (if empty)
-    if (IsEmpty(self.apps)) {
+    if (![self.apps count]) {
         BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
         defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
         defaultApp.version = currentAppVersion_;
@@ -469,7 +463,7 @@ static inline BOOL IsEmpty(id thing) {
         self.lastCheck = [NSDate date];
 
         // server returned empty response?
-        if (IsEmpty(feedArray)) {
+        if (![feedArray count]) {
             BWLog(@"Warning: Server returned empty response");
             [self updateViewController_];
 			return;

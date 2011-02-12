@@ -38,7 +38,7 @@
   // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
   // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  [[BWHockeyManager sharedHockeyController] setUpdateURL:@"http://alpha.buzzworks.de/" delegate:self];
+  [[BWHockeyManager sharedHockeyManager] setUpdateURL:@"http://alpha.buzzworks.de/" delegate:self];
 #endif
 
   return YES;
