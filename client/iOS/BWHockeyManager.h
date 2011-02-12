@@ -124,8 +124,18 @@ typedef enum {
 // open update info view
 - (void)showUpdateView;
 
+// manually start an update check
+- (void)checkForUpdate;
+
 // initiates app-download call. displays an system UIAlertView
 - (BOOL)initiateAppDownload;
+
+// convenience methode to create hockey view controller
+- (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
+
+// get/set current active hockey view controller
+@property (nonatomic, retain) BWHockeyViewController *currentHockeyViewController;
+
 
 // convenience method to get current running version string
 - (NSString *)currentAppVersion;
@@ -133,17 +143,6 @@ typedef enum {
 // get newest app or array of all available versions
 - (BWApp *)app;
 - (NSArray *)apps;
-
-// convenience methode to create hockey view controller
-- (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
-
-- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController;
-
-// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
-- (void)checkForUpdate;
-
-// get/set current active hockey view controller
-@property (nonatomic, retain) BWHockeyViewController *currentHockeyViewController;
 
 @end
 

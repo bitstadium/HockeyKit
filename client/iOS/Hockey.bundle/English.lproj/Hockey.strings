@@ -21,7 +21,6 @@
 /* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
 "HockeyUpdateAlertText" = "Would you like to check out the new update?";
 
-
 /* Update details screen */
 
 /* Update Details */
@@ -75,3 +74,5 @@
 "HockeyVersion" = "Version";
 
 "ShowPreviousVersions" = "Show previous versions...";
+
+"HockeyUpdateAlertTextWithAppVersion" = "%@ is available.\nWould you like to check out the new update?";

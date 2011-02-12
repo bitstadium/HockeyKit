@@ -248,24 +248,22 @@
 
         [self startUsage];
     }
-
     return self;
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 
-	self.delegate = nil;
+    self.delegate = nil;
 
     [urlConnection_ cancel];
     self.urlConnection = nil;
 
-	currentHockeyViewController_ = nil;
+    [currentHockeyViewController_ release];
     [updateURL_ release];
-	[apps_ release];
-	[receivedData_ release];
+    [apps_ release];
+    [receivedData_ release];
     [lastCheck_ release];
     [usageStartTimestamp_ release];
 
@@ -278,10 +276,6 @@
 
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal {
     return [[[BWHockeyViewController alloc] init:self modal:modal] autorelease];
-}
-
-- (void)unsetHockeyViewController {
-    currentHockeyViewController_ = nil;
 }
 
 - (void)showUpdateView {
@@ -330,8 +324,9 @@
 
 
 - (void)showCheckForBetaAlert_ {
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
-                                                         message:BWLocalize(@"HockeyUpdateAlertText")
+    NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.app.name, [self.app versionString]];
+  UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
+                                                         message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), appNameAndVersion]
                                                         delegate:self
                                                cancelButtonTitle:BWLocalize(@"HockeyNo")
                                                otherButtonTitles:BWLocalize(@"HockeyYes"), nil
@@ -362,21 +357,16 @@
 }
 
 - (void)checkForUpdate {
-    [self checkForUpdate:nil];
-}
-
-- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController {
     if (self.isCheckInProgress) return;
 
     checkInProgress_ = YES;
-    currentHockeyViewController_ = hockeyViewController;
 
     // do we need to update?
     BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;
     if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
         BWLog(@"update not needed right now");
         checkInProgress_ = NO;
-        [currentHockeyViewController_ redrawTableView];
+        [self updateViewController_];
         return;
     }
 
@@ -414,7 +404,7 @@
         [self registerOnline];
     }
 
-    [currentHockeyViewController_ redrawTableView];
+    [self updateViewController_];
 }
 
 - (BOOL)initiateAppDownload {
@@ -482,8 +472,7 @@
     self.urlConnection = nil;
     checkInProgress_ = NO;
 
-    [currentHockeyViewController_ redrawTableView];
-
+    [self updateViewController_];
     [self registerOnline];
 }
 
@@ -588,12 +577,20 @@
 
 - (void)wentOnline:(NSNotification *)note {
     [self unregisterOnline];
-    [self checkForUpdate:NO];
+    [self checkForUpdate];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Properties
+
+- (void)setCurrentHockeyViewController:(BWHockeyViewController *)aCurrentHockeyViewController {
+  if (currentHockeyViewController_ != aCurrentHockeyViewController) {
+    [currentHockeyViewController_ release];
+    currentHockeyViewController_ = [aCurrentHockeyViewController retain];
+    BWLog(@"active hockey view controller: %@", aCurrentHockeyViewController);
+  }
+}
 
 - (void)setUpdateURL:(NSString *)anUpdateURL {
   // ensure url ends with a trailing slash
