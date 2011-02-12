@@ -310,6 +310,11 @@
             navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         }
 
+        // page sheet for the iPad
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [navController respondsToSelector:@selector(setModalPresentationStyle:)]) {
+          navController.modalPresentationStyle = UIModalPresentationFormSheet;
+        }
+
         [parentViewController presentModalViewController:navController animated:YES];
     } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
