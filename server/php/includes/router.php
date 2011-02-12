@@ -10,8 +10,7 @@ class Router
         '/apps' => '/index',
         '/apps/' => '/index',
         '/apps/:bundleidentifier@^[\w-.]+$' => '/app',
-        '/api/2/apps/:bundleidentifier@^[\w-.]+$' => '/api',
-        '/api/ios/authorize/:bundleidentifier@^[\w-.]+$' => 'ios/authorize',
+        '/api/2/apps/:bundleidentifier@^[\w-.]+$' => '/api'
     );
 
     static protected $instance;
@@ -200,6 +199,8 @@ class Router
     {
         if ($this->action == "api") {
             $format = self::arg_match(AppUpdater::PARAM_2_FORMAT, '/^(' . AppUpdater::PARAM_2_FORMAT_VALUE_JSON . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_PLIST . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_IPA . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_APK . ')$/');
+            $authorize = self::arg_match(AppUpdater::PARAM_2_AUTHORIZE, '/^(' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES . '|' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_NO . ')$/');
+            
             if ($format) {
                 switch ($format) {
                     case AppUpdater::PARAM_2_FORMAT_VALUE_JSON: 
@@ -207,7 +208,12 @@ class Router
                             $this->controller = AppUpdater::PLATFORM_ANDROID;
                         else
                             $this->controller = AppUpdater::PLATFORM_IOS;
-                        $this->action = "status";
+                            
+                        if ($this->controller == AppUpdater::PLATFORM_IOS && $authorize && $authorize == AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES) {
+                            $this->action = "authorize";
+                        } else {
+                            $this->action = "status";
+                        }
                         break;
                     case AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION: 
                         $this->controller = AppUpdater::PLATFORM_IOS;

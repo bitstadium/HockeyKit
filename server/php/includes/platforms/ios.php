@@ -80,7 +80,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         }
 
         $udid    = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
-        $version = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
+        $version = Router::arg(self::PARAM_2_APP_VERSION);
 
         return $this->deliverAuthenticationResponse($bundleidentifier, $udid, $version);
     }

@@ -58,6 +58,7 @@ class AppUpdater
     const PARAM_2_LANGUAGE      = 'lang';
     const PARAM_2_FIRST_START   = 'first_start_at';
     const PARAM_2_USAGE_TIME    = 'usage_time';
+    const PARAM_2_AUTHORIZE     = 'authorize';
     
     // define the API V2 paramater values
     const PARAM_2_FORMAT_VALUE_JSON             = 'json';
@@ -66,6 +67,8 @@ class AppUpdater
     const PARAM_2_FORMAT_VALUE_IPA              = 'ipa';
     const PARAM_2_FORMAT_VALUE_APK              = 'apk';
     
+    const PARAM_2_AUTHORIZE_VALUE_YES           = 'yes';
+    const PARAM_2_AUTHORIZE_VALUE_NO            = 'no';
     
     // define the json response format version
     const API_V1 = '1';
