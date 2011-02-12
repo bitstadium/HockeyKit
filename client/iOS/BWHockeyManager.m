@@ -374,7 +374,7 @@
         return;
     }
 
-    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/ios/status/%@",
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@",
                                   [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 
     // build request & send
@@ -386,7 +386,7 @@
 
     // add additional statistics if user didn't disable flag
     if (self.isSendUserData) {
-        NSString *postDataString = [NSString stringWithFormat:@"version=%@&ios=%@&platform=%@&udid=%@&lang=%@&usagetime=%@&installdate=%@",
+        NSString *postDataString = [NSString stringWithFormat:@"format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
                                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                     [[UIDevice currentDevice] systemVersion],
                                     [self getDevicePlatform_],
