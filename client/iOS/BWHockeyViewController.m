@@ -62,21 +62,34 @@
 }
 
 - (void)openSettings:(id)sender {
-    [settingPicker_ release];
-    [settingsSheet_ release];
-    
+  [settingPicker_ release]; settingsSheet_ = nil;
+  [settingsSheet_ release]; settingsSheet_ = nil;
+
+  settingPicker_ = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0, 44.0, 0.0, 0.0)];
+  settingPicker_.showsSelectionIndicator = YES;
+  settingPicker_.dataSource = self;
+  settingPicker_.delegate = self;
+  [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
+
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+      UIViewController *pickerViewController = [[[UIViewController alloc] init] autorelease];
+      [pickerViewController.view addSubview:settingPicker_];
+      UIPopoverController *popOverController = [[UIPopoverController alloc] initWithContentViewController:pickerViewController];
+      popOverController.popoverContentSize = CGSizeMake(300, 216);
+
+      // show popover
+      CGSize sizeOfPopover = CGSizeMake(300, 222);
+      CGPoint positionOfPopover = [sender view].frame.origin;
+      settingPicker_.frame = CGRectMake(0, 0, sizeOfPopover.width, sizeOfPopover.height);
+      [popOverController presentPopoverFromRect:CGRectMake(positionOfPopover.x, positionOfPopover.y, sizeOfPopover.width, sizeOfPopover.height)
+                                                   inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }else {
     settingsSheet_ = [[UIActionSheet alloc] initWithTitle:@"Settings"
                                                  delegate:self
                                         cancelButtonTitle:nil
                                    destructiveButtonTitle:nil
                                         otherButtonTitles:nil];
     
-    settingPicker_ = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0, 44.0, 0.0, 0.0)];
-    settingPicker_.showsSelectionIndicator = YES;
-    settingPicker_.dataSource = self;
-    settingPicker_.delegate = self;
-    [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
-
     UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)] autorelease];
     pickerToolbar.barStyle = UIBarStyleBlackOpaque;
     [pickerToolbar sizeToFit];
@@ -105,6 +118,7 @@
     }
         
     [UIView commitAnimations];
+    }
 }
 
 // apply gloss
