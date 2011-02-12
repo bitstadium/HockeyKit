@@ -46,7 +46,7 @@ typedef enum {
     id <BWHockeyControllerDelegate> delegate_;
     NSMutableArray *apps_;
 
-    NSString *updateUrl_;
+    NSString *updateURL_;
     NSString *currentAppVersion_;
 
 	  BWHockeyViewController *currentHockeyViewController_;
@@ -76,7 +76,7 @@ typedef enum {
 + (BWHockeyManager *)sharedHockeyManager;
 
 // update url needs to be set
-@property (nonatomic, retain) NSString *updateUrl;
+@property (nonatomic, retain) NSString *updateURL;
 
 // delegate is optional
 @property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;

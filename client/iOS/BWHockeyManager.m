@@ -59,7 +59,7 @@
 @implementation BWHockeyManager
 
 @synthesize delegate = delegate_;
-@synthesize updateUrl = updateUrl_;
+@synthesize updateURL = updateURL_;
 @synthesize urlConnection = urlConnection_;
 @synthesize checkInProgress = checkInProgress_;
 @synthesize receivedData = receivedData_;
@@ -221,7 +221,7 @@
 
 - (id)init {
 	if ((self = [super init])) {
-        self.updateUrl = nil;
+        self.updateURL = nil;
         checkInProgress_ = NO;
         dataFound = NO;
         updateAvailable_ = NO;
@@ -258,7 +258,7 @@
     self.urlConnection = nil;
 
 	currentHockeyViewController_ = nil;
-    [updateUrl_ release];
+    [updateURL_ release];
 	[apps_ release];
 	[receivedData_ release];
     [lastCheck_ release];
@@ -378,7 +378,7 @@
                                   [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 
     // build request & send
-    NSString *url = [NSString stringWithFormat:@"%@%@", self.updateUrl, parameter];
+    NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
     BWLog(@"sending api request to %@", url);
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
@@ -572,10 +572,10 @@
   
   // register/deregister logic
   NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-  if (!updateUrl_ && anUpdateURL) {
+  if (!updateURL_ && anUpdateURL) {
     [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
     [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
-  }else if (updateUrl_ && !anUpdateURL) {
+  }else if (updateURL_ && !anUpdateURL) {
     [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
   }

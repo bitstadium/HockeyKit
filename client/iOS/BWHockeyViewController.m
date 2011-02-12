@@ -23,7 +23,7 @@
 //  THE SOFTWARE.
 
 #import <QuartzCore/QuartzCore.h>
-#import "NSString+URLEncoding.h"
+#import "NSString+HockeyAdditions.h"
 #import "BWHockeyViewController.h"
 #import "BWHockeyManager.h"
 #import "BWGlobal.h"
