@@ -429,12 +429,14 @@
   
   NSString *extraParameter = [NSString string];
   if (self.isSendUserData) {
-    extraParameter = [NSString stringWithFormat:@"?udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
+    // HACK: server hiccups when sending this
+    //extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
   }
   
-  NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
+  NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
   NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
   
+  BWLog(@"API Server Call: %@", hockeyAPIURL);
   BWLog(@"Calling to iOS with %@", iOSUpdateURL);
   BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
   BWLog(@"System returned: %d", success);
