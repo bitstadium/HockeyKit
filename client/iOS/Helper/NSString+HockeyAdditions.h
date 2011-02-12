@@ -1,5 +1,5 @@
 //
-//  NSString+URLEncoding.h
+//  NSString+HockeyAdditions.h
 //
 //  Created by Jon Crosby on 10/19/07.
 //  Copyright 2007 Kaboomerang LLC. All rights reserved.
@@ -25,8 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-
-@interface NSString (URLEncodingAdditions)
+@interface NSString (HockeyAdditions)
 
 - (NSString *)bw_URLEncodedString;
 - (NSString *)bw_URLDecodedString;

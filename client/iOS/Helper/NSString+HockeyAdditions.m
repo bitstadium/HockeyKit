@@ -1,5 +1,5 @@
 //
-//  NSString+URLEncoding.m
+//  NSString+HockeyAdditions.m
 //
 //  Created by Jon Crosby on 10/19/07.
 //  Copyright 2007 Kaboomerang LLC. All rights reserved.
@@ -23,10 +23,10 @@
 //  THE SOFTWARE.
 
 
-#import "NSString+URLEncoding.h"
+#import "NSString+HockeyAdditions.h"
 
 
-@implementation NSString (URLEncodingAdditions)
+@implementation NSString (HockeyAdditions)
 
 - (NSString *)bw_URLEncodedString {
     NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
