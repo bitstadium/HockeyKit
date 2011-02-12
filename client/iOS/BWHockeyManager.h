@@ -22,6 +22,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+//  Note: Hockey currently supports either JSONKit or sb-json.
+
 #import <UIKit/UIKit.h>
 #import "BWGlobal.h"
 #import "BWApp.h"
@@ -41,23 +43,23 @@ typedef enum {
 @protocol BWHockeyControllerDelegate;
 
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
-	id <BWHockeyControllerDelegate> delegate;
+    id <BWHockeyControllerDelegate> delegate_;
     NSMutableArray *apps_;
 
     NSString *updateUrl_;
     NSString *currentAppVersion_;
 
-	BWHockeyViewController *currentHockeyViewController;
+	  BWHockeyViewController *currentHockeyViewController_;
 
-	NSMutableData *receivedData_;
+	  NSMutableData *receivedData_;
 
-    BOOL checkInProgress;
+    BOOL checkInProgress_;
     BOOL dataFound;
     BOOL updateAvailable_;
 
-    NSURLConnection *urlConnection;
+    NSURLConnection *urlConnection_;
     NSDate *lastCheck_;
-    NSDate *usageStartTimestsamp_;
+    NSDate *usageStartTimestamp_;
 
     BOOL sendUserData_;
     BOOL showUpdateReminder_;
@@ -68,8 +70,20 @@ typedef enum {
     BOOL showUserSettings_;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// this is a singleton
++ (BWHockeyManager *)sharedHockeyManager;
+
+// update url needs to be set
+@property (nonatomic, retain) NSString *updateUrl;
+
+// delegate is optional
+@property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // settings
-// The setting values need to be adjusted before defining the URL with setUpdateURL: !
 
 // if YES, the current user data is send: device type, iOS version, app version, UDID (default)
 // if NO, no such data is send to the server
@@ -92,51 +106,47 @@ typedef enum {
 @property (nonatomic, assign, getter=isCheckForUpdateOnLaunch) BOOL checkForUpdateOnLaunch;
 
 // HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
-// HockeyComparisonResultGreater: alerts if the version on the server is greate
+// HockeyComparisonResultGreater: alerts if the version on the server is greater
 @property (nonatomic, assign) HockeyComparisonResult compareVersionType;
 
 // see HockeyUpdateSetting-enum. Will be saved in user defaults.
 // default value: HockeyUpdateCheckStartup
 @property (nonatomic, assign) HockeyUpdateSetting updateSetting;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 // is an update available?
 @property (nonatomic, readonly, getter=isUpdateAvailable) BOOL updateAvailable;
 
-// delegate
-@property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
+// are we currently checking for updates?
+@property (readonly, readonly, getter=isCheckInProgress) BOOL checkInProgress;
 
-// internal
-@property (nonatomic, retain) NSString *updateUrl;
-@property (nonatomic, retain) NSURLConnection *urlConnection;
-
-@property (readonly) BOOL checkInProgress;
-
+// convenience method to get current running version string
 - (NSString *)currentAppVersion;
+
+// get newest app or array of all available versions
 - (BWApp *)app;
 - (NSArray *)apps;
 
-+ (BWHockeyManager *)sharedHockeyManager;
-
-- (void) setUpdateURL:(NSString *)url;
-- (void) setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)delegate;
-- (void) checkForUpdate:(BWHockeyViewController *)hockeyViewController;
-- (void) checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
-// UIApplicationDidBecomeActiveNotification notification is sent by iOS
-- (BWHockeyViewController *) hockeyViewController:(BOOL)modal;
-- (void) unsetHockeyViewController;
-- (void) showBetaUpdateView;	// shows the update information screen
+- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController;
+- (void)checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
+- (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
+- (void)unsetHockeyViewController;
+- (void)showUpdateView;	// shows the update information screen
 
 @end
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 @protocol BWHockeyControllerDelegate <NSObject>
-
 @optional
-- (void) connectionOpened;	// Invoked when the internet connection is started, to let the app enable the activity indicator
-- (void) connectionClosed;	// Invoked when the internet connection is closed, to let the app disable the activity indicator
 
-- (HockeyComparisonResult) compareVersionType;
+// Invoked when the internet connection is started, to let the app enable the activity indicator
+- (void)connectionOpened;
 
-- (UIViewController *) viewControllerForHockeyController:(BWHockeyManager *)hockeyController;
+// Invoked when the internet connection is closed, to let the app disable the activity indicator
+- (void)connectionClosed;
+
 // optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance
+- (UIViewController *)viewControllerForHockeyController:(BWHockeyManager *)hockeyController;
 
 @end

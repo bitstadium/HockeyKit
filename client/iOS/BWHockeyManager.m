@@ -23,7 +23,6 @@
 //  THE SOFTWARE.
 
 #import "BWHockeyManager.h"
-#import "JSONKit.h"
 #import <sys/sysctl.h>
 #import <Foundation/Foundation.h>
 
@@ -53,14 +52,16 @@
 @property (nonatomic, retain) NSMutableData *receivedData;
 @property (nonatomic, copy) NSDate *lastCheck;
 @property (nonatomic, retain) NSMutableArray *apps;
+@property (nonatomic, retain) NSURLConnection *urlConnection;
+@property (nonatomic, copy) NSDate *usageStartTimestamp;
 @end
 
 @implementation BWHockeyManager
 
-@synthesize delegate;
+@synthesize delegate = delegate_;
 @synthesize updateUrl = updateUrl_;
-@synthesize urlConnection;
-@synthesize checkInProgress;
+@synthesize urlConnection = urlConnection_;
+@synthesize checkInProgress = checkInProgress_;
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
 @synthesize sendUsageTime = sendUsageTime_;
@@ -72,6 +73,7 @@
 @synthesize updateSetting = updateSetting_;
 @synthesize apps = apps_;
 @synthesize updateAvailable = updateAvailable_;
+@synthesize usageStartTimestamp = usageStartTimestamp_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -112,7 +114,7 @@
 }
 
 - (void)startUsage {
-    usageStartTimestsamp_ = [[NSDate alloc] init];
+    self.usageStartTimestamp = [NSDate date];
 
     BOOL newVersion = NO;
     
@@ -133,7 +135,7 @@
 }
 
 - (void)stopUsage {
-    double timeDifference = [[NSDate date] timeIntervalSinceReferenceDate] - [usageStartTimestsamp_ timeIntervalSinceReferenceDate];
+    double timeDifference = [[NSDate date] timeIntervalSinceReferenceDate] - [usageStartTimestamp_ timeIntervalSinceReferenceDate];
     double previousTimeDifference = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithDouble:previousTimeDifference + timeDifference] forKey:kUsageTimeOfCurrentVersion];
@@ -210,7 +212,7 @@
 }
 
 - (void)updateViewController_ {
-    [currentHockeyViewController redrawTableView];
+    [currentHockeyViewController_ redrawTableView];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,19 +222,19 @@
 - (id)init {
 	if ((self = [super init])) {
         self.updateUrl = nil;
-        checkInProgress = NO;
+        checkInProgress_ = NO;
         dataFound = NO;
         updateAvailable_ = NO;
 
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
         // set defaults
-        sendUserData_ = YES;
-        sendUsageTime_ = YES;
-        showUpdateReminder_ = NO;
-        checkForUpdateOnLaunch_ = YES;
-        showUserSettings_ = YES;
-        compareVersionType_ = HockeyComparisonResultDifferent;
+        self.sendUserData = YES;
+        self.sendUsageTime = YES;
+        self.alwaysShowUpdateReminder = NO;
+        self.checkForUpdateOnLaunch = YES;
+        self.showUserSettings = YES;
+        self.compareVersionType = HockeyComparisonResultDifferent;
 
         // load update setting from user defaults and check value
         self.updateSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
@@ -252,15 +254,15 @@
 
 	self.delegate = nil;
 
-    [urlConnection cancel];
+    [urlConnection_ cancel];
     self.urlConnection = nil;
 
-	currentHockeyViewController = nil;
+	currentHockeyViewController_ = nil;
     [updateUrl_ release];
 	[apps_ release];
 	[receivedData_ release];
     [lastCheck_ release];
-    [usageStartTimestsamp_ release];
+    [usageStartTimestamp_ release];
 
     [super dealloc];
 }
@@ -274,10 +276,10 @@
 }
 
 - (void)unsetHockeyViewController {
-    currentHockeyViewController = nil;
+    currentHockeyViewController_ = nil;
 }
 
-- (void)showBetaUpdateView {
+- (void)showUpdateView {
     UIViewController *parentViewController = nil;
 
     if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
@@ -358,17 +360,17 @@
 }
 
 - (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController {
-    if (checkInProgress) return;
+    if (self.isCheckInProgress) return;
 
-    checkInProgress = YES;
-    currentHockeyViewController = hockeyViewController;
+    checkInProgress_ = YES;
+    currentHockeyViewController_ = hockeyViewController;
 
     // do we need to update?
     BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;
-    if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController) {
+    if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
         BWLog(@"update not needed right now");
-        checkInProgress = NO;
-        [currentHockeyViewController redrawTableView];
+        checkInProgress_ = NO;
+        [currentHockeyViewController_ redrawTableView];
         return;
     }
 
@@ -402,12 +404,12 @@
     }
 
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    if (!urlConnection) {
-        checkInProgress = NO;
+    if (!urlConnection_) {
+        checkInProgress_ = NO;
         [self registerOnline];
     }
 
-    [currentHockeyViewController redrawTableView];
+    [currentHockeyViewController_ redrawTableView];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -415,6 +417,7 @@
 #pragma mark NSURLRequest
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
+  [self connectionOpened_];
 	NSURLRequest *newRequest = request;
 	if (redirectResponse) {
 		newRequest = nil;
@@ -423,7 +426,17 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    [self connectionOpened_];
+  if ([response respondsToSelector:@selector(statusCode)]) {
+    int statusCode = [((NSHTTPURLResponse *)response) statusCode];
+    if (statusCode == 404) {
+      [connection cancel];  // stop connecting; no more delegate messages
+      BWLog(@"Error: Hockey API received HTTP Status Code %d", statusCode);
+      // TODO: report error!
+      [self connectionClosed_];
+      return;
+    }
+  }
+  
 	self.receivedData = [NSMutableData data];
 	[receivedData_ setLength:0];
 }
@@ -434,11 +447,11 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     [self connectionClosed_];
-	self.receivedData = nil;
+	  self.receivedData = nil;
     self.urlConnection = nil;
-    checkInProgress = NO;
+    checkInProgress_ = NO;
 
-    [currentHockeyViewController redrawTableView];
+    [currentHockeyViewController_ redrawTableView];
 
     [self registerOnline];
 }
@@ -446,17 +459,35 @@
 // api call returned, parsing
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     [self connectionClosed_];
-    checkInProgress = NO;
-
+    checkInProgress_ = NO;
+  
 	if ([self.receivedData length]) {
         NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
         BWLog(@"Received API response: %@", responseString);
 
         NSError *error = nil;
-        NSArray *feedArray = [responseString objectFromJSONStringWithParseOptions:JKParseOptionNone error:&error];
+    
+        // weak linked JSONKit
+    NSArray *feedArray;
+    // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
+    SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
+    if (jsonKitSelector && [responseString respondsToSelector:jsonKitSelector]) {
+      NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[responseString methodSignatureForSelector:jsonKitSelector]];
+      invocation.target = responseString;
+      invocation.selector = jsonKitSelector;
+      int parseOptions = 0;
+      [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+      [invocation setArgument:&error atIndex:3];
+      [invocation invoke];
+      [invocation getReturnValue:&feedArray];
+    }else {
+      NSLog(@"You need JSONKit in your runtime");
+      [self doesNotRecognizeSelector:_cmd];
+    }    
         if (error) {
             BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
             // TODO: report error
+          return;
         }
 
         self.receivedData = nil;
@@ -496,7 +527,7 @@
 
             [self checkUpdateAvailable_];
 
-            if (updateAvailable_ && !currentHockeyViewController) {
+            if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForBetaAlert_];
             }
 
@@ -533,36 +564,38 @@
 #pragma mark -
 #pragma mark Properties
 
-- (void)setUpdateURL:(NSString *)url {
-    [self setUpdateURL:url delegate:nil];
+- (void)setUpdateURL:(NSString *)anUpdateURL {
+  // ensure url ends with a trailing slash
+  if (![anUpdateURL hasSuffix:@"/"]) {
+    anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
+  }
+  
+  // register/deregister logic
+  NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+  if (!updateUrl_ && anUpdateURL) {
+    [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
+  }else if (updateUrl_ && !anUpdateURL) {
+    [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+    [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+  }
+  
+  if (updateURL_ != anUpdateURL) {
+    [updateURL_ release];
+    updateURL_ = [anUpdateURL copy];
+  }
 }
 
-- (void)setUpdateURL:(NSString *)url delegate:(id <BWHockeyControllerDelegate>)object {
-	self.delegate = object;
-
-    // ensure url ends with a trailing slash
-    if (![url hasSuffix:@"/"]) {
-        url = [NSString stringWithFormat:@"%@/", url];
+- (void)setCheckForUpdateOnLaunch:(BOOL)flag {
+  if (checkForUpdateOnLaunch_ != flag) {
+    checkForUpdateOnLaunch_ = flag;
+    NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+    if (flag) {
+      [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
+    }else {
+      [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     }
-
-	self.updateUrl = url;
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(startUsage)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(stopUsage)
-                                                 name:UIApplicationDidEnterBackgroundNotification
-                                               object:nil];
-
-	if (self.isCheckForUpdateOnLaunch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(checkForUpdate)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-	}
+  }
 }
 
 - (NSString *)currentAppVersion {
@@ -602,7 +635,7 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == [alertView firstOtherButtonIndex]) {
         // YES button has been clicked
-        [self showBetaUpdateView];
+        [self showUpdateView];
     }
 }
 
