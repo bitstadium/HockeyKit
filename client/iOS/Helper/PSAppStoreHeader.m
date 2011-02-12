@@ -25,6 +25,7 @@
 
 #import "PSAppStoreHeader.h"
 #import "UIImage+HockeyAdditions.h"
+#import "BWGlobal.h"w
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 
@@ -87,8 +88,8 @@
     UIColor *mainTextColor = RGBCOLOR(0,0,0);
     UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
     UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
-	UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
-	UIFont *smallFont = [UIFont systemFontOfSize:12];
+	  UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
+	  UIFont *smallFont = [UIFont systemFontOfSize:12];
 
     float myColorValues[] = {255, 255, 255, .6};
     CGColorSpaceRef myColorSpace = CGColorSpaceCreateDeviceRGB();
@@ -99,7 +100,9 @@
     [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
 
     // header
-    CGContextSetShadowWithColor (context, CGSizeMake(2, 2), 0, myColor);
+    NSInteger shadowOffset = 2;
+    IF_IOS4_OR_GREATER(if([[UIScreen mainScreen] scale] == 2) shadowOffset = 1;)
+    CGContextSetShadowWithColor (context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);
     [mainTextColor set];
     [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
 
