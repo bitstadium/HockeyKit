@@ -329,7 +329,7 @@
     PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(10, 45)] autorelease];
     storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     storeButton.buttonDelegate = self;
-	[self.tableView addSubview:storeButton];
+    [self.tableView.tableHeaderView addSubview:storeButton];
     storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Checking" colors:[PSStoreButton appStoreGrayColor] enabled:NO];
     appStoreButtonState_ = AppStoreButtonStateNone;
     [storeButton alignToSuperview];
