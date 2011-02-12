@@ -429,8 +429,7 @@
   
   NSString *extraParameter = [NSString string];
   if (self.isSendUserData) {
-    // HACK: server hiccups when sending this
-    //extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
+    extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
   }
   
   NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
