@@ -191,7 +191,10 @@
 
 - (void)loadAppCache_ {
     NSData *savedHockeyData = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
-    NSArray *savedHockeyCheck = [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
+    NSArray *savedHockeyCheck = nil;
+    if (savedHockeyData) {
+      [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
+    }
     if (savedHockeyCheck) {
         self.apps = [NSMutableArray arrayWithArray:savedHockeyCheck];
         [self checkUpdateAvailable_];
