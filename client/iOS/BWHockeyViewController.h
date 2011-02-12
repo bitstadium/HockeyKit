@@ -59,7 +59,7 @@ typedef enum {
 @property (nonatomic, retain) BWHockeyManager *hockeyManager;
 @property (nonatomic, readwrite) BOOL modal;
 
-- (id)init:(BWHockeyManager *)newHockeyController modal:(BOOL)newModal;
+- (id)init:(BWHockeyManager *)newHockeyManager modal:(BOOL)newModal;
 - (id)init;
 
 - (void)redrawTableView;

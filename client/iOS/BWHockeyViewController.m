@@ -168,9 +168,9 @@
 #pragma mark -
 #pragma mark NSObject
 
-- (id)init:(BWHockeyManager *)newHockeyController modal:(BOOL)newModal {
+- (id)init:(BWHockeyManager *)newHockeyManager modal:(BOOL)newModal {
     if ((self = [super initWithStyle:UITableViewStylePlain])) {
-        self.hockeyManager = newHockeyController;
+        self.hockeyManager = newHockeyManager;
         self.modal = newModal;
         self.title = BWLocalize(@"HockeyUpdateScreenTitle");
 
@@ -793,7 +793,6 @@
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration {
-    //- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     // update all cells
     [cells_ makeObjectsPerformSelector:@selector(addWebView)];
 }
@@ -813,6 +812,7 @@
         case AppStoreButtonStateUpdate:
             [button setButtonData:[PSStoreButtonData dataWithLabel:@"Installing..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:YES];
             appStoreButtonState_ = AppStoreButtonStateInstalling;
+            [self.hockeyManager initiateAppDownload];
             break;
         default:
             [button setButtonData:[PSStoreButtonData dataWithLabel:@"Checking" colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:YES];
