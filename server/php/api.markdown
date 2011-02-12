@@ -84,16 +84,13 @@ Optional parameters
 * apiversion = for now 2
 * bundleidentifier = ([\w.-]+)
 
+Other parameters, *HTTP GET/POST*.
+
+* format = 'json'       (return requested data in json format)
+
 Optional parameters, *HTTP GET/POST*.
 
 * udid = `[1-9a-f]{40}` (*semi-optional* (authentication), UDID of user’s device, for *statistics*, *authentication* and *team membership*)
-* format = 'json'       (return requested data in json format)
-  = 'json'              (return requested data in json format)
-  = 'plist'             (text download of the iOS distribution manifest)
-  = 'mobileprovision'   (binary download of the iOS mobile provisioning profile)
-  = 'ipa'               (binary download of the iOS ipa package)
-  = 'apk'               (binary download of the Android apk package)
-* authorize = 'yes'     (*iOS only*, request authorization code for running the requested app version on the requested device)
 * app_version           (version of app running on user’s device, for *statistics*)
 * os                    (OS name of user’s device, for *statistics*)
 * os_version            (OS version of user’s device, for *statistics*)
@@ -200,7 +197,7 @@ Optional parameters
 * v2:         `http://hockey/api/<apiversion>/apps/<bundleidentifier>`
 * v2 Example: `http://hockey/api/2/apps/de.buzzworks.worldview`
 
-### Input
+### Input *HTTP GET/POST*
 
 * apiversion = for now 2
 * bundleidentifier = ([\w.-]+)
