@@ -23,12 +23,12 @@
 //  THE SOFTWARE.
 
 #import "BWHockeyManager.h"
+#import "NSString+HockeyAdditions.h"
 #import <sys/sysctl.h>
 #import <Foundation/Foundation.h>
 
 // API defines - do not change
 #define BETA_DOWNLOAD_TYPE_PROFILE	@"profile"
-#define BETA_DOWNLOAD_TYPE_APP		  @"app"
 #define BETA_UPDATE_RESULT          @"result"
 #define BETA_UPDATE_TITLE           @"title"
 #define BETA_UPDATE_SUBTITLE        @"subtitle"
@@ -92,6 +92,10 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark private
+
+- (NSString *)encodedAppIdentifier_ {
+  return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
 
 - (NSString *)getDevicePlatform_ {
 	size_t size;
@@ -374,8 +378,7 @@
         return;
     }
 
-    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@",
-                                  [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
 
     // build request & send
     NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
@@ -390,7 +393,7 @@
                                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                     [[UIDevice currentDevice] systemVersion],
                                     [self getDevicePlatform_],
-                                    @"710fb31679b4eb484b854684ab1562ced857062c", // [[UIDevice currentDevice] uniqueIdentifier],
+                                    [[UIDevice currentDevice] uniqueIdentifier],
                                     [[NSLocale preferredLanguages] objectAtIndex:0],
                                     [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                     [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
@@ -410,6 +413,31 @@
     }
 
     [currentHockeyViewController_ redrawTableView];
+}
+
+- (BOOL)initiateAppDownload {
+  if (!self.isUpdateAvailable) {
+    BWLog(@"Warning: No update available. Aborting.");
+    return NO;
+  }
+  
+  IF_PRE_IOS4 (
+     BWLog(@"Warning: In-App Download is not supported with iOS < 4.0. Aborting.");
+     return NO;
+  )
+  
+  NSString *extraParameter = [NSString string];
+  if (self.isSendUserData) {
+    extraParameter = [NSString stringWithFormat:@"?udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
+  }
+  
+  NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
+  NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
+  
+  BWLog(@"Calling to iOS with %@", iOSUpdateURL);
+  BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
+  BWLog(@"System returned: %d", success);
+  return success;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

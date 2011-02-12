@@ -121,6 +121,12 @@ typedef enum {
 // are we currently checking for updates?
 @property (readonly, readonly, getter=isCheckInProgress) BOOL checkInProgress;
 
+// open update info view
+- (void)showUpdateView;
+
+// initiates app-download call. displays an system UIAlertView
+- (BOOL)initiateAppDownload;
+
 // convenience method to get current running version string
 - (NSString *)currentAppVersion;
 
@@ -132,7 +138,6 @@ typedef enum {
 - (void)checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
 - (void)unsetHockeyViewController;
-- (void)showUpdateView;	// shows the update information screen
 
 @end
 
