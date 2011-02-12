@@ -63,7 +63,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa</string>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa]]></string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -169,7 +169,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa</string>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa]]></string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -277,7 +277,7 @@ Get the iOS plist manifest file
 								<key>kind</key>
 								<string>software-package</string>
 								<key>url</key>
-								<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
 							</dict>
 						        <dict>
                             <key>kind</key>
@@ -374,7 +374,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -428,7 +428,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.single?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -522,7 +522,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -575,7 +575,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -656,7 +656,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -709,7 +709,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567890</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -790,7 +790,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
@@ -843,7 +843,7 @@ Get the iOS plist manifest file
 									<key>kind</key>
 									<string>software-package</string>
 									<key>url</key>
-									<string>http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891</string>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891]]></string>
 								</dict>
 							        <dict>
 	                            <key>kind</key>
