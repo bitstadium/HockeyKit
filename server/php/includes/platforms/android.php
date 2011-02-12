@@ -70,6 +70,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
             $result = array();
             $appversion =  Router::arg(self::PARAM_2_APP_VERSION);
             
+            $breakLoop = false;
+
             // API version is V2 by default, even if the client provides V1
             foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
                 $apk = $version[self::FILE_ANDROID_APK];
@@ -95,8 +97,9 @@ class AndroidAppUpdater extends AbstractAppUpdater
 
                 $result[] = $newAppVersion;
                 
-                // only send the data until the current version if provided
-                if ($appversion == $parsed_json['versionCode']) break;
+                // only send the data until the current version if provided, including the current version!
+                if ($breakLoop) break;
+                if ($appversion == $parsed_json['versionCode']) $breakLoop = true;
             }
             return Helper::sendJSONAndExit($result);
         }

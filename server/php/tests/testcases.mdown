@@ -508,7 +508,7 @@ Get all available versions and update the stats file.
 
 **Expected Result:**
 
-	[{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":6}]
+	[{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":6},{"notes":"Multiple iOS app version 1 release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":6}]
 
 	stats file updated
 
@@ -552,7 +552,7 @@ Get the iOS plist manifest file
 								<key>bundle-identifier</key>
 								<string>test.ios.multiple</string>
 								<key>bundle-version</key>
-								<string>1</string>
+								<string>2</string>
 								<key>kind</key>
 								<string>software</string>
 								<key>title</key>
@@ -605,7 +605,7 @@ Get the iOS plist manifest file
 								<key>bundle-identifier</key>
 								<string>test.ios.multiple</string>
 								<key>bundle-version</key>
-								<string>1</string>
+								<string>2</string>
 								<key>kind</key>
 								<string>software</string>
 								<key>title</key>
@@ -802,7 +802,7 @@ Get all available versions and update the stats file.
 
 **Expected Result:**
 
-	[{"notes":"Einschraenkung iOS app version 2 informationen","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":13}]
+	[{"notes":"Einschraenkung iOS app version 2 informationen","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":13},{"notes":"Restriction iOS app version 1 release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":13}]
 	
 	stats file updated
 

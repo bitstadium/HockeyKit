@@ -19,7 +19,7 @@
 							<key>bundle-identifier</key>
 							<string>test.ios.multiple</string>
 							<key>bundle-version</key>
-							<string>1</string>
+							<string>2</string>
 							<key>kind</key>
 							<string>software</string>
 							<key>title</key>

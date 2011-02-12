@@ -129,6 +129,8 @@ class iOSAppUpdater extends AbstractAppUpdater
                 
                 $appversion = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
                 
+                $breakLoop = false;
+                
                 foreach ($files[self::VERSIONS_SPECIFIC_DATA] as $version) {
                     $ipa = $version[self::FILE_IOS_IPA];
                     $plist = $version[self::FILE_IOS_PLIST];
@@ -160,8 +162,9 @@ class iOSAppUpdater extends AbstractAppUpdater
                     
                     $result[] = $newAppVersion;
                     
-                    // only send the data until the current version if provided
-                    if ($appversion == $thisVersion) break;
+                    // only send the data until the current version if provided, including the current version!
+                    if ($breakLoop) break;
+                    if ($appversion == $thisVersion) $breakLoop = true;
                 }
                 return Helper::sendJSONAndExit($result);
             }
