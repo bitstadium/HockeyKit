@@ -8,6 +8,8 @@
 
 @interface UIImage (HockeyAdditions)
 
+- (UIImage *)bw_roundedCornerImage:(NSInteger)cornerSize borderSize:(NSInteger)borderSize;
+- (UIImage *)bw_imageToFitSize:(CGSize)fitSize honorScaleFactor:(BOOL)honorScaleFactor;
 - (UIImage *)ps_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha;
 
 - (id)initWithContentsOfResolutionIndependentFile:(NSString *)path;

@@ -7,7 +7,6 @@
 //
 
 #import "PSAppStoreHeader.h"
-#import "UIImage+RoundedCorner.h"
 #import "UIImage+HockeyAdditions.h"
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
@@ -111,7 +110,7 @@
         [iconImage_ release];
 
         // scale, make borders and reflection
-        iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) method:MGImageResizeScale honorScaleFactor:YES];
+        iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) honorScaleFactor:YES];
         iconImage_ = [[iconImage_ bw_roundedCornerImage:kImageBorderRadius borderSize:0.0] retain];
         //    iconImage_ = [anIconImage retain];
 

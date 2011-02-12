@@ -41,9 +41,7 @@
 		789C24C212EE291E00FDDD4C /* PSStoreButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AF12EE291E00FDDD4C /* PSStoreButton.m */; };
 		789C24C312EE291E00FDDD4C /* PSTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B112EE291E00FDDD4C /* PSTableViewController.m */; };
 		789C24C412EE291E00FDDD4C /* UIImage+HockeyAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */; };
-		789C24C512EE291E00FDDD4C /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B512EE291E00FDDD4C /* UIImage+RoundedCorner.m */; };
 		789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B812EE291E00FDDD4C /* JSONKit.m */; };
-		789C24C712EE291E00FDDD4C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 789C24B912EE291E00FDDD4C /* README.md */; };
 		789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */; };
 		789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BE12EE291E00FDDD4C /* BWHockeyViewController.m */; };
 		789C257812EE34C300FDDD4C /* Hockey.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 789C257712EE34C300FDDD4C /* Hockey.bundle */; };
@@ -98,11 +96,8 @@
 		789C24B112EE291E00FDDD4C /* PSTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTableViewController.m; sourceTree = "<group>"; };
 		789C24B212EE291E00FDDD4C /* UIImage+HockeyAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HockeyAdditions.h"; sourceTree = "<group>"; };
 		789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HockeyAdditions.m"; sourceTree = "<group>"; };
-		789C24B412EE291E00FDDD4C /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
-		789C24B512EE291E00FDDD4C /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 		789C24B712EE291E00FDDD4C /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		789C24B812EE291E00FDDD4C /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
-		789C24B912EE291E00FDDD4C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		789C24BA12EE291E00FDDD4C /* BWGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWGlobal.h; path = iOS/BWGlobal.h; sourceTree = "<group>"; };
 		789C24BB12EE291E00FDDD4C /* BWHockeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeyManager.h; path = iOS/BWHockeyManager.h; sourceTree = "<group>"; };
 		789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeyManager.m; path = iOS/BWHockeyManager.m; sourceTree = "<group>"; };
@@ -254,8 +249,6 @@
 				789C24B112EE291E00FDDD4C /* PSTableViewController.m */,
 				789C24B212EE291E00FDDD4C /* UIImage+HockeyAdditions.h */,
 				789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */,
-				789C24B412EE291E00FDDD4C /* UIImage+RoundedCorner.h */,
-				789C24B512EE291E00FDDD4C /* UIImage+RoundedCorner.m */,
 				784B93BE12FC39B000FF906D /* PSWebTableViewCell.h */,
 				784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */,
 			);
@@ -268,7 +261,6 @@
 			children = (
 				789C24B712EE291E00FDDD4C /* JSONKit.h */,
 				789C24B812EE291E00FDDD4C /* JSONKit.m */,
-				789C24B912EE291E00FDDD4C /* README.md */,
 			);
 			name = JSON;
 			path = iOS/JSON;
@@ -331,7 +323,6 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* HockeyDemoViewController.xib in Resources */,
-				789C24C712EE291E00FDDD4C /* README.md in Resources */,
 				789C257812EE34C300FDDD4C /* Hockey.bundle in Resources */,
 				78D40D8612F2DA9000F39AC2 /* Icon-72.png in Resources */,
 				78D40D8712F2DA9000F39AC2 /* Icon-Small-50.png in Resources */,
@@ -377,7 +368,6 @@
 				789C24C212EE291E00FDDD4C /* PSStoreButton.m in Sources */,
 				789C24C312EE291E00FDDD4C /* PSTableViewController.m in Sources */,
 				789C24C412EE291E00FDDD4C /* UIImage+HockeyAdditions.m in Sources */,
-				789C24C512EE291E00FDDD4C /* UIImage+RoundedCorner.m in Sources */,
 				789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */,
 				789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */,
 				789C24C912EE291E00FDDD4C /* BWHockeyViewController.m in Sources */,
