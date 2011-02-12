@@ -30,13 +30,21 @@
 #import "UIImage+HockeyAdditions.h"
 #import "PSWebTableViewCell.h"
 
-#define kWebCellIdentifier @"PSWebTableViewCell"
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define kWebCellIdentifier @"PSWebTableViewCell"
+#define kAppStoreViewHeight 90
+
+@interface BWHockeyViewController ()
+@property (nonatomic, assign) AppStoreButtonState appStoreButtonState;
+- (void)setAppStoreButtonState:(AppStoreButtonState)anAppStoreButtonState animated:(BOOL)animated;
+@end
+
 
 @implementation BWHockeyViewController
 
 @synthesize hockeyManager = hockeyManager_;
 @synthesize modal = modal_;
+@synthesize appStoreButtonState = appStoreButtonState_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -44,6 +52,13 @@
 
 - (void)closeSettings {
     [settingsSheet_ dismissWithClickedButtonIndex:[settingPicker_ selectedRowInComponent:0] animated:YES];
+}
+
+
+- (void)appDidBecomeActive_ {
+  if (self.appStoreButtonState == AppStoreButtonStateInstalling) {
+    [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:YES];
+  }
 }
 
 - (void)openSettings:(id)sender {
@@ -174,7 +189,7 @@
         self.modal = newModal;
         self.title = BWLocalize(@"HockeyUpdateScreenTitle");
 
-        if ([self.hockeyManager isShowUserSettings]) {
+        if ([self.hockeyManager shouldShowUserSettings]) {
             self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage bw_imageNamed:@"gear.png" bundle:kHockeyBundleName]
                                                                                        style:UIBarButtonItemStyleBordered
                                                                                       target:self
@@ -183,6 +198,8 @@
 
         cells_ = [[NSMutableArray alloc] initWithCapacity:5];
 
+        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+        [dnc addObserver:self selector:@selector(appDidBecomeActive_) name:UIApplicationDidBecomeActiveNotification object:nil];
     }
     return self;
 }
@@ -245,7 +262,6 @@
 	return headerLayer;
 }
 
-#define kAppStoreViewHeight 90
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -330,8 +346,8 @@
     storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     storeButton.buttonDelegate = self;
     [self.tableView.tableHeaderView addSubview:storeButton];
-    storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"Checking" colors:[PSStoreButton appStoreGrayColor] enabled:NO];
-    appStoreButtonState_ = AppStoreButtonStateNone;
+    storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"" colors:[PSStoreButton appStoreGrayColor] enabled:NO];
+    self.appStoreButtonState = AppStoreButtonStateCheck;
     [storeButton alignToSuperview];
     appStoreButton_ = [storeButton retain];
 
@@ -339,15 +355,16 @@
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
-	statusBarStyle_ = [[UIApplication sharedApplication] statusBarStyle];
-	[[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
+    self.hockeyManager.currentHockeyViewController = self;
+    [super viewWillAppear:animated];
+    statusBarStyle_ = [[UIApplication sharedApplication] statusBarStyle];
+    [[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
-    [self.hockeyManager unsetHockeyViewController];
-	[super viewWillDisappear:animated];
-	[[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle_];
+    self.hockeyManager.currentHockeyViewController = nil;
+    [super viewWillDisappear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle_];
 }
 
 - (void)redrawTableView {
@@ -801,21 +818,43 @@
 #pragma mark -
 #pragma mark PSAppStoreHeaderDelegate
 
+- (void)setAppStoreButtonState:(AppStoreButtonState)anAppStoreButtonState {
+  [self setAppStoreButtonState:anAppStoreButtonState animated:NO];
+}
+
+- (void)setAppStoreButtonState:(AppStoreButtonState)anAppStoreButtonState animated:(BOOL)animated {
+  appStoreButtonState_ = anAppStoreButtonState;
+
+  switch (anAppStoreButtonState) {
+    case AppStoreButtonStateCheck:
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Check" colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
+      break;
+    case AppStoreButtonStateSearching:
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Searching..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+      break;
+    case AppStoreButtonStateUpdate:
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:animated];
+      break;
+    case AppStoreButtonStateInstalling:
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Installing..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+      break;
+    default:
+      break;
+  }
+}
+
 - (void)storeButtonFired:(PSStoreButton *)button {
-    BWLog(@"************* storeButtonFired *******************: %@", button);
+    BWLog(@"************* storeButtonFired: %@", button);
 
     switch (appStoreButtonState_) {
         case AppStoreButtonStateCheck:
-            [button setButtonData:[PSStoreButtonData dataWithLabel:@"Searching..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:YES];
-            appStoreButtonState_ = AppStoreButtonStateSearching;
+            [self setAppStoreButtonState:AppStoreButtonStateSearching animated:YES];
             break;
         case AppStoreButtonStateUpdate:
-            [button setButtonData:[PSStoreButtonData dataWithLabel:@"Installing..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:YES];
-            appStoreButtonState_ = AppStoreButtonStateInstalling;
+            [self setAppStoreButtonState:AppStoreButtonStateInstalling animated:YES];
             [self.hockeyManager initiateAppDownload];
             break;
         default:
-            [button setButtonData:[PSStoreButtonData dataWithLabel:@"Checking" colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:YES];
             break;
     }
 }

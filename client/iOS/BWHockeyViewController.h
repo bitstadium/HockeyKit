@@ -44,7 +44,7 @@ typedef enum {
 
     BOOL modal_;
     BOOL showAllVersions_;
-	UIStatusBarStyle statusBarStyle_;
+    UIStatusBarStyle statusBarStyle_;
     PSAppStoreHeader *appStoreHeader_;
     PSStoreButton *appStoreButton_;
 
