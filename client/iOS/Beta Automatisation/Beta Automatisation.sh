@@ -13,6 +13,8 @@ dropboxDistributionDirectoryPath="/users/myusername/Dropbox/My Application Beta"
 
 uploadMethod="scp"
 
+secretSubDirStart='cdgj';
+
 ftpUsername="username"
 ftpPassword="password"
 ftpServerDirectoryPath="my-cool-server.com/httpdocs/beta"
@@ -105,7 +107,8 @@ EOF
     elif [[ "$uploadMethod" == "scp" ]]
     then
         echo "Uploading $executableName.ipa and $executableName.plist to $scpHost...";
-        scp "${CONFIGURATION_BUILD_DIR}/$executableName.ipa" $scpUser@$scpHost:"$scpPath/$bundleIdentifier"
-        scp "${CONFIGURATION_BUILD_DIR}/$executableName.plist" $scpUser@$scpHost:"$scpPath/$bundleIdentifier"
+        ssh $scpUser@$scpHost "mkdir $scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
+        scp "${CONFIGURATION_BUILD_DIR}/$executableName.ipa" $scpUser@$scpHost:"$scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
+        scp "${CONFIGURATION_BUILD_DIR}/$executableName.plist" $scpUser@$scpHost:"$scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
     fi
 fi
