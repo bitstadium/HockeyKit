@@ -34,7 +34,7 @@
 #endif
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
-#define PS_MIN_HEIGHT 20.0f
+#define PS_MIN_HEIGHT 30.0f
 #define PS_MAX_WIDTH 120.0f
 #define PS_PADDING 12.0f
 
@@ -137,11 +137,15 @@
         CGRect newFrame = oldFrame;
         newFrame.size.width = sizeThatFits.width;
         
+      if (animated) {
         [CATransaction begin];
         [CATransaction setAnimationDuration:0.25f];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+      }
         aLayer.frame = newFrame;
+      if (animated) {
         [CATransaction commit];
+      }
 	}
     
     // set outer frame changes
