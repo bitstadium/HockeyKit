@@ -26,7 +26,6 @@
 #import "NSString+URLEncoding.h"
 #import "BWHockeyViewController.h"
 #import "BWHockeyManager.h"
-#import "BWWebViewController.h"
 #import "BWGlobal.h"
 #import "UIImage+HockeyAdditions.h"
 #import "PSWebTableViewCell.h"
