@@ -74,6 +74,7 @@
 @synthesize apps = apps_;
 @synthesize updateAvailable = updateAvailable_;
 @synthesize usageStartTimestamp = usageStartTimestamp_;
+@synthesize currentHockeyViewController = currentHockeyViewController_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -149,7 +150,7 @@
 - (NSString *)currentUsageString {
     double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
 
-    if (currentUsageTime > 0 && self.isSendUsageTime) {
+    if (currentUsageTime > 0 && self.shouldSendUsageTime) {
         double days = trunc(currentUsageTime / (60 * 60 * 24));
         double hours = trunc((currentUsageTime - (days * 60 * 60 * 24)) / (60 * 60));
         double minutes = trunc((currentUsageTime - (hours * 60 * 60)) / 60);
@@ -389,7 +390,7 @@
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
 
     // add additional statistics if user didn't disable flag
-    if (self.isSendUserData) {
+    if (self.shouldSendUserData) {
         NSString *postDataString = [NSString stringWithFormat:@"format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
                                     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                     [[UIDevice currentDevice] systemVersion],
@@ -428,7 +429,7 @@
   )
   
   NSString *extraParameter = [NSString string];
-  if (self.isSendUserData) {
+  if (self.shouldSendUserData) {
     extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
   }
   

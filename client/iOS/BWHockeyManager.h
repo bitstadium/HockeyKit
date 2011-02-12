@@ -87,11 +87,11 @@ typedef enum {
 
 // if YES, the current user data is send: device type, iOS version, app version, UDID (default)
 // if NO, no such data is send to the server
-@property (nonatomic, assign, getter=isSendUserData) BOOL sendUserData;
+@property (nonatomic, assign, getter=shouldSendUserData) BOOL sendUserData;
 
 // if YES, the the users usage time of the app to the service, only in 15 minute granularity! (default)
 // if NO, no such data is send to the server
-@property (nonatomic, assign, getter=isSendUsageTime) BOOL sendUsageTime;
+@property (nonatomic, assign, getter=shouldSendUsageTime) BOOL sendUsageTime;
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update (default)
@@ -99,7 +99,7 @@ typedef enum {
 
 // if YES, the user can change the HockeyUpdateSetting value (default)
 // if NO, the user can not change it, and the default or developer defined value will be used
-@property (nonatomic, assign, getter=isShowUserSettings) BOOL showUserSettings;
+@property (nonatomic, assign, getter=shouldShowUserSettings) BOOL showUserSettings;
 
 //if YES, then an update check will be performed after the application becomes active (default)
 //if NO, then the update check will not happen unless invoked explicitly
@@ -134,10 +134,16 @@ typedef enum {
 - (BWApp *)app;
 - (NSArray *)apps;
 
-- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController;
-- (void)checkForUpdate;	// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
+// convenience methode to create hockey view controller
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;
-- (void)unsetHockeyViewController;
+
+- (void)checkForUpdate:(BWHockeyViewController *)hockeyViewController;
+
+// invoke this if you need to start a check process manually, e.g. if the hockey controller is set after the
+- (void)checkForUpdate;
+
+// get/set current active hockey view controller
+@property (nonatomic, retain) BWHockeyViewController *currentHockeyViewController;
 
 @end
 
