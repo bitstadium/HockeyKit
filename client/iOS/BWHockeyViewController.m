@@ -342,7 +342,7 @@
                                                                                               action:@selector(onAction:)];
     }
 
-    PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(10, 45)] autorelease];
+    PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(10, 40)] autorelease];
     storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     storeButton.buttonDelegate = self;
     [self.tableView.tableHeaderView addSubview:storeButton];
