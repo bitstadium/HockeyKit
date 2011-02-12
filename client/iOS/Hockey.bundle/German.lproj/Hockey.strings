@@ -76,3 +76,5 @@
 "HockeySectionCheckManually" = "Manuell";
 
 "ShowPreviousVersions" = "Zeige frühere Versionen...";
+
+"HockeyUpdateAlertTextWithAppVersion" = "%@ ist verfügbar.\nMöchten Sie sich weitere Informationen zu der Aktualisierung ansehen?";
