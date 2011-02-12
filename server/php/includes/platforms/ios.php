@@ -175,7 +175,7 @@ class iOSAppUpdater extends AbstractAppUpdater
         $r = Router::get();
         $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
         // send XML with url to app binary file
-        $ipa_url = $r->baseURL . "api/2/apps/$bundleidentifier?format=" . self::PARAM_2_FORMAT_VALUE_IPA . ($udid ? "&udid=$udid" : '');
+        $ipa_url = $r->baseURL . "api/2/apps/$bundleidentifier?format=" . self::PARAM_2_FORMAT_VALUE_IPA . ($udid ? "&amp;udid=$udid" : '');
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
