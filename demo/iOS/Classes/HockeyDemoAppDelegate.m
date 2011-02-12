@@ -38,7 +38,8 @@
   // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
   // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  [[BWHockeyManager sharedHockeyManager] setUpdateURL:@"http://alpha.buzzworks.de/" delegate:self];
+  [BWHockeyManager sharedHockeyManager].updateUrl = @"http://alpha.buzzworks.de/";
+  [BWHockeyManager sharedHockeyManager].delegate = self;
 #endif
 
   return YES;
@@ -49,5 +50,17 @@
   [window release];
   [super dealloc];
 }
+
+#pragma mark -
+#pragma mark BWHockeyControllerDelegate
+
+- (void)connectionOpened {
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+- (void)connectionClosed {
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 
 @end
