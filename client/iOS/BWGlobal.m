@@ -33,17 +33,3 @@ NSBundle *hockeyBundle() {
   }
   return bundle;
 }
-
-
-BOOL isIPad()
-{
-  IF_3_2_OR_GREATER
-  (
-   if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-   {
-     return YES;
-   }
-   );
-
-  return NO;
-}

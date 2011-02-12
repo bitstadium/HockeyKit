@@ -86,5 +86,3 @@ if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iPhoneOS_4_0
 { \
 __VA_ARGS__ \
 }
-
-BOOL isIPad();
