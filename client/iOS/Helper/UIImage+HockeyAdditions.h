@@ -10,10 +10,10 @@
 
 - (UIImage *)bw_roundedCornerImage:(NSInteger)cornerSize borderSize:(NSInteger)borderSize;
 - (UIImage *)bw_imageToFitSize:(CGSize)fitSize honorScaleFactor:(BOOL)honorScaleFactor;
-- (UIImage *)ps_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha;
+- (UIImage *)bw_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha;
 
-- (id)initWithContentsOfResolutionIndependentFile:(NSString *)path;
-+ (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path;
-+ (UIImage *)imageNamed:(NSString *)imageName bundle:(NSString *)bundleName;
+- (id)bw_initWithContentsOfResolutionIndependentFile:(NSString *)path;
++ (UIImage*)bw_imageWithContentsOfResolutionIndependentFile:(NSString *)path;
++ (UIImage *)bw_imageNamed:(NSString *)imageName bundle:(NSString *)bundleName;
 
 @end

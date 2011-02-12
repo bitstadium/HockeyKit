@@ -118,7 +118,7 @@
         [reflectedImage_ release];
         reflectedImage_ = nil;
         if (anIconImage) {
-            reflectedImage_ = [[iconImage_ ps_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
+            reflectedImage_ = [[iconImage_ bw_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
         }
     }
 }

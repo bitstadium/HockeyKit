@@ -99,7 +99,7 @@
     IF_PRE_IOS4(UIGraphicsBeginImageContext(image.size);)
 
     [image drawAtPoint:CGPointZero];
-    UIImage *iconGradient = [UIImage imageNamed:@"IconGradient.png" bundle:kHockeyBundleName];
+    UIImage *iconGradient = [UIImage bw_imageNamed:@"IconGradient.png" bundle:kHockeyBundleName];
     [iconGradient drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:0.5];
 
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
@@ -176,7 +176,7 @@
         self.title = BWLocalize(@"HockeyUpdateScreenTitle");
 
         if ([self.hockeyManager isShowUserSettings]) {
-            self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"gear.png" bundle:kHockeyBundleName]
+            self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage bw_imageNamed:@"gear.png" bundle:kHockeyBundleName]
                                                                                        style:UIBarButtonItemStyleBordered
                                                                                       target:self
                                                                                       action:@selector(openSettings:)] autorelease];

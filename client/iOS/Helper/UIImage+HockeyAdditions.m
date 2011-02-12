@@ -268,7 +268,7 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
     return UIGraphicsGetCurrentContext();
 }
 
-- (UIImage *)ps_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha {
+- (UIImage *)bw_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha {
     if(height == 0)
 		return nil;
 
@@ -294,7 +294,7 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
 	return theImage;
 }
 
-- (id)initWithContentsOfResolutionIndependentFile:(NSString *)path {
+- (id)bw_initWithContentsOfResolutionIndependentFile:(NSString *)path {
     if ([UIScreen instancesRespondToSelector:@selector(scale)] && (int)[[UIScreen mainScreen] scale] == 2.0) {
         NSString *path2x = [[path stringByDeletingLastPathComponent]
                             stringByAppendingPathComponent:[NSString stringWithFormat:@"%@@2x.%@",
@@ -309,16 +309,16 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
     return [self initWithContentsOfFile:path];
 }
 
-+ (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path {
-    return [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
++ (UIImage*)bw_imageWithContentsOfResolutionIndependentFile:(NSString *)path {
+    return [[[UIImage alloc] bw_initWithContentsOfResolutionIndependentFile:path] autorelease];
 }
 
 
-+ (UIImage *)imageNamed:(NSString *)imageName bundle:(NSString *)bundleName {
++ (UIImage *)bw_imageNamed:(NSString *)imageName bundle:(NSString *)bundleName {
 	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
 	NSString *bundlePath = [resourcePath stringByAppendingPathComponent:bundleName];
 	NSString *imagePath = [bundlePath stringByAppendingPathComponent:imageName];
-	return [UIImage imageWithContentsOfResolutionIndependentFile:imagePath];
+	return [UIImage bw_imageWithContentsOfResolutionIndependentFile:imagePath];
 }
 
 @end
