@@ -34,7 +34,7 @@
 #endif
 
 #define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
-#define PS_MIN_HEIGHT 30.0f
+#define PS_MIN_HEIGHT 25.0f
 #define PS_MAX_WIDTH 120.0f
 #define PS_PADDING 12.0f
 
@@ -133,19 +133,21 @@
     
     // move sublayer (can't be animated explcitely)
     for (CALayer *aLayer in self.layer.sublayers) {
-        CGRect oldFrame = aLayer.frame;
-        CGRect newFrame = oldFrame;
-        newFrame.size.width = sizeThatFits.width;
-        
+      [CATransaction begin];
+
       if (animated) {
-        [CATransaction begin];
         [CATransaction setAnimationDuration:0.25f];
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+      }else {
+        // frame is calculated and explicitely animated. so we absolutely need kCATransactionDisableActions
+        [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
       }
+
+        CGRect newFrame = aLayer.frame;
+        newFrame.size.width = sizeThatFits.width;
         aLayer.frame = newFrame;
-      if (animated) {
+
         [CATransaction commit];
-      }
 	}
     
     // set outer frame changes
