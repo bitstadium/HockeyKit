@@ -35,11 +35,9 @@
 		784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */; };
 		784B961D12FC645300FF906D /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B961C12FC645300FF906D /* BWGlobal.m */; };
 		784B967F12FC912B00FF906D /* BWApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B967E12FC912B00FF906D /* BWApp.m */; };
-		789C24BF12EE291E00FDDD4C /* BWWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24A812EE291E00FDDD4C /* BWWebViewController.m */; };
-		789C24C012EE291E00FDDD4C /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AB12EE291E00FDDD4C /* NSString+URLEncoding.m */; };
+		789C24C012EE291E00FDDD4C /* NSString+HockeyAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AB12EE291E00FDDD4C /* NSString+HockeyAdditions.m */; };
 		789C24C112EE291E00FDDD4C /* PSAppStoreHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AD12EE291E00FDDD4C /* PSAppStoreHeader.m */; };
 		789C24C212EE291E00FDDD4C /* PSStoreButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AF12EE291E00FDDD4C /* PSStoreButton.m */; };
-		789C24C312EE291E00FDDD4C /* PSTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B112EE291E00FDDD4C /* PSTableViewController.m */; };
 		789C24C412EE291E00FDDD4C /* UIImage+HockeyAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */; };
 		789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24B812EE291E00FDDD4C /* JSONKit.m */; };
 		789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24BC12EE291E00FDDD4C /* BWHockeyManager.m */; };
@@ -84,16 +82,12 @@
 		784B961C12FC645300FF906D /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWGlobal.m; path = iOS/BWGlobal.m; sourceTree = "<group>"; };
 		784B967D12FC912B00FF906D /* BWApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWApp.h; path = iOS/BWApp.h; sourceTree = "<group>"; };
 		784B967E12FC912B00FF906D /* BWApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWApp.m; path = iOS/BWApp.m; sourceTree = "<group>"; };
-		789C24A712EE291E00FDDD4C /* BWWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWWebViewController.h; sourceTree = "<group>"; };
-		789C24A812EE291E00FDDD4C /* BWWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWWebViewController.m; sourceTree = "<group>"; };
-		789C24AA12EE291E00FDDD4C /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
-		789C24AB12EE291E00FDDD4C /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
+		789C24AA12EE291E00FDDD4C /* NSString+HockeyAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HockeyAdditions.h"; sourceTree = "<group>"; };
+		789C24AB12EE291E00FDDD4C /* NSString+HockeyAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HockeyAdditions.m"; sourceTree = "<group>"; };
 		789C24AC12EE291E00FDDD4C /* PSAppStoreHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSAppStoreHeader.h; sourceTree = "<group>"; };
 		789C24AD12EE291E00FDDD4C /* PSAppStoreHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSAppStoreHeader.m; sourceTree = "<group>"; };
 		789C24AE12EE291E00FDDD4C /* PSStoreButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStoreButton.h; sourceTree = "<group>"; };
 		789C24AF12EE291E00FDDD4C /* PSStoreButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStoreButton.m; sourceTree = "<group>"; };
-		789C24B012EE291E00FDDD4C /* PSTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTableViewController.h; sourceTree = "<group>"; };
-		789C24B112EE291E00FDDD4C /* PSTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTableViewController.m; sourceTree = "<group>"; };
 		789C24B212EE291E00FDDD4C /* UIImage+HockeyAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HockeyAdditions.h"; sourceTree = "<group>"; };
 		789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HockeyAdditions.m"; sourceTree = "<group>"; };
 		789C24B712EE291E00FDDD4C /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -153,7 +147,6 @@
 			isa = PBXGroup;
 			children = (
 				784B961E12FC65F200FF906D /* Model */,
-				789C24A612EE291E00FDDD4C /* BWWebViewController */,
 				789C24A912EE291E00FDDD4C /* Helper */,
 				789C24B612EE291E00FDDD4C /* JSON */,
 				789C24BA12EE291E00FDDD4C /* BWGlobal.h */,
@@ -226,27 +219,15 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
-		789C24A612EE291E00FDDD4C /* BWWebViewController */ = {
-			isa = PBXGroup;
-			children = (
-				789C24A712EE291E00FDDD4C /* BWWebViewController.h */,
-				789C24A812EE291E00FDDD4C /* BWWebViewController.m */,
-			);
-			name = BWWebViewController;
-			path = iOS/BWWebViewController;
-			sourceTree = "<group>";
-		};
 		789C24A912EE291E00FDDD4C /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				789C24AA12EE291E00FDDD4C /* NSString+URLEncoding.h */,
-				789C24AB12EE291E00FDDD4C /* NSString+URLEncoding.m */,
+				789C24AA12EE291E00FDDD4C /* NSString+HockeyAdditions.h */,
+				789C24AB12EE291E00FDDD4C /* NSString+HockeyAdditions.m */,
 				789C24AC12EE291E00FDDD4C /* PSAppStoreHeader.h */,
 				789C24AD12EE291E00FDDD4C /* PSAppStoreHeader.m */,
 				789C24AE12EE291E00FDDD4C /* PSStoreButton.h */,
 				789C24AF12EE291E00FDDD4C /* PSStoreButton.m */,
-				789C24B012EE291E00FDDD4C /* PSTableViewController.h */,
-				789C24B112EE291E00FDDD4C /* PSTableViewController.m */,
 				789C24B212EE291E00FDDD4C /* UIImage+HockeyAdditions.h */,
 				789C24B312EE291E00FDDD4C /* UIImage+HockeyAdditions.m */,
 				784B93BE12FC39B000FF906D /* PSWebTableViewCell.h */,
@@ -362,11 +343,9 @@
 				1D3623260D0F684500981E51 /* HockeyDemoAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* HockeyDemoViewController.m in Sources */,
 				1EB330EB122162200081CF8E /* HockeyDemoSettingsViewController.m in Sources */,
-				789C24BF12EE291E00FDDD4C /* BWWebViewController.m in Sources */,
-				789C24C012EE291E00FDDD4C /* NSString+URLEncoding.m in Sources */,
+				789C24C012EE291E00FDDD4C /* NSString+HockeyAdditions.m in Sources */,
 				789C24C112EE291E00FDDD4C /* PSAppStoreHeader.m in Sources */,
 				789C24C212EE291E00FDDD4C /* PSStoreButton.m in Sources */,
-				789C24C312EE291E00FDDD4C /* PSTableViewController.m in Sources */,
 				789C24C412EE291E00FDDD4C /* UIImage+HockeyAdditions.m in Sources */,
 				789C24C612EE291E00FDDD4C /* JSONKit.m in Sources */,
 				789C24C812EE291E00FDDD4C /* BWHockeyManager.m in Sources */,
@@ -486,10 +465,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"CONFIGURATION_$(CONFIGURATION)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
