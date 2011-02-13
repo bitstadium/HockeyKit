@@ -80,3 +80,8 @@
 "HockeyShowUpdate" = "Show Update";
 "HockeyError" = "Error";
 "HockeyOK" = "OK";
+
+"HockeyButtonCheck" = "CHECK";
+"HockeyButtonSearching" = "CHECKING...";
+"HockeyButtonUpdate" = "UPDATE";
+"HockeyButtonInstalling" = "INSTALLING...";
