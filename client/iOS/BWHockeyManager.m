@@ -474,7 +474,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     int statusCode = [((NSHTTPURLResponse *)response) statusCode];
     if (statusCode == 404) {
       [connection cancel];  // stop connecting; no more delegate messages
-      NSString *errorStr = [NSString stringWithFormat:@"Error: Hockey API received HTTP Status Code %d", statusCode];
+      NSString *errorStr = [NSString stringWithFormat:@"Hockey API received HTTP Status Code %d", statusCode];
       [self connectionClosed_];
       [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidStatus userInfo:
                           [NSDictionary dictionaryWithObjectsAndKeys:errorStr, NSLocalizedDescriptionKey, nil]]];
@@ -542,7 +542,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         // server returned empty response?
         if (![feedArray count]) {
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
-                                [NSDictionary dictionaryWithObjectsAndKeys:@"Warning: Server returned empty response", NSLocalizedDescriptionKey, nil]]];
+                                [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
 			      return;
 		}
 
@@ -556,7 +556,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                 [tmpApps addObject:app];
             }else {
               [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
-                                  [NSDictionary dictionaryWithObjectsAndKeys:@"Error: Invalid App data received from server!", NSLocalizedDescriptionKey, nil]]];
+                                  [NSDictionary dictionaryWithObjectsAndKeys:@"Invalid data received from server.", NSLocalizedDescriptionKey, nil]]];
             }
         }
         // only set if different!
