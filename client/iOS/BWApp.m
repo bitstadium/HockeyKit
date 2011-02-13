@@ -99,6 +99,11 @@
 #pragma mark -
 #pragma mark Properties
 
+- (NSString *)nameAndVersionString {
+  NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.name, [self versionString]];
+  return appNameAndVersion;
+}
+
 - (NSString *)versionString {
     NSString *shortString = self.shortVersion ? [NSString stringWithFormat:@"%@ ", self.shortVersion] : @"";
     NSString *versionString = [shortString length] ? [NSString stringWithFormat:@"(%@)", self.version] : self.version;

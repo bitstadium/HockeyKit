@@ -40,6 +40,7 @@
 @property (nonatomic, copy) NSDate *date;
 @property (nonatomic, copy) NSNumber *size;
 
+- (NSString *)nameAndVersionString;
 - (NSString *)versionString;
 - (NSString *)dateString;
 - (NSString *)sizeInMB;
