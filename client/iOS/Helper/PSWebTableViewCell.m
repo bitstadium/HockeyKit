@@ -82,7 +82,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 			webView_.frame = webViewRect;
 
         NSString *deviceWidth = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? [NSString stringWithFormat:@"%d", CGRectGetWidth(self.bounds)] : @"device-width";
-        BWLog(@"%@\n%@\%@", PSWebTableViewCellHtmlTemplate, deviceWidth, self.webViewContent);
+        //BWLog(@"%@\n%@\%@", PSWebTableViewCellHtmlTemplate, deviceWidth, self.webViewContent);
         NSString *contentHtml = [NSString stringWithFormat:PSWebTableViewCellHtmlTemplate, deviceWidth, self.webViewContent];
 		[webView_ loadHTMLString:contentHtml baseURL:nil];
 	}
