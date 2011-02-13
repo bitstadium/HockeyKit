@@ -14,7 +14,7 @@
 
 @class HockeyDemoViewController;
 
-@interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate, BWHockeyControllerDelegate> {
+@interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate, BWHockeyManagerDelegate> {
     UIWindow *window;
     UINavigationController *navigationController;
     HockeyDemoViewController *viewController;    
