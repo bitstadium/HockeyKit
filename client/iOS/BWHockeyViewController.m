@@ -226,6 +226,7 @@
       // hook into manager with kvo!
       [self.hockeyManager addObserver:self forKeyPath:@"checkInProgress" options:0 context:nil];
       [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
+      [self.hockeyManager addObserver:self forKeyPath:@"apps" options:0 context:nil];
     }
     return self;
 }
@@ -238,6 +239,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
     [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
     [self viewDidUnload];
     for (UITableViewCell *cell in cells_) {
         [cell removeObserver:self forKeyPath:@"webViewSize"];
@@ -371,7 +373,7 @@
                                                                                               action:@selector(onAction:)];
     }
 
-    PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(10, 40)] autorelease];
+    PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(5, 40)] autorelease];
     storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     storeButton.buttonDelegate = self;
     [self.tableView.tableHeaderView addSubview:storeButton];
@@ -489,7 +491,7 @@
     }
 
     if (rowHeight == 0) {
-        rowHeight = 44;
+        rowHeight = 300; // fill screen on startupw
     }
 
     return rowHeight;
@@ -516,6 +518,9 @@
       [self restoreStoreButtonStateAnimated_:YES];
     }
   }else if ([keyPath isEqualToString:@"updateAvailable"]) {
+    [self restoreStoreButtonStateAnimated_:YES];
+    //[self redrawTableView];
+  }else if ([keyPath isEqualToString:@"apps"]) {
     [self redrawTableView];
   }
 }

@@ -49,9 +49,11 @@
 - (NSString *)currentUsageString;
 - (NSString *)installationDateString;
 
+@property (nonatomic, assign, getter=isUpdateAvailable) BOOL updateAvailable;
+@property (nonatomic, assign, getter=isCheckInProgress) BOOL checkInProgress;
 @property (nonatomic, retain) NSMutableData *receivedData;
 @property (nonatomic, copy) NSDate *lastCheck;
-@property (nonatomic, retain) NSMutableArray *apps;
+@property (nonatomic, copy) NSArray *apps;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
 @property (nonatomic, copy) NSDate *usageStartTimestamp;
 @end
@@ -193,17 +195,13 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kDateOfVersionInstallation] doubleValue]]];
 }
 
-- (void)clearAppCache_ {
-    [self.apps removeAllObjects];
-}
-
 - (void)checkAndWriteDefaultAppCache_ {
     // populate with default values (if empty)
     if (![self.apps count]) {
         BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
         defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
         defaultApp.version = currentAppVersion_;
-        [self.apps addObject:defaultApp];
+        self.apps = [NSArray arrayWithObject:defaultApp];
     }
 }
 
@@ -223,10 +221,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
       [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
     }
     if (savedHockeyCheck) {
-        self.apps = [NSMutableArray arrayWithArray:savedHockeyCheck];
+        self.apps = [NSArray arrayWithArray:savedHockeyCheck];
         [self checkUpdateAvailable_];
     } else {
-        self.apps = [NSMutableArray array];
+        self.apps = nil;
     }
     [self checkAndWriteDefaultAppCache_];
 }
@@ -399,7 +397,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
         BWLog(@"update not needed right now");
         self.checkInProgress = NO;
-        [self updateViewController_];
         return;
     }
 
@@ -514,7 +511,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     self.urlConnection = nil;
     self.checkInProgress = NO;
 
-    [self updateViewController_];
     [self registerOnline];
     [self reportError_:error];
 }
@@ -554,7 +550,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         }
 
         self.receivedData = nil;
-		self.urlConnection = nil;
+        self.urlConnection = nil;
 
         // remember that we just checked the server
         self.lastCheck = [NSDate date];
@@ -563,22 +559,25 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         if (![feedArray count]) {
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                                 [NSDictionary dictionaryWithObjectsAndKeys:@"Warning: Server returned empty response", NSLocalizedDescriptionKey, nil]]];
-            [self updateViewController_];
-			return;
+			      return;
 		}
 
         NSString *currentAppCacheVersion = [[[self app].version copy] autorelease];
 
         // clear cache and reload with new data
-        [self clearAppCache_];
+        NSMutableArray *tmpApps = [NSMutableArray arrayWithCapacity:[feedArray count]];
         for (NSDictionary *dict in feedArray) {
             BWApp *app = [BWApp appFromDict:dict];
             if ([app isValid]) {
-                [apps_ addObject:app];
+                [tmpApps addObject:app];
             }else {
               [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                                   [NSDictionary dictionaryWithObjectsAndKeys:@"Error: Invalid App data received from server!", NSLocalizedDescriptionKey, nil]]];
             }
+        }
+        // only set if different!
+        if (![self.apps isEqualToArray:tmpApps]) {
+          self.apps = [[tmpApps copy] autorelease];
         }
         [self checkAndWriteDefaultAppCache_];
         [self saveAppCache_];
@@ -593,11 +592,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
       [alert show];
       [alert release];
     }
-
+    
         if (newVersionAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
-
-            self.updateAvailable = NO;
-
             [self checkUpdateAvailable_];
           
             if (updateAvailable_ && !currentHockeyViewController_) {

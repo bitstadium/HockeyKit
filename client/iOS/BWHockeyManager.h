@@ -46,7 +46,7 @@ typedef enum {
 
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
     id <BWHockeyControllerDelegate> delegate_;
-    NSMutableArray *apps_;
+    NSArray *apps_;
 
     NSString *updateURL_;
     NSString *currentAppVersion_;
@@ -119,10 +119,10 @@ typedef enum {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // is an update available?
-@property (nonatomic, assign, getter=isUpdateAvailable) BOOL updateAvailable;
+- (BOOL)isUpdateAvailable;
 
 // are we currently checking for updates?
-@property (nonatomic, assign, getter=isCheckInProgress) BOOL checkInProgress;
+- (BOOL)isCheckInProgress;
 
 // open update info view
 - (void)showUpdateView;
@@ -148,6 +148,7 @@ typedef enum {
 
 // get newest app or array of all available versions
 - (BWApp *)app;
+
 - (NSArray *)apps;
 
 @end
