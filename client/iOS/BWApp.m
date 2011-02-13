@@ -162,6 +162,14 @@
     }
 }
 
+- (NSString *)notesOrEmptyString {
+ if (self.notes) {
+   return self.notes;
+ }else {
+   return [NSString string];
+ }
+}
+
 // a valid app needs at least following properties: name, version, date
 - (BOOL)isValid {
     BOOL valid = [self.name length] && [self.version length] && [self.notes length];

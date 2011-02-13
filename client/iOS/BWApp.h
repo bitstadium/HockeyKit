@@ -44,6 +44,7 @@
 - (NSString *)versionString;
 - (NSString *)dateString;
 - (NSString *)sizeInMB;
+- (NSString *)notesOrEmptyString;
 - (void)setDateWithTimestamp:(NSTimeInterval)timestamp;
 - (BOOL)isValid;
 - (BOOL)isEqualToBWApp:(BWApp *)anApp;
