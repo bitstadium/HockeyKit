@@ -8,7 +8,7 @@ Important:
 
 E.g. use where appropriate (if your configuration is named AppStore_Distribution):
 #if !defined (CONFIGURATION_AppStore_Distribution)
-#import "BWHockeyController.h"
+#import "BWHockeyManager.h"
 #endif
 
 
@@ -18,7 +18,7 @@ Include Client Code:
 - Include the header as shown above
 - Include the library in application:didFinishLaunchingWithOptions: via
 #if !defined (CONFIGURATION_AppStore_Distribution)
-    [BWHockeyController sharedHockeyController].updateURL = @"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated";
+    [BWHockeyManager sharedHockeyManager].updateURL = @"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated";
 #endif
 
 - Replace the URL

@@ -42,10 +42,10 @@ typedef enum {
     HockeyUpdateCheckManually
 } HockeyUpdateSetting;
 
-@protocol BWHockeyControllerDelegate;
+@protocol BWHockeyManagerDelegate;
 
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
-    id <BWHockeyControllerDelegate> delegate_;
+    id <BWHockeyManagerDelegate> delegate_;
     NSArray *apps_;
 
     NSString *updateURL_;
@@ -84,7 +84,7 @@ typedef enum {
 @property (nonatomic, retain) NSString *updateURL;
 
 // delegate is optional
-@property (nonatomic, assign) id <BWHockeyControllerDelegate> delegate;
+@property (nonatomic, assign) id <BWHockeyManagerDelegate> delegate;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ typedef enum {
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-@protocol BWHockeyControllerDelegate <NSObject>
+@protocol BWHockeyManagerDelegate <NSObject>
 @optional
 
 // Invoked when the internet connection is started, to let the app enable the activity indicator
