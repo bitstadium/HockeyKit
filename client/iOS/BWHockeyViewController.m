@@ -493,7 +493,7 @@
     }
 
     if (rowHeight == 0) {
-        rowHeight = 300; // fill screen on startupw
+        rowHeight = 250; // fill screen on startup
     }
 
     return rowHeight;
