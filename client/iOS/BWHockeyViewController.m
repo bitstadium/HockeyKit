@@ -507,7 +507,8 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"webViewSize"]) {
         NSInteger index = [cells_ indexOfObject:object];
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        IF_3_2_OR_GREATER([self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];)
+        IF_PRE_3_2([self.tableView reloadData];)        
         [self realignPreviousVersionButton];
     }else if ([keyPath isEqualToString:@"checkInProgress"]) {
         if (self.hockeyManager.isCheckInProgress) {
