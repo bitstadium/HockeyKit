@@ -76,7 +76,8 @@
 "HockeySectionCheckManually" = "Manuell";
 
 "ShowPreviousVersions" = "Zeige frühere Versionen...";
-
+"HockeyNoUpdateNeededTitle" = "Kein Update notwendig";
+"HockeyNoUpdateNeededMessage" = "%@ ist bereits die aktuellste Version";
 "HockeyUpdateAlertTextWithAppVersion" = "%@ ist verfügbar.";
 "HockeyIgnore" = "Ignorieren";
 "HockeyShowUpdate" = "Update zeigen";
