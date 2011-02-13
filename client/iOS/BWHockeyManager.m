@@ -326,7 +326,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 	}
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
-      parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] rootViewController];
+      parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];
     }
 
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
