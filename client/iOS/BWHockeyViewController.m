@@ -841,16 +841,16 @@
 
   switch (anAppStoreButtonState) {
     case AppStoreButtonStateCheck:
-      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Check" colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonCheck") colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
       break;
     case AppStoreButtonStateSearching:
-      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Searching..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonSearching") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
       break;
     case AppStoreButtonStateUpdate:
-      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:animated];
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonUpdate") colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:animated];
       break;
     case AppStoreButtonStateInstalling:
-      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:@"Installing..." colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonInstalling") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
       break;
     default:
       break;

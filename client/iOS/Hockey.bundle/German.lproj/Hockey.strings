@@ -77,4 +77,13 @@
 
 "ShowPreviousVersions" = "Zeige frühere Versionen...";
 
-"HockeyUpdateAlertTextWithAppVersion" = "%@ ist verfügbar.\nMöchten Sie sich weitere Informationen zu der Aktualisierung ansehen?";
+"HockeyUpdateAlertTextWithAppVersion" = "%@ ist verfügbar.";
+"HockeyIgnore" = "Ignorieren";
+"HockeyShowUpdate" = "Update zeigen";
+"HockeyError" = "Fehler";
+"HockeyOK" = "OK";
+
+"HockeyButtonCheck" = "ÜBERPRÜFEN";
+"HockeyButtonSearching" = "ÜBERPRÜFE...";
+"HockeyButtonUpdate" = "AKTUALISIERE";
+"HockeyButtonInstalling" = "INSTALLIEREN...";
