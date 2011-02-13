@@ -50,6 +50,14 @@
 #pragma mark -
 #pragma mark private
 
+- (void)restoreStoreButtonStateAnimated_:(BOOL)animated {
+  if ([self.hockeyManager isUpdateAvailable]) {
+    [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:animated];
+  } else {
+    [self setAppStoreButtonState:AppStoreButtonStateCheck animated:animated];
+  }
+}
+
 - (void)closeSettings {
     [settingsSheet_ dismissWithClickedButtonIndex:[settingPicker_ selectedRowInComponent:0] animated:YES];
 }
@@ -214,6 +222,10 @@
 
         NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
         [dnc addObserver:self selector:@selector(appDidBecomeActive_) name:UIApplicationDidBecomeActiveNotification object:nil];
+      
+      // hook into manager with kvo!
+      [self.hockeyManager addObserver:self forKeyPath:@"checkInProgress" options:0 context:nil];
+      [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
     }
     return self;
 }
@@ -223,6 +235,9 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
     [self viewDidUnload];
     for (UITableViewCell *cell in cells_) {
         [cell removeObserver:self forKeyPath:@"webViewSize"];
@@ -387,14 +402,8 @@
         [cell removeObserver:self forKeyPath:@"webViewSize"];
     }
     [cells_ removeAllObjects];
-
-    if ([self.hockeyManager isUpdateAvailable]) {
-        appStoreButton_.buttonData = [PSStoreButtonData dataWithLabel:@"Update" colors:[PSStoreButton appStoreBlueColor] enabled:YES];
-        appStoreButtonState_ = AppStoreButtonStateUpdate;
-    } else {
-        appStoreButton_.buttonData = [PSStoreButtonData dataWithLabel:@"Check" colors:[PSStoreButton appStoreGreenColor] enabled:YES];
-        appStoreButtonState_ = AppStoreButtonStateCheck;
-    }
+  
+  [self restoreStoreButtonStateAnimated_:NO];
 
     for (BWApp *app in self.hockeyManager.apps) {
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
@@ -495,9 +504,19 @@
 #pragma mark KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+  if ([keyPath isEqualToString:@"webViewSize"]) {
     NSInteger index = [cells_ indexOfObject:object];
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     [self realignPreviousVersionButton];
+  }else if ([keyPath isEqualToString:@"checkInProgress"]) {
+    if (self.hockeyManager.isCheckInProgress) {
+      [self setAppStoreButtonState:AppStoreButtonStateSearching animated:YES];
+    }else {
+      [self restoreStoreButtonStateAnimated_:YES];
+    }
+  }else if ([keyPath isEqualToString:@"updateAvailable"]) {
+    [self redrawTableView];
+  }
 }
 
 // Customize the appearance of table view cells.
@@ -862,7 +881,7 @@
 
     switch (appStoreButtonState_) {
         case AppStoreButtonStateCheck:
-            [self setAppStoreButtonState:AppStoreButtonStateSearching animated:YES];
+            [self.hockeyManager checkForUpdateShowFeedback:YES];
             break;
         case AppStoreButtonStateUpdate:
             if ([self.hockeyManager initiateAppDownload]) {

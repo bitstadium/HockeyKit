@@ -62,6 +62,7 @@ typedef enum {
 - (id)init:(BWHockeyManager *)newHockeyManager modal:(BOOL)newModal;
 - (id)init;
 
+// updates the whole view
 - (void)redrawTableView;
 
 @end
