@@ -35,6 +35,8 @@
 #define kAppStoreViewHeight 90
 
 @interface BWHockeyViewController ()
+// updates the whole view
+- (void)redrawTableView;
 @property (nonatomic, assign) AppStoreButtonState appStoreButtonState;
 - (void)setAppStoreButtonState:(AppStoreButtonState)anAppStoreButtonState animated:(BOOL)animated;
 @end
@@ -42,9 +44,9 @@
 
 @implementation BWHockeyViewController
 
+@synthesize appStoreButtonState = appStoreButtonState_;
 @synthesize hockeyManager = hockeyManager_;
 @synthesize modal = modal_;
-@synthesize appStoreButtonState = appStoreButtonState_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -415,7 +417,7 @@
             cell.webViewContent = app.notes;
         } else {
             NSString *installed = @"";
-            if ([app.version compare: [self.hockeyManager currentAppVersion]] == NSOrderedSame) {
+            if ([app.version compare:[self.hockeyManager currentAppVersion]] == NSOrderedSame) {
                 installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
             }
             cell.webViewContent = [NSString stringWithFormat: @"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];

@@ -234,10 +234,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:kArrayOfLastHockeyCheck];
 }
 
-- (void)updateViewController_ {
-    [currentHockeyViewController_ redrawTableView];
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
@@ -599,8 +595,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForBetaAlert_];
             }
-
-            [self updateViewController_];
         }
       showFeedback_ = NO;
     }
