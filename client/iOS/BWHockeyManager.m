@@ -61,6 +61,7 @@
 typedef enum {
     HockeyErrorUnknown,
     HockeyAPIServerReturnedInvalidStatus,
+    HockeyAPIServerReturnedInvalidData,
     HockeyAPIServerReturnedEmptyResponse,
     HockeyAPIClientCannotCreateConnection
 } HockeyErrorReason;
@@ -471,8 +472,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
     NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
     
-    BWLog(@"API Server Call: %@", hockeyAPIURL);
-    BWLog(@"Calling to iOS with %@", iOSUpdateURL);
+    BWLog(@"API Server Call: %@, calling iOS with %@", hockeyAPIURL, iOSUpdateURL);
     BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
     BWLog(@"System returned: %d", success);
     return success;
@@ -575,7 +575,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             if ([app isValid]) {
                 [tmpApps addObject:app];
             }else {
-                [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidData userInfo:
                                     [NSDictionary dictionaryWithObjectsAndKeys:@"Invalid data received from server.", NSLocalizedDescriptionKey, nil]]];
             }
         }
@@ -604,6 +604,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             }
         }
         showFeedback_ = NO;
+    }else {
+        [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                            [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned an empty response.", NSLocalizedDescriptionKey, nil]]];
     }
 }
 
@@ -638,7 +641,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (currentHockeyViewController_ != aCurrentHockeyViewController) {
         [currentHockeyViewController_ release];
         currentHockeyViewController_ = [aCurrentHockeyViewController retain];
-        BWLog(@"active hockey view controller: %@", aCurrentHockeyViewController);
+        //BWLog(@"active hockey view controller: %@", aCurrentHockeyViewController);
     }
 }
 
