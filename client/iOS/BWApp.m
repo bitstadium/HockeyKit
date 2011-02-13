@@ -81,17 +81,17 @@
 - (BOOL)isEqualToBWApp:(BWApp *)anApp {
   if (self == anApp)
     return YES;
-  if (![[self name] isEqualToString:[anApp name]])
+  if (self.name != anApp.name && ![self.name isEqualToString:anApp.name])
     return NO;
-  if (![[self version] isEqualToString:[anApp version]])
+  if (self.version != anApp.version && ![self.version isEqualToString:anApp.version])
     return NO;
-  if (![[self shortVersion] isEqualToString:[anApp shortVersion]])
+  if (self.shortVersion != anApp.shortVersion && ![self.shortVersion isEqualToString:anApp.shortVersion])
     return NO;
-  if (![[self notes] isEqualToString:[anApp notes]])
+  if (self.notes != anApp.notes && ![self.notes isEqualToString:anApp.notes])
     return NO;
-  if (![[self date] isEqualToDate:[anApp date]])
+  if (self.date != anApp.date && ![self.date isEqualToDate:anApp.date])
     return NO;
-  if (![[self size] isEqualToNumber:[anApp size]])
+  if (self.size != anApp.size && ![self.size isEqualToNumber:anApp.size])
     return NO;
   return YES;
 }
