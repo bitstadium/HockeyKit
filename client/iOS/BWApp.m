@@ -41,8 +41,8 @@
 
 + (BWApp *)appFromDict:(NSDictionary *)dict {
     BWApp *app = [[[[self class] alloc] init] autorelease];
-
-//    NSParameterAssert([dict isKindOfClass:[NSDictionary class]]);
+    
+    //    NSParameterAssert([dict isKindOfClass:[NSDictionary class]]);
     if ([dict isKindOfClass:[NSDictionary class]]) {
         app.name = [dict objectForKey:@"title"];
         app.version = [dict objectForKey:@"version"];
@@ -51,7 +51,7 @@
         app.size = [dict objectForKey:@"appsize"];
         app.notes = [dict objectForKey:@"notes"];
     }
-
+    
     return app;
 }
 
@@ -66,34 +66,34 @@
     [notes_ release];
     [date_ release];
     [size_ release];
-
+    
     [super dealloc];
 }
 
 - (BOOL)isEqual:(id)other {
-  if (other == self)
-    return YES;
-  if (!other || ![other isKindOfClass:[self class]])
-    return NO;
-  return [self isEqualToBWApp:other];
+    if (other == self)
+        return YES;
+    if (!other || ![other isKindOfClass:[self class]])
+        return NO;
+    return [self isEqualToBWApp:other];
 }
 
 - (BOOL)isEqualToBWApp:(BWApp *)anApp {
-  if (self == anApp)
+    if (self == anApp)
+        return YES;
+    if (self.name != anApp.name && ![self.name isEqualToString:anApp.name])
+        return NO;
+    if (self.version != anApp.version && ![self.version isEqualToString:anApp.version])
+        return NO;
+    if (self.shortVersion != anApp.shortVersion && ![self.shortVersion isEqualToString:anApp.shortVersion])
+        return NO;
+    if (self.notes != anApp.notes && ![self.notes isEqualToString:anApp.notes])
+        return NO;
+    if (self.date != anApp.date && ![self.date isEqualToDate:anApp.date])
+        return NO;
+    if (self.size != anApp.size && ![self.size isEqualToNumber:anApp.size])
+        return NO;
     return YES;
-  if (self.name != anApp.name && ![self.name isEqualToString:anApp.name])
-    return NO;
-  if (self.version != anApp.version && ![self.version isEqualToString:anApp.version])
-    return NO;
-  if (self.shortVersion != anApp.shortVersion && ![self.shortVersion isEqualToString:anApp.shortVersion])
-    return NO;
-  if (self.notes != anApp.notes && ![self.notes isEqualToString:anApp.notes])
-    return NO;
-  if (self.date != anApp.date && ![self.date isEqualToDate:anApp.date])
-    return NO;
-  if (self.size != anApp.size && ![self.size isEqualToNumber:anApp.size])
-    return NO;
-  return YES;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,8 +126,8 @@
 #pragma mark Properties
 
 - (NSString *)nameAndVersionString {
-  NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.name, [self versionString]];
-  return appNameAndVersion;
+    NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.name, [self versionString]];
+    return appNameAndVersion;
 }
 
 - (NSString *)versionString {
@@ -139,7 +139,7 @@
 - (NSString *)dateString {
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
-
+    
     return [formatter stringFromDate:self.date];
 }
 
@@ -149,7 +149,7 @@
         NSString *appSizeString = [NSString stringWithFormat:@"%.1f MB", appSizeInMB];
         return appSizeString;
     }
-
+    
     return @"0 MB";
 }
 
@@ -163,11 +163,11 @@
 }
 
 - (NSString *)notesOrEmptyString {
- if (self.notes) {
-   return self.notes;
- }else {
-   return [NSString string];
- }
+    if (self.notes) {
+        return self.notes;
+    }else {
+        return [NSString string];
+    }
 }
 
 // a valid app needs at least following properties: name, version, date
