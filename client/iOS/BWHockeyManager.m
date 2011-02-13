@@ -301,6 +301,10 @@
             }
         }
 	}
+    // special addition to get rootViewController from three20 which has it's own controller handling
+    if (NSClassFromString(@"TTNavigator")) {
+      parentViewController = [[NSClassFromString(@"TTNavigator") navigator] rootViewController];
+    }
 
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
     UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
@@ -418,11 +422,20 @@
     return NO;
   }
   
-  IF_PRE_IOS4 (
-     BWLog(@"Warning: In-App Download is not supported with iOS < 4.0. Aborting.");
-     return NO;
+  IF_PRE_IOS4
+  (
+   NSString *message = [NSString stringWithFormat:@"In-App Download requires iOS 4 or higher. You can download the update with downloading from %@ and syncing with iTunes.", self.updateURL];
+   UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Warning" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+   [alert show];
+   return NO;
   )
   
+  #if TARGET_IPHONE_SIMULATOR
+  UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Simulator detected" message:@"Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+  [alert show];
+  return NO;
+  #endif
+
   NSString *extraParameter = [NSString string];
   if (self.shouldSendUserData) {
     extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];

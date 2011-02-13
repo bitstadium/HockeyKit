@@ -865,8 +865,9 @@
             [self setAppStoreButtonState:AppStoreButtonStateSearching animated:YES];
             break;
         case AppStoreButtonStateUpdate:
-            [self setAppStoreButtonState:AppStoreButtonStateInstalling animated:YES];
-            [self.hockeyManager initiateAppDownload];
+            if ([self.hockeyManager initiateAppDownload]) {
+              [self setAppStoreButtonState:AppStoreButtonStateInstalling animated:YES];
+            };
             break;
         default:
             break;
