@@ -25,6 +25,9 @@
 #import "BWHockeyManager.h"
 #import "BWApp.h"
 
+#define HOCKEYKIT_VERSION_MAJOR 2
+#define HOCKEYKIT_VERSION_MINOR 0
+
 // uncomment this line to enable NSLog-debugging output
 #define kHockeyDebugEnabled
 
