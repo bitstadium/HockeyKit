@@ -75,6 +75,7 @@
 /* Manually */
 "HockeySectionCheckManually" = "Manuell";
 
+"HockeyVersion" = "Version";
 "ShowPreviousVersions" = "Zeige frühere Versionen...";
 "HockeyNoUpdateNeededTitle" = "Kein Update notwendig";
 "HockeyNoUpdateNeededMessage" = "%@ ist bereits die aktuellste Version.";
