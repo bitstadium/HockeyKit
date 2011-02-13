@@ -99,7 +99,7 @@
     [iconImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin)];
     [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
     
-    // shadows are a beast.2
+    // shadows are a beast
     NSInteger shadowOffset = 2;
     IF_IOS4_OR_GREATER(if([[UIScreen mainScreen] scale] == 2) shadowOffset = 1;)
     IF_3_2_OR_GREATER(CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);)
