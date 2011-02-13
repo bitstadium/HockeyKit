@@ -189,7 +189,7 @@ The first option to integrate the client is by downloading the sources and integ
 * Include the header into your UIApplicationDelegate subclass, this assumes your AppStore distribution configuration is named *AppStore_Distribution*
 
 		#if !defined (CONFIGURATION_AppStore_Distribution)
-		#import "BWHockeyController.h"
+		#import "BWHockeyManager.h"
 		#endif
 
 * Initialize Hockey with the code below and replace the URL to point to your server hockey public URL path (without index.php !).
@@ -200,7 +200,6 @@ The first option to integrate the client is by downloading the sources and integ
 		// to the Preprocessor Macros in the project settings to all configurations
 		#if !defined (CONFIGURATION_AppStore_Distribution)
   			[BWHockeyManager sharedHockeyManager].updateURL = @"http://your.server.com/";
-  			[BWHockeyManager sharedHockeyManager].delegate = self;
 		#endif
 
 * Optionally set the *UIWindow* *rootViewController* property (iOS 4 only, make sure it is not set on iOS 3.x if you require compatibility) which should be used to push the modal Hockey Update view onto. If it is not set Hockey will try to find the best way by itself.
@@ -243,7 +242,7 @@ The first option to integrate the client is by downloading the sources and integ
 
   **default:** nil
 
-  **Description:** the delegate instance responding to BWHockeyControllerDelegate protocol
+  **Description:** the delegate instance responding to BWHockeyManagerDelegate protocol
 
 * *sendUserData* (optional)
 
@@ -302,7 +301,7 @@ The first option to integrate the client is by downloading the sources and integ
   **Description:** Let the user change the *updateSetting* value or not
 
 
-## BWHockeyControllerDelegate Protocol
+## BWHockeyManagerDelegate Protocol
 All methods are optional.
 
 * *- (void)connectionOpened*
@@ -313,7 +312,7 @@ All methods are optional.
 
   Invoked when the internet connection is closed, to let the app disable the activity indicator.
 
-* *- (UIViewController *)viewControllerForHockeyController:(BWHockeyManager *)hockeyControllerconnectionOpened()*
+* *- (UIViewController *)viewControllerForHockeyManager:(BWHockeyManager *)hockeyManagerConnectionOpened()*
 
   Optional parent view controller for the update screen when invoked via the alert view, default is the root UIWindow instance.
 
