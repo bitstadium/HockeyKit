@@ -104,11 +104,13 @@
     settingPicker_.delegate = self;
     [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
     
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    Class popoverControllerClass = NSClassFromString(@"UIPopoverController");
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && popoverControllerClass) {
         UIViewController *pickerViewController = [[[UIViewController alloc] init] autorelease];
         [pickerViewController.view addSubview:settingPicker_];
-        UIPopoverController *popOverController = [[UIPopoverController alloc] initWithContentViewController:pickerViewController];
-        popOverController.popoverContentSize = CGSizeMake(300, 216);
+        
+        id popOverController = [[popoverControllerClass alloc] initWithContentViewController:pickerViewController];
+        [popOverController setPopoverContentSize: CGSizeMake(300, 216)];
         
         // show popover
         CGSize sizeOfPopover = CGSizeMake(300, 222);

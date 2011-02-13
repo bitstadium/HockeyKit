@@ -274,8 +274,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    IF_IOS4_OR_GREATER(
+                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                       )
     [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
     [reachability_ release];
     self.delegate = nil;
@@ -646,15 +648,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
     }
     
-    // register/deregister logic
-    NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-    if (!updateURL_ && anUpdateURL) {
-        [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
-        [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    }else if (updateURL_ && !anUpdateURL) {
-        [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-        [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-    }
+    IF_IOS4_OR_GREATER(
+                       // register/deregister logic
+                       NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+                       if (!updateURL_ && anUpdateURL) {
+                           [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
+                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
+                       } else if (updateURL_ && !anUpdateURL) {
+                           [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                           [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                       }
+                       )
     
     if (updateURL_ != anUpdateURL) {
         [updateURL_ release];
@@ -666,12 +670,14 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
     if (checkForUpdateOnLaunch_ != flag) {
         checkForUpdateOnLaunch_ = flag;
-        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-        if (flag) {
-            [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
-        }else {
-            [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-        }
+        IF_IOS4_OR_GREATER(
+                           NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+                           if (flag) {
+                               [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
+                           } else {
+                               [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                           }
+                           )
     }
 }
 
