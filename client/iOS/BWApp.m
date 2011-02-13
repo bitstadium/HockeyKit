@@ -144,13 +144,13 @@
 }
 
 - (NSString *)sizeInMB {
-    if ([size_ doubleValue]) {
+    if ([size_ doubleValue] > 0) {
         double appSizeInMB = [size_ doubleValue]/(1024*1024);
         NSString *appSizeString = [NSString stringWithFormat:@"%.1f MB", appSizeInMB];
         return appSizeString;
     }
 
-    return nil;
+    return @"0 MB";
 }
 
 - (void)setDateWithTimestamp:(NSTimeInterval)timestamp {
