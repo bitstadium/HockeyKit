@@ -67,7 +67,6 @@
 
     [super dealloc];
 }
-
 @end
 
 
@@ -180,7 +179,7 @@
 		self.layer.needsDisplayOnBoundsChange = YES;
 
         // setup title label
-        [self.titleLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+        [self.titleLabel setFont:[UIFont boldSystemFontOfSize:13.0]];
 
         // register for touch events
         [self addTarget:self action:@selector(touchedUpOutside:) forControlEvents:UIControlEventTouchUpOutside];
@@ -295,8 +294,8 @@
 
 + (NSArray *)appStoreGrayColor {
     return [NSArray arrayWithObjects:(id)
-            RGBCOLOR(167,169,171).CGColor,
-            RGBCOLOR(185,187,188).CGColor, nil];
+            RGBCOLOR(187,189,191).CGColor,
+            RGBCOLOR(210,210,210).CGColor, nil];
 }
 
 @end
