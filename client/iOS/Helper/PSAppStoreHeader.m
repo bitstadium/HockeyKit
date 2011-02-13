@@ -108,14 +108,12 @@
 
     // middle
     [secondaryTextColor set];
-    [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 28, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
+    [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 25, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
     CGContextSetShadowWithColor(context, CGSizeZero, 0, nil);
     
     // sub
     [secondaryTextColor set];
-    //  [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont minFontSize:12 actualFontSize:nil lineBreakMode:UILineBreakModeTailTruncation baselineAdjustment:UIBaselineAdjustmentNone];
     [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
-    //  [subHeaderLabel drawInRect:CGRectMake(kTextRow, kImageMargin + 45, globalWidth-kTextRow, 20) withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
 
     CGColorRelease(myColor);
     CGColorSpaceRelease(myColorSpace);
@@ -124,6 +122,30 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Properties
+
+- (void)setHeaderLabel:(NSString *)anHeaderLabel {
+  if (headerLabel_ != anHeaderLabel) {
+    [headerLabel_ release];
+    headerLabel_ = [anHeaderLabel copy];
+    [self setNeedsDisplay];
+  }
+}
+
+- (void)setMiddleHeaderLabel:(NSString *)aMiddleHeaderLabel {
+  if (middleHeaderLabel_ != aMiddleHeaderLabel) {
+    [middleHeaderLabel_ release];
+    middleHeaderLabel_ = [aMiddleHeaderLabel copy];
+    [self setNeedsDisplay];
+  }
+}
+
+- (void)setSubHeaderLabel:(NSString *)aSubHeaderLabel {
+  if (subHeaderLabel != aSubHeaderLabel) {
+    [subHeaderLabel release];
+    subHeaderLabel = [aSubHeaderLabel copy];
+    [self setNeedsDisplay];
+  }
+}
 
 - (void)setIconImage:(UIImage *)anIconImage {
     if (iconImage_ != anIconImage) {
@@ -140,6 +162,7 @@
         if (anIconImage) {
             reflectedImage_ = [[iconImage_ bw_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
         }
+      [self setNeedsDisplay];
     }
 }
 

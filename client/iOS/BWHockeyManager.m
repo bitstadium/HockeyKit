@@ -521,9 +521,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         BWLog(@"Received API response: %@", responseString);
 
         NSError *error = nil;
+        NSArray *feedArray;
     
-        // weak linked JSONKit
-    NSArray *feedArray;
     // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
     SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
     if (jsonKitSelector && [responseString respondsToSelector:jsonKitSelector]) {
@@ -578,20 +577,20 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [self checkAndWriteDefaultAppCache_];
         [self saveAppCache_];
 
-        BOOL newVersionAvailable = [[self app].version compare:[self currentAppVersion]] != NSOrderedSame;
-        BOOL newVersionDiffersFromCachedVersion = [[self app].version compare:currentAppCacheVersion] != NSOrderedSame;
+        [self checkUpdateAvailable_];
+        BOOL newVersionDiffersFromCachedVersion = ![self.app.version isEqualToString:currentAppCacheVersion];
     
     // show alert if we are on the latest & greatest
-    if (showFeedback_ && !newVersionAvailable) {
-      NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), [self.app nameAndVersionString]];
+    if (showFeedback_ && !self.isUpdateAvailable) {
+      // use currentVersionString, as version still may differ (e.g. server: 1.2, client: 1.3)
+      NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@ %@", self.app.name, BWLocalize(@"HockeyVersion"), [self currentAppVersion]];
+      NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
       UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
       [alert show];
       [alert release];
     }
     
-        if (newVersionAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
-            [self checkUpdateAvailable_];
-          
+        if (self.isUpdateAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForBetaAlert_];
             }

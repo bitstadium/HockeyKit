@@ -60,6 +60,27 @@
   }
 }
 
+- (void)updateAppStoreHeader_ {
+  BWApp *app = self.hockeyManager.app;
+  appStoreHeader_.headerLabel = app.name;
+  NSString *shortVersion = app.shortVersion ? [NSString stringWithFormat:@"%@ ", app.shortVersion] : @"";
+  NSString *version = [shortVersion length] ? [NSString stringWithFormat:@"(%@)",app.version] : app.version;
+  appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortVersion, version];
+  NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+  [formatter setDateStyle:NSDateFormatterMediumStyle];
+  NSMutableString *subHeaderString = [NSMutableString string];
+  if (app.date) {
+    [subHeaderString appendString:[formatter stringFromDate:app.date]];
+  }
+  if (app.size) {
+    if ([subHeaderString length]) {
+      [subHeaderString appendString:@" - "];
+    }
+    [subHeaderString appendString:app.sizeInMB];
+  }
+  appStoreHeader_.subHeaderLabel = subHeaderString;
+}
+
 - (void)closeSettings {
     [settingsSheet_ dismissWithClickedButtonIndex:[settingPicker_ selectedRowInComponent:0] animated:YES];
 }
@@ -298,7 +319,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    //self.view.backgroundColor = RGBCOLOR(140, 141, 142);
     self.tableView.backgroundColor = RGBCOLOR(200, 202, 204);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
@@ -306,31 +326,9 @@
     topView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     topView.backgroundColor = RGBCOLOR(140, 141, 142);
     [self.tableView addSubview:topView];
-    //  self.tableView.contentInset = UIEdgeInsetsMake(600-kAppStoreViewHeight, 0, 0, 0);
-
-    // DEBUG
-    //  self.tableView.layer.borderColor = [[UIColor orangeColor] CGColor];
-    //self.tableView.layer.borderWidth = 2.0;
-
-    BWApp *app = self.hockeyManager.app;
+  
     appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
-    appStoreHeader_.headerLabel = app.name;
-    NSString *shortVersion = app.shortVersion ? [NSString stringWithFormat:@"%@ ", app.shortVersion] : @"";
-    NSString *version = [shortVersion length] ? [NSString stringWithFormat:@"(%@)",app.version] : app.version;
-    appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortVersion, version];
-    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    NSMutableString *subHeaderString = [NSMutableString string];
-    if (app.date) {
-        [subHeaderString appendString:[formatter stringFromDate:app.date]];
-    }
-    if (app.size) {
-        if ([subHeaderString length]) {
-            [subHeaderString appendString:@" - "];
-        }
-        [subHeaderString appendString:app.sizeInMB];
-    }
-    appStoreHeader_.subHeaderLabel = subHeaderString;
+    [self updateAppStoreHeader_];
 
     NSString *iconString;
     NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
@@ -402,6 +400,7 @@
 
 - (void)redrawTableView {
     [self restoreStoreButtonStateAnimated_:NO];
+    [self updateAppStoreHeader_];
   
     // clean up and remove any pending overservers
     for (UITableViewCell *cell in cells_) {
@@ -413,14 +412,15 @@
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
 
         // create web view for a version
+        NSString *installed = @"";
+        if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
+          installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
+        }      
         if ([app isEqual:self.hockeyManager.app]) {
-            cell.webViewContent = app.notes;
+            installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
+            cell.webViewContent = [NSString stringWithFormat:@"%@<p>%@</p>", installed, app.notes];
         } else {
-            NSString *installed = @"";
-            if ([app.version compare:[self.hockeyManager currentAppVersion]] == NSOrderedSame) {
-                installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
-            }
-            cell.webViewContent = [NSString stringWithFormat: @"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];
+            cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];
         }
         [cell addWebView];
         // hack
