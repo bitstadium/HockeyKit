@@ -152,8 +152,7 @@
     }
 }
 
-// apply gloss
-- (UIImage *)addGloss:(UIImage *)image {
+- (UIImage *)addGlossToImage_:(UIImage *)image {
     IF_IOS4_OR_GREATER(UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);)
     IF_PRE_IOS4(UIGraphicsBeginImageContext(image.size);)
 
@@ -360,7 +359,7 @@
     }
     
     if (addGloss) {
-        appStoreHeader_.iconImage = [self addGloss:[UIImage imageNamed:iconString]];
+        appStoreHeader_.iconImage = [self addGlossToImage_:[UIImage imageNamed:iconString]];
     } else {
         appStoreHeader_.iconImage = [UIImage imageNamed:iconString];
     }
