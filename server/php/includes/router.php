@@ -98,7 +98,7 @@ class Router
 
         $is_v1_client = strpos($_SERVER['HTTP_USER_AGENT'], 'CFNetwork') !== false;
 
-        $this->api = (strpos($request, '/api/') === false) || $is_v1_client ?
+        $this->api = (strpos($request, '/api/') === false && strpos($request, '/apps/') === false) || $is_v1_client ?
             AppUpdater::API_V1 : AppUpdater::API_V2;
 
         if ($this->api == AppUpdater::API_V1)
