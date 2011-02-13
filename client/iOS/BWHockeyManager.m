@@ -60,6 +60,7 @@
 typedef enum {
   HockeyErrorUnknown,
   HockeyAPIServerReturnedInvalidStatus,
+  HockeyAPIServerReturnedEmptyResponse,
 } HockeyErrorReason;
 static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
@@ -104,11 +105,12 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)reportError_:(NSError *)error {
   BWLog(@"Error: %@", [error localizedDescription]);
   
-  // only show error if hockey controller is visible
-  if (self.currentHockeyViewController) {
+  // only show error if we enable that
+  if (showFeedback_) {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyError") message:[error localizedDescription] delegate:nil cancelButtonTitle:BWLocalize(@"OK") otherButtonTitles:nil];
     [alert show];
     [alert release];
+    showFeedback_ = NO;
   }
 }
 
@@ -208,9 +210,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)checkUpdateAvailable_ {
     // check if there is an update available
     if (self.compareVersionType == HockeyComparisonResultGreater) {
-        updateAvailable_ = ([self.app.version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
+        self.updateAvailable = ([self.app.version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
     } else {
-        updateAvailable_ = ([self.app.version compare:self.currentAppVersion] != NSOrderedSame);
+        self.updateAvailable = ([self.app.version compare:self.currentAppVersion] != NSOrderedSame);
     }
 }
 
@@ -351,9 +353,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 
 - (void)showCheckForBetaAlert_ {
-    NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.app.name, [self.app versionString]];
     UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
-                                                         message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), appNameAndVersion]
+                                                         message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
                                                         delegate:self
                                                cancelButtonTitle:BWLocalize(@"HockeyIgnore")
                                                otherButtonTitles:BWLocalize(@"HockeyShowUpdate"), nil
@@ -384,15 +385,20 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdate {
+  [self checkForUpdateShowFeedback:NO]; 
+}
+
+- (void)checkForUpdateShowFeedback:(BOOL)feedback {
     if (self.isCheckInProgress) return;
 
-    checkInProgress_ = YES;
+    showFeedback_ = feedback;
+    self.checkInProgress = YES;
 
     // do we need to update?
     BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;
     if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
         BWLog(@"update not needed right now");
-        checkInProgress_ = NO;
+        self.checkInProgress = NO;
         [self updateViewController_];
         return;
     }
@@ -427,11 +433,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!urlConnection_) {
-        checkInProgress_ = NO;
+        BWLog(@"Url Connection could not be created");
+        self.checkInProgress = NO;
         [self registerOnline];
     }
-
-    [self updateViewController_];
 }
 
 - (BOOL)initiateAppDownload {
@@ -507,7 +512,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [self connectionClosed_];
 	  self.receivedData = nil;
     self.urlConnection = nil;
-    checkInProgress_ = NO;
+    self.checkInProgress = NO;
 
     [self updateViewController_];
     [self registerOnline];
@@ -517,7 +522,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 // api call returned, parsing
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     [self connectionClosed_];
-    checkInProgress_ = NO;
+    self.checkInProgress = NO;
   
 	if ([self.receivedData length]) {
         NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
@@ -556,7 +561,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
         // server returned empty response?
         if (![feedArray count]) {
-            BWLog(@"Warning: Server returned empty response");
+            [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                                [NSDictionary dictionaryWithObjectsAndKeys:@"Warning: Server returned empty response", NSLocalizedDescriptionKey, nil]]];
             [self updateViewController_];
 			return;
 		}
@@ -570,7 +576,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             if ([app isValid]) {
                 [apps_ addObject:app];
             }else {
-                BWLog(@"Error: Invalid App data received from server!");
+              [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                                  [NSDictionary dictionaryWithObjectsAndKeys:@"Error: Invalid App data received from server!", NSLocalizedDescriptionKey, nil]]];
             }
         }
         [self checkAndWriteDefaultAppCache_];
@@ -578,19 +585,28 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
         BOOL newVersionAvailable = [[self app].version compare:[self currentAppVersion]] != NSOrderedSame;
         BOOL newVersionDiffersFromCachedVersion = [[self app].version compare:currentAppCacheVersion] != NSOrderedSame;
+    
+    // show alert if we are on the latest & greatest
+    if (showFeedback_ && !newVersionAvailable) {
+      NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), [self.app nameAndVersionString]];
+      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
+      [alert show];
+      [alert release];
+    }
 
         if (newVersionAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
 
-            updateAvailable_ = NO;
+            self.updateAvailable = NO;
 
             [self checkUpdateAvailable_];
-
+          
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForBetaAlert_];
             }
 
             [self updateViewController_];
         }
+      showFeedback_ = NO;
     }
 }
 

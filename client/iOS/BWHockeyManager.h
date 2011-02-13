@@ -58,6 +58,7 @@ typedef enum {
     BOOL checkInProgress_;
     BOOL dataFound;
     BOOL updateAvailable_;
+    BOOL showFeedback_; 
 
     NSURLConnection *urlConnection_;
     NSDate *lastCheck_;
@@ -118,16 +119,19 @@ typedef enum {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // is an update available?
-@property (nonatomic, readonly, getter=isUpdateAvailable) BOOL updateAvailable;
+@property (nonatomic, assign, getter=isUpdateAvailable) BOOL updateAvailable;
 
 // are we currently checking for updates?
-@property (readonly, readonly, getter=isCheckInProgress) BOOL checkInProgress;
+@property (nonatomic, assign, getter=isCheckInProgress) BOOL checkInProgress;
 
 // open update info view
 - (void)showUpdateView;
 
 // manually start an update check
 - (void)checkForUpdate;
+
+// checks for update, informs the user (error, no update found, etc)
+- (void)checkForUpdateShowFeedback:(BOOL)feedback;
 
 // initiates app-download call. displays an system UIAlertView
 - (BOOL)initiateAppDownload;
