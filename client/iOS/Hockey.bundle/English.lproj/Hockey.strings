@@ -75,7 +75,7 @@
 
 "ShowPreviousVersions" = "Show previous versions...";
 "HockeyNoUpdateNeededTitle" = "No update needed";
-"HockeyNoUpdateNeededMessage" = "%@ is already the latest version";
+"HockeyNoUpdateNeededMessage" = "%@ is already the latest version.";
 "HockeyUpdateAlertTextWithAppVersion" = "%@ is available.";
 "HockeyIgnore" = "Ignore";
 "HockeyShowUpdate" = "Show Update";
