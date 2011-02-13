@@ -30,7 +30,7 @@
   NSString *version_;
   NSString *shortVersion_;
   NSString *notes_;
-  NSDate *date_;
+  NSDate   *date_;
   NSNumber *size_;
 }
 @property (nonatomic, copy) NSString *name;
@@ -46,6 +46,7 @@
 - (NSString *)sizeInMB;
 - (void)setDateWithTimestamp:(NSTimeInterval)timestamp;
 - (BOOL)isValid;
+- (BOOL)isEqualToBWApp:(BWApp *)anApp;
 
 + (BWApp *)appFromDict:(NSDictionary *)dict;
 

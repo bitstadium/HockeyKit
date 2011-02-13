@@ -70,6 +70,32 @@
     [super dealloc];
 }
 
+- (BOOL)isEqual:(id)other {
+  if (other == self)
+    return YES;
+  if (!other || ![other isKindOfClass:[self class]])
+    return NO;
+  return [self isEqualToBWApp:other];
+}
+
+- (BOOL)isEqualToBWApp:(BWApp *)anApp {
+  if (self == anApp)
+    return YES;
+  if (![[self name] isEqualToString:[anApp name]])
+    return NO;
+  if (![[self version] isEqualToString:[anApp version]])
+    return NO;
+  if (![[self shortVersion] isEqualToString:[anApp shortVersion]])
+    return NO;
+  if (![[self notes] isEqualToString:[anApp notes]])
+    return NO;
+  if (![[self date] isEqualToDate:[anApp date]])
+    return NO;
+  if (![[self size] isEqualToNumber:[anApp size]])
+    return NO;
+  return YES;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSCoder
