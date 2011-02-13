@@ -49,6 +49,7 @@ typedef enum {
     NSArray *apps_;
 
     NSString *updateURL_;
+    id reachability_;
     NSString *currentAppVersion_;
 
 	  BWHockeyViewController *currentHockeyViewController_;
@@ -59,6 +60,7 @@ typedef enum {
     BOOL dataFound;
     BOOL updateAvailable_;
     BOOL showFeedback_; 
+    BOOL updateURLOffline_;
 
     NSURLConnection *urlConnection_;
     NSDate *lastCheck_;
@@ -117,6 +119,9 @@ typedef enum {
 @property (nonatomic, assign) HockeyUpdateSetting updateSetting;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// only valid if Reachability is available
+- (BOOL)isUpdateURLOffline;
 
 // is an update available?
 - (BOOL)isUpdateAvailable;

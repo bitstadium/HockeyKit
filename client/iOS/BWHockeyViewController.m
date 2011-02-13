@@ -53,9 +53,11 @@
 #pragma mark private
 
 - (void)restoreStoreButtonStateAnimated_:(BOOL)animated {
-  if ([self.hockeyManager isUpdateAvailable]) {
+  if ([self.hockeyManager isUpdateURLOffline]) {
+    [self setAppStoreButtonState:AppStoreButtonStateOffline animated:animated];
+  }else if ([self.hockeyManager isUpdateAvailable]) {
     [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:animated];
-  } else {
+  }else {
     [self setAppStoreButtonState:AppStoreButtonStateCheck animated:animated];
   }
 }
@@ -266,6 +268,7 @@
       
       // hook into manager with kvo!
       [self.hockeyManager addObserver:self forKeyPath:@"checkInProgress" options:0 context:nil];
+      [self.hockeyManager addObserver:self forKeyPath:@"isUpdateURLOffline" options:0 context:nil];
       [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
       [self.hockeyManager addObserver:self forKeyPath:@"apps" options:0 context:nil];
     }
@@ -279,6 +282,7 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
     [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
     [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
     [self viewDidUnload];
@@ -509,6 +513,8 @@
     }else {
       [self restoreStoreButtonStateAnimated_:YES];
     }
+  }else if ([keyPath isEqualToString:@"isUpdateURLOffline"]) {
+    [self restoreStoreButtonStateAnimated_:YES];
   }else if ([keyPath isEqualToString:@"updateAvailable"]) {
     [self restoreStoreButtonStateAnimated_:YES];
     //[self redrawTableView];
@@ -608,6 +614,9 @@
   appStoreButtonState_ = anAppStoreButtonState;
 
   switch (anAppStoreButtonState) {
+      case AppStoreButtonStateOffline:
+      [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonOffline") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+      break;
     case AppStoreButtonStateCheck:
       [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonCheck") colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
       break;

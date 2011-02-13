@@ -27,7 +27,7 @@
 #import "PSAppStoreHeader.h"
 
 typedef enum {
-	AppStoreButtonStateNone,
+	AppStoreButtonStateOffline,
 	AppStoreButtonStateCheck,
 	AppStoreButtonStateSearching,
 	AppStoreButtonStateUpdate,

@@ -38,17 +38,16 @@
 #define BETA_UPDATE_APPSIZE         @"appsize"
 
 @interface BWHockeyManager ()
-- (void)registerOnline;
-- (void)wentOnline:(NSNotification *)note;
 - (NSString *)getDevicePlatform_;
 - (void)connectionOpened_;
 - (void)connectionClosed_;
-
+- (void)reachabilityChanged:(NSNotification *)notification;
 - (void)startUsage;
 - (void)stopUsage;
 - (NSString *)currentUsageString;
 - (NSString *)installationDateString;
 
+@property (nonatomic, assign, getter=isUpdateURLOffline) BOOL updateURLOffline;
 @property (nonatomic, assign, getter=isUpdateAvailable) BOOL updateAvailable;
 @property (nonatomic, assign, getter=isCheckInProgress) BOOL checkInProgress;
 @property (nonatomic, retain) NSMutableData *receivedData;
@@ -63,6 +62,7 @@ typedef enum {
   HockeyErrorUnknown,
   HockeyAPIServerReturnedInvalidStatus,
   HockeyAPIServerReturnedEmptyResponse,
+  HockeyAPIClientCannotCreateConnection
 } HockeyErrorReason;
 static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
@@ -71,6 +71,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize delegate = delegate_;
 @synthesize updateURL = updateURL_;
 @synthesize urlConnection = urlConnection_;
+@synthesize updateURLOffline = updateURLOffline_;
 @synthesize checkInProgress = checkInProgress_;
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
@@ -138,6 +139,24 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)connectionClosed_ {
     if ([self.delegate respondsToSelector:@selector(connectionClosed)])
 		[(id)self.delegate connectionClosed];
+}
+
+// weak-linked reachability
+- (void)setupReachability {
+  if (reachability_) {
+    [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
+    [reachability_ release];
+    reachability_ = nil;
+  }
+  
+  Class reachabilityClass = NSClassFromString(@"Reachability");
+  if (reachabilityClass) {
+    NSString *hostName = [[NSURL URLWithString:self.updateURL] host];
+    BWLog(@"setting up reachability for %@", hostName);
+    reachability_ = [[reachabilityClass performSelector:NSSelectorFromString(@"reachabilityWithHostName:") withObject:hostName] retain];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:reachability_];
+    [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
+  }
 }
 
 - (void)startUsage {
@@ -229,11 +248,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (id)init {
 	if ((self = [super init])) {
-        self.updateURL = nil;
+        updateURL_ = nil;
         checkInProgress_ = NO;
         dataFound = NO;
         updateAvailable_ = NO;
-
+        updateURLOffline_ = NO;
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
         // set defaults
@@ -257,7 +276,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-
+    [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
+    [reachability_ release];
     self.delegate = nil;
 
     [urlConnection_ cancel];
@@ -306,7 +326,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 	}
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
-      parentViewController = [[NSClassFromString(@"TTNavigator") navigator] rootViewController];
+      parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] rootViewController];
     }
 
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
@@ -415,9 +435,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!urlConnection_) {
-        BWLog(@"Url Connection could not be created");
         self.checkInProgress = NO;
-        [self registerOnline];
+        [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientCannotCreateConnection userInfo:
+                            [NSDictionary dictionaryWithObjectsAndKeys:@"Url Connection could not be created.", NSLocalizedDescriptionKey, nil]]];
     }
 }
 
@@ -495,8 +515,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 	  self.receivedData = nil;
     self.urlConnection = nil;
     self.checkInProgress = NO;
-
-    [self registerOnline];
     [self reportError_:error];
 }
 
@@ -587,28 +605,27 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark RegisterOnline
-
-- (void)registerOnline {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(wentOnline:)
-                                                 name:@"kNetworkReachabilityChangedNotification"
-                                               object:nil];
-}
-
-
-- (void)unregisterOnline {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"kNetworkReachabilityChangedNotification"
-                                                  object:nil];
-}
-
-
-- (void)wentOnline:(NSNotification *)note {
-    [self unregisterOnline];
-    [self checkForUpdate];
+- (void)reachabilityChanged:(NSNotification *)notification {
+  id reachability = reachability_;
+  if ([notification.object isKindOfClass:NSClassFromString(@"Reachability")]) {
+    reachability = notification.object;
+  }
+  if (reachability) {
+    NSInteger networkStatus;
+    SEL currentReachabilityStatusSelector = NSSelectorFromString(@"currentReachabilityStatus");
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[reachability methodSignatureForSelector:currentReachabilityStatusSelector]];
+    invocation.target = reachability;
+    invocation.selector = currentReachabilityStatusSelector;
+    [invocation invoke];
+    [invocation getReturnValue:&networkStatus];
+        
+    // 0 = NotReachable
+    BOOL isOffline = networkStatus == 0;
+    self.updateURLOffline = isOffline;
+    if (!isOffline) {
+      [self checkForUpdate];
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -642,6 +659,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
   if (updateURL_ != anUpdateURL) {
     [updateURL_ release];
     updateURL_ = [anUpdateURL copy];
+    [self setupReachability];
   }
 }
 
