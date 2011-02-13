@@ -25,8 +25,8 @@
         [window setRootViewController:navigationController];
     }else {
         [window addSubview:navigationController.view];
-        [window makeKeyAndVisible];
     }
+    [window makeKeyAndVisible];
     
     // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
     // to the Preprocessor Macros in the project settings to all configurations
