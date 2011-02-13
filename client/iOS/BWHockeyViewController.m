@@ -166,11 +166,6 @@
     return result;
 }
 
-- (void)showPreviousVersionAction {
-    showAllVersions_ = YES;    
-    [self redrawTableView];
-}
-
 #define kMinPreviousVersionButtonHeight 100
 - (void)realignPreviousVersionButton {
 
@@ -221,6 +216,30 @@
     }else {
         self.tableView.tableFooterView = nil;
     }
+}
+
+- (void)configureWebCell:(PSWebTableViewCell *)cell forApp_:(BWApp *)app {
+  // create web view for a version
+  NSString *installed = @"";
+  if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
+    installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
+  }
+
+  if ([app isEqual:self.hockeyManager.app]) {
+    if ([app.notes length] > 0) {
+      installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
+      cell.webViewContent = [NSString stringWithFormat:@"%@%@", installed, app.notes];
+    }else {
+      cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWLocalize(@"HockeyNoReleaseNotesAvailable")];
+    }
+  } else {
+    cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
+  }
+  [cell addWebView];
+  // hack
+  cell.textLabel.text = @"";
+
+  [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -409,28 +428,7 @@
 
     for (BWApp *app in self.hockeyManager.apps) {
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
-
-        // create web view for a version
-        NSString *installed = @"";
-        if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
-          installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
-        }
-      
-        if ([app isEqual:self.hockeyManager.app]) {
-          if ([app.notes length] > 0) {
-            installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
-            cell.webViewContent = [NSString stringWithFormat:@"%@<p>%@</p>", installed, app.notes];
-          }else {
-            cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWLocalize(@"HockeyNoReleaseNotesAvailable")];
-          }
-        } else {
-          cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
-        }
-        [cell addWebView];
-        // hack
-        cell.textLabel.text = @"";
-
-        [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
+      [self configureWebCell:cell forApp_:app];
         [cells_ addObject:cell];
         
         // stop on first app if we don't show all versions
@@ -440,39 +438,27 @@
     }
     
     [self.tableView reloadData];
-  
     [self showHidePreviousVersionsButton];
+}
 
-    // [self.tableView reloadData];
-    /*
-     int currentNumberOfSections = [self.tableView numberOfSections];
-     int sectionsToShow = [self numberOfSectionsInTableView:self.tableView];
+- (void)showPreviousVersionAction {
+  showAllVersions_ = YES;
 
-     [self.tableView beginUpdates];
+  [self.tableView beginUpdates];
+  NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[self.hockeyManager.apps count]-1];
+  for (BWApp *app in self.hockeyManager.apps) {
+    if ([app isEqual:self.hockeyManager.app]) {
+      continue; // skip first
+    }
 
-     // show the rows that should be visible
-     // is this row visible?
-     for (int i = 0; i < sectionsToShow; i++) {
-     // is this row visible?
-     if (i < currentNumberOfSections) {
-     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:i]
-     withRowAnimation:UITableViewRowAnimationFade];
-     } else {
-     [self.tableView insertSections:[NSIndexSet indexSetWithIndex:i]
-     withRowAnimation:UITableViewRowAnimationFade];
-     }
-     }
-
-     // do we need to remove rows?
-     if (currentNumberOfSections > 1) {
-     for (int i = 1; i < currentNumberOfSections; i++) {
-     [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:i]
-     withRowAnimation:UITableViewRowAnimationFade];
-     }
-     }
-
-     [self.tableView endUpdates];
-     */
+    PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
+    [self configureWebCell:cell forApp_:app];
+    [cells_ addObject:cell];
+    [indexPaths addObject:[NSIndexPath indexPathForRow:[cells_ count]-1 inSection:0]];
+  }
+  [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+  [self.tableView endUpdates];
+  [self showHidePreviousVersionsButton];
 }
 
 - (void)viewDidUnload {
@@ -497,7 +483,7 @@
     }
 
     if (rowHeight == 0) {
-        rowHeight = 250; // fill screen on startup
+        rowHeight = indexPath.row == 0 ? 250 : 44; // fill screen on startup
     }
 
     return rowHeight;
