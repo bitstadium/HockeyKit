@@ -1,6 +1,6 @@
 Requirements:
 - Server software available and installed
-- The iOS application needs to be build with base SDK set to 4.0
+- The iOS application needs to be build with base SDK set to 4.0 or higher
 
 Important:
 - This code may NEVER be used in an app version distributed to Apple!
@@ -18,8 +18,9 @@ Include Client Code:
 - Include the header as shown above
 - Include the library in application:didFinishLaunchingWithOptions: via
 #if !defined (CONFIGURATION_AppStore_Distribution)
-    [[BWHockeyController sharedHockeyController] setBetaURL:@"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated"];
+    [BWHockeyController sharedHockeyController].updateURL = @"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated";
 #endif
+
 - Replace the URL
 - Add the BWHockeyViewController to your In-App Settings page
 - Optionally include the strings localization, example file present in the demo project
