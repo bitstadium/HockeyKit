@@ -83,6 +83,7 @@
 "HockeyShowUpdate" = "Zeigen";
 "HockeyError" = "Fehler";
 "HockeyOK" = "OK";
+"HockeyNoReleaseNotesAvailable" = "Keine Release Notes verfügbar.";
 
 "HockeyButtonCheck" = "ÜBERPRÜFEN";
 "HockeyButtonSearching" = "ÜBERPRÜFE...";
