@@ -195,16 +195,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kDateOfVersionInstallation] doubleValue]]];
 }
 
-- (void)checkAndWriteDefaultAppCache_ {
-    // populate with default values (if empty)
-    if (![self.apps count]) {
-        BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
-        defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
-        defaultApp.version = currentAppVersion_;
-        self.apps = [NSArray arrayWithObject:defaultApp];
-    }
-}
-
 - (void)checkUpdateAvailable_ {
     // check if there is an update available
     if (self.compareVersionType == HockeyComparisonResultGreater) {
@@ -226,7 +216,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     } else {
         self.apps = nil;
     }
-    [self checkAndWriteDefaultAppCache_];
 }
 
 - (void)saveAppCache_ {
@@ -574,7 +563,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         if (![self.apps isEqualToArray:tmpApps]) {
           self.apps = [[tmpApps copy] autorelease];
         }
-        [self checkAndWriteDefaultAppCache_];
         [self saveAppCache_];
 
         [self checkUpdateAvailable_];
@@ -691,6 +679,24 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 		[[NSUserDefaults standardUserDefaults] setObject:[[lastCheck_ description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
     }
+}
+
+- (void)setApps:(NSArray *)anApps {
+  if (apps_ != anApps || !apps_) {
+    [apps_ release];
+    [self willChangeValueForKey:@"apps"];
+    
+    // populate with default values (if empty)
+    if (![anApps count]) {
+      BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
+      defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+      defaultApp.version = currentAppVersion_;
+      apps_ = [[NSArray arrayWithObject:defaultApp] retain];
+    }else {
+      apps_ = [anApps copy]; 
+    }      
+    [self didChangeValueForKey:@"apps"];
+  }
 }
 
 - (BWApp *)app {
