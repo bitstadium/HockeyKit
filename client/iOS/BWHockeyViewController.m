@@ -397,13 +397,13 @@
 }
 
 - (void)redrawTableView {
+    [self restoreStoreButtonStateAnimated_:NO];
+  
     // clean up and remove any pending overservers
     for (UITableViewCell *cell in cells_) {
         [cell removeObserver:self forKeyPath:@"webViewSize"];
     }
     [cells_ removeAllObjects];
-  
-  [self restoreStoreButtonStateAnimated_:NO];
 
     for (BWApp *app in self.hockeyManager.apps) {
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
@@ -431,8 +431,9 @@
         }
     }
     
-    [self showHidePreviousVersionsButton];
     [self.tableView reloadData];
+  
+    [self showHidePreviousVersionsButton];
 
     // [self.tableView reloadData];
     /*
@@ -521,261 +522,12 @@
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
     if ([cells_ count] > indexPath.row) {
         return [cells_ objectAtIndex:indexPath.row];
     }else {
         BWLog(@"Warning: cells_ and indexPath do not match? forgot calling redrawTableView?");
     }
-
-
-    /*
-
-     PSWebTableViewCell *cell = (PSWebTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kWebCellIdentifier];
-
-     if (!cell) {
-     cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
-     }
-     */
-
-    //  return cell;
-
-    // HACK
-
-
-    /*
-     // 2 lines cell
-     static NSString *BetaCell1Identifier = @"BetaCell1";
-     // 1 line cell with discolure
-     static NSString *BetaCell2Identifier = @"BetaCell2";
-     // 1 line cell with value
-     static NSString *BetaCell3Identifier = @"BetaCell3";
-     // check cell
-     static NSString *BetaCell4Identifier = @"BetaCell4";
-
-     UITableViewCell *cell = nil;
-
-     NSString *requiredIdentifier = BetaCell1Identifier;
-     NSInteger cellStyle = UITableViewCellStyleSubtitle;
-
-     if (self.hockeyController.checkInProgress &&
-     indexPath.section == 0 &&
-     indexPath.row == 0) {
-     cell = [tableView dequeueReusableCellWithIdentifier:BetaCell3Identifier];
-
-     if (cell == nil) {
-     cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:requiredIdentifier] autorelease];
-     }
-
-     cell.accessoryType = UITableViewCellAccessoryNone;
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     cell.textLabel.text = BWLocalize(@"HockeySectionCheckProgress");
-     cell.textLabel.textAlignment = UITextAlignmentCenter;
-     cell.textLabel.textColor = [UIColor grayColor];
-
-     return cell;
-     }
-
-     int startIndexOfSettings = [self sectionIndexOfSettings];
-
-     // preselect the required cell style
-     if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
-     // we need a one line cell with discloure
-     requiredIdentifier = BetaCell2Identifier;
-     cellStyle = UITableViewCellStyleDefault;
-     } else if (indexPath.section == startIndexOfSettings + 1 ||
-     indexPath.section == startIndexOfSettings - 1) {
-     // we need a button style
-     requiredIdentifier = BetaCell3Identifier;
-     cellStyle = UITableViewCellStyleDefault;
-     } else if (indexPath.section == startIndexOfSettings) {
-     // we need a check cell
-     requiredIdentifier = BetaCell4Identifier;
-     cellStyle = UITableViewCellStyleDefault;
-     }
-
-     cell = [tableView dequeueReusableCellWithIdentifier:requiredIdentifier];
-
-     if (cell == nil) {
-     cell = [[[UITableViewCell alloc] initWithStyle:cellStyle reuseIdentifier:requiredIdentifier] autorelease];
-     }
-
-     cell.accessoryType = UITableViewCellAccessoryNone;
-     cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-
-     if (indexPath.section == startIndexOfSettings + 1) {
-     // check again button
-     cell.textLabel.text = BWLocalize(@"HockeySectionCheckButton");
-     cell.textLabel.textAlignment = UITextAlignmentCenter;
-     cell.textLabel.textColor = [UIColor blackColor];
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     } else if (indexPath.section == startIndexOfSettings) {
-     // update check interval selection
-
-     NSNumber *hockeyAutoUpdateSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting];
-     if (indexPath.row == 0) {
-     // on startup
-     cell.textLabel.text = BWLocalize(@"HockeySectionCheckStartup");
-     if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_STARTUP) {
-     cell.accessoryType = UITableViewCellAccessoryCheckmark;
-     }
-     } else if (indexPath.row == 1) {
-     // daily
-     cell.textLabel.text = BWLocalize(@"HockeySectionCheckDaily");
-     if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_DAILY) {
-     cell.accessoryType = UITableViewCellAccessoryCheckmark;
-     }
-     } else {
-     // manually
-     cell.textLabel.text = BWLocalize(@"HockeySectionCheckManually");
-     if ([hockeyAutoUpdateSetting intValue] == BETA_UPDATE_CHECK_MANUAL) {
-     cell.accessoryType = UITableViewCellAccessoryCheckmark;
-     }
-     }
-     } else if (indexPath.section == startIndexOfSettings - 1) {
-     if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
-     cell.textLabel.text = BWLocalize(@"HockeySectionAppSameVersionButton");
-     cell.textLabel.textColor = [UIColor grayColor];
-     cell.textLabel.textAlignment = UITextAlignmentCenter;
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     } else if ([[[UIDevice currentDevice] systemVersion] compare:@"4.0" options:NSNumericSearch] < NSOrderedSame) {
-     cell.textLabel.text = BWLocalize(@"HockeySectionAppWebsite");
-     cell.textLabel.numberOfLines = 3;
-     cell.textLabel.textColor = [UIColor grayColor];
-     cell.textLabel.textAlignment = UITextAlignmentLeft;
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     } else {
-     // install application button
-     cell.textLabel.text = BWLocalize(@"HockeySectionAppButton");
-     cell.textLabel.textColor = [UIColor blackColor];
-     cell.textLabel.textAlignment = UITextAlignmentCenter;
-     }
-     } else if (indexPath.section == startIndexOfSettings - 2) {
-     // last application update information
-     if (indexPath.row == 0) {
-     // app name
-     cell.textLabel.text = ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] != [NSNull null]) ? [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_TITLE] : nil;
-     cell.detailTextLabel.text = nil;
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     } else if (indexPath.row == 1) {
-     // app version
-
-     // if subtitle is set, then use it as main version number, since the version field is used for the build number
-     NSString *versionString = nil;
-     NSString *currentVersionString = nil;
-
-     if ([self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE] != nil) {
-     versionString = [NSString stringWithFormat:@"%@ (%@)",
-     [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_SUBTITLE],
-     [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION]
-     ];
-     } else {
-     versionString = [self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION];
-     }
-
-     cell.textLabel.text = [NSString stringWithFormat:@"%@: %@", BWLocalize(@"HockeySectionAppNewVersion"), versionString];
-
-     if ([[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] != nil) {
-     currentVersionString = [NSString stringWithFormat:@"%@ (%@)",
-     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-     [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]
-     ];
-     } else {
-     currentVersionString = [NSString stringWithFormat:@"%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
-     }
-
-     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@: %@", BWLocalize(@"HockeySectionAppCurrentVersion"), currentVersionString];
-     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     } else {
-     // release notes
-     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-     cell.textLabel.text = BWLocalize(@"HockeySectionAppReleaseNotes");
-     }
-     }
-
-     return cell;
-     */
     return nil;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    /*
-     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-     if (self.hockeyController.checkInProgress) {
-     return;
-     }
-
-     int startIndexOfSettings = [self sectionIndexOfSettings];
-
-     NSString *url = nil;
-
-     if (indexPath.section == startIndexOfSettings + 1) {
-     // check again button
-     if (!self.hockeyController.checkInProgress) {
-     [self.hockeyController checkForUpdate:self];
-     [self redrawTableView];
-     }
-     } else if (indexPath.section == startIndexOfSettings) {
-     // update check interval selection
-     if (indexPath.row == 0) {
-     // on startup
-     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:BETA_UPDATE_CHECK_STARTUP] forKey:kHockeyAutoUpdateSetting];
-     } else if (indexPath.row == 1) {
-     // daily
-     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:BETA_UPDATE_CHECK_DAILY] forKey:kHockeyAutoUpdateSetting];
-     } else {
-     // manually
-     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:BETA_UPDATE_CHECK_MANUAL] forKey:kHockeyAutoUpdateSetting];
-     }
-
-     // persist the new value
-     [[NSUserDefaults standardUserDefaults] synchronize];
-     [tableView reloadData];
-     } else if (indexPath.section == startIndexOfSettings - 1) {
-     if ([[self.hockeyController.betaDictionary objectForKey:BETA_UPDATE_VERSION] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
-     // install application button
-     NSString *parameter = [NSString stringWithFormat:@"?type=%@&bundleidentifier=%@", BETA_DOWNLOAD_TYPE_APP, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"]];
-     NSString *temp = [NSString stringWithFormat:@"%@%@", self.hockeyController.updateUrl, parameter];
-     url = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [temp bw_URLEncodedString]];
-     }
-     } else if (indexPath.section == startIndexOfSettings - 2 && indexPath.row == 2) {
-     // release notes in a webview
-
-     NSMutableString *webString = [[[NSMutableString alloc] init] autorelease];
-
-     [webString appendString:@"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"];
-     [webString appendString:@"<html xmlns=\"http://www.w3.org/1999/xhtml\">"];
-     [webString appendString:@"<head>"];
-     [webString appendString:@"<style type=\"text/css\">"];
-     [webString appendString:@" body { font: 15px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px;} p {margin:0;} ul {padding-left: 18px;}"];
-     [webString appendString:@"</style>"];
-
-     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-     [webString appendString:@"<meta name=\"viewport\" content=\"user-scalable=no width=device-width\" /></head>"];
-     } else {
-     [webString appendFormat:@"<meta name=\"viewport\" content=\"user-scalable=no width=%d\" /></head>", CGRectGetWidth([[self view] bounds])];
-     }
-
-     [webString appendString:@"<body>"];
-     [webString appendString:[self.hockeyController.betaDictionary objectForKey:@"notes"]];
-     [webString appendString:@"</body></html>"];
-
-
-     BWWebViewController *controller = [[[BWWebViewController alloc] initWithHTMLString:webString] autorelease];
-
-     [[self navigationController] pushViewController:controller animated:YES];
-     }
-
-     if (url != nil && ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]])
-     {
-     // there was an error trying to open the URL. for the moment we'll simply ignore it.
-     }
-     */
 }
 
 
@@ -877,8 +629,6 @@
 }
 
 - (void)storeButtonFired:(PSStoreButton *)button {
-    BWLog(@"************* storeButtonFired: %@", button);
-
     switch (appStoreButtonState_) {
         case AppStoreButtonStateCheck:
             [self.hockeyManager checkForUpdateShowFeedback:YES];
@@ -894,4 +644,3 @@
 }
 
 @end
-
