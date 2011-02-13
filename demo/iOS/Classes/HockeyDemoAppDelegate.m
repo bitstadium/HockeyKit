@@ -8,7 +8,7 @@
 
 #import "HockeyDemoAppDelegate.h"
 #import "HockeyDemoViewController.h"
-
+#import "Reachability.h"
 
 @implementation HockeyDemoAppDelegate
 
@@ -16,16 +16,7 @@
 @synthesize viewController;
 @synthesize navigationController;
 
-#pragma mark -
-#pragma mark BWHockeyController
-
-- (BOOL)showUpdateReminder {
-  return YES;
-}
-
-
-#pragma mark -
-#pragma mark Application lifecycle
+#define kHockeyUpdateURL @"http://alpha.buzzworks.de"
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   [window addSubview:viewController.view];
@@ -38,7 +29,7 @@
   // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
   // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  [BWHockeyManager sharedHockeyManager].updateURL = @"http://alpha.buzzworks.de/";
+  [BWHockeyManager sharedHockeyManager].updateURL = kHockeyUpdateURL;
   [BWHockeyManager sharedHockeyManager].delegate = self;
 #endif
 
