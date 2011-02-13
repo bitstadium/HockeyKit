@@ -87,3 +87,4 @@
 "HockeyButtonSearching" = "CHECKING...";
 "HockeyButtonUpdate" = "UPDATE";
 "HockeyButtonInstalling" = "INSTALLING...";
+"HockeyButtonOffline" = "NO CONNECTION";
