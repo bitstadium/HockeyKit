@@ -224,7 +224,7 @@
   // create web view for a version
   NSString *installed = @"";
   if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
-    installed = [NSString stringWithFormat:@"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>%@</b></span>", BWLocalize(@"HockeyInstalled")];
+    installed = [NSString stringWithFormat:@"<span style=\"float:%@;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>%@</b></span>", [app isEqual:self.hockeyManager.app] ? @"left" : @"right", BWLocalize(@"HockeyInstalled")];
   }
 
   if ([app isEqual:self.hockeyManager.app]) {
