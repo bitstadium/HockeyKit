@@ -80,7 +80,7 @@
 "HockeyNoUpdateNeededMessage" = "%@ ist bereits die aktuellste Version.";
 "HockeyUpdateAlertTextWithAppVersion" = "%@ ist verfügbar.";
 "HockeyIgnore" = "Ignorieren";
-"HockeyShowUpdate" = "Update zeigen";
+"HockeyShowUpdate" = "Zeigen";
 "HockeyError" = "Fehler";
 "HockeyOK" = "OK";
 
