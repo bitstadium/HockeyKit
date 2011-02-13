@@ -19,11 +19,13 @@
 #define kHockeyUpdateURL @"http://alpha.buzzworks.de"
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [window addSubview:viewController.view];
-    [window makeKeyAndVisible];
     
+    // 4.x property
     if ([window respondsToSelector:@selector(setRootViewController:)]) {
         [window setRootViewController:navigationController];
+    }else {
+        [window addSubview:navigationController.view];
+        [window makeKeyAndVisible];
     }
     
     // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
