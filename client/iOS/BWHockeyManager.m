@@ -59,10 +59,10 @@
 
 // hockey api error domain
 typedef enum {
-  HockeyErrorUnknown,
-  HockeyAPIServerReturnedInvalidStatus,
-  HockeyAPIServerReturnedEmptyResponse,
-  HockeyAPIClientCannotCreateConnection
+    HockeyErrorUnknown,
+    HockeyAPIServerReturnedInvalidStatus,
+    HockeyAPIServerReturnedEmptyResponse,
+    HockeyAPIClientCannotCreateConnection
 } HockeyErrorReason;
 static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
@@ -93,11 +93,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 + (BWHockeyManager *)sharedHockeyManager {
 	static BWHockeyManager *hockeyManager = nil;
-
+    
 	if (hockeyManager == nil) {
 		hockeyManager = [[BWHockeyManager alloc] init];
 	}
-
+    
 	return hockeyManager;
 }
 
@@ -106,19 +106,19 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark private
 
 - (void)reportError_:(NSError *)error {
-  BWLog(@"Error: %@", [error localizedDescription]);
-  
-  // only show error if we enable that
-  if (showFeedback_) {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyError") message:[error localizedDescription] delegate:nil cancelButtonTitle:BWLocalize(@"OK") otherButtonTitles:nil];
-    [alert show];
-    [alert release];
-    showFeedback_ = NO;
-  }
+    BWLog(@"Error: %@", [error localizedDescription]);
+    
+    // only show error if we enable that
+    if (showFeedback_) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyError") message:[error localizedDescription] delegate:nil cancelButtonTitle:BWLocalize(@"OK") otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        showFeedback_ = NO;
+    }
 }
 
 - (NSString *)encodedAppIdentifier_ {
-  return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSString *)getDevicePlatform_ {
@@ -143,25 +143,25 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // weak-linked reachability
 - (void)setupReachability {
-  if (reachability_) {
-    [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
-    [reachability_ release];
-    reachability_ = nil;
-  }
-  
-  Class reachabilityClass = NSClassFromString(@"Reachability");
-  if (reachabilityClass) {
-    NSString *hostName = [[NSURL URLWithString:self.updateURL] host];
-    BWLog(@"setting up reachability for %@", hostName);
-    reachability_ = [[reachabilityClass performSelector:NSSelectorFromString(@"reachabilityWithHostName:") withObject:hostName] retain];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:reachability_];
-    [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
-  }
+    if (reachability_) {
+        [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
+        [reachability_ release];
+        reachability_ = nil;
+    }
+    
+    Class reachabilityClass = NSClassFromString(@"Reachability");
+    if (reachabilityClass) {
+        NSString *hostName = [[NSURL URLWithString:self.updateURL] host];
+        BWLog(@"setting up reachability for %@", hostName);
+        reachability_ = [[reachabilityClass performSelector:NSSelectorFromString(@"reachabilityWithHostName:") withObject:hostName] retain];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:reachability_];
+        [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
+    }
 }
 
 - (void)startUsage {
     self.usageStartTimestamp = [NSDate date];
-
+    
     BOOL newVersion = NO;
     
     if (![[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString]) {
@@ -183,14 +183,14 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)stopUsage {
     double timeDifference = [[NSDate date] timeIntervalSinceReferenceDate] - [usageStartTimestamp_ timeIntervalSinceReferenceDate];
     double previousTimeDifference = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
-
+    
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithDouble:previousTimeDifference + timeDifference] forKey:kUsageTimeOfCurrentVersion];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSString *)currentUsageString {
     double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
-
+    
     if (currentUsageTime > 0 && self.shouldSendUsageTime) {
         double days = trunc(currentUsageTime / (60 * 60 * 24));
         double hours = trunc((currentUsageTime - (days * 60 * 60 * 24)) / (60 * 60));
@@ -227,7 +227,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSData *savedHockeyData = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
     NSArray *savedHockeyCheck = nil;
     if (savedHockeyData) {
-      [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
+        [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
     }
     if (savedHockeyCheck) {
         self.apps = [NSArray arrayWithArray:savedHockeyCheck];
@@ -254,7 +254,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         updateAvailable_ = NO;
         updateURLOffline_ = NO;
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-
+        
         // set defaults
         self.sendUserData = YES;
         self.sendUsageTime = YES;
@@ -262,12 +262,12 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         self.checkForUpdateOnLaunch = YES;
         self.showUserSettings = YES;
         self.compareVersionType = HockeyComparisonResultDifferent;
-
+        
         // load update setting from user defaults and check value
         self.updateSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
-
+        
         [self loadAppCache_];
-
+        
         [self startUsage];
     }
     return self;
@@ -279,17 +279,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
     [reachability_ release];
     self.delegate = nil;
-
+    
     [urlConnection_ cancel];
     self.urlConnection = nil;
-
+    
     [currentHockeyViewController_ release];
     [updateURL_ release];
     [apps_ release];
     [receivedData_ release];
     [lastCheck_ release];
     [usageStartTimestamp_ release];
-
+    
     [super dealloc];
 }
 
@@ -303,11 +303,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)showUpdateView {
     UIViewController *parentViewController = nil;
-
+    
     if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
         parentViewController = [[self delegate] viewControllerForHockeyController:self];
     }
-
+    
     UIWindow *visibleWindow = nil;
 	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
         // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
@@ -326,29 +326,29 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 	}
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
-      parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];
+        parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];
     }
-
+    
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
     UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
-
+    
     if (parentViewController) {
         if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
             navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         }
-
+        
         // page sheet for the iPad
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [navController respondsToSelector:@selector(setModalPresentationStyle:)]) {
-          navController.modalPresentationStyle = UIModalPresentationFormSheet;
+            navController.modalPresentationStyle = UIModalPresentationFormSheet;
         }
-
+        
         [parentViewController presentModalViewController:navController animated:YES];
     } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
         BWLog(@"No rootViewController found, using UIWindow-approach: %@", visibleWindow);
         [visibleWindow addSubview:navController.view];
-
+        
 		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
         [navController retain];
 	}
@@ -388,15 +388,15 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdate {
-  [self checkForUpdateShowFeedback:NO]; 
+    [self checkForUpdateShowFeedback:NO]; 
 }
 
 - (void)checkForUpdateShowFeedback:(BOOL)feedback {
     if (self.isCheckInProgress) return;
-
+    
     showFeedback_ = feedback;
     self.checkInProgress = YES;
-
+    
     // do we need to update?
     BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;
     if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
@@ -404,16 +404,16 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         self.checkInProgress = NO;
         return;
     }
-
+    
     NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
-
+    
     // build request & send
     NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
     BWLog(@"sending api request to %@", url);
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
-
+    
     // add additional statistics if user didn't disable flag
     if (self.shouldSendUserData) {
         NSString *postDataString = [NSString stringWithFormat:@"format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
@@ -432,7 +432,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
         [request setHTTPBody:requestData];
     }
-
+    
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!urlConnection_) {
         self.checkInProgress = NO;
@@ -442,38 +442,38 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (BOOL)initiateAppDownload {
-  if (!self.isUpdateAvailable) {
-    BWLog(@"Warning: No update available. Aborting.");
+    if (!self.isUpdateAvailable) {
+        BWLog(@"Warning: No update available. Aborting.");
+        return NO;
+    }
+    
+    IF_PRE_IOS4
+    (
+     NSString *message = [NSString stringWithFormat:@"In-App Download requires iOS 4 or higher. You can download the update with downloading from %@ and syncing with iTunes.", self.updateURL];
+     UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Warning" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+     [alert show];
+     return NO;
+     )
+    
+#if TARGET_IPHONE_SIMULATOR
+    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Simulator detected" message:@"Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+    [alert show];
     return NO;
-  }
-  
-  IF_PRE_IOS4
-  (
-   NSString *message = [NSString stringWithFormat:@"In-App Download requires iOS 4 or higher. You can download the update with downloading from %@ and syncing with iTunes.", self.updateURL];
-   UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Warning" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
-   [alert show];
-   return NO;
-  )
-  
-  #if TARGET_IPHONE_SIMULATOR
-  UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Simulator detected" message:@"Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
-  [alert show];
-  return NO;
-  #endif
-
-  NSString *extraParameter = [NSString string];
-  if (self.shouldSendUserData) {
-    extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
-  }
-  
-  NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
-  NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
-  
-  BWLog(@"API Server Call: %@", hockeyAPIURL);
-  BWLog(@"Calling to iOS with %@", iOSUpdateURL);
-  BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
-  BWLog(@"System returned: %d", success);
-  return success;
+#endif
+    
+    NSString *extraParameter = [NSString string];
+    if (self.shouldSendUserData) {
+        extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
+    }
+    
+    NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
+    NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
+    
+    BWLog(@"API Server Call: %@", hockeyAPIURL);
+    BWLog(@"Calling to iOS with %@", iOSUpdateURL);
+    BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
+    BWLog(@"System returned: %d", success);
+    return success;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -481,7 +481,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark NSURLRequest
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
-  [self connectionOpened_];
+    [self connectionOpened_];
 	NSURLRequest *newRequest = request;
 	if (redirectResponse) {
 		newRequest = nil;
@@ -490,18 +490,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-  if ([response respondsToSelector:@selector(statusCode)]) {
-    int statusCode = [((NSHTTPURLResponse *)response) statusCode];
-    if (statusCode == 404) {
-      [connection cancel];  // stop connecting; no more delegate messages
-      NSString *errorStr = [NSString stringWithFormat:@"Hockey API received HTTP Status Code %d", statusCode];
-      [self connectionClosed_];
-      [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidStatus userInfo:
-                          [NSDictionary dictionaryWithObjectsAndKeys:errorStr, NSLocalizedDescriptionKey, nil]]];
-      return;
+    if ([response respondsToSelector:@selector(statusCode)]) {
+        int statusCode = [((NSHTTPURLResponse *)response) statusCode];
+        if (statusCode == 404) {
+            [connection cancel];  // stop connecting; no more delegate messages
+            NSString *errorStr = [NSString stringWithFormat:@"Hockey API received HTTP Status Code %d", statusCode];
+            [self connectionClosed_];
+            [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidStatus userInfo:
+                                [NSDictionary dictionaryWithObjectsAndKeys:errorStr, NSLocalizedDescriptionKey, nil]]];
+            return;
+        }
     }
-  }
-  
+    
 	self.receivedData = [NSMutableData data];
 	[receivedData_ setLength:0];
 }
@@ -512,7 +512,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     [self connectionClosed_];
-	  self.receivedData = nil;
+    self.receivedData = nil;
     self.urlConnection = nil;
     self.checkInProgress = NO;
     [self reportError_:error];
@@ -522,50 +522,50 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     [self connectionClosed_];
     self.checkInProgress = NO;
-  
+    
 	if ([self.receivedData length]) {
         NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
         BWLog(@"Received API response: %@", responseString);
-
+        
         NSError *error = nil;
         NSArray *feedArray;
-    
-    // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
-    SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
-    if (jsonKitSelector && [responseString respondsToSelector:jsonKitSelector]) {
-      NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[responseString methodSignatureForSelector:jsonKitSelector]];
-      invocation.target = responseString;
-      invocation.selector = jsonKitSelector;
-      int parseOptions = 0;
-      [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
-      [invocation setArgument:&error atIndex:3];
-      [invocation invoke];
-      [invocation getReturnValue:&feedArray];
-    }else {
-      BWLog(@"Error: You need a JSON Framework in your runtime!");
-      [self doesNotRecognizeSelector:_cmd];
-    }    
+        
+        // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
+        SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
+        if (jsonKitSelector && [responseString respondsToSelector:jsonKitSelector]) {
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[responseString methodSignatureForSelector:jsonKitSelector]];
+            invocation.target = responseString;
+            invocation.selector = jsonKitSelector;
+            int parseOptions = 0;
+            [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+            [invocation setArgument:&error atIndex:3];
+            [invocation invoke];
+            [invocation getReturnValue:&feedArray];
+        }else {
+            BWLog(@"Error: You need a JSON Framework in your runtime!");
+            [self doesNotRecognizeSelector:_cmd];
+        }    
         if (error) {
-          BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
-          [self reportError_:error];
-          return;
+            BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
+            [self reportError_:error];
+            return;
         }
-
+        
         self.receivedData = nil;
         self.urlConnection = nil;
-
+        
         // remember that we just checked the server
         self.lastCheck = [NSDate date];
-
+        
         // server returned empty response?
         if (![feedArray count]) {
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                                 [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
-			      return;
+            return;
 		}
-
+        
         NSString *currentAppCacheVersion = [[[self app].version copy] autorelease];
-
+        
         // clear cache and reload with new data
         NSMutableArray *tmpApps = [NSMutableArray arrayWithCapacity:[feedArray count]];
         for (NSDictionary *dict in feedArray) {
@@ -573,59 +573,59 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             if ([app isValid]) {
                 [tmpApps addObject:app];
             }else {
-              [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
-                                  [NSDictionary dictionaryWithObjectsAndKeys:@"Invalid data received from server.", NSLocalizedDescriptionKey, nil]]];
+                [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                                    [NSDictionary dictionaryWithObjectsAndKeys:@"Invalid data received from server.", NSLocalizedDescriptionKey, nil]]];
             }
         }
         // only set if different!
         if (![self.apps isEqualToArray:tmpApps]) {
-          self.apps = [[tmpApps copy] autorelease];
+            self.apps = [[tmpApps copy] autorelease];
         }
         [self saveAppCache_];
-
+        
         [self checkUpdateAvailable_];
         BOOL newVersionDiffersFromCachedVersion = ![self.app.version isEqualToString:currentAppCacheVersion];
-    
-    // show alert if we are on the latest & greatest
-    if (showFeedback_ && !self.isUpdateAvailable) {
-      // use currentVersionString, as version still may differ (e.g. server: 1.2, client: 1.3)
-      NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@ %@", self.app.name, BWLocalize(@"HockeyVersion"), [self currentAppVersion]];
-      NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
-      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
-      [alert show];
-      [alert release];
-    }
-    
+        
+        // show alert if we are on the latest & greatest
+        if (showFeedback_ && !self.isUpdateAvailable) {
+            // use currentVersionString, as version still may differ (e.g. server: 1.2, client: 1.3)
+            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@ %@", self.app.name, BWLocalize(@"HockeyVersion"), [self currentAppVersion]];
+            NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        }
+        
         if (self.isUpdateAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForBetaAlert_];
             }
         }
-      showFeedback_ = NO;
+        showFeedback_ = NO;
     }
 }
 
 - (void)reachabilityChanged:(NSNotification *)notification {
-  id reachability = reachability_;
-  if ([notification.object isKindOfClass:NSClassFromString(@"Reachability")]) {
-    reachability = notification.object;
-  }
-  if (reachability) {
-    NSInteger networkStatus;
-    SEL currentReachabilityStatusSelector = NSSelectorFromString(@"currentReachabilityStatus");
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[reachability methodSignatureForSelector:currentReachabilityStatusSelector]];
-    invocation.target = reachability;
-    invocation.selector = currentReachabilityStatusSelector;
-    [invocation invoke];
-    [invocation getReturnValue:&networkStatus];
-        
-    // 0 = NotReachable
-    BOOL isOffline = networkStatus == 0;
-    self.updateURLOffline = isOffline;
-    if (!isOffline) {
-      [self checkForUpdate];
+    id reachability = reachability_;
+    if ([notification.object isKindOfClass:NSClassFromString(@"Reachability")]) {
+        reachability = notification.object;
     }
-  }
+    if (reachability) {
+        NSInteger networkStatus;
+        SEL currentReachabilityStatusSelector = NSSelectorFromString(@"currentReachabilityStatus");
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[reachability methodSignatureForSelector:currentReachabilityStatusSelector]];
+        invocation.target = reachability;
+        invocation.selector = currentReachabilityStatusSelector;
+        [invocation invoke];
+        [invocation getReturnValue:&networkStatus];
+        
+        // 0 = NotReachable
+        BOOL isOffline = networkStatus == 0;
+        self.updateURLOffline = isOffline;
+        if (!isOffline) {
+            [self checkForUpdate];
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -633,46 +633,46 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark Properties
 
 - (void)setCurrentHockeyViewController:(BWHockeyViewController *)aCurrentHockeyViewController {
-  if (currentHockeyViewController_ != aCurrentHockeyViewController) {
-    [currentHockeyViewController_ release];
-    currentHockeyViewController_ = [aCurrentHockeyViewController retain];
-    BWLog(@"active hockey view controller: %@", aCurrentHockeyViewController);
-  }
+    if (currentHockeyViewController_ != aCurrentHockeyViewController) {
+        [currentHockeyViewController_ release];
+        currentHockeyViewController_ = [aCurrentHockeyViewController retain];
+        BWLog(@"active hockey view controller: %@", aCurrentHockeyViewController);
+    }
 }
 
 - (void)setUpdateURL:(NSString *)anUpdateURL {
-  // ensure url ends with a trailing slash
-  if (![anUpdateURL hasSuffix:@"/"]) {
-    anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
-  }
-  
-  // register/deregister logic
-  NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-  if (!updateURL_ && anUpdateURL) {
-    [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
-    [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
-  }else if (updateURL_ && !anUpdateURL) {
-    [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-    [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-  }
-  
-  if (updateURL_ != anUpdateURL) {
-    [updateURL_ release];
-    updateURL_ = [anUpdateURL copy];
-    [self setupReachability];
-  }
+    // ensure url ends with a trailing slash
+    if (![anUpdateURL hasSuffix:@"/"]) {
+        anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
+    }
+    
+    // register/deregister logic
+    NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+    if (!updateURL_ && anUpdateURL) {
+        [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
+        [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    }else if (updateURL_ && !anUpdateURL) {
+        [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+        [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    }
+    
+    if (updateURL_ != anUpdateURL) {
+        [updateURL_ release];
+        updateURL_ = [anUpdateURL copy];
+        [self setupReachability];
+    }
 }
 
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
-  if (checkForUpdateOnLaunch_ != flag) {
-    checkForUpdateOnLaunch_ = flag;
-    NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-    if (flag) {
-      [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
-    }else {
-      [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+    if (checkForUpdateOnLaunch_ != flag) {
+        checkForUpdateOnLaunch_ = flag;
+        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+        if (flag) {
+            [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
+        }else {
+            [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+        }
     }
-  }
 }
 
 - (NSString *)currentAppVersion {
@@ -683,7 +683,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (anUpdateSetting > HockeyUpdateCheckManually) {
         updateSetting_ = HockeyUpdateCheckStartup;
     }
-
+    
     updateSetting_ = anUpdateSetting;
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:updateSetting_] forKey:kHockeyAutoUpdateSetting];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -693,28 +693,28 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (lastCheck_ != aLastCheck) {
         [lastCheck_ release];
         lastCheck_ = [aLastCheck copy];
-
+        
 		[[NSUserDefaults standardUserDefaults] setObject:[[lastCheck_ description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
     }
 }
 
 - (void)setApps:(NSArray *)anApps {
-  if (apps_ != anApps || !apps_) {
-    [apps_ release];
-    [self willChangeValueForKey:@"apps"];
-    
-    // populate with default values (if empty)
-    if (![anApps count]) {
-      BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
-      defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
-      defaultApp.version = currentAppVersion_;
-      apps_ = [[NSArray arrayWithObject:defaultApp] retain];
-    }else {
-      apps_ = [anApps copy]; 
-    }      
-    [self didChangeValueForKey:@"apps"];
-  }
+    if (apps_ != anApps || !apps_) {
+        [apps_ release];
+        [self willChangeValueForKey:@"apps"];
+        
+        // populate with default values (if empty)
+        if (![anApps count]) {
+            BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
+            defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+            defaultApp.version = currentAppVersion_;
+            apps_ = [[NSArray arrayWithObject:defaultApp] retain];
+        }else {
+            apps_ = [anApps copy]; 
+        }      
+        [self didChangeValueForKey:@"apps"];
+    }
 }
 
 - (BWApp *)app {

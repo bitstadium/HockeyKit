@@ -39,20 +39,20 @@ typedef enum {
 
 @interface BWHockeyViewController : UITableViewController <PSStoreButtonDelegate, UIActionSheetDelegate, UIPickerViewDelegate, UIPickerViewDataSource> {
     BWHockeyManager *hockeyManager_;
-
+    
     NSDictionary *cellLayout;
-
+    
     BOOL modal_;
     BOOL showAllVersions_;
     UIStatusBarStyle statusBarStyle_;
     PSAppStoreHeader *appStoreHeader_;
     PSStoreButton *appStoreButton_;
-
+    
     UIActionSheet *settingsSheet_;
     UIPickerView *settingPicker_;
     
     AppStoreButtonState appStoreButtonState_;
-
+    
     NSMutableArray *cells_;
 }
 

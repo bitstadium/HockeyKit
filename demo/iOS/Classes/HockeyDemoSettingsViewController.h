@@ -10,7 +10,7 @@
 
 
 @interface HockeyDemoSettingsViewController : UITableViewController {
-
+    
 }
 
 @end

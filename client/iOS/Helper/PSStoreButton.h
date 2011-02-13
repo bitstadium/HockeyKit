@@ -53,7 +53,7 @@
 @interface PSStoreButton : UIButton {
     PSStoreButtonData *buttonData_;
     id<PSStoreButtonDelegate> buttonDelegate_;
-
+    
     CAGradientLayer *gradient_;
     CGPoint customPadding_;
 }

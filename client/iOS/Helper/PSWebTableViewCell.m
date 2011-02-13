@@ -61,14 +61,14 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 			webView_.opaque = NO;
 			webView_.delegate = self;
             webView_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-
+            
             for(UIView* subView in webView_.subviews){
                 if([subView isKindOfClass:[UIScrollView class]]){
                     // disable scrolling
                     UIScrollView *sv = (UIScrollView *)subView;
                     sv.scrollEnabled = NO;
                     sv.bounces = NO;
-
+                    
                     // hide shadow
                     for (UIView* shadowView in [subView subviews]) {
                         if ([shadowView isKindOfClass:[UIImageView class]]) {
@@ -80,7 +80,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
         }
 		else
 			webView_.frame = webViewRect;
-
+        
         NSString *deviceWidth = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? [NSString stringWithFormat:@"%d", CGRectGetWidth(self.bounds)] : @"device-width";
         //BWLog(@"%@\n%@\%@", PSWebTableViewCellHtmlTemplate, deviceWidth, self.webViewContent);
         NSString *contentHtml = [NSString stringWithFormat:PSWebTableViewCellHtmlTemplate, deviceWidth, self.webViewContent];
@@ -130,7 +130,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 - (void)setFrame:(CGRect)aFrame {
     BOOL needChange = !CGRectEqualToRect(aFrame, self.frame);
     [super setFrame:aFrame];
-
+    
     if (needChange) {
         [self addWebView];
     }
@@ -153,13 +153,13 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	if(navigationType == UIWebViewNavigationTypeOther)
 		return YES;
-
+    
     /*
      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Link!" message:@"You touched a link!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
      [alert show];
      [alert release];
      */
-
+    
 	return NO;
 }
 
@@ -168,19 +168,19 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 	if(webViewContent_)
         [self showWebView];
     //[self performSelector:@selector(showWebView) withObject:nil afterDelay:.35];
-
+    
     CGRect frame = webView_.frame;
     frame.size.height = 1;
     webView_.frame = frame;
     CGSize fittingSize = [webView_ sizeThatFits:CGSizeZero];
     frame.size = fittingSize;
     webView_.frame = frame;
-
+    
     //  BWLog(@"web view size: %f, %f", fittingSize.width, fittingSize.height);
-
+    
     NSString *output = [webView_ stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight;"];
     //  BWLog(@"web view size V2: %@", output);
-
+    
     self.webViewSize = CGSizeMake(fittingSize.width, [output integerValue]);
 }
 

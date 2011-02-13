@@ -47,25 +47,25 @@ typedef enum {
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
     id <BWHockeyManagerDelegate> delegate_;
     NSArray *apps_;
-
+    
     NSString *updateURL_;
     id reachability_;
     NSString *currentAppVersion_;
-
-	  BWHockeyViewController *currentHockeyViewController_;
-
-	  NSMutableData *receivedData_;
-
+    
+    BWHockeyViewController *currentHockeyViewController_;
+    
+    NSMutableData *receivedData_;
+    
     BOOL checkInProgress_;
     BOOL dataFound;
     BOOL updateAvailable_;
     BOOL showFeedback_; 
     BOOL updateURLOffline_;
-
+    
     NSURLConnection *urlConnection_;
     NSDate *lastCheck_;
     NSDate *usageStartTimestamp_;
-
+    
     BOOL sendUserData_;
     BOOL showUpdateReminder_;
     BOOL checkForUpdateOnLaunch_;

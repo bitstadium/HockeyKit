@@ -62,7 +62,7 @@
     [middleHeaderLabel_ release];
     [subHeaderLabel release];
     [iconImage_ release];
-
+    
     [super dealloc];
 }
 
@@ -75,7 +75,7 @@
     CGRect bounds = self.bounds;
     CGFloat globalWidth = self.frame.size.width;
     CGContextRef context = UIGraphicsGetCurrentContext();
-
+    
     // draw the gradient
     NSArray *colors = [NSArray arrayWithObjects:(id)kDarkGrayColor.CGColor, (id)kLightGrayColor.CGColor, nil];
     CGGradientRef gradient = CGGradientCreateWithColors(CGColorGetColorSpace((CGColorRef)[colors objectAtIndex:0]), (CFArrayRef)colors, (CGFloat[2]){0, 1});
@@ -83,29 +83,29 @@
     CGPoint bottom = CGPointMake(CGRectGetMidX(bounds), CGRectGetMaxY(bounds)-kReflectionHeight);
     CGContextDrawLinearGradient(context, gradient, top, bottom, 0);
     CGGradientRelease(gradient);
-
+    
     // draw header name
     UIColor *mainTextColor = RGBCOLOR(0,0,0);
     UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
     UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
-	  UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
-	  UIFont *smallFont = [UIFont systemFontOfSize:12];
-
+    UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
+    UIFont *smallFont = [UIFont systemFontOfSize:12];
+    
     float myColorValues[] = {255, 255, 255, .6};
     CGColorSpaceRef myColorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef myColor = CGColorCreate(myColorSpace, myColorValues);
-
+    
     // icon
     [iconImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin)];
     [reflectedImage_ drawAtPoint:CGPointMake(kImageMargin, kImageMargin+kImageHeight)];
-
+    
     // header
     NSInteger shadowOffset = 2;
     IF_IOS4_OR_GREATER(if([[UIScreen mainScreen] scale] == 2) shadowOffset = 1;)
     CGContextSetShadowWithColor (context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);
     [mainTextColor set];
     [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
-
+    
     // middle
     [secondaryTextColor set];
     [middleHeaderLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin + 25, globalWidth-kTextRow, 20) withFont:secondaryFont lineBreakMode:UILineBreakModeTailTruncation];
@@ -114,7 +114,7 @@
     // sub
     [secondaryTextColor set];
     [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
-
+    
     CGColorRelease(myColor);
     CGColorSpaceRelease(myColorSpace);
 }
@@ -124,45 +124,45 @@
 #pragma mark Properties
 
 - (void)setHeaderLabel:(NSString *)anHeaderLabel {
-  if (headerLabel_ != anHeaderLabel) {
-    [headerLabel_ release];
-    headerLabel_ = [anHeaderLabel copy];
-    [self setNeedsDisplay];
-  }
+    if (headerLabel_ != anHeaderLabel) {
+        [headerLabel_ release];
+        headerLabel_ = [anHeaderLabel copy];
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setMiddleHeaderLabel:(NSString *)aMiddleHeaderLabel {
-  if (middleHeaderLabel_ != aMiddleHeaderLabel) {
-    [middleHeaderLabel_ release];
-    middleHeaderLabel_ = [aMiddleHeaderLabel copy];
-    [self setNeedsDisplay];
-  }
+    if (middleHeaderLabel_ != aMiddleHeaderLabel) {
+        [middleHeaderLabel_ release];
+        middleHeaderLabel_ = [aMiddleHeaderLabel copy];
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setSubHeaderLabel:(NSString *)aSubHeaderLabel {
-  if (subHeaderLabel != aSubHeaderLabel) {
-    [subHeaderLabel release];
-    subHeaderLabel = [aSubHeaderLabel copy];
-    [self setNeedsDisplay];
-  }
+    if (subHeaderLabel != aSubHeaderLabel) {
+        [subHeaderLabel release];
+        subHeaderLabel = [aSubHeaderLabel copy];
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setIconImage:(UIImage *)anIconImage {
     if (iconImage_ != anIconImage) {
         [iconImage_ release];
-
+        
         // scale, make borders and reflection
         iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) honorScaleFactor:YES];
         iconImage_ = [[iconImage_ bw_roundedCornerImage:kImageBorderRadius borderSize:0.0] retain];
         //    iconImage_ = [anIconImage retain];
-
+        
         // create reflected image
         [reflectedImage_ release];
         reflectedImage_ = nil;
         if (anIconImage) {
             reflectedImage_ = [[iconImage_ bw_reflectedImageWithHeight:kReflectionHeight fromAlpha:0.5 toAlpha:0.0] retain];
         }
-      [self setNeedsDisplay];
+        [self setNeedsDisplay];
     }
 }
 

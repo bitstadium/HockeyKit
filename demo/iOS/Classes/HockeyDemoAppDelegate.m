@@ -19,38 +19,38 @@
 #define kHockeyUpdateURL @"http://alpha.buzzworks.de"
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [window addSubview:viewController.view];
-  [window makeKeyAndVisible];
-
-  if ([window respondsToSelector:@selector(setRootViewController:)]) {
-    [window setRootViewController:navigationController];
-  }
-
-  // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
-  // to the Preprocessor Macros in the project settings to all configurations
+    [window addSubview:viewController.view];
+    [window makeKeyAndVisible];
+    
+    if ([window respondsToSelector:@selector(setRootViewController:)]) {
+        [window setRootViewController:navigationController];
+    }
+    
+    // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
+    // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-  [BWHockeyManager sharedHockeyManager].updateURL = kHockeyUpdateURL;
-  [BWHockeyManager sharedHockeyManager].delegate = self;
+    [BWHockeyManager sharedHockeyManager].updateURL = kHockeyUpdateURL;
+    [BWHockeyManager sharedHockeyManager].delegate = self;
 #endif
-
-  return YES;
+    
+    return YES;
 }
 
 - (void)dealloc {
-  [viewController release];
-  [window release];
-  [super dealloc];
+    [viewController release];
+    [window release];
+    [super dealloc];
 }
 
 #pragma mark -
 #pragma mark BWHockeyControllerDelegate
 
 - (void)connectionOpened {
-  [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
 - (void)connectionClosed {
-  [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 

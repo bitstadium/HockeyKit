@@ -28,7 +28,6 @@
 @interface PSWebTableViewCell : UITableViewCell <UIWebViewDelegate> {
     UIWebView *webView_;
     NSString *webViewContent_;
-
     CGSize webViewSize_;
 }
 

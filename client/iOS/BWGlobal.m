@@ -25,11 +25,11 @@
 #import "BWGlobal.h"
 
 NSBundle *hockeyBundle() {
-  static NSBundle* bundle = nil;
-  if (!bundle) {
-    NSString* path = [[[NSBundle mainBundle] resourcePath]
-                      stringByAppendingPathComponent:kHockeyBundleName];
-    bundle = [[NSBundle bundleWithPath:path] retain];
-  }
-  return bundle;
+    static NSBundle* bundle = nil;
+    if (!bundle) {
+        NSString* path = [[[NSBundle mainBundle] resourcePath]
+                          stringByAppendingPathComponent:kHockeyBundleName];
+        bundle = [[NSBundle bundleWithPath:path] retain];
+    }
+    return bundle;
 }

@@ -13,9 +13,6 @@
 #import "BWHockeyManager.h"
 #endif
 
-// TODO: does not work correctly
-//#define kAutoOpenHockey
-
 @implementation HockeyDemoViewController
 
 - (void)openUpdateViewAnimated:(BOOL)animated {
@@ -27,12 +24,6 @@
 #endif
 }
 
-#ifdef kAutoOpenHockey
-- (void)openUpdateViewCaller {
-    [self openUpdateViewAnimated:NO];
-}
-#endif
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -40,11 +31,6 @@
                                                                               style:UIBarButtonItemStyleBordered
                                                                              target:self
                                                                              action:@selector(showSettings)];
-    
-#ifdef kAutoOpenHockey
-    // HACK - DEVELOPMENT AID
-    [self performSelector:@selector(openUpdateViewCaller) withObject:nil afterDelay:0.01];
-#endif
 }
 
 - (void)dealloc {

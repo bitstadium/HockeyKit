@@ -24,12 +24,12 @@
 //  THE SOFTWARE.
 
 @interface PSAppStoreHeader : UIView {
-  NSString *headerLabel_;
-  NSString *middleHeaderLabel_;
-  NSString *subHeaderLabel;
-  UIImage *iconImage_;
-
-  UIImage *reflectedImage_;
+    NSString *headerLabel_;
+    NSString *middleHeaderLabel_;
+    NSString *subHeaderLabel;
+    UIImage *iconImage_;
+    
+    UIImage *reflectedImage_;
 }
 
 @property (nonatomic, copy) NSString *headerLabel;

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface HockeyDemoViewController : UIViewController {
-
+    
 }
 
 - (IBAction)openUpdateView;
