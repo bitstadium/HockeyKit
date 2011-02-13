@@ -452,14 +452,14 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     IF_PRE_IOS4
     (
-     NSString *message = [NSString stringWithFormat:@"In-App Download requires iOS 4 or higher. You can download the update with downloading from %@ and syncing with iTunes.", self.updateURL];
-     UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Warning" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+     NSString *message = [NSString stringWithFormat:BWLocalize(@"HockeyiOS3Message"), self.updateURL];
+     UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyWarning") message:message delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil] autorelease];
      [alert show];
      return NO;
      )
     
 #if TARGET_IPHONE_SIMULATOR
-    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Simulator detected" message:@"Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyWarning") message:BWLocalize(@"HockeySimulatorMessage") delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil] autorelease];
     [alert show];
     return NO;
 #endif
