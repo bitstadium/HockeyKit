@@ -72,7 +72,7 @@
 "HockeySectionCheckManually" = "Manually";
 
 "HockeyVersion" = "Version";
-"ShowPreviousVersions" = "Show previous versions...";
+"HockeyShowPreviousVersions" = "Show previous versions...";
 "HockeyNoUpdateNeededTitle" = "No update needed";
 "HockeyNoUpdateNeededMessage" = "%@ is already the latest version.";
 "HockeyUpdateAlertTextWithAppVersion" = "%@ is available.";

@@ -206,7 +206,7 @@
                            footerButton.layer.shadowRadius = 2.0f;
                            )
         footerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
-        [footerButton setTitle:BWLocalize(@"ShowPreviousVersions") forState:UIControlStateNormal];
+        [footerButton setTitle:BWLocalize(@"HockeyShowPreviousVersions") forState:UIControlStateNormal];
         [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
