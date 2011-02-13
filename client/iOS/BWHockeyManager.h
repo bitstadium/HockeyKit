@@ -22,7 +22,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-//  Note: Hockey currently supports either JSONKit or sb-json.
+
+//  Note: Hockey currently supports following JSON Frameworks: JSONKit
+//  To detect internet accessibility, Apple's Reachability Class has to be linked and used
 
 #import <UIKit/UIKit.h>
 #import "BWGlobal.h"

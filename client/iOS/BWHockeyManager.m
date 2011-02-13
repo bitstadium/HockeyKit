@@ -56,6 +56,13 @@
 @property (nonatomic, copy) NSDate *usageStartTimestamp;
 @end
 
+// hockey api error domain
+typedef enum {
+  HockeyErrorUnknown,
+  HockeyAPIServerReturnedInvalidStatus,
+} HockeyErrorReason;
+static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
+
 @implementation BWHockeyManager
 
 @synthesize delegate = delegate_;
@@ -93,6 +100,17 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark private
+
+- (void)reportError_:(NSError *)error {
+  BWLog(@"Error: %@", [error localizedDescription]);
+  
+  // only show error if hockey controller is visible
+  if (self.currentHockeyViewController) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyError") message:[error localizedDescription] delegate:nil cancelButtonTitle:BWLocalize(@"OK") otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+  }
+}
 
 - (NSString *)encodedAppIdentifier_ {
   return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -334,11 +352,11 @@
 
 - (void)showCheckForBetaAlert_ {
     NSString *appNameAndVersion = [NSString stringWithFormat:@"%@ %@", self.app.name, [self.app versionString]];
-  UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
                                                          message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), appNameAndVersion]
                                                         delegate:self
-                                               cancelButtonTitle:BWLocalize(@"HockeyNo")
-                                               otherButtonTitles:BWLocalize(@"HockeyYes"), nil
+                                               cancelButtonTitle:BWLocalize(@"HockeyIgnore")
+                                               otherButtonTitles:BWLocalize(@"HockeyShowUpdate"), nil
                                ] autorelease];
     [alertView show];
 }
@@ -469,9 +487,10 @@
     int statusCode = [((NSHTTPURLResponse *)response) statusCode];
     if (statusCode == 404) {
       [connection cancel];  // stop connecting; no more delegate messages
-      BWLog(@"Error: Hockey API received HTTP Status Code %d", statusCode);
-      // TODO: report error!
+      NSString *errorStr = [NSString stringWithFormat:@"Error: Hockey API received HTTP Status Code %d", statusCode];
       [self connectionClosed_];
+      [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidStatus userInfo:
+                          [NSDictionary dictionaryWithObjectsAndKeys:errorStr, NSLocalizedDescriptionKey, nil]]];
       return;
     }
   }
@@ -492,6 +511,7 @@
 
     [self updateViewController_];
     [self registerOnline];
+    [self reportError_:error];
 }
 
 // api call returned, parsing
@@ -519,12 +539,12 @@
       [invocation invoke];
       [invocation getReturnValue:&feedArray];
     }else {
-      NSLog(@"You need JSONKit in your runtime");
+      BWLog(@"Error: You need a JSON Framework in your runtime!");
       [self doesNotRecognizeSelector:_cmd];
     }    
         if (error) {
-            BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
-            // TODO: report error
+          BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
+          [self reportError_:error];
           return;
         }
 
