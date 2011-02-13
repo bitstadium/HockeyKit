@@ -414,12 +414,17 @@
         NSString *installed = @"";
         if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
           installed = @"<span style=\"float:right;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>INSTALLED</b></span>";
-        }      
+        }
+      
         if ([app isEqual:self.hockeyManager.app]) {
+          if ([app.notes length] > 0) {
             installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
             cell.webViewContent = [NSString stringWithFormat:@"%@<p>%@</p>", installed, app.notes];
+          }else {
+            cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWLocalize(@"HockeyNoReleaseNotesAvailable")];
+          }
         } else {
-            cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], app.notes];
+          cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
         }
         [cell addWebView];
         // hack
