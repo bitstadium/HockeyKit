@@ -29,11 +29,14 @@
     UIWebView *webView_;
     NSString *webViewContent_;
     CGSize webViewSize_;
+    
+    UIColor *cellBackgroundColor_;
 }
 
 @property (nonatomic, retain) UIWebView *webView;
 @property (nonatomic, copy) NSString *webViewContent;
 @property (nonatomic, assign) CGSize webViewSize;
+@property (nonatomic, retain) UIColor *cellBackgroundColor;
 
 - (void)addWebView;
 

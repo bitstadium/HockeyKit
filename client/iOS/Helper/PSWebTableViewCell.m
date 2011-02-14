@@ -45,6 +45,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 @synthesize webView = webView_;
 @synthesize webViewContent = webViewContent_;
 @synthesize webViewSize = webViewSize_;
+@synthesize cellBackgroundColor = cellBackgroundColor_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -57,7 +58,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 			webView_ = [[[UIWebView alloc] initWithFrame:webViewRect] retain];
 			[self addSubview:webView_];
 			webView_.hidden = YES;
-			webView_.backgroundColor = [UIColor clearColor];
+			webView_.backgroundColor = self.cellBackgroundColor;
 			webView_.opaque = NO;
 			webView_.delegate = self;
             webView_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -113,6 +114,7 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        self.cellBackgroundColor = [UIColor clearColor];
     }
     return self;
 }

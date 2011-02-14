@@ -201,6 +201,7 @@
         // align at the bottom if tableview is small
         UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMinPreviousVersionButtonHeight)];
         footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        footerView.backgroundColor = RGBCOLOR(200, 202, 204);
         UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
         IF_IOS4_OR_GREATER(
                            //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
@@ -217,8 +218,9 @@
         [footerView addSubview:footerButton];
         self.tableView.tableFooterView = footerView;
         [self realignPreviousVersionButton];
-    }else {
+    } else {
         self.tableView.tableFooterView = nil;
+        self.tableView.backgroundColor = RGBCOLOR(200, 202, 204); 
     }
 }
 
@@ -233,17 +235,19 @@
         if ([app.notes length] > 0) {
             installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
             cell.webViewContent = [NSString stringWithFormat:@"%@%@", installed, app.notes];
-        }else {
+        } else {
             cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWLocalize(@"HockeyNoReleaseNotesAvailable")];
         }
     } else {
         cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
     }
+    cell.cellBackgroundColor = RGBCOLOR(200, 202, 204);
+    
     [cell addWebView];
     // hack
     cell.textLabel.text = @"";
     
-    [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
+    [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,7 +448,7 @@
     }
     
     [self.tableView reloadData];
-    [self showHidePreviousVersionsButton];
+    [self showHidePreviousVersionsButton];    
 }
 
 - (void)showPreviousVersionAction {
@@ -488,8 +492,13 @@
         rowHeight = cell.webViewSize.height;
     }
     
+    if ([self.hockeyManager.apps count] > 1 && !showAllVersions_) {
+        self.tableView.backgroundColor = RGBCOLOR(183, 183, 183);
+    }    
+    
     if (rowHeight == 0) {
         rowHeight = indexPath.row == 0 ? 250 : 44; // fill screen on startup
+        self.tableView.backgroundColor = RGBCOLOR(200, 202, 204);
     }
     
     return rowHeight;
@@ -510,18 +519,18 @@
         IF_3_2_OR_GREATER([self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];)
         IF_PRE_3_2([self.tableView reloadData];)        
         [self realignPreviousVersionButton];
-    }else if ([keyPath isEqualToString:@"checkInProgress"]) {
+    } else if ([keyPath isEqualToString:@"checkInProgress"]) {
         if (self.hockeyManager.isCheckInProgress) {
             [self setAppStoreButtonState:AppStoreButtonStateSearching animated:YES];
         }else {
             [self restoreStoreButtonStateAnimated_:YES];
         }
-    }else if ([keyPath isEqualToString:@"isUpdateURLOffline"]) {
+    } else if ([keyPath isEqualToString:@"isUpdateURLOffline"]) {
         [self restoreStoreButtonStateAnimated_:YES];
-    }else if ([keyPath isEqualToString:@"updateAvailable"]) {
+    } else if ([keyPath isEqualToString:@"updateAvailable"]) {
         [self restoreStoreButtonStateAnimated_:YES];
         //[self redrawTableView];
-    }else if ([keyPath isEqualToString:@"apps"]) {
+    } else if ([keyPath isEqualToString:@"apps"]) {
         [self redrawTableView];
     }
 }
@@ -530,7 +539,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([cells_ count] > indexPath.row) {
         return [cells_ objectAtIndex:indexPath.row];
-    }else {
+    } else {
         BWLog(@"Warning: cells_ and indexPath do not match? forgot calling redrawTableView?");
     }
     return nil;
