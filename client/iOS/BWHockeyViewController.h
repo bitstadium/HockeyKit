@@ -51,6 +51,8 @@ typedef enum {
     UIActionSheet *settingsSheet_;
     UIPickerView *settingPicker_;
     
+    id popOverController_;
+    
     AppStoreButtonState appStoreButtonState_;
     
     NSMutableArray *cells_;

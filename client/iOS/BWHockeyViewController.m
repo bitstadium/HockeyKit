@@ -109,15 +109,16 @@
         UIViewController *pickerViewController = [[[UIViewController alloc] init] autorelease];
         [pickerViewController.view addSubview:settingPicker_];
         
-        id popOverController = [[popoverControllerClass alloc] initWithContentViewController:pickerViewController];
-        [popOverController setPopoverContentSize: CGSizeMake(300, 216)];
+        if (popOverController_ == nil) {
+            popOverController_ = [[popoverControllerClass alloc] initWithContentViewController:pickerViewController];
+        }
+        [popOverController_ setPopoverContentSize: CGSizeMake(300, 216)];
         
         // show popover
         CGSize sizeOfPopover = CGSizeMake(300, 222);
-        CGPoint positionOfPopover = [sender view].frame.origin;
         settingPicker_.frame = CGRectMake(0, 0, sizeOfPopover.width, sizeOfPopover.height);
-        [popOverController presentPopoverFromRect:CGRectMake(positionOfPopover.x, positionOfPopover.y, sizeOfPopover.width, sizeOfPopover.height)
-                                           inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        [popOverController_ presentPopoverFromBarButtonItem:self.navigationItem.rightBarButtonItem
+                                   permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     }else {
         settingsSheet_ = [[UIActionSheet alloc] initWithTitle:@"Settings"
                                                      delegate:self
@@ -268,6 +269,8 @@
         }
         
         cells_ = [[NSMutableArray alloc] initWithCapacity:5];
+        
+        popOverController_ = nil;
         
         NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
         [dnc addObserver:self selector:@selector(appDidBecomeActive_) name:UIApplicationDidBecomeActiveNotification object:nil];
