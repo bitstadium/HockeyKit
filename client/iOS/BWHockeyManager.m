@@ -305,6 +305,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)showUpdateView {
+    if (currentHockeyViewController_) {
+        BWLog(@"update view already visible, aborting");
+        return;
+    }
+    
     UIViewController *parentViewController = nil;
     
     if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
@@ -358,14 +363,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 
-- (void)showCheckForBetaAlert_ {
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
-                                                         message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
-                                                        delegate:self
-                                               cancelButtonTitle:BWLocalize(@"HockeyIgnore")
-                                               otherButtonTitles:BWLocalize(@"HockeyShowUpdate"), nil
-                               ] autorelease];
-    [alertView show];
+- (void)showCheckForUpdateAlert_ {
+    if (!updateAlertShowing_) {
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyUpdateAvailable")
+                                                             message:[NSString stringWithFormat:BWLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
+                                                            delegate:self
+                                                   cancelButtonTitle:BWLocalize(@"HockeyIgnore")
+                                                   otherButtonTitles:BWLocalize(@"HockeyShowUpdate"), nil
+                                   ] autorelease];
+        [alertView show];
+        updateAlertShowing_ = YES;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +608,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         
         if (self.isUpdateAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
             if (updateAvailable_ && !currentHockeyViewController_) {
-                [self showCheckForBetaAlert_];
+                [self showCheckForUpdateAlert_];
             }
         }
         showFeedback_ = NO;
@@ -737,6 +745,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // invoke the selected action from the actionsheet for a location element
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    updateAlertShowing_ = NO;
     if (buttonIndex == [alertView firstOtherButtonIndex]) {
         // YES button has been clicked
         [self showUpdateView];
