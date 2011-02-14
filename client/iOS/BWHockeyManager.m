@@ -439,6 +439,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
+    [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!urlConnection_) {
