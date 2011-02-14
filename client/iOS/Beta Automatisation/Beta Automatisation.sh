@@ -29,6 +29,7 @@ if [[ "${EFFECTIVE_PLATFORM_NAME}" == "-iphoneos" && "${BUILD_STYLE}" == $adHocC
 then
     bundleVersion=$(defaults read "$applicationPath/Info" CFBundleVersion)
     bundleIdentifier=$(defaults read "$applicationPath/Info" CFBundleIdentifier)
+    bundleShortVersionString=$(defaults read "$applicationPath/Info" CFBundleShortVersionString)
     
     # Zip the app and dSYM
     zipPath="${CONFIGURATION_BUILD_DIR}/$executableName $bundleVersion.zip"
@@ -73,6 +74,8 @@ then
                         <string>software</string>
                         <key>title</key>
                         <string>$bundleDisplayName</string>
+                        <key>subtitle</key>
+                        <string>$bundleShortVersionString</string>
                     </dict>
                 </dict>
             </array>
