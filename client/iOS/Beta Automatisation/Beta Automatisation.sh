@@ -113,5 +113,7 @@ EOF
         ssh $scpUser@$scpHost "mkdir $scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
         scp "${CONFIGURATION_BUILD_DIR}/$executableName.ipa" $scpUser@$scpHost:"$scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
         scp "${CONFIGURATION_BUILD_DIR}/$executableName.plist" $scpUser@$scpHost:"$scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
+        #scp "${PROJECT_DIR}/../ReleaseNotes.html" $scpUser@$scpHost:"$scpPath/$bundleIdentifier/$secretSubDirStart$bundleVersion/"
+
     fi
 fi
