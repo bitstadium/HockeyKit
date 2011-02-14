@@ -255,6 +255,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         updateAvailable_ = NO;
         updateURLOffline_ = NO;
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+        navController_ = nil;
         
         // set defaults
         self.sendUserData = YES;
@@ -286,6 +287,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [urlConnection_ cancel];
     self.urlConnection = nil;
     
+    [navController_ release];
     [currentHockeyViewController_ release];
     [updateURL_ release];
     [apps_ release];
@@ -337,28 +339,27 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];
     }
     
-    BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
-    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
+    if (navController_ != nil) [navController_ release];
+
+    BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];    
+    navController_ = [[UINavigationController alloc] initWithRootViewController:hockeyViewController];
     
     if (parentViewController) {
-        if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
-            navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        if ([navController_ respondsToSelector:@selector(setModalTransitionStyle:)]) {
+            navController_.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         }
         
         // page sheet for the iPad
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [navController respondsToSelector:@selector(setModalPresentationStyle:)]) {
-            navController.modalPresentationStyle = UIModalPresentationFormSheet;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && [navController_ respondsToSelector:@selector(setModalPresentationStyle:)]) {
+            navController_.modalPresentationStyle = UIModalPresentationFormSheet;
         }
         
-        [parentViewController presentModalViewController:navController animated:YES];
+        [parentViewController presentModalViewController:navController_ animated:YES];
     } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
         BWLog(@"No rootViewController found, using UIWindow-approach: %@", visibleWindow);
-        [visibleWindow addSubview:navController.view];
-        
-		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
-        [navController retain];
+        [visibleWindow addSubview:navController_.view];
 	}
 }
 
@@ -538,7 +539,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         BWLog(@"Received API response: %@", responseString);
         
         NSError *error = nil;
-        NSArray *feedArray;
+        NSArray *feedArray = nil;
         
         // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
         SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");

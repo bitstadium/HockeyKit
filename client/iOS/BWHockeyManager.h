@@ -52,6 +52,7 @@ typedef enum {
     id reachability_;
     NSString *currentAppVersion_;
     
+    UINavigationController *navController_;
     BWHockeyViewController *currentHockeyViewController_;
     
     NSMutableData *receivedData_;
