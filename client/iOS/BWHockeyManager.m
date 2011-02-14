@@ -109,6 +109,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)reportError_:(NSError *)error {
     BWLog(@"Error: %@", [error localizedDescription]);
+    lastCheckFailed_ = YES;
     
     // only show error if we enable that
     if (showFeedback_) {
@@ -254,6 +255,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         dataFound = NO;
         updateAvailable_ = NO;
         updateURLOffline_ = NO;
+        lastCheckFailed_ = NO;
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
         navController_ = nil;
         
@@ -569,7 +571,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                                 [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
             return;
-		}
+		}else {
+            lastCheckFailed_ = NO;
+        }
+
         
         NSString *currentAppCacheVersion = [[[self app].version copy] autorelease];
         
@@ -636,7 +641,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         // 0 = NotReachable
         BOOL isOffline = networkStatus == 0;
         self.updateURLOffline = isOffline;
-        if (!isOffline) {
+        if (!isOffline && lastCheckFailed_) {
             [self checkForUpdate];
         }
     }

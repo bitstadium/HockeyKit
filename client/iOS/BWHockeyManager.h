@@ -63,6 +63,7 @@ typedef enum {
     BOOL showFeedback_; 
     BOOL updateURLOffline_;
     BOOL updateAlertShowing_;
+    BOOL lastCheckFailed_;
     
     NSURLConnection *urlConnection_;
     NSDate *lastCheck_;
