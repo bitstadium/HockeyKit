@@ -599,7 +599,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         // show alert if we are on the latest & greatest
         if (showFeedback_ && !self.isUpdateAvailable) {
             // use currentVersionString, as version still may differ (e.g. server: 1.2, client: 1.3)
-            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@ %@", self.app.name, BWLocalize(@"HockeyVersion"), [self currentAppVersion]];
+            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@", self.app.name, [[self app] versionString]];
             NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
             [alert show];
