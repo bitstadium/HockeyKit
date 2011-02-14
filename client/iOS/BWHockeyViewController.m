@@ -365,6 +365,9 @@
     NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
     if (!icons) {
         iconString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFile"];
+        if (!iconString) {
+            iconString = @"Icon.png";
+        }
     } else {
         BOOL useHighResIcon = NO;
         IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
