@@ -599,7 +599,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             NSString *shortVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
             shortVersionString = shortVersionString ? [NSString stringWithFormat:@"%@ ", shortVersionString] : @"";
             versionString = [shortVersionString length] ? [NSString stringWithFormat:@"(%@)", versionString] : versionString;
-            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@%@", self.app.name, BWLocalize(@"HockeyVersion"), shortVersionString, versionString];
+            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@ %@%@", self.app.name, BWLocalize(@"HockeyVersion"), shortVersionString, versionString];
             NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
             [alert show];
