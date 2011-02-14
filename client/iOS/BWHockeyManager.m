@@ -600,7 +600,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         // show alert if we are on the latest & greatest
         if (showFeedback_ && !self.isUpdateAvailable) {
             // use currentVersionString, as version still may differ (e.g. server: 1.2, client: 1.3)
-            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@", self.app.name, [[self app] versionString]];
+            NSString *versionString = [self currentAppVersion];
+            NSString *shortVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+            shortVersionString = shortVersionString ? [NSString stringWithFormat:@"%@ ", shortVersionString] : @"";
+            versionString = [shortVersionString length] ? [NSString stringWithFormat:@"(%@)", versionString] : versionString;
+            NSString *currentVersionString = [NSString stringWithFormat:@"%@ %@%@", self.app.name, BWLocalize(@"HockeyVersion"), shortVersionString, versionString];
             NSString *alertMsg = [NSString stringWithFormat:BWLocalize(@"HockeyNoUpdateNeededMessage"), currentVersionString];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWLocalize(@"HockeyNoUpdateNeededTitle") message:alertMsg delegate:nil cancelButtonTitle:BWLocalize(@"HockeyOK") otherButtonTitles:nil];
             [alert show];
@@ -696,6 +700,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (NSString *)currentAppVersion {
     return currentAppVersion_;
 }
+
 
 - (void)setUpdateSetting:(HockeyUpdateSetting)anUpdateSetting {
     if (anUpdateSetting > HockeyUpdateCheckManually) {
