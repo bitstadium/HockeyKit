@@ -89,9 +89,9 @@
 "HockeyiOS3Message" = "In-App download benötigt iOS 4 oder höher. Sie können die Applikation manuell updaten, indem sie das IPA von %@ laden und es via iTunes syncen.";
 "HockeySimulatorMessage" = "Hockey funktioniert nicht im Simulator.";
 
-"HockeyButtonCheck" = "ÜBERPRÜFEN";
-"HockeyButtonSearching" = "ÜBERPRÜFEN...";
-"HockeyButtonUpdate" = "AKTUALISIEREN";
-"HockeyButtonInstalling" = "INSTALLIEREN...";
+"HockeyButtonCheck" = "PRÜFE";
+"HockeyButtonSearching" = "PRÜFEN";
+"HockeyButtonUpdate" = "UPDATE";
+"HockeyButtonInstalling" = "INSTALLIEREN";
 "HockeyButtonOffline" = "OFFLINE";
 "HockeyInstalled" = "INSTALLIERT";

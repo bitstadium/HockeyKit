@@ -87,8 +87,8 @@
 "HockeySimulatorMessage" = "Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional.";
 
 "HockeyButtonCheck" = "CHECK";
-"HockeyButtonSearching" = "CHECKING...";
+"HockeyButtonSearching" = "CHECKING";
 "HockeyButtonUpdate" = "UPDATE";
-"HockeyButtonInstalling" = "INSTALLING...";
-"HockeyButtonOffline" = "NO CONNECTION";
+"HockeyButtonInstalling" = "INSTALLING";
+"HockeyButtonOffline" = "OFFLINE";
 "HockeyInstalled" = "INSTALLED";
