@@ -419,15 +419,16 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         return;
     }
     
-    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@?format=json&udid=%@", 
+                                  [self encodedAppIdentifier_],
+                                  [[UIDevice currentDevice] uniqueIdentifier]];
     
     // add additional statistics if user didn't disable flag
     if (self.shouldSendUserData) {
-        [parameter appendFormat:@"?format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
+        [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&usage_time=%@&first_start_at=%@",
          [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[UIDevice currentDevice] systemVersion],
          [self getDevicePlatform_],
-         [[UIDevice currentDevice] uniqueIdentifier],
          [[NSLocale preferredLanguages] objectAtIndex:0],
          [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
