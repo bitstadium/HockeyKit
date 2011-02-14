@@ -42,6 +42,7 @@
 - (void)connectionOpened_;
 - (void)connectionClosed_;
 - (void)reachabilityChanged:(NSNotification *)notification;
+- (BOOL)shouldCheckForUpdates;
 - (void)startUsage;
 - (void)stopUsage;
 - (NSString *)currentUsageString;
@@ -162,7 +163,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)startUsage {
     self.usageStartTimestamp = [NSDate date];
-    
     BOOL newVersion = NO;
     
     if (![[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString]) {
@@ -670,6 +670,12 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                            [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
                        }
                        )
+    IF_PRE_IOS4 (
+                       // initial uddate check if we don't have reachability
+                       if ([self shouldCheckForUpdates] && !NSClassFromString(@"Reachability")) {
+                         [self performSelector:@selector(checkForUpdate) afterDelay:0.0f];
+                      }
+                )
     
     if (updateURL_ != anUpdateURL) {
         [updateURL_ release];
