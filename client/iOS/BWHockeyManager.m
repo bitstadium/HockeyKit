@@ -419,31 +419,26 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
     
+    // add additional statistics if user didn't disable flag
+    if (self.shouldSendUserData) {
+        [parameter appendFormat:@"?format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
+         [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+         [[UIDevice currentDevice] systemVersion],
+         [self getDevicePlatform_],
+         [[UIDevice currentDevice] uniqueIdentifier],
+         [[NSLocale preferredLanguages] objectAtIndex:0],
+         [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+         [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+         ];
+    }
+
     // build request & send
     NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
     BWLog(@"sending api request to %@", url);
+
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
-    [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:@"GET"];
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
-    
-    // add additional statistics if user didn't disable flag
-    if (self.shouldSendUserData) {
-        NSString *postDataString = [NSString stringWithFormat:@"format=json&app_version=%@&os=iOS&os_version=%@&device=%@&udid=%@&lang=%@&usage_time=%@&first_start_at=%@",
-                                    [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                                    [[UIDevice currentDevice] systemVersion],
-                                    [self getDevicePlatform_],
-                                    [[UIDevice currentDevice] uniqueIdentifier],
-                                    [[NSLocale preferredLanguages] objectAtIndex:0],
-                                    [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                                    [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
-                                    ];
-        BWLog(@"posting additional data: %@", postDataString);
-        NSData *requestData = [NSData dataWithBytes:[postDataString UTF8String] length:[postDataString length]];
-        NSString *postLength = [NSString stringWithFormat:@"%d", [postDataString length]];
-        [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-        [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-        [request setHTTPBody:requestData];
-    }
     
     self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!urlConnection_) {
