@@ -8,7 +8,7 @@ About:
 
 
 Installation PHP Server:
-- Copy the content of the public subfolder into a publicly accessible directory on your web server
+- Copy the content of the public subfolder, including the .htaccess file (!!), into a publicly accessible directory on your web server
 - Copy the content of the includes subfolder into a publicly not accessible directory (for security) on your web server
 - Adjust the path to the includes subfolder in line 27 of index.php
 - Done

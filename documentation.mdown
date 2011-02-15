@@ -71,7 +71,7 @@ The following steps assume that you are installing Hockey on an Apache server.
 
 1.  Have a server accessible to your potential testers with PHP 5 support
 2.  Create a directory which will hold you applications, later referred as the *public server directory*.
-3.  Copy the content of the public directory in the repository onto your server into the *public server directory* created in 2.
+3.  Copy the content of the public directory in the repository, including the .htaccess file (!), onto your server into the *public server directory* created in 2.
 4.  Create another directory on your server, preferably outside the public accessible HTML path (for better security), later referred as the *include server directory*
 5.  Copy the content of the includes directory into this *include server directory* created in step 4
 6.  Open the *public server directory* created in 2. and open the config.php file in an editor. Adjust the path to relatively point to the *include server directory* created in 4.
