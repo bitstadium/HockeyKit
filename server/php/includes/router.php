@@ -31,17 +31,30 @@ class Router
         $instance = self::get();
         if (!isset($instance->args[$name]))
         {
-            Logger::log("arg `$name` not set");
+            Logger::log("arg `$name` not set", true);
             return $default;
         }
         return $instance->args[$name];
+    }
+    
+    static public function arg_variants($names, $default = null) {
+        $instance = self::get();
+        
+        foreach ($names as $name) {
+            if (isset($instance->args[$name]))
+            {
+                return $instance->args[$name];
+            }
+        }
+        Logger::log('args `'.join('`, `', $names).'` not set', true);
+        return $default;
     }
     
     static public function arg_match($name, $regexp, $default = null) {
         $instance = self::get();
         if (!isset($instance->args[$name]))
         {
-            Logger::log("arg `$name` not set");
+            Logger::log("arg `$name` not set", true);
             return $default;
         }
         
@@ -197,52 +210,55 @@ class Router
     
     protected function run($options)
     {
-        if ($this->action == "api") {
-            $format = self::arg_match(AppUpdater::PARAM_2_FORMAT, '/^(' . AppUpdater::PARAM_2_FORMAT_VALUE_JSON . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_PLIST . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_IPA . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_APK . ')$/');
-            $authorize = self::arg_match(AppUpdater::PARAM_2_AUTHORIZE, '/^(' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES . '|' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_NO . ')$/');
-            
-            if ($format) {
-                switch ($format) {
-                    case AppUpdater::PARAM_2_FORMAT_VALUE_JSON: 
-                        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/Android') !== false)
-                            $this->controller = AppUpdater::PLATFORM_ANDROID;
-                        else
-                            $this->controller = AppUpdater::PLATFORM_IOS;
-                            
-                        if ($this->controller == AppUpdater::PLATFORM_IOS && $authorize && $authorize == AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES) {
-                            $this->action = "authorize";
-                        } else {
-                            $this->action = "status";
-                        }
-                        break;
-                    case AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION: 
-                        $this->controller = AppUpdater::PLATFORM_IOS;
-                        $this->action = "download";
-                        break;
-                    case AppUpdater::PARAM_2_FORMAT_VALUE_PLIST: 
-                        $this->controller = AppUpdater::PLATFORM_IOS;
-                        $this->action = "download";
-                        break;
-                    case AppUpdater::PARAM_2_FORMAT_VALUE_IPA: 
-                        $this->controller = AppUpdater::PLATFORM_IOS;
-                        $this->action = "download";
-                        break;
-                    case AppUpdater::PARAM_2_FORMAT_VALUE_APK: 
-                        $this->controller = AppUpdater::PLATFORM_ANDROID;
-                        $this->action = "download";
-                        break;
-                    default: break;
-                }
-                $this->app = AppUpdater::factory($this->controller, $options);
-                $this->app->execute($this->action, array_merge($this->arguments, $this->args));
-            } else {
-                $this->app = AppUpdater::factory(null, $options);
-                $this->app->execute($this->action, array_merge($this->arguments, $this->args));
-            }
-        } else {
+        if ($this->action != "api") {
             $this->app = AppUpdater::factory($this->controller, $options);
             $this->app->execute($this->action, array_merge($this->arguments, $this->args));
+            return;
         }
+
+
+        $format = self::arg_match(AppUpdater::PARAM_2_FORMAT, '/^(' . AppUpdater::PARAM_2_FORMAT_VALUE_JSON . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_PLIST . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_IPA . '|' . AppUpdater::PARAM_2_FORMAT_VALUE_APK . ')$/');
+        $authorize = self::arg_match(AppUpdater::PARAM_2_AUTHORIZE, '/^(' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES . '|' . AppUpdater::PARAM_2_AUTHORIZE_VALUE_NO . ')$/');
+            
+        if (!$format) {
+            $this->app = AppUpdater::factory(null, $options);
+            $this->app->execute($this->action, array_merge($this->arguments, $this->args));
+            return;
+        }
+
+        switch ($format) {
+            case AppUpdater::PARAM_2_FORMAT_VALUE_JSON: 
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Hockey/Android') !== false)
+                    $this->controller = AppUpdater::PLATFORM_ANDROID;
+                else
+                    $this->controller = AppUpdater::PLATFORM_IOS;
+                            
+                if ($this->controller == AppUpdater::PLATFORM_IOS && $authorize && $authorize == AppUpdater::PARAM_2_AUTHORIZE_VALUE_YES) {
+                    $this->action = "authorize";
+                } else {
+                    $this->action = "status";
+                }
+                break;
+            case AppUpdater::PARAM_2_FORMAT_VALUE_MOBILEPROVISION: 
+                $this->controller = AppUpdater::PLATFORM_IOS;
+                $this->action = "download";
+                break;
+            case AppUpdater::PARAM_2_FORMAT_VALUE_PLIST: 
+                $this->controller = AppUpdater::PLATFORM_IOS;
+                $this->action = "download";
+                break;
+            case AppUpdater::PARAM_2_FORMAT_VALUE_IPA: 
+                $this->controller = AppUpdater::PLATFORM_IOS;
+                $this->action = "download";
+                break;
+            case AppUpdater::PARAM_2_FORMAT_VALUE_APK: 
+                $this->controller = AppUpdater::PLATFORM_ANDROID;
+                $this->action = "download";
+                break;
+            default: break;
+        }
+        $this->app = AppUpdater::factory($this->controller, $options);
+        $this->app->execute($this->action, array_merge($this->arguments, $this->args));
     }
     
     protected function routeV1($options, $is_client = false)
