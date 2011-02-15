@@ -82,6 +82,10 @@ The following steps assume that you are installing Hockey on an Apache server.
 
     *Note:* Refer to your server documentation on how to generate a *.htpasswd* file. For more information check out the [Apache documentation](http://httpd.apache.org/docs/1.3/howto/htaccess.html)
 
+	*Note:* Make sure the server is set to override directory specific settings in the hockey folder, in Apache this is handled with the *AllowOverride All* setting. And also make sure it has rewrite rules enabled, in Apache this is usually done with the following line:
+	
+		LoadModule rewrite_module libexec/apache2/mod_rewrite.so
+		
 ### Setup a new application
 
 1.  Open the *public server directory*
