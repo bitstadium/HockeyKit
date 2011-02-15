@@ -57,7 +57,7 @@
         <link rel="stylesheet" type="text/css" href="<?php echo $b ?>css/stylesheet.css">
         <link rel="alternate" type="application/rss+xml" title="App Updates" href="<?php echo $b ?>feed.php" />
     </head>
-    <body class="<? echo $className; ?>">
+    <body class="<?php echo $className; ?>">
         <div id="container" class="container">
             
             <?php if ($isAndroidDevice) { ?>
