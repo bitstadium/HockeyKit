@@ -145,6 +145,8 @@ class AppUpdater
     const E_FILES_INCOMPLETE  = -1;
     const E_UNKNOWN_API       = -1;
     const E_UNKNOWN_BUNDLE_ID = -1;
+    
+    const STATS_SEPARATOR = ';;';
 
 
     static public function factory($platform = null, $options = null) {
@@ -205,49 +207,58 @@ class AppUpdater
     protected function addStats($bundleidentifier, $format)
     {
         // did we get any user data?
-        $udid           = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
-        $appversion     = Router::arg(self::PARAM_2_APP_VERSION) != null ? Router::arg(self::PARAM_2_APP_VERSION) : Router::arg(self::PARAM_1_APP_VERSION);
-        $osversion      = Router::arg(self::PARAM_2_OS_VERSION) != null ? Router::arg(self::PARAM_2_OS_VERSION) : Router::arg(self::PARAM_1_OS_VERSION);
-        $osname         = Router::arg(self::PARAM_2_OS) != null ? Router::arg(self::PARAM_2_OS) : "iOS";
-        $device         = Router::arg(self::PARAM_2_DEVICE) != null ? Router::arg(self::PARAM_2_DEVICE) : Router::arg(self::PARAM_1_DEVICE);
-        $language       = Router::arg(self::PARAM_2_LANGUAGE) != null ? Router::arg(self::PARAM_2_LANGUAGE) : "";
-        $firststartdate = Router::arg(self::PARAM_2_FIRST_START) != null ? Router::arg(self::PARAM_2_FIRST_START) : "";
-        $usagetime      = Router::arg(self::PARAM_2_USAGE_TIME) != null ? Router::arg(self::PARAM_2_USAGE_TIME) : "";
+        $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
+
+        if (!$udid || !is_dir($this->appDirectory.'stats/')) {
+            return;
+        }
+
+        $appversion     = Router::arg_variants(array(self::PARAM_2_APP_VERSION, self::PARAM_1_APP_VERSION));
+        $osversion      = Router::arg_variants(array(self::PARAM_2_OS_VERSION, self::PARAM_1_OS_VERSION));
+        $osname         = Router::arg(self::PARAM_2_OS, 'iOS');
+        $device         = Router::arg_variants(array(self::PARAM_2_DEVICE, self::PARAM_1_DEVICE));
+        $language       = Router::arg(self::PARAM_2_LANGUAGE, '');
+        $firststartdate = Router::arg(self::PARAM_2_FIRST_START, '');
+        $usagetime      = Router::arg(self::PARAM_2_USAGE_TIME, '');
         
-        if ($udid) {
-            $thisdevice = $udid.";;".$device.";;".$osname." ".$osversion.";;".$appversion.";;".date("m/d/Y H:i:s").";;".$language.";;".$firststartdate.";;".$usagetime;
-            $content =  "";
+        $thisdevice = array(
+            $udid,
+            $device,
+            $osname.' '.$osversion,
+            $appversion,
+            date('m/d/Y H:i:s'),
+            $language,
+            $firststartdate,
+            $usagetime);
 
-            $filename = $this->appDirectory."stats/".$bundleidentifier;
+        $filename = $this->appDirectory."stats/".$bundleidentifier;
 
-            if (is_dir($this->appDirectory."stats/")) {
-                $content = @file_get_contents($filename);
+        $lines = @file($filename, FILE_IGNORE_NEW_LINES);
+        $found = false;
+        $lines = $lines ? array_filter(array_map('trim', $lines)) : array();
+        foreach ($lines as $i => $line) {
+            $device = explode(self::STATS_SEPARATOR, $line);
             
-                $lines = explode("\n", $content);
-                $content = "";
-                $found = false;
-                foreach ($lines as $i => $line) :
-                    if ($line == "") continue;
-                    $device = explode( ";;", $line);
-                    $newline = $line;
-                
-                    if (count($device) > 0) {
-                        // is this the same device?
-                        if (strcmp($device[0],$udid) == 0) {
-                            $newline = $thisdevice;
-                            $found = true;
-                        }
-                    }
-                
-                    $content .= $newline."\n";
-                endforeach;
+            if (!count($device)) {
+                continue;
+            }
+            // is this the same device?
+            if ($device[0] === $udid) {
+                $found = true;
+                $lines[$i] = join(self::STATS_SEPARATOR, $thisdevice);
+                break;
+            }
+        }
             
-                if (!$found) {
-                    $content .= $thisdevice;
-                }
-            
-                // write back the updated stats
-                @file_put_contents($filename, $content);
+        if (!$found) {
+            $lines[] = join(self::STATS_SEPARATOR, $thisdevice);
+        }
+
+        // write back the updated stats
+        if ($lines) {
+            if (!@file_put_contents($filename, join("\n", $lines)))
+            {
+                Logger::log("Stats file not writable: $filename");
             }
         }
     }
@@ -543,13 +554,11 @@ class AppUpdater
                 if (file_exists($filename)) {
                     $users = self::parseUserList();
                 
-                    $content = file_get_contents($filename);
-                    $lines = explode("\n", $content);
-
+                    $lines = @file($filename, FILE_IGNORE_NEW_LINES);
                     foreach ($lines as $i => $line) {
-                        if ($line == "") continue;
+                        if (!$line) continue;
                         
-                        $device = explode(";;", $line);
+                        $device = explode(self::STATS_SEPARATOR, $line);
                     
                         $newdevice = array();
                         $newdevice[self::DEVICE_USER]           = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';

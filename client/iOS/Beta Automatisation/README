@@ -1,3 +1,5 @@
+Xcode build system: Beta Automatisation.sh
+
 Note:
 This script does not work right out of the box, you have to modify it to work correctly. It's just a source of inspiration!
 
@@ -13,3 +15,13 @@ How you set it up:
 ¥ In your Xcode project you have to add a new "Aggregate" target
 ¥ Then you add your main target to that added target's dependencies
 ¥ After that you need to a new "Run Script" build phase and paste in your modified script
+
+
+External build system: buildmanifest.sh
+This shell script will create the manifest.plist file which is needed for OTA installation.
+
+    usage: buildmanifest name [output]
+
+      name   : absolute path and filename of the .plist file excluding the file extension
+      output : the filenane to write the manifest content, default is manifest.plist
+      Example: ./buildmanifest ~/SourceCode/Hockey/HockeyDemo-Info
