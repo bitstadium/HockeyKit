@@ -37,6 +37,7 @@
 #define PS_MIN_HEIGHT 25.0f
 #define PS_MAX_WIDTH 120.0f
 #define PS_PADDING 12.0f
+#define kDefaultButtonAnimationTime 0.25f
 
 @implementation PSStoreButtonData
 
@@ -107,7 +108,7 @@
         // hide text, then start animation
         [self setTitle:@"" forState:UIControlStateNormal];
         [UIView beginAnimations:@"storeButtonUpdate" context:nil];
-        [UIView setAnimationDuration:0.25f];
+        [UIView setAnimationDuration:kDefaultButtonAnimationTime];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
     }else {
@@ -135,7 +136,7 @@
         [CATransaction begin];
         
         if (animated) {
-            [CATransaction setAnimationDuration:0.25f];
+            [CATransaction setAnimationDuration:kDefaultButtonAnimationTime];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         }else {
             // frame is calculated and explicitely animated. so we absolutely need kCATransactionDisableActions
@@ -235,7 +236,6 @@
 	CGSize newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font constrainedToSize:constr lineBreakMode:UILineBreakModeMiddleTruncation];
 	CGFloat newWidth = newSize.width + (PS_PADDING * 2);
     CGFloat newHeight = PS_MIN_HEIGHT > newSize.height ? PS_MIN_HEIGHT : newSize.height;
-	//CGFloat diff = self.frame.size.width - newWidth;
     
     CGSize sizeThatFits = CGSizeMake(newWidth, newHeight);
     return sizeThatFits;
@@ -271,7 +271,6 @@
     [self updateButtonAnimated:animated];
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Static
@@ -279,16 +278,12 @@
 + (NSArray *)appStoreGreenColor {
     return [NSArray arrayWithObjects:(id)
             [UIColor colorWithRed:0.482 green:0.674 blue:0.406 alpha:1.000].CGColor,
-            //[UIColor colorWithRed:0.525 green:0.742 blue:0.454 alpha:1.000].CGColor,
-            //[UIColor colorWithRed:0.346 green:0.719 blue:0.183 alpha:1.000].CGColor,
             [UIColor colorWithRed:0.299 green:0.606 blue:0.163 alpha:1.000].CGColor, nil];
 }
 
 + (NSArray *)appStoreBlueColor {
     return [NSArray arrayWithObjects:(id)
             [UIColor colorWithRed:0.306 green:0.380 blue:0.547 alpha:1.000].CGColor,
-            //[UIColor colorWithRed:0.258 green:0.307 blue:0.402 alpha:1.000].CGColor,
-            //[UIColor colorWithRed:0.159 green:0.270 blue:0.550 alpha:1.000].CGColor,
             [UIColor colorWithRed:0.129 green:0.220 blue:0.452 alpha:1.000].CGColor, nil];
 }
 
