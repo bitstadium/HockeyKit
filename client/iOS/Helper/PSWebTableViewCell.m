@@ -155,21 +155,14 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	if(navigationType == UIWebViewNavigationTypeOther)
 		return YES;
-    
-    /*
-     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Link!" message:@"You touched a link!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-     [alert show];
-     [alert release];
-     */
-    
-	return NO;
+
+    return NO;
 }
 
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 	if(webViewContent_)
         [self showWebView];
-    //[self performSelector:@selector(showWebView) withObject:nil afterDelay:.35];
     
     CGRect frame = webView_.frame;
     frame.size.height = 1;
@@ -178,11 +171,8 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
     frame.size = fittingSize;
     webView_.frame = frame;
     
-    //  BWLog(@"web view size: %f, %f", fittingSize.width, fittingSize.height);
-    
+    // sizeThatFits is not reliable - use javascript for optimal height
     NSString *output = [webView_ stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight;"];
-    //  BWLog(@"web view size V2: %@", output);
-    
     self.webViewSize = CGSizeMake(fittingSize.width, [output integerValue]);
 }
 

@@ -156,7 +156,6 @@
         // scale, make borders and reflection
         iconImage_ = [anIconImage bw_imageToFitSize:CGSizeMake(kImageHeight, kImageHeight) honorScaleFactor:YES];
         iconImage_ = [[iconImage_ bw_roundedCornerImage:kImageBorderRadius borderSize:0.0] retain];
-        //    iconImage_ = [anIconImage retain];
         
         // create reflected image
         [reflectedImage_ release];

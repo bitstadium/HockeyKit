@@ -150,7 +150,6 @@ typedef enum {
 // get/set current active hockey view controller
 @property (nonatomic, retain) BWHockeyViewController *currentHockeyViewController;
 
-
 // convenience method to get current running version string
 - (NSString *)currentAppVersion;
 
