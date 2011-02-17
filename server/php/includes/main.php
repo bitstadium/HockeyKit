@@ -265,14 +265,20 @@ class AppUpdater
     
     protected function checkProtectedVersion($restrict)
     {
-        $allowedTeams = @file_get_contents($restrict);
-        if (strlen($allowedTeams) == 0) return true;
+        $allowedTeams = array();
+        foreach (@file($restrict) as $line) {
+            if (preg_match('/^\s*#/', $line)) continue;
+            $items = array_filter(array_map('trim', explode(',', $line)));
+            $allowedTeams = array_merge($allowedTeams, $items);
+        }
 
-        $allowedTeams = explode(",", $allowedTeams);
+        if (!$allowedTeams) return true;
+
         $udid = Router::arg(self::PARAM_2_UDID);
+        if (!$udid) return false;
+        
         $users = self::parseUserList();
-
-        if ($udid && isset($users[$udid])) {
+        if (isset($users[$udid])) {
             return count(array_intersect($users[$udid]['teams'], $allowedTeams)) > 0;
         }
         

@@ -1,4 +1,3 @@
-# Kommentare in .team file
 # Browser detection aus index.php auslagern
 # Notice when upgrading: Stats now include firststartdate and usagetime
 
@@ -25,3 +24,4 @@
 * ✓ detect and remove duplicate code
 * ✓ deliver methods
 # ✓ Router::arg in `addStats`
+* ✓ Kommentare in .team file
