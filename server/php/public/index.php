@@ -5,44 +5,7 @@
     $router = Router::get(array('appDirectory' => dirname(__FILE__).DIRECTORY_SEPARATOR));
     $apps = $router->app;
     $b = $router->baseURL;
-    
-    // get the calling browser
-    
-    $isOldIOSDevice = false; 
-    $isNewIOSDevice = false;
-    $isiPad4Device = false;
-    $isAndroidDevice = false;
-    $className = "";
-    
-    $agent = $_SERVER['HTTP_USER_AGENT'];
-    
-    if (strpos($agent, 'iPad') !== false) {
-        if (strpos($agent, 'OS 4') !== false) {
-            $isiPad4Device = true;
-        } else {
-            $isOldIOSDevice = true;
-        }
-    } else if (strpos($agent, 'iPhone') !== false) {
-        if (strpos($agent, 'iPhone OS 4') !== false) {
-            $isNewIOSDevice = true;
-        } else {
-            $isOldIOSDevice = true;
-        }
-    } else if (strpos($agent, 'Android') !== false) {
-        $isAndroidDevice = true;
-    }
-    
-    if ($isNewIOSDevice) {
-        $className = "browser-ios4";
-    } else if ($isiPad4Device) {
-        $className = "browser-ipad4";
-    } else if ($isOldIOSDevice) {
-        $className = "browser-old-ios";
-    } else if ($isAndroidDevice) {
-        $className = "browser-android";
-    } else {
-        $className = "browser-desktop";
-    }
+    DeviceDetector::detect();
 ?>
 <!DOCTYPE html>
 <html>
@@ -57,10 +20,10 @@
         <link rel="stylesheet" type="text/css" href="<?php echo $b ?>css/stylesheet.css">
         <link rel="alternate" type="application/rss+xml" title="App Updates" href="<?php echo $b ?>feed.php" />
     </head>
-    <body class="<?php echo $className; ?>">
+    <body class="<?php echo DeviceDetector::$category; ?>">
         <div id="container" class="container">
             
-            <?php if ($isAndroidDevice) { ?>
+            <?php if (DeviceDetector::$isAndroidDevice) { ?>
                 <div class='android'>
 
                     <h1>Install Apps</h1>
@@ -146,7 +109,7 @@
                     </div>
                 <?php endforeach ?>
                 </div>
-            <?php } else if ($isOldIOSDevice) { ?>
+            <?php } else if (DeviceDetector::$isOldIOSDevice) { ?>
                 <div class='old-ios'>
 
                     <h3>Direct Installation Not Supported</h3>
@@ -155,7 +118,7 @@
                     <p>If you are able to upgrade your device to iOS 4.0 or later, simply visit this page with your iPad, iPhone, or iPod touch and you can install an app directly on your device.</p>
 
                 </div>
-            <?php } else if ($isNewIOSDevice) { ?>
+            <?php } else if (DeviceDetector::$isNewIOSDevice) { ?>
                 <div class='new-ios'>
 
                     <h1>Install Apps</h1>
@@ -245,7 +208,7 @@
                     </div>
                 <?php endforeach ?>
                 </div>
-            <?php } else if ($isiPad4Device) { ?>
+            <?php } else if (DeviceDetector::$isiPad4Device) { ?>
                 <div class='ipad-ios4'>
 
                     <h1>Install Apps</h1>
@@ -384,8 +347,10 @@
                 </div>
             <?php } ?>
 
-        <script>/mobile/i.test(navigator.userAgent) && !window.location.hash && setTimeout(function () {
-                window.scrollTo(0, 1);
-            }, 2000);</script>
+        <script type="text/javascript" charset="utf-8">
+            /mobile/i.test(navigator.userAgent) &&
+            !window.location.hash &&
+            setTimeout(function () { window.scrollTo(0, 1); }, 2000);
+        </script>
     </body>
 </html>
