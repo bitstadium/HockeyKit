@@ -568,14 +568,14 @@ class AppUpdater
                         $device = explode(self::STATS_SEPARATOR, $line);
                     
                         $newdevice = array();
-                        $newdevice[self::DEVICE_USER]           = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
-                        $newdevice[self::DEVICE_PLATFORM]       = Helper::mapPlatform($device[1]);
-                        $newdevice[self::DEVICE_OSVERSION]      = $device[2];
-                        $newdevice[self::DEVICE_APPVERSION]     = $device[3];
-                        $newdevice[self::DEVICE_LASTCHECK]      = $device[4];
-                        $newdevice[self::DEVICE_LANGUAGE]       = $device[5];
-                        $newdevice[self::DEVICE_INSTALLDATE]    = $device[6];
-                        $newdevice[self::DEVICE_USAGETIME]      = $device[7];
+                        $newdevice[self::DEVICE_USER]        = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
+                        $newdevice[self::DEVICE_PLATFORM]    = Helper::mapPlatform(isset($device[1]) ? $device[1] : null);
+                        $newdevice[self::DEVICE_OSVERSION]   = isset($device[2]) ? $device[2] : '';
+                        $newdevice[self::DEVICE_APPVERSION]  = isset($device[3]) ? $device[3] : '';
+                        $newdevice[self::DEVICE_LASTCHECK]   = isset($device[4]) ? $device[4] : '';
+                        $newdevice[self::DEVICE_LANGUAGE]    = isset($device[5]) ? $device[5] : '';
+                        $newdevice[self::DEVICE_INSTALLDATE] = isset($device[6]) ? $device[6] : '';
+                        $newdevice[self::DEVICE_USAGETIME]   = isset($device[7]) ? $device[7] : '';
                     
                         $newApp[self::INDEX_STATS][] = $newdevice;
                     }
