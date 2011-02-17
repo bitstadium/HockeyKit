@@ -740,6 +740,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             BWApp *defaultApp = [[[BWApp alloc] init] autorelease];
             defaultApp.name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
             defaultApp.version = currentAppVersion_;
+            defaultApp.shortVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
             apps_ = [[NSArray arrayWithObject:defaultApp] retain];
         }else {
             apps_ = [anApps copy]; 
