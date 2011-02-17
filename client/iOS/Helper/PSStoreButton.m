@@ -241,8 +241,8 @@
     return sizeThatFits;
 }
 
-- (void)setFrame:(CGRect)rect {
-    [super setFrame:rect];
+- (void)setFrame:(CGRect)aRect {
+    [super setFrame:aRect];
     
     // copy frame changes to sublayers
     for (CALayer *aLayer in self.layer.sublayers) {

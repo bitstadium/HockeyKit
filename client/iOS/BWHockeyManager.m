@@ -613,7 +613,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [alert release];
         }
         
-        if (self.isUpdateAvailable && self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion) {
+        if (self.isUpdateAvailable && (self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion)) {
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForUpdateAlert_];
             }
