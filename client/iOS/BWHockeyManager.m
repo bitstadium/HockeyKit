@@ -680,7 +680,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     IF_PRE_IOS4 (
                        // initial uddate check if we don't have reachability
                        if ([self shouldCheckForUpdates] && !NSClassFromString(@"Reachability")) {
-                         [self performSelector:@selector(checkForUpdate) afterDelay:0.0f];
+                           [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
                       }
                 )
     
