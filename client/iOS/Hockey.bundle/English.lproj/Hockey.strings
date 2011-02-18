@@ -78,6 +78,7 @@
 "HockeyUpdateAlertTextWithAppVersion" = "%@ is available.";
 "HockeyIgnore" = "Ignore";
 "HockeyShowUpdate" = "Show";
+"HockeyInstallUpdate" = "Install";
 "HockeyError" = "Error";
 "HockeyOK" = "OK";
 "HockeyWarning" = "Warning";

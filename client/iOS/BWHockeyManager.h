@@ -76,6 +76,7 @@ typedef enum {
     HockeyComparisonResult compareVersionType_;
     HockeyUpdateSetting updateSetting_;
     BOOL showUserSettings_;
+    BOOL showDirectInstallOption_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +113,10 @@ typedef enum {
 //if YES, then an update check will be performed after the application becomes active (default)
 //if NO, then the update check will not happen unless invoked explicitly
 @property (nonatomic, assign, getter=isCheckForUpdateOnLaunch) BOOL checkForUpdateOnLaunch;
+
+//if YES, the alert notifying about an new update also shows a button to install the update directly
+//if NO, the alert notifying about an new update only shows ignore and show update button
+@property (nonatomic, assign, getter=ishowingDirectInstallOption) BOOL showDirectInstallOption;
 
 // HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
 // HockeyComparisonResultGreater: alerts if the version on the server is greater

@@ -88,6 +88,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize updateAvailable = updateAvailable_;
 @synthesize usageStartTimestamp = usageStartTimestamp_;
 @synthesize currentHockeyViewController = currentHockeyViewController_;
+@synthesize showDirectInstallOption = showDirectInstallOption_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -260,6 +261,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         navController_ = nil;
         
         // set defaults
+        self.showDirectInstallOption = NO;
         self.sendUserData = YES;
         self.sendUsageTime = YES;
         self.alwaysShowUpdateReminder = NO;
@@ -374,6 +376,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                                    cancelButtonTitle:BWLocalize(@"HockeyIgnore")
                                                    otherButtonTitles:BWLocalize(@"HockeyShowUpdate"), nil
                                    ] autorelease];
+        IF_IOS4_OR_GREATER(
+                           if (self.ishowingDirectInstallOption) {
+                               [alertView addButtonWithTitle:BWLocalize(@"HockeyInstallUpdate")];
+                           }
+                           )
         [alertView show];
         updateAlertShowing_ = YES;
     }
@@ -764,6 +771,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (buttonIndex == [alertView firstOtherButtonIndex]) {
         // YES button has been clicked
         [self showUpdateView];
+    } else if (buttonIndex == [alertView firstOtherButtonIndex] + 1) {
+        // YES button has been clicked
+        [self initiateAppDownload];
     }
 }
 
