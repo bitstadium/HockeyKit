@@ -419,8 +419,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     self.checkInProgress = YES;
     
     // do we need to update?
-    BOOL updatePending = self.alwaysShowUpdateReminder && [[self currentAppVersion] compare:[self app].version] != NSOrderedSame;
-    if (!updatePending && ![self shouldCheckForUpdates] && !currentHockeyViewController_) {
+    if (![self shouldCheckForUpdates] && !currentHockeyViewController_) {
         BWLog(@"update not needed right now");
         self.checkInProgress = NO;
         return;
