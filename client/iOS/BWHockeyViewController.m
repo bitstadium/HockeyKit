@@ -172,7 +172,7 @@
     return result;
 }
 
-#define kMinPreviousVersionButtonHeight 100
+#define kMinPreviousVersionButtonHeight 50
 - (void)realignPreviousVersionButton {
     
     // manually collect actual table height size
