@@ -1,0 +1,76 @@
+/* 
+   Hockey.strings
+   Hockey
+
+   Created by Andreas Linde on 11/15/10.
+   Copyright 2010 buzzworks.de. All rights reserved.
+ */
+
+
+/* Alert view */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Oui";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Non";
+
+/* Unknown application */
+"HockeyUnknownApp" = "Applications iconnue";
+
+/* Update available */
+"HockeyUpdateAvailable" = "Mise-à-jour disponible";
+
+/* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
+"HockeyUpdateAlertText" = "Voulez-vous avoir plus de détails ?";
+
+
+/* Update details screen */
+
+/* Update Details */
+"HockeyUpdateScreenTitle" = "Détails de la Mise-à-jour";
+
+
+/* Application Section */
+
+/* Application */
+"HockeySectionAppHeader" = "Application";
+
+/* New Version */
+"HockeySectionAppNewVersion" = "Dernière version";
+
+/* Current Version */
+"HockeySectionAppCurrentVersion" = "Version installée";
+
+/* Release Notes */
+"HockeySectionAppReleaseNotes" = "À propos de cette version";
+
+/* No Update Available */
+"HockeySectionAppSameVersionButton" = "Pas de mise-à-jour disponible";
+
+/* Visit the beta website on your Mac or PC to update */
+"HockeySectionAppWebsite" = "Visiter le site web des betas depuis votre Mac ou PC pour mettre à jour l'application.";
+
+/* Install Update */
+"HockeySectionAppButton" = "Installer la mise-à-jour";
+
+
+/* Check for Update Section */
+
+/* Check for Update */
+"HockeySectionCheckHeader" = "Rechercher les mises-à-jour";
+
+/* Checking... */
+"HockeySectionCheckProgress" = "Recherche...";
+
+/* Check Now */
+"HockeySectionCheckButton" = "Rechercher maintenant";
+
+/* On Startup */
+"HockeySectionCheckStartup" = "Au lancement";
+
+/* Daily */
+"HockeySectionCheckDaily" = "Quotidiennement";
+
+/* Manually */
+"HockeySectionCheckManually" = "Manuellement";
