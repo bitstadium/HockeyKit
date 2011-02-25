@@ -414,19 +414,18 @@
     storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"" colors:[PSStoreButton appStoreGrayColor] enabled:NO];
     self.appStoreButtonState = AppStoreButtonStateCheck;
     [storeButton alignToSuperview];
-    appStoreButton_ = [storeButton retain];
-    
-    [self redrawTableView];
+    appStoreButton_ = [storeButton retain];    
 }
 
-- (void) viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     self.hockeyManager.currentHockeyViewController = self;
     [super viewWillAppear:animated];
     statusBarStyle_ = [[UIApplication sharedApplication] statusBarStyle];
     [[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
+    [self redrawTableView];
 }
 
-- (void) viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated {
     self.hockeyManager.currentHockeyViewController = nil;
     [super viewWillDisappear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle_];
@@ -520,6 +519,8 @@
 #pragma mark KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+  // only make changes if we are visible
+  if(self.view.window) {
     if ([keyPath isEqualToString:@"webViewSize"]) {
         NSInteger anIndex = [cells_ indexOfObject:object];
         IF_3_2_OR_GREATER([self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:anIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];)
@@ -535,10 +536,10 @@
         [self restoreStoreButtonStateAnimated_:YES];
     } else if ([keyPath isEqualToString:@"updateAvailable"]) {
         [self restoreStoreButtonStateAnimated_:YES];
-        //[self redrawTableView];
     } else if ([keyPath isEqualToString:@"apps"]) {
         [self redrawTableView];
     }
+  }
 }
 
 // Customize the appearance of table view cells.
