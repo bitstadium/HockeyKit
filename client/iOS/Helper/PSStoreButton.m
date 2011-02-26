@@ -33,7 +33,7 @@
 #define PSLog(...)
 #endif
 
-#define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define PS_RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 #define PS_MIN_HEIGHT 25.0f
 #define PS_MAX_WIDTH 120.0f
 #define PS_PADDING 12.0f
@@ -125,7 +125,7 @@
         [self setTitleColor:[UIColor colorWithWhite:1.0 alpha:1.000] forState:UIControlStateNormal];
     }else {
         [self.titleLabel setShadowOffset:CGSizeMake(0.0, 0.0)];
-        [self setTitleColor:RGBCOLOR(148,150,151) forState:UIControlStateNormal];
+        [self setTitleColor:PS_RGBCOLOR(148,150,151) forState:UIControlStateNormal];
     }
     
     // calculate optimal new size
@@ -289,8 +289,8 @@
 
 + (NSArray *)appStoreGrayColor {
     return [NSArray arrayWithObjects:(id)
-            RGBCOLOR(187,189,191).CGColor,
-            RGBCOLOR(210,210,210).CGColor, nil];
+            PS_RGBCOLOR(187,189,191).CGColor,
+            PS_RGBCOLOR(210,210,210).CGColor, nil];
 }
 
 @end

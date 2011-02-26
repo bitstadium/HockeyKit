@@ -27,10 +27,10 @@
 #import "UIImage+HockeyAdditions.h"
 #import "BWGlobal.h"
 
-#define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define BW_RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 
-#define kLightGrayColor RGBCOLOR(200, 202, 204)
-#define kDarkGrayColor  RGBCOLOR(140, 141, 142)
+#define kLightGrayColor BW_RGBCOLOR(200, 202, 204)
+#define kDarkGrayColor  BW_RGBCOLOR(140, 141, 142)
 
 #define kImageHeight 57
 #define kReflectionHeight 20
@@ -85,8 +85,8 @@
     CGGradientRelease(gradient);
     
     // draw header name
-    UIColor *mainTextColor = RGBCOLOR(0,0,0);
-    UIColor *secondaryTextColor = RGBCOLOR(48,48,48);
+    UIColor *mainTextColor = BW_RGBCOLOR(0,0,0);
+    UIColor *secondaryTextColor = BW_RGBCOLOR(48,48,48);
     UIFont *mainFont = [UIFont boldSystemFontOfSize:20];
     UIFont *secondaryFont = [UIFont boldSystemFontOfSize:12];
     UIFont *smallFont = [UIFont systemFontOfSize:12];

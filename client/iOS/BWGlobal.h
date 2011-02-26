@@ -29,7 +29,7 @@
 #define HOCKEYKIT_VERSION_MINOR 0
 
 // uncomment this line to enable NSLog-debugging output
-#define kHockeyDebugEnabled
+//#define kHockeyDebugEnabled
 
 #define kArrayOfLastHockeyCheck		@"ArrayOfLastHockeyCheck"
 #define kDateOfLastHockeyCheck		@"DateOfLastHockeyCheck"

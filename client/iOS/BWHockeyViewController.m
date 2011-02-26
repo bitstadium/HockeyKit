@@ -30,7 +30,7 @@
 #import "UIImage+HockeyAdditions.h"
 #import "PSWebTableViewCell.h"
 
-#define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define BW_RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 #define kWebCellIdentifier @"PSWebTableViewCell"
 #define kAppStoreViewHeight 90
 
@@ -203,7 +203,7 @@
         // align at the bottom if tableview is small
         UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMinPreviousVersionButtonHeight)];
         footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        footerView.backgroundColor = RGBCOLOR(200, 202, 204);
+        footerView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
         UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
         IF_IOS4_OR_GREATER(
                            //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
@@ -216,13 +216,13 @@
         footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
         footerButton.frame = CGRectMake(0, kMinPreviousVersionButtonHeight-44, self.view.frame.size.width, 44);
-        footerButton.backgroundColor = RGBCOLOR(183,183,183);
+        footerButton.backgroundColor = BW_RGBCOLOR(183,183,183);
         [footerView addSubview:footerButton];
         self.tableView.tableFooterView = footerView;
         [self realignPreviousVersionButton];
     } else {
         self.tableView.tableFooterView = nil;
-        self.tableView.backgroundColor = RGBCOLOR(200, 202, 204); 
+        self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204); 
     }
 }
 
@@ -243,7 +243,7 @@
     } else {
         cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
     }
-    cell.cellBackgroundColor = RGBCOLOR(200, 202, 204);
+    cell.cellBackgroundColor = BW_RGBCOLOR(200, 202, 204);
     
     [cell addWebView];
     // hack
@@ -350,12 +350,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.backgroundColor = RGBCOLOR(200, 202, 204);
+    self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     UIView *topView = [[[UIView alloc] initWithFrame:CGRectMake(0, -(600-kAppStoreViewHeight), self.view.frame.size.width, 600)] autorelease];
     topView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    topView.backgroundColor = RGBCOLOR(140, 141, 142);
+    topView.backgroundColor = BW_RGBCOLOR(140, 141, 142);
     [self.tableView addSubview:topView];
     
     appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
@@ -498,12 +498,12 @@
     }
     
     if ([self.hockeyManager.apps count] > 1 && !showAllVersions_) {
-        self.tableView.backgroundColor = RGBCOLOR(183, 183, 183);
+        self.tableView.backgroundColor = BW_RGBCOLOR(183, 183, 183);
     }    
     
     if (rowHeight == 0) {
         rowHeight = indexPath.row == 0 ? 250 : 44; // fill screen on startup
-        self.tableView.backgroundColor = RGBCOLOR(200, 202, 204);
+        self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     }
     
     return rowHeight;
