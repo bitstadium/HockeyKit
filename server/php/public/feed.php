@@ -19,13 +19,22 @@
 
   <entry>
     <title><?php echo $app[AppUpdater::INDEX_APP] ?> V<?php 
-    if ($app[AppUpdater::INDEX_SUBTITLE]) {
+    if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
       echo $app[AppUpdater::INDEX_SUBTITLE]." (".$app[AppUpdater::INDEX_VERSION].")";
     } else {
       echo $app[AppUpdater::INDEX_VERSION];
     } ?></title>
-    <id><?php echo $app[AppUpdater::INDEX_APP].$app[AppUpdater::INDEX_SUBTITLE].$app[AppUpdater::INDEX_VERSION] ?></id>
-    <link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
+    <id><?php echo preg_replace(
+      '/\W/',
+      '_',
+      $app[AppUpdater::INDEX_APP].
+      (
+        isset($app[AppUpdater::INDEX_SUBTITLE]) ?
+          $app[AppUpdater::INDEX_SUBTITLE] :
+          ''
+      ).
+      $app[AppUpdater::INDEX_VERSION]) ?></id>
+		<link rel="alternate" type="text/html" href="<?php echo $baseURL ?>"/>
     <published><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></published>
     <updated><?php echo date('Y-m-d\TH:i:s\Z', $app[AppUpdater::INDEX_DATE]) ?></updated>
     <content type="html" xml:base="http://<?php echo $router->servername ?>/" xml:lang="en"><![CDATA[
