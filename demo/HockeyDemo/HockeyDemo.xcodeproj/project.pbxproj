@@ -61,6 +61,7 @@
 		1D6058910D05DD3D006BFB54 /* HockeyDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HockeyDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1E1DD57412A7B52500018802 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ../../client/ru.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
+		1E1F6610131BB23200836E88 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = ../../client/nl.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 		1E2C07291291568800CCD438 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = ../../client/English.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 		1E2C072B1291569700CCD438 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = ../../client/German.lproj/Hockey.strings; sourceTree = SOURCE_ROOT; };
 		1EB32F88122147E20081CF8E /* BWHockeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWHockeyViewController.h; sourceTree = "<group>"; };
@@ -266,6 +267,7 @@
 				German,
 				ru,
 				es,
+				nl,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -348,6 +350,7 @@
 				1E2C072B1291569700CCD438 /* German */,
 				1E1DD57412A7B52500018802 /* ru */,
 				AA8E0C6212D5B9B8004556B8 /* es */,
+				1E1F6610131BB23200836E88 /* nl */,
 			);
 			name = Hockey.strings;
 			sourceTree = "<group>";
