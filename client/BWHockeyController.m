@@ -58,6 +58,7 @@
         self.betaDictionary = nil;
         checkInProgress = NO;
         dataFound = NO;
+        navController = nil;
     }
 	
     return self;
@@ -97,6 +98,7 @@
     [urlConnection cancel];
     self.urlConnection = nil;
     
+    navController = nil;
 	currentHockeyViewController = nil;
     [betaCheckUrl release];
 	[betaDictionary release];
@@ -152,8 +154,10 @@
         parentViewController = [[[[UIApplication sharedApplication] windows] objectAtIndex:0] rootViewController];
 	}
     
+    if (navController != nil) [navController release];
+    
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];
-    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
+    navController = [[UINavigationController alloc] initWithRootViewController:hockeyViewController];
 
     if (parentViewController) {
         if ([navController respondsToSelector:@selector(setModalTransitionStyle:)]) {
@@ -165,9 +169,6 @@
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
 		[[[[UIApplication sharedApplication] windows] objectAtIndex:0] addSubview:navController.view];
-		
-		// we don't release the navController here, that'll be done when it's dismissed in [BWHockeyViewController -onAction:]
-        [navController retain];
 	}
 }
 

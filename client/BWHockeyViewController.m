@@ -73,7 +73,6 @@
 			[self.navigationController dismissModalViewControllerAnimated:YES];
 		} else {
 			[self.navigationController.view removeFromSuperview];
-			[self.navigationController release];
 		}
 	}
     else

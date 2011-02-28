@@ -39,6 +39,7 @@ typedef enum {
     NSString *betaCheckUrl;
     NSMutableDictionary *betaDictionary;
 
+    UINavigationController *navController;
 	BWHockeyViewController *currentHockeyViewController;
 	
 	NSMutableData *_receivedData;
