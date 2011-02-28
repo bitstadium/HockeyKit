@@ -329,7 +329,7 @@ class AppUpdater
             }
 
             // Sort the files and display
-            rsort($subDirs);
+            usort($subDirs, array($this, 'sort_versions'));
             
             if (count($subDirs) > 0) {
                 foreach ($subDirs as $subDir) {
@@ -615,6 +615,11 @@ class AppUpdater
         }
             
         return $users;
+    }
+    
+    protected function sort_versions($a, $b)
+    {
+      return version_compare($a, $b, '<');
     }
 }
 
