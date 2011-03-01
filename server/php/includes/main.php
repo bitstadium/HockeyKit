@@ -532,10 +532,9 @@ class AppUpdater
                     $newApp[self::INDEX_DATE]           = filectime($ipa);
                     $newApp[self::INDEX_APPSIZE]        = filesize($ipa);
                     
-                    $provisioningProfile = null; // FIXME: $provisioningProfile was never initialized before?
-                    if ($provisioningProfile) {
-                        $newApp[self::INDEX_PROFILE]        = $provisioningProfile;
-                        $newApp[self::INDEX_PROFILE_UPDATE] = filectime($provisioningProfile);
+                    if ($profile) {
+                        $newApp[self::INDEX_PROFILE]        = $profile;
+                        $newApp[self::INDEX_PROFILE_UPDATE] = filectime($profile);
                     }
                     $newApp[self::INDEX_PLATFORM]       = self::APP_PLATFORM_IOS;
                     
