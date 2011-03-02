@@ -276,7 +276,7 @@
     NSURLRequest *theRequest=[NSURLRequest requestWithURL:[NSURL URLWithString:url]
                                               cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                           timeoutInterval:10.0];
-    self.urlConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
+    self.urlConnection = [[[NSURLConnection alloc] initWithRequest:theRequest delegate:self] autorelease];
 
     if (!urlConnection) {
         checkInProgress = NO;
