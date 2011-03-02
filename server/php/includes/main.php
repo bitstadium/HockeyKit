@@ -302,8 +302,8 @@ class iOSUpdater
             $latestversion = $parsed_plist['items'][0]['metadata']['bundle-version'];
 
             // add the latest release notes if available
-            if ($note && file_exists($this->appDirectory . $note)) {
-                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($this->appDirectory . $note));
+            if ($note && file_exists($note)) {
+                $this->json[self::RETURN_NOTES] = nl2br_skip_html(file_get_contents($note));
             }
 
             $this->json[self::RETURN_TITLE]   = $parsed_plist['items'][0]['metadata']['title'];
