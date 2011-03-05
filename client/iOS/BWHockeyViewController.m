@@ -98,23 +98,23 @@
 - (void)openSettings:(id)sender {
     [settingPicker_ release]; settingsSheet_ = nil;
     [settingsSheet_ release]; settingsSheet_ = nil;
-    
+
     settingPicker_ = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0, 44.0, 0.0, 0.0)];
     settingPicker_.showsSelectionIndicator = YES;
     settingPicker_.dataSource = self;
     settingPicker_.delegate = self;
     [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
-    
+
     Class popoverControllerClass = NSClassFromString(@"UIPopoverController");
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && popoverControllerClass) {
         UIViewController *pickerViewController = [[[UIViewController alloc] init] autorelease];
         [pickerViewController.view addSubview:settingPicker_];
-        
+
         if (popOverController_ == nil) {
             popOverController_ = [[popoverControllerClass alloc] initWithContentViewController:pickerViewController];
         }
         [popOverController_ setPopoverContentSize: CGSizeMake(300, 216)];
-        
+
         // show popover
         CGSize sizeOfPopover = CGSizeMake(300, 222);
         settingPicker_.frame = CGRectMake(0, 0, sizeOfPopover.width, sizeOfPopover.height);
@@ -126,25 +126,25 @@
                                             cancelButtonTitle:nil
                                        destructiveButtonTitle:nil
                                             otherButtonTitles:nil];
-        
+
         UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)] autorelease];
         pickerToolbar.barStyle = UIBarStyleBlackOpaque;
         [pickerToolbar sizeToFit];
-        
+
         NSMutableArray *barItems = [[[NSMutableArray alloc] init] autorelease];
-        
+
         UIBarButtonItem *flexSpace = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil] autorelease];
         [barItems addObject:flexSpace];
-        
+
         UIBarButtonItem *doneBtn = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(closeSettings)] autorelease];
         [barItems addObject:doneBtn];
-        
+
         [pickerToolbar setItems:barItems animated:YES];
-        
+
         [settingsSheet_ addSubview:pickerToolbar];
         [settingsSheet_ addSubview:settingPicker_];
         [settingsSheet_ showInView:self.view];
-        
+
         [UIView beginAnimations:nil context:nil];
         [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+40)];
         if(self.view.frame.size.width > 320) { // ugly partial landscape fix
@@ -153,7 +153,7 @@
             settingPicker_.frame = frame;
             [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+10)];
         }
-        
+
         [UIView commitAnimations];
     }
 }
@@ -161,33 +161,33 @@
 - (UIImage *)addGlossToImage_:(UIImage *)image {
     IF_IOS4_OR_GREATER(UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);)
     IF_PRE_IOS4(UIGraphicsBeginImageContext(image.size);)
-    
+
     [image drawAtPoint:CGPointZero];
     UIImage *iconGradient = [UIImage bw_imageNamed:@"IconGradient.png" bundle:kHockeyBundleName];
     [iconGradient drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:0.5];
-    
+
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
+
     return result;
 }
 
 #define kMinPreviousVersionButtonHeight 50
 - (void)realignPreviousVersionButton {
-    
+
     // manually collect actual table height size
     NSUInteger tableViewContentHeight = 0;
     for (int i=0; i < [self tableView:self.tableView numberOfRowsInSection:0]; i++) {
         tableViewContentHeight += [self tableView:self.tableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
     }
     tableViewContentHeight += self.tableView.tableHeaderView.frame.size.height;
-    
+
     NSUInteger footerViewSize = kMinPreviousVersionButtonHeight;
     NSUInteger frameHeight = self.view.frame.size.height;
     if(tableViewContentHeight < frameHeight && (frameHeight - tableViewContentHeight > 100)) {
         footerViewSize = frameHeight - tableViewContentHeight;
     }
-    
+
     // update footer view
     if(self.tableView.tableFooterView) {
         CGRect frame = self.tableView.tableFooterView.frame;
@@ -198,7 +198,7 @@
 
 - (void)showHidePreviousVersionsButton {
     BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1 && !showAllVersions_;
-    
+
     if(multipleVersionButtonNeeded) {
         // align at the bottom if tableview is small
         UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMinPreviousVersionButtonHeight)];
@@ -222,7 +222,7 @@
         [self realignPreviousVersionButton];
     } else {
         self.tableView.tableFooterView = nil;
-        self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204); 
+        self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     }
 }
 
@@ -232,7 +232,7 @@
     if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
         installed = [NSString stringWithFormat:@"<span style=\"float:%@;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>%@</b></span>", [app isEqual:self.hockeyManager.app] ? @"left" : @"right", BWLocalize(@"HockeyInstalled")];
     }
-    
+
     if ([app isEqual:self.hockeyManager.app]) {
         if ([app.notes length] > 0) {
             installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
@@ -244,12 +244,12 @@
         cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
     }
     cell.cellBackgroundColor = BW_RGBCOLOR(200, 202, 204);
-    
+
     [cell addWebView];
     // hack
     cell.textLabel.text = @"";
-    
-    [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];    
+
+    [cell addObserver:self forKeyPath:@"webViewSize" options:0 context:nil];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -261,26 +261,16 @@
         self.hockeyManager = newHockeyManager;
         self.modal = newModal;
         self.title = BWLocalize(@"HockeyUpdateScreenTitle");
-        
+
         if ([self.hockeyManager shouldShowUserSettings]) {
             self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage bw_imageNamed:@"gear.png" bundle:kHockeyBundleName]
                                                                                        style:UIBarButtonItemStyleBordered
                                                                                       target:self
                                                                                       action:@selector(openSettings:)] autorelease];
         }
-        
+
         cells_ = [[NSMutableArray alloc] initWithCapacity:5];
-        
         popOverController_ = nil;
-        
-        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-        [dnc addObserver:self selector:@selector(appDidBecomeActive_) name:UIApplicationDidBecomeActiveNotification object:nil];
-        
-        // hook into manager with kvo!
-        [self.hockeyManager addObserver:self forKeyPath:@"checkInProgress" options:0 context:nil];
-        [self.hockeyManager addObserver:self forKeyPath:@"isUpdateURLOffline" options:0 context:nil];
-        [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
-        [self.hockeyManager addObserver:self forKeyPath:@"apps" options:0 context:nil];
     }
     return self;
 }
@@ -290,11 +280,6 @@
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
     [self viewDidUnload];
     for (UITableViewCell *cell in cells_) {
         [cell removeObserver:self forKeyPath:@"webViewSize"];
@@ -310,7 +295,7 @@
 
 - (void)onAction:(id)sender {
     if (self.modal) {
-        
+
 		if (self.navigationController.parentViewController) {
 			[self.navigationController dismissModalViewControllerAnimated:YES];
 		} else {
@@ -319,9 +304,9 @@
 	}
     else
 		[self.navigationController popViewControllerAnimated:YES];
-    
+
 	[[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle_];
-    
+
 }
 
 - (CAGradientLayer *)backgroundLayer {
@@ -329,38 +314,48 @@
 	UIColor *colorTwo	= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.85 alpha:1.0];
 	UIColor *colorThree	= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.7 alpha:1.0];
 	UIColor *colorFour	= [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.4 alpha:1.0];
-    
+
 	NSArray *colors     = [NSArray arrayWithObjects:(id)colorOne.CGColor, colorTwo.CGColor, colorThree.CGColor, colorFour.CGColor, nil];
-    
+
 	NSNumber *stopOne	= [NSNumber numberWithFloat:0.0];
 	NSNumber *stopTwo	= [NSNumber numberWithFloat:0.02];
 	NSNumber *stopThree = [NSNumber numberWithFloat:0.99];
 	NSNumber *stopFour  = [NSNumber numberWithFloat:1.0];
-    
+
 	NSArray *locations  = [NSArray arrayWithObjects:stopOne, stopTwo, stopThree, stopFour, nil];
-    
+
 	CAGradientLayer *headerLayer = [CAGradientLayer layer];
 	//headerLayer.frame = CGRectMake(0.0, 0.0, 320.0, 77.0);
 	headerLayer.colors = colors;
 	headerLayer.locations = locations;
-    
+
 	return headerLayer;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+    // add notifications only to loaded view
+    NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+    [dnc addObserver:self selector:@selector(appDidBecomeActive_) name:UIApplicationDidBecomeActiveNotification object:nil];
+
+    // hook into manager with kvo!
+    [self.hockeyManager addObserver:self forKeyPath:@"checkInProgress" options:0 context:nil];
+    [self.hockeyManager addObserver:self forKeyPath:@"isUpdateURLOffline" options:0 context:nil];
+    [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
+    [self.hockeyManager addObserver:self forKeyPath:@"apps" options:0 context:nil];
+
     self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
+
     UIView *topView = [[[UIView alloc] initWithFrame:CGRectMake(0, -(600-kAppStoreViewHeight), self.view.frame.size.width, 600)] autorelease];
     topView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     topView.backgroundColor = BW_RGBCOLOR(140, 141, 142);
     [self.tableView addSubview:topView];
-    
+
     appStoreHeader_ = [[PSAppStoreHeader alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kAppStoreViewHeight)];
     [self updateAppStoreHeader_];
-    
+
     NSString *iconString = nil;
     NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
     if (!icons) {
@@ -371,11 +366,11 @@
     } else {
         BOOL useHighResIcon = NO;
         IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
-        
+
         for(NSString *icon in icons) {
             iconString = icon;
             UIImage *iconImage = [UIImage imageNamed:icon];
-            
+
             if (iconImage.size.height == 57 && !useHighResIcon) {
                 // found!
                 break;
@@ -386,27 +381,27 @@
             }
         }
     }
-    
+
     BOOL addGloss = YES;
     NSNumber *prerendered = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIPrerenderedIcon"];
     if (prerendered) {
         addGloss = ![prerendered boolValue];
     }
-    
+
     if (addGloss) {
         appStoreHeader_.iconImage = [self addGlossToImage_:[UIImage imageNamed:iconString]];
     } else {
         appStoreHeader_.iconImage = [UIImage imageNamed:iconString];
     }
-    
+
     self.tableView.tableHeaderView = appStoreHeader_;
-    
+
     if (self.modal) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                               target:self
                                                                                               action:@selector(onAction:)];
     }
-    
+
     PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(5, 40)] autorelease];
     storeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     storeButton.buttonDelegate = self;
@@ -414,7 +409,7 @@
     storeButton.buttonData = [PSStoreButtonData dataWithLabel:@"" colors:[PSStoreButton appStoreGrayColor] enabled:NO];
     self.appStoreButtonState = AppStoreButtonStateCheck;
     [storeButton alignToSuperview];
-    appStoreButton_ = [storeButton retain];    
+    appStoreButton_ = [storeButton retain];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -434,38 +429,38 @@
 - (void)redrawTableView {
     [self restoreStoreButtonStateAnimated_:NO];
     [self updateAppStoreHeader_];
-    
+
     // clean up and remove any pending overservers
     for (UITableViewCell *cell in cells_) {
         [cell removeObserver:self forKeyPath:@"webViewSize"];
     }
     [cells_ removeAllObjects];
-    
+
     for (BWApp *app in self.hockeyManager.apps) {
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
         [self configureWebCell:cell forApp_:app];
         [cells_ addObject:cell];
-        
+
         // stop on first app if we don't show all versions
         if (!showAllVersions_) {
             break;
         }
     }
-    
+
     [self.tableView reloadData];
-    [self showHidePreviousVersionsButton];    
+    [self showHidePreviousVersionsButton];
 }
 
 - (void)showPreviousVersionAction {
     showAllVersions_ = YES;
-    
+
     [self.tableView beginUpdates];
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[self.hockeyManager.apps count]-1];
     for (BWApp *app in self.hockeyManager.apps) {
         if ([app isEqual:self.hockeyManager.app]) {
             continue; // skip first
         }
-        
+
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
         [self configureWebCell:cell forApp_:app];
         [cells_ addObject:cell];
@@ -478,6 +473,11 @@
 
 - (void)viewDidUnload {
     [appStoreHeader_ release]; appStoreHeader_ = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
+    [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
     [super viewDidUnload];
 }
 
@@ -491,21 +491,21 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat rowHeight = 0;
-    
+
     if ([cells_ count] > indexPath.row) {
         PSWebTableViewCell *cell = [cells_ objectAtIndex:indexPath.row];
         rowHeight = cell.webViewSize.height;
     }
-    
+
     if ([self.hockeyManager.apps count] > 1 && !showAllVersions_) {
         self.tableView.backgroundColor = BW_RGBCOLOR(183, 183, 183);
-    }    
-    
+    }
+
     if (rowHeight == 0) {
         rowHeight = indexPath.row == 0 ? 250 : 44; // fill screen on startup
         self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     }
-    
+
     return rowHeight;
 }
 
@@ -524,7 +524,7 @@
     if ([keyPath isEqualToString:@"webViewSize"]) {
         NSInteger anIndex = [cells_ indexOfObject:object];
         IF_3_2_OR_GREATER([self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:anIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];)
-        IF_PRE_3_2([self.tableView reloadData];)        
+        IF_PRE_3_2([self.tableView reloadData];)
         [self realignPreviousVersionButton];
     } else if ([keyPath isEqualToString:@"checkInProgress"]) {
         if (self.hockeyManager.isCheckInProgress) {
@@ -562,7 +562,7 @@
         // on startup
         return BWLocalize(@"HockeySectionCheckStartup");
     } else if (row == 1) {
-        // daily    
+        // daily
         return BWLocalize(@"HockeySectionCheckDaily");
     } else {
         // manually
@@ -592,9 +592,9 @@
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckManually] forKey:kHockeyAutoUpdateSetting];
         [self.hockeyManager setUpdateSetting: HockeyUpdateCheckManually];
     }
-    
+
     // persist the new value
-    [[NSUserDefaults standardUserDefaults] synchronize];    
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -604,7 +604,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     BOOL shouldAutorotate;
-    
+
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait ||
                             interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
@@ -612,7 +612,7 @@
     } else {
         shouldAutorotate = YES;
     }
-    
+
     return shouldAutorotate;
 }
 
@@ -631,7 +631,7 @@
 
 - (void)setAppStoreButtonState:(AppStoreButtonState)anAppStoreButtonState animated:(BOOL)animated {
     appStoreButtonState_ = anAppStoreButtonState;
-    
+
     switch (anAppStoreButtonState) {
         case AppStoreButtonStateOffline:
             [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonOffline") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
