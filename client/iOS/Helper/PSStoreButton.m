@@ -65,7 +65,7 @@
 - (void)dealloc {
     [label_ release];
     [colors_ release];
-    
+
     [super dealloc];
 }
 @end
@@ -114,10 +114,10 @@
     }else {
         [self setTitle:self.buttonData.label forState:UIControlStateNormal];
     }
-    
+
     self.enabled = self.buttonData.isEnabled;
     gradient_.colors = self.buttonData.colors;
-    
+
     // show white or gray text, depending on the state
     if (self.buttonData.isEnabled) {
         [self setTitleShadowColor:[UIColor colorWithWhite:0.200 alpha:1.000] forState:UIControlStateNormal];
@@ -127,14 +127,14 @@
         [self.titleLabel setShadowOffset:CGSizeMake(0.0, 0.0)];
         [self setTitleColor:PS_RGBCOLOR(148,150,151) forState:UIControlStateNormal];
     }
-    
+
     // calculate optimal new size
     CGSize sizeThatFits = [self sizeThatFits:CGSizeZero];
-    
+
     // move sublayer (can't be animated explcitely)
     for (CALayer *aLayer in self.layer.sublayers) {
         [CATransaction begin];
-        
+
         if (animated) {
             [CATransaction setAnimationDuration:kDefaultButtonAnimationTime];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
@@ -142,14 +142,14 @@
             // frame is calculated and explicitely animated. so we absolutely need kCATransactionDisableActions
             [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
         }
-        
+
         CGRect newFrame = aLayer.frame;
         newFrame.size.width = sizeThatFits.width;
         aLayer.frame = newFrame;
-        
+
         [CATransaction commit];
 	}
-    
+
     // set outer frame changes
     self.titleEdgeInsets = UIEdgeInsetsMake(2.0, self.titleEdgeInsets.left, 0.0, 0.0);
     CGRect cr = self.frame;
@@ -157,7 +157,7 @@
     cr.origin.x = self.superview.frame.size.width -  sizeThatFits.width - customPadding_.x * 2;
     cr.size.width = sizeThatFits.width;
     self.frame = cr;
-    
+
     if (animated) {
         [UIView commitAnimations];
     }
@@ -178,14 +178,14 @@
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
 		self.layer.needsDisplayOnBoundsChange = YES;
-        
+
         // setup title label
         [self.titleLabel setFont:[UIFont boldSystemFontOfSize:13.0]];
-        
+
         // register for touch events
         [self addTarget:self action:@selector(touchedUpOutside:) forControlEvents:UIControlEventTouchUpOutside];
 		[self addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        
+
         // border layers for more sex!
         CAGradientLayer *bevelLayer = [CAGradientLayer layer];
 		bevelLayer.colors = [NSArray arrayWithObjects:(id)[[UIColor colorWithWhite:0.4 alpha:1.0] CGColor], [[UIColor whiteColor] CGColor], nil];
@@ -193,14 +193,14 @@
 		bevelLayer.cornerRadius = 2.5;
 		bevelLayer.needsDisplayOnBoundsChange = YES;
         [self.layer addSublayer:bevelLayer];
-        
+
 		CAGradientLayer *topBorderLayer = [CAGradientLayer layer];
 		topBorderLayer.colors = [NSArray arrayWithObjects:(id)[[UIColor darkGrayColor] CGColor], [[UIColor lightGrayColor] CGColor], nil];
 		topBorderLayer.frame = CGRectMake(0.5, 0.5, CGRectGetWidth(frame) - 1.0, CGRectGetHeight(frame) - 1.0);
 		topBorderLayer.cornerRadius = 2.6;
 		topBorderLayer.needsDisplayOnBoundsChange = YES;
 		[self.layer addSublayer:topBorderLayer];
-        
+
         // main gradient layer
         gradient_ = [[CAGradientLayer layer] retain];
         gradient_.locations = [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:1.0], nil];//[NSNumber numberWithFloat:0.500], [NSNumber numberWithFloat:0.5001],
@@ -223,7 +223,7 @@
 - (void)dealloc {
     [buttonData_ release];
     [gradient_ release];
-    
+
     [super dealloc];
 }
 
@@ -236,22 +236,24 @@
 	CGSize newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font constrainedToSize:constr lineBreakMode:UILineBreakModeMiddleTruncation];
 	CGFloat newWidth = newSize.width + (PS_PADDING * 2);
     CGFloat newHeight = PS_MIN_HEIGHT > newSize.height ? PS_MIN_HEIGHT : newSize.height;
-    
+
     CGSize sizeThatFits = CGSizeMake(newWidth, newHeight);
     return sizeThatFits;
 }
 
 - (void)setFrame:(CGRect)aRect {
     [super setFrame:aRect];
-    
-    // copy frame changes to sublayers
+
+    // copy frame changes to sublayers (but watch out for NaN's)
+  if (self.frame.size.width && self.frame.size.height) {
     for (CALayer *aLayer in self.layer.sublayers) {
-		CGRect rect = aLayer.frame;
-		rect.size.width = self.frame.size.width;
-        rect.size.height = self.frame.size.height;
-		aLayer.frame = rect;
-		[aLayer layoutIfNeeded];
+      CGRect rect = aLayer.frame;
+      rect.size.width = self.frame.size.width;
+      rect.size.height = self.frame.size.height;
+      aLayer.frame = rect;
+      [aLayer layoutIfNeeded];
 	}
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,7 +269,7 @@
         [buttonData_ release];
         buttonData_ = [aButtonData retain];
     }
-    
+
     [self updateButtonAnimated:animated];
 }
 
