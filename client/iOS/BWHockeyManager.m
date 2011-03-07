@@ -194,8 +194,12 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (NSString *)currentUsageString {
     double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
     
-	// round (up) to 15 minutes
-	return [NSString stringWithFormat:@"%.0f", ceil(usage_time / 900.0)*900];
+    if (currentUsageTime > 0) {
+        // round (up) to 15 minutes
+        return [NSString stringWithFormat:@"%.0f", ceil(currentUsageTime / 900.0)*900];
+    } else {
+        return @"0";
+    }
 }
 
 - (NSString *)installationDateString {
