@@ -23,7 +23,7 @@
     // 4.x property
     if ([window respondsToSelector:@selector(setRootViewController:)]) {
         [window setRootViewController:navigationController];
-    }else {
+    } else {
         [window addSubview:navigationController.view];
     }
     [window makeKeyAndVisible];
@@ -31,6 +31,9 @@
     // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
     // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
+    // Add these two lines if you want to activate the authorization feature
+    //    [BWHockeyManager sharedHockeyManager].requireAuthorization = YES;
+    //    [BWHockeyManager sharedHockeyManager].authenticationSecret = @"ChangeThisToYourOwnSecretString";
     [BWHockeyManager sharedHockeyManager].updateURL = kHockeyUpdateURL;
     [BWHockeyManager sharedHockeyManager].delegate = self;
 #endif

@@ -37,6 +37,8 @@
 #define kUsageTimeOfCurrentVersion	@"UsageTimeOfCurrentVersion"
 #define kUsageTimeForVersionString	@"kUsageTimeForVersionString"
 #define kHockeyAutoUpdateSetting	@"HockeyAutoUpdateSetting"
+#define kHockeyAuthorizedVersion	@"HockeyAuthorizedVersion"
+#define kHockeyAuthorizedToken		@"HockeyAuthorizedToken"
 
 #define kHockeyBundleName @"Hockey.bundle"
 
@@ -48,6 +50,7 @@
 #endif
 
 NSBundle *hockeyBundle();
+NSString *BWmd5(NSString *str);
 
 #define BWLocalize(StringToken) NSLocalizedStringFromTableInBundle(StringToken, @"Hockey", hockeyBundle(), @"")
 

@@ -88,6 +88,10 @@
 "HockeyWarning" = "Warnung";
 "HockeyNoReleaseNotesAvailable" = "Keine Release Notes verfügbar.";
 
+"HockeyAuthorizationProgress" = "Autorisierung...";
+"HockeyAuthorizationOffline" = "Internet Verbindung wird benötigt!";
+"HockeyAuthorizationDenied" = "Autorisierung verweigert. Bitte kontaktieren Sie den Entwickler.";
+
 "HockeyiOS3Message" = "In-App download benötigt iOS 4 oder höher. Sie können die Applikation manuell updaten, indem sie das IPA von %@ laden und es via iTunes syncen.";
 "HockeySimulatorMessage" = "Hockey funktioniert nicht im Simulator.";
 

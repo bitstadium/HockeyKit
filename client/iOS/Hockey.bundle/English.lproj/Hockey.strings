@@ -84,6 +84,10 @@
 "HockeyWarning" = "Warning";
 "HockeyNoReleaseNotesAvailable" = "No release notes available.";
 
+"HockeyAuthorizationProgress" = "Authorizing...";
+"HockeyAuthorizationOffline" = "Internet connection required!";
+"HockeyAuthorizationDenied" = "Authorizing denied. Please contact the developer.";
+
 "HockeyiOS3Message" = "In-App download requires iOS 4 or higher. You can update this application via downloading the IPA from %@ and syncing it with iTunes.";
 "HockeySimulatorMessage" = "Hockey Update does not work in the Simulator.\nThe itms-services:// url scheme is implemented but nonfunctional.";
 

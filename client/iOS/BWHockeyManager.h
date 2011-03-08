@@ -37,6 +37,12 @@ typedef enum {
 } HockeyComparisonResult;
 
 typedef enum {
+	HockeyAuthorizationDenied,
+	HockeyAuthorizationAllowed,
+	HockeyAuthorizationPending
+} HockeyAuthorizationState;
+
+typedef enum {
     HockeyUpdateCheckStartup,
     HockeyUpdateCheckDaily,
     HockeyUpdateCheckManually
@@ -54,6 +60,7 @@ typedef enum {
     
     UINavigationController *navController_;
     BWHockeyViewController *currentHockeyViewController_;
+    UIView *authorizeView_;
     
     NSMutableData *receivedData_;
     
@@ -77,6 +84,9 @@ typedef enum {
     HockeyUpdateSetting updateSetting_;
     BOOL showUserSettings_;
     BOOL showDirectInstallOption_;
+    
+    BOOL requireAuthorization_;
+    NSString *authenticationSecret_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +99,9 @@ typedef enum {
 
 // delegate is optional
 @property (nonatomic, assign) id <BWHockeyManagerDelegate> delegate;
+
+// hockey secret is required if authentication is used
+@property (nonatomic, retain) NSString *authenticationSecret;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +130,10 @@ typedef enum {
 //if YES, the alert notifying about an new update also shows a button to install the update directly
 //if NO, the alert notifying about an new update only shows ignore and show update button
 @property (nonatomic, assign, getter=ishowingDirectInstallOption) BOOL showDirectInstallOption;
+
+//if YES, each app version needs to be authorized by the server to run on this device
+//if NO, each app version does not need to be authorized (default) 
+@property (nonatomic, assign, getter=isRequireAuthorization) BOOL requireAuthorization;
 
 // HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
 // HockeyComparisonResultGreater: alerts if the version on the server is greater
@@ -148,6 +165,12 @@ typedef enum {
 
 // initiates app-download call. displays an system UIAlertView
 - (BOOL)initiateAppDownload;
+
+// checks wether this app version is authorized
+- (BOOL)appVersionIsAuthorized;
+
+// start checking for an authorization key
+- (void)checkForAuthorization;
 
 // convenience methode to create hockey view controller
 - (BWHockeyViewController *)hockeyViewController:(BOOL)modal;

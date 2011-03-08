@@ -24,6 +24,7 @@
 
 #import "BWHockeyManager.h"
 #import "NSString+HockeyAdditions.h"
+#import "UIImage+HockeyAdditions.h"
 #import <sys/sysctl.h>
 #import <Foundation/Foundation.h>
 
@@ -39,14 +40,19 @@
 
 @interface BWHockeyManager ()
 - (NSString *)getDevicePlatform_;
+- (id)parseJSONResultString:(NSString *)jsonString;
 - (void)connectionOpened_;
 - (void)connectionClosed_;
 - (void)reachabilityChanged:(NSNotification *)notification;
 - (BOOL)shouldCheckForUpdates;
 - (void)startUsage;
 - (void)stopUsage;
+- (void)startManager;
+- (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image;
 - (NSString *)currentUsageString;
 - (NSString *)installationDateString;
+- (NSString *)authenticationToken;
+- (HockeyAuthorizationState)authorizationState;
 
 @property (nonatomic, assign, getter=isUpdateURLOffline) BOOL updateURLOffline;
 @property (nonatomic, assign, getter=isUpdateAvailable) BOOL updateAvailable;
@@ -64,6 +70,7 @@ typedef enum {
     HockeyAPIServerReturnedInvalidStatus,
     HockeyAPIServerReturnedInvalidData,
     HockeyAPIServerReturnedEmptyResponse,
+    HockeyAPIClientAuthorizationMissingSecret,
     HockeyAPIClientCannotCreateConnection
 } HockeyErrorReason;
 static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
@@ -89,6 +96,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize usageStartTimestamp = usageStartTimestamp_;
 @synthesize currentHockeyViewController = currentHockeyViewController_;
 @synthesize showDirectInstallOption = showDirectInstallOption_;
+@synthesize requireAuthorization = requireAuthorization_;
+@synthesize authenticationSecret = authenticationSecret_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -146,7 +155,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 // weak-linked reachability
-- (void)setupReachability {
+- (void)setupReachability:(SEL)selector {    
     if (reachability_) {
         [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
         [reachability_ release];
@@ -158,7 +167,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         NSString *hostName = [[NSURL URLWithString:self.updateURL] host];
         BWLog(@"setting up reachability for %@", hostName);
         reachability_ = [[reachabilityClass performSelector:NSSelectorFromString(@"reachabilityWithHostName:") withObject:hostName] retain];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:@"kNetworkReachabilityChangedNotification" object:reachability_];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:selector name:@"kNetworkReachabilityChangedNotification" object:reachability_];
         [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
     }
 }
@@ -208,6 +217,33 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kDateOfVersionInstallation] doubleValue]]];
 }
 
+- (NSString *)authenticationToken {
+    return [BWmd5([NSString stringWithFormat:@"%@%@%@%@", 
+                   authenticationSecret_, 
+                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"],
+                   [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"],
+                   [[UIDevice currentDevice] uniqueIdentifier]
+                   ]
+                  ) lowercaseString];
+}
+
+- (HockeyAuthorizationState)authorizationState {
+    NSString *version = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAuthorizedVersion];
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAuthorizedToken];
+    
+    if (version != nil && token != nil) {
+        if ([version compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
+            // if it is denied, block the screen permanently
+            if ([token compare:[self authenticationToken]] != NSOrderedSame) {
+                return HockeyAuthorizationDenied;
+            } else {
+                return HockeyAuthorizationAllowed;
+            }
+        }
+    }
+    return HockeyAuthorizationPending;
+}
+
 - (void)checkUpdateAvailable_ {
     // check if there is an update available
     if (self.compareVersionType == HockeyComparisonResultGreater) {
@@ -236,6 +272,26 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:kArrayOfLastHockeyCheck];
 }
 
+- (UIWindow *)visibleWindow:(UIViewController *)parentViewController {
+    UIWindow *visibleWindow = nil;
+	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
+        // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for (UIWindow *window in windows) {
+            if (!window.hidden && !visibleWindow) {
+                visibleWindow = window;
+            }
+            if ([window rootViewController]) {
+                visibleWindow = window;
+                BWLog(@"UIWindow with rootViewController found: %@", visibleWindow);
+                break;
+            }
+        }
+	}
+    
+    return visibleWindow;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
@@ -250,9 +306,13 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         lastCheckFailed_ = NO;
         currentAppVersion_ = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
         navController_ = nil;
+        authorizeView_ = nil;
+        requireAuthorization_ = NO;
+        authenticationSecret_= nil;
         
         // set defaults
         self.showDirectInstallOption = NO;
+        self.requireAuthorization = NO;
         self.sendUserData = YES;
         self.sendUsageTime = YES;
         self.alwaysShowUpdateReminder = NO;
@@ -283,12 +343,14 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     self.urlConnection = nil;
     
     [navController_ release];
+    [authorizeView_ release];
     [currentHockeyViewController_ release];
     [updateURL_ release];
     [apps_ release];
     [receivedData_ release];
     [lastCheck_ release];
     [usageStartTimestamp_ release];
+    [authenticationSecret_ release];
     
     [super dealloc];
 }
@@ -313,22 +375,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         parentViewController = [[self delegate] viewControllerForHockeyController:self];
     }
     
-    UIWindow *visibleWindow = nil;
-	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
-        // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
-        NSArray *windows = [[UIApplication sharedApplication] windows];
-        for (UIWindow *window in windows) {
-            if (!window.hidden && !visibleWindow) {
-                visibleWindow = window;
-            }
-            if ([window rootViewController]) {
-                parentViewController = [window rootViewController];
-                visibleWindow = window;
-                BWLog(@"UIWindow with rootViewController found: %@", visibleWindow);
-                break;
-            }
-        }
-	}
+    UIWindow *visibleWindow = [self visibleWindow:parentViewController];
+
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
         parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];
@@ -377,6 +425,86 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
 }
 
+
+// open an authorization screen
+- (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image {
+    if (authorizeView_ != nil) {
+        [authorizeView_ removeFromSuperview];
+    }
+    
+    UIViewController *parentViewController = nil;
+    
+    if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
+        parentViewController = [[self delegate] viewControllerForHockeyController:self];
+    }
+    
+    UIWindow *visibleWindow = [self visibleWindow:parentViewController];
+    CGRect frame = [visibleWindow frame];
+    
+    authorizeView_ = [[[UIView alloc] initWithFrame:frame] autorelease];
+    UIImageView *backgroundView = [[[UIImageView alloc] initWithImage:[UIImage bw_imageNamed:@"bg.png" bundle:kHockeyBundleName]] autorelease];
+    backgroundView.contentMode = UIViewContentModeScaleAspectFill;
+    backgroundView.frame = frame;
+    [authorizeView_ addSubview:backgroundView];
+    
+    if (image != nil) {
+        UIImageView *imageView = [[[UIImageView alloc] initWithImage:[UIImage bw_imageNamed:image bundle:kHockeyBundleName]] autorelease];
+        imageView.contentMode = UIViewContentModeCenter;
+        imageView.frame = frame;
+        [authorizeView_ addSubview:imageView];
+    }
+    
+    if (message != nil) {
+        frame.origin.x = 20;
+        frame.origin.y = frame.size.height - 140;
+        frame.size.width -= 40;
+        frame.size.height = 40;
+        
+        UILabel *label = [[[UILabel alloc] initWithFrame:frame] autorelease];
+        label.text = message;
+        label.textAlignment = UITextAlignmentCenter;
+        label.numberOfLines = 2;
+        label.backgroundColor = [UIColor clearColor];
+        
+        [authorizeView_ addSubview:label];
+    }
+    
+    [visibleWindow addSubview:authorizeView_];
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark JSONParsing
+
+- (id)parseJSONResultString:(NSString *)jsonString {
+    NSError *error = nil;
+    id feedResult = nil;
+    
+    // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
+    SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
+    if (jsonKitSelector && [jsonString respondsToSelector:jsonKitSelector]) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:jsonKitSelector]];
+        invocation.target = jsonString;
+        invocation.selector = jsonKitSelector;
+        int parseOptions = 0;
+        [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        [invocation setArgument:&error atIndex:3];
+        [invocation invoke];
+        [invocation getReturnValue:&feedResult];
+    } else {
+        BWLog(@"Error: You need a JSON Framework in your runtime!");
+        [self doesNotRecognizeSelector:_cmd];
+    }    
+    if (error) {
+        BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
+        [self reportError_:error];
+        return nil;
+    }
+    
+    return feedResult;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark RequestComments
@@ -399,8 +527,81 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return checkForUpdate;
 }
 
+- (void)checkForAuthorization {
+    if (reachability_) {
+        [reachability_ performSelector:NSSelectorFromString(@"stopNotifier")];    
+        [reachability_ release];
+        reachability_ = nil;
+    }
+    
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
+    
+    [parameter appendFormat:@"?format=json&authorize=yes&app_version=%@&udid=%@",
+     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+     @"710fb31679b4eb484b854684ab1562ced857062c" // [[UIDevice currentDevice] uniqueIdentifier]
+     ];
+    
+    // build request & send
+    NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
+    BWLog(@"sending api request to %@", url);
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
+    [request setHTTPMethod:@"GET"];
+    [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
+    
+    NSURLResponse *response = nil;
+    NSError *error = NULL;
+    BOOL failed = YES;
+    
+    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    if ([responseData length]) {
+        NSString *responseString = [[[NSString alloc] initWithBytes:[responseData bytes] length:[responseData length] encoding: NSUTF8StringEncoding] autorelease];
+        NSLog(@"%@", responseString);
+
+        NSDictionary *feedDict = (NSDictionary *)[self parseJSONResultString:responseString];
+
+        // server returned empty response?
+        if (![feedDict count]) {
+            [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
+                                [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
+            return;
+		} else {
+            NSString *token = [[feedDict objectForKey:@"authcode"] lowercaseString];
+            if ([token compare:[self authenticationToken]] == NSOrderedSame) {
+                // identical token, activate this version
+                failed = NO;
+
+                // store the new data
+                [[NSUserDefaults standardUserDefaults] setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:kHockeyAuthorizedVersion];
+                [[NSUserDefaults standardUserDefaults] setObject:token forKey:kHockeyAuthorizedToken];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                self.requireAuthorization = NO;
+                [authorizeView_ removeFromSuperview];
+                
+                // now continue with an update check right away
+                if (self.checkForUpdateOnLaunch) {
+                    [self checkForUpdate];
+                }
+            } else {
+                // different token, block this version
+                NSLog(@"FAILURE");
+            }
+        }
+                
+    }
+        
+    if (failed) {
+        [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationOffline") image:@"authorize_request.png"];
+        
+        [self setupReachability:@selector(checkForAuthorization)];        
+    }
+}
+
 - (void)checkForUpdate {
-    [self checkForUpdateShowFeedback:NO]; 
+    if (self.requireAuthorization) return;
+    [self checkForUpdateShowFeedback:NO];
 }
 
 - (void)checkForUpdateShowFeedback:(BOOL)feedback {
@@ -483,6 +684,57 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return success;
 }
 
+
+// checks wether this app version is authorized
+- (BOOL)appVersionIsAuthorized {
+    if (self.requireAuthorization && !authenticationSecret_) {
+        [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientAuthorizationMissingSecret userInfo:
+                            [NSDictionary dictionaryWithObjectsAndKeys:@"Authentication secret is not set but required.", NSLocalizedDescriptionKey, nil]]];
+
+        return NO;
+    }
+    
+    if (!self.requireAuthorization) {
+        if (authorizeView_ != nil) {
+            [authorizeView_ removeFromSuperview];
+        }
+        
+        return YES;
+    }
+    
+    HockeyAuthorizationState state = [self authorizationState];
+    if (state == HockeyAuthorizationDenied) {
+        [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationDenied") image:@"authorize_denied.png"];
+    } else if (state == HockeyAuthorizationAllowed) {
+        self.requireAuthorization = NO;
+        return YES;
+    }
+        
+    return NO;
+}
+
+
+// begin the startup process
+- (void)startManager {
+    if (![self appVersionIsAuthorized]) {
+        if ([self authorizationState] == HockeyAuthorizationPending) {
+            [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationProgress") image:@"authorize_request.png"];
+        
+            [self performSelector:@selector(checkForAuthorization) withObject:nil afterDelay:0.0f];
+        }
+    } else {
+        if ([self shouldCheckForUpdates]) {
+            // initial update check if we don't have reachability
+            if (!NSClassFromString(@"Reachability")) {
+                [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
+            } else {
+                [self setupReachability:@selector(reachabilityChanged:)];
+            }
+        }
+    }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSURLRequest
@@ -534,29 +786,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         NSString *responseString = [[[NSString alloc] initWithBytes:[receivedData_ bytes] length:[receivedData_ length] encoding: NSUTF8StringEncoding] autorelease];
         BWLog(@"Received API response: %@", responseString);
         
-        NSError *error = nil;
-        NSArray *feedArray = nil;
-        
-        // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
-        SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
-        if (jsonKitSelector && [responseString respondsToSelector:jsonKitSelector]) {
-            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[responseString methodSignatureForSelector:jsonKitSelector]];
-            invocation.target = responseString;
-            invocation.selector = jsonKitSelector;
-            int parseOptions = 0;
-            [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
-            [invocation setArgument:&error atIndex:3];
-            [invocation invoke];
-            [invocation getReturnValue:&feedArray];
-        }else {
-            BWLog(@"Error: You need a JSON Framework in your runtime!");
-            [self doesNotRecognizeSelector:_cmd];
-        }    
-        if (error) {
-            BWLog(@"Error while parsing response feed: %@", [error localizedDescription]);
-            [self reportError_:error];
-            return;
-        }
+        NSArray *feedArray = (NSArray *)[self parseJSONResultString:responseString];
         
         self.receivedData = nil;
         self.urlConnection = nil;
@@ -569,7 +799,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                                 [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
             return;
-		}else {
+		} else {
             lastCheckFailed_ = NO;
         }
 
@@ -582,7 +812,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             BWApp *app = [BWApp appFromDict:dict];
             if ([app isValid]) {
                 [tmpApps addObject:app];
-            }else {
+            } else {
                 [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedInvalidData userInfo:
                                     [NSDictionary dictionaryWithObjectsAndKeys:@"Invalid data received from server.", NSLocalizedDescriptionKey, nil]]];
             }
@@ -674,18 +904,13 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                            [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
                        }
                        )
-    IF_PRE_IOS4 (
-                       // initial uddate check if we don't have reachability
-                       if ([self shouldCheckForUpdates] && !NSClassFromString(@"Reachability")) {
-                           [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
-                      }
-                )
     
     if (updateURL_ != anUpdateURL) {
         [updateURL_ release];
         updateURL_ = [anUpdateURL copy];
-        [self setupReachability];
     }
+    
+    [self performSelector:@selector(startManager) withObject:nil afterDelay:0.0f];
 }
 
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
@@ -750,6 +975,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     BWApp *app = [apps_ objectAtIndex:0];
     return app;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
