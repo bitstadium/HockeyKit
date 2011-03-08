@@ -108,6 +108,7 @@
         // hide text, then start animation
         [self setTitle:@"" forState:UIControlStateNormal];
         [UIView beginAnimations:@"storeButtonUpdate" context:nil];
+        [UIView setAnimationBeginsFromCurrentState:YES];
         [UIView setAnimationDuration:kDefaultButtonAnimationTime];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
@@ -152,11 +153,7 @@
 
     // set outer frame changes
     self.titleEdgeInsets = UIEdgeInsetsMake(2.0, self.titleEdgeInsets.left, 0.0, 0.0);
-    CGRect cr = self.frame;
-    cr.origin.y = customPadding_.y;
-    cr.origin.x = self.superview.frame.size.width -  sizeThatFits.width - customPadding_.x * 2;
-    cr.size.width = sizeThatFits.width;
-    self.frame = cr;
+    [self alignToSuperview];
 
     if (animated) {
         [UIView commitAnimations];
@@ -165,10 +162,12 @@
 
 - (void)alignToSuperview {
     [self sizeToFit];
-    CGRect cr = self.frame;
-    cr.origin.y = customPadding_.y;
-    cr.origin.x = self.superview.frame.size.width - cr.size.width - customPadding_.x * 2;
-    self.frame = cr;
+    if (self.superview) {
+      CGRect cr = self.frame;
+      cr.origin.y = customPadding_.y;
+      cr.origin.x = self.superview.frame.size.width - cr.size.width - customPadding_.x * 2;
+      self.frame = cr;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +244,6 @@
     [super setFrame:aRect];
 
     // copy frame changes to sublayers (but watch out for NaN's)
-  if (self.frame.size.width && self.frame.size.height) {
     for (CALayer *aLayer in self.layer.sublayers) {
       CGRect rect = aLayer.frame;
       rect.size.width = self.frame.size.width;
@@ -253,7 +251,6 @@
       aLayer.frame = rect;
       [aLayer layoutIfNeeded];
 	}
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
