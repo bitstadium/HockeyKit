@@ -390,13 +390,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     UIViewController *parentViewController = nil;
-    
+
     if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
         parentViewController = [[self delegate] viewControllerForHockeyController:self];
     }
     
     UIWindow *visibleWindow = [self visibleWindow:parentViewController];
 
+    if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
+        parentViewController = [visibleWindow rootViewController];
+    }
+    
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
         parentViewController = [[NSClassFromString(@"TTNavigator") performSelector:(NSSelectorFromString(@"navigator"))] visibleViewController];

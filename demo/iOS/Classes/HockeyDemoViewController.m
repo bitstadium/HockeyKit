@@ -15,15 +15,6 @@
 
 @implementation HockeyDemoViewController
 
-- (void)openUpdateViewAnimated:(BOOL)animated {
-#if !defined (CONFIGURATION_AppStore_Distribution)
-    BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyManager] hockeyViewController:YES];
-    UINavigationController *hockeyNavController = [[[UINavigationController alloc] initWithRootViewController:hockeyViewController] autorelease];
-    IF_3_2_OR_GREATER(hockeyNavController.modalPresentationStyle = UIModalPresentationFormSheet;)
-    [self presentModalViewController:hockeyNavController animated:animated];
-#endif
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -46,7 +37,9 @@
 }
 
 - (IBAction)openUpdateView {
-    [self openUpdateViewAnimated:YES];
+#if !defined (CONFIGURATION_AppStore_Distribution)
+    [[BWHockeyManager sharedHockeyManager] showUpdateView];
+#endif
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
