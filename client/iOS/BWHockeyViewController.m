@@ -57,9 +57,9 @@
 - (void)restoreStoreButtonStateAnimated_:(BOOL)animated {
     if ([self.hockeyManager isUpdateURLOffline]) {
         [self setAppStoreButtonState:AppStoreButtonStateOffline animated:animated];
-    }else if ([self.hockeyManager isUpdateAvailable]) {
+    } else if ([self.hockeyManager isUpdateAvailable]) {
         [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:animated];
-    }else {
+    } else {
         [self setAppStoreButtonState:AppStoreButtonStateCheck animated:animated];
     }
 }
@@ -88,6 +88,8 @@
 - (void)appDidBecomeActive_ {
     if (self.appStoreButtonState == AppStoreButtonStateInstalling) {
         [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:YES];
+    } else if (![self.hockeyManager isCheckInProgress]) {
+        [self restoreStoreButtonStateAnimated_:YES];
     }
 }
 
