@@ -15,9 +15,6 @@
 /* For dialogs no buttons */
 "HockeyNo" = "Nein";
 
-/* Unknown application */
-"HockeyUnknownApp" = "Unbekanntes Programm";
-
 /* Update available */
 "HockeyUpdateAvailable" = "Aktualisierung verfügbar";
 
@@ -31,40 +28,25 @@
 "HockeyUpdateScreenTitle" = "Aktualisierung";
 
 
-/* Application Section */
+/* Settings */
 
-/* Application */
-"HockeySectionAppHeader" = "Programm";
+/* Screen title for settings view */
+"HockeySettingsTitle" = "Settings";
 
-/* New Version */
-"HockeySectionAppNewVersion" = "Neueste Version";
+/* Text asking the user to send user data (on/off switch) */
+"HockeySettingsUserData" = "Send User Data";
 
-/* Current Version */
-"HockeySectionAppCurrentVersion" = "Installierte Version";
+/* Description text for turning on/off sending user data */
+"HockeySettingsUserDataDescription" = "Send User Data will send the following data to the developer: app version, language, device type and iOS version.";
 
-/* Release Notes */
-"HockeySectionAppReleaseNotes" = "Neuerungen";
+/* Text asking the user to send usage data (on/off switch) */
+"HockeySettingsUsageData" = "Send Usage Data";
 
-/* No Update Available */
-"HockeySectionAppSameVersionButton" = "Keine Aktualisierung verfügbar";
+/* Description text for turning on/off sending usage data */
+"HockeySettingsUsageDataDescription" = "Send Usage Data will send the amount of test time to the developer, in a granularity of 15 minutes.";
 
-/* Visit the beta website on your Mac or PC to update */
-"HockeySectionAppWebsite" = "Besuchen Sie die Beta Webseite auf ihrem Mac oder PC um die Aktualisierung durchzuführen.";
-
-/* Install Update */
-"HockeySectionAppButton" = "Installieren";
-
-
-/* Check for Update Section */
-
-/* Check for Update */
-"HockeySectionCheckHeader" = "Nach Aktualisierung Prüfen";
-
-/* Checking... */
-"HockeySectionCheckProgress" = "Prüfen...";
-
-/* Check Now */
-"HockeySectionCheckButton" = "Jetzt Prüfen";
+/* Title for defining when update checks may be made */
+"HockeySectionCheckTitle" = "Nach Aktualisierung Prüfen";
 
 /* On Startup */
 "HockeySectionCheckStartup" = "Beim Start";
@@ -74,6 +56,7 @@
 
 /* Manually */
 "HockeySectionCheckManually" = "Manuell";
+
 
 "HockeyVersion" = "Version";
 "HockeyShowPreviousVersions" = "Zeige frühere Versionen...";

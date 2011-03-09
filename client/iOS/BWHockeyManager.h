@@ -77,9 +77,12 @@ typedef enum {
     NSDate *usageStartTimestamp_;
     
     BOOL sendUserData_;
+    BOOL sendUsageTime_;
+    BOOL allowUserToDisableSendData_;
+    BOOL userAllowsSendUserData_;
+    BOOL userAllowsSendUsageData_;
     BOOL showUpdateReminder_;
     BOOL checkForUpdateOnLaunch_;
-    BOOL sendUsageTime_;
     HockeyComparisonResult compareVersionType_;
     HockeyUpdateSetting updateSetting_;
     BOOL showUserSettings_;
@@ -114,6 +117,18 @@ typedef enum {
 // if YES, the the users usage time of the app to the service, only in 15 minute granularity! (default)
 // if NO, no such data is send to the server
 @property (nonatomic, assign, getter=shouldSendUsageTime) BOOL sendUsageTime;
+
+// if YES, the user agrees to send the usage data, user can change it if the developer shows the settings (default)
+// if NO, the user overwrites the developer setting and no such data is sent
+@property (nonatomic, assign, getter=isAllowUserToDisableSendData) BOOL allowUserToDisableSendData;
+
+// if YES, the user allowed to send user data (default)
+// if NO, the user denied to send user data
+@property (nonatomic, assign, getter=doesUserAllowsSendUserData) BOOL userAllowsSendUserData;
+
+// if YES, the user allowed to send usage data (default)
+// if NO, the user denied to send usage data
+@property (nonatomic, assign, getter=doesUserAllowsSendUsageData) BOOL userAllowsSendUsageData;
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update (default)

@@ -37,6 +37,9 @@
 #define kUsageTimeOfCurrentVersion	@"UsageTimeOfCurrentVersion"
 #define kUsageTimeForVersionString	@"kUsageTimeForVersionString"
 #define kHockeyAutoUpdateSetting	@"HockeyAutoUpdateSetting"
+#define kHockeyAllowUserSetting		@"HockeyAllowUserSetting"
+#define kHockeyAllowUsageSetting	@"HockeyAllowUsageSetting"
+#define kHockeyAutoUpdateSetting	@"HockeyAutoUpdateSetting"
 #define kHockeyAuthorizedVersion	@"HockeyAuthorizedVersion"
 #define kHockeyAuthorizedToken		@"HockeyAuthorizedToken"
 

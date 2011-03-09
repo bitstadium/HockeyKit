@@ -21,46 +21,32 @@
 /* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
 "HockeyUpdateAlertText" = "Would you like to check out the new update?";
 
+
 /* Update details screen */
 
 /* Update Details */
 "HockeyUpdateScreenTitle" = "Update";
 
 
-/* Application Section */
+/* Settings */
 
-/* Application */
-"HockeySectionAppHeader" = "Application";
+/* Screen title for settings view */
+"HockeySettingsTitle" = "Settings";
 
-/* New Version */
-"HockeySectionAppNewVersion" = "Latest Version";
+/* Text asking the user to send user data (on/off switch) */
+"HockeySettingsUserData" = "Send User Data";
 
-/* Current Version */
-"HockeySectionAppCurrentVersion" = "Installed Version";
+/* Description text for turning on/off sending user data */
+"HockeySettingsUserDataDescription" = "Send User Data will send the following data to the developer: app version, language, device type and iOS version.";
 
-/* Release Notes */
-"HockeySectionAppReleaseNotes" = "Release Notes";
+/* Text asking the user to send usage data (on/off switch) */
+"HockeySettingsUsageData" = "Send Usage Data";
 
-/* No Update Available */
-"HockeySectionAppSameVersionButton" = "No Update Available";
+/* Description text for turning on/off sending usage data */
+"HockeySettingsUsageDataDescription" = "Send Usage Data will send the amount of test time to the developer, in a granularity of 15 minutes.";
 
-/* Visit the beta website on your Mac or PC to update */
-"HockeySectionAppWebsite" = "Visit the beta website on your Mac or PC to update";
-
-/* Install Update */
-"HockeySectionAppButton" = "Install Update";
-
-
-/* Check for Update Section */
-
-/* Check for Update */
-"HockeySectionCheckHeader" = "Check for Update";
-
-/* Checking... */
-"HockeySectionCheckProgress" = "Checking...";
-
-/* Check Now */
-"HockeySectionCheckButton" = "Check Now";
+/* Title for defining when update checks may be made */
+"HockeySectionCheckTitle" = "Check For Update";
 
 /* On Startup */
 "HockeySectionCheckStartup" = "On Startup";
@@ -70,6 +56,7 @@
 
 /* Manually */
 "HockeySectionCheckManually" = "Manually";
+
 
 "HockeyVersion" = "Version";
 "HockeyShowPreviousVersions" = "Show previous versions...";

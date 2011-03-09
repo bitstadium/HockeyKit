@@ -85,6 +85,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
 @synthesize sendUsageTime = sendUsageTime_;
+@synthesize allowUserToDisableSendData = allowUserToDisableSendData_;
+@synthesize userAllowsSendUserData = userAllowsSendUserData_;
+@synthesize userAllowsSendUsageData = userAllowsSendUsageData_;
 @synthesize alwaysShowUpdateReminder = showUpdateReminder_;
 @synthesize checkForUpdateOnLaunch = checkForUpdateOnLaunch_;
 @synthesize compareVersionType = compareVersionType_;
@@ -315,14 +318,31 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         self.requireAuthorization = NO;
         self.sendUserData = YES;
         self.sendUsageTime = YES;
+        self.allowUserToDisableSendData = YES;
         self.alwaysShowUpdateReminder = NO;
         self.checkForUpdateOnLaunch = YES;
         self.showUserSettings = YES;
         self.compareVersionType = HockeyComparisonResultDifferent;
         
         // load update setting from user defaults and check value
-        self.updateSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting]) {
+            self.updateSetting = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAutoUpdateSetting];
+        } else {
+            self.updateSetting = HockeyUpdateCheckStartup;
+        }
         
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAllowUserSetting]) {
+            self.userAllowsSendUserData = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAllowUserSetting];
+        } else {
+            self.userAllowsSendUserData = YES;
+        }
+
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAllowUsageSetting]) {
+            self.userAllowsSendUsageData = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAllowUsageSetting];
+        } else {
+            self.userAllowsSendUsageData = YES;
+        }
+
         [self loadAppCache_];
         
         [self startUsage];
@@ -925,6 +945,20 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                            }
                            )
     }
+}
+
+- (void)setUserAllowsSendUserData:(BOOL)flag {
+    userAllowsSendUserData_ = flag;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:userAllowsSendUserData_] forKey:kHockeyAllowUsageSetting];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setUserAllowsSendUsageData:(BOOL)flag {
+    userAllowsSendUsageData_ = flag;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:userAllowsSendUsageData_] forKey:kHockeyAllowUsageSetting];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSString *)currentAppVersion {

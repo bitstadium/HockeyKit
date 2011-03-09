@@ -29,6 +29,7 @@
 #import "BWGlobal.h"
 #import "UIImage+HockeyAdditions.h"
 #import "PSWebTableViewCell.h"
+#import "BWHockeySettingsViewController.h"
 
 #define BW_RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
 #define kWebCellIdentifier @"PSWebTableViewCell"
@@ -84,11 +85,6 @@
     appStoreHeader_.subHeaderLabel = subHeaderString;
 }
 
-- (void)closeSettings {
-    [settingsSheet_ dismissWithClickedButtonIndex:[settingPicker_ selectedRowInComponent:0] animated:YES];
-}
-
-
 - (void)appDidBecomeActive_ {
     if (self.appStoreButtonState == AppStoreButtonStateInstalling) {
         [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:YES];
@@ -96,65 +92,27 @@
 }
 
 - (void)openSettings:(id)sender {
-    [settingPicker_ release]; settingsSheet_ = nil;
-    [settingsSheet_ release]; settingsSheet_ = nil;
-
-    settingPicker_ = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0, 44.0, 0.0, 0.0)];
-    settingPicker_.showsSelectionIndicator = YES;
-    settingPicker_.dataSource = self;
-    settingPicker_.delegate = self;
-    [settingPicker_ selectRow:[self.hockeyManager updateSetting] inComponent:0 animated:NO];
+    BWHockeySettingsViewController *settings = [[[BWHockeySettingsViewController alloc] init] autorelease];
 
     Class popoverControllerClass = NSClassFromString(@"UIPopoverController");
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && popoverControllerClass) {
-        UIViewController *pickerViewController = [[[UIViewController alloc] init] autorelease];
-        [pickerViewController.view addSubview:settingPicker_];
-
         if (popOverController_ == nil) {
-            popOverController_ = [[popoverControllerClass alloc] initWithContentViewController:pickerViewController];
+            popOverController_ = [[popoverControllerClass alloc] initWithContentViewController:settings];
         }
-        [popOverController_ setPopoverContentSize: CGSizeMake(300, 216)];
-
-        // show popover
-        CGSize sizeOfPopover = CGSizeMake(300, 222);
-        settingPicker_.frame = CGRectMake(0, 0, sizeOfPopover.width, sizeOfPopover.height);
+        [popOverController_ setPopoverContentSize: CGSizeMake(320, 440)];
         [popOverController_ presentPopoverFromBarButtonItem:self.navigationItem.rightBarButtonItem
                                    permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-    }else {
-        settingsSheet_ = [[UIActionSheet alloc] initWithTitle:@"Settings"
-                                                     delegate:self
-                                            cancelButtonTitle:nil
-                                       destructiveButtonTitle:nil
-                                            otherButtonTitles:nil];
+    } else {
 
-        UIToolbar *pickerToolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)] autorelease];
-        pickerToolbar.barStyle = UIBarStyleBlackOpaque;
-        [pickerToolbar sizeToFit];
-
-        NSMutableArray *barItems = [[[NSMutableArray alloc] init] autorelease];
-
-        UIBarButtonItem *flexSpace = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil] autorelease];
-        [barItems addObject:flexSpace];
-
-        UIBarButtonItem *doneBtn = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(closeSettings)] autorelease];
-        [barItems addObject:doneBtn];
-
-        [pickerToolbar setItems:barItems animated:YES];
-
-        [settingsSheet_ addSubview:pickerToolbar];
-        [settingsSheet_ addSubview:settingPicker_];
-        [settingsSheet_ showInView:self.view];
-
-        [UIView beginAnimations:nil context:nil];
-        [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+40)];
-        if(self.view.frame.size.width > 320) { // ugly partial landscape fix
-            CGRect frame = settingPicker_.frame;
-            frame.origin.y = 32;
-            settingPicker_.frame = frame;
-            [settingsSheet_ setBounds:CGRectMake(0, 0, self.view.frame.size.width, settingPicker_.frame.size.height*2+10)];
-        }
-
-        [UIView commitAnimations];
+        IF_3_2_OR_GREATER(
+                          settings.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+                          [self presentModalViewController:settings animated:YES];
+                          )
+        IF_PRE_3_2(
+                   UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:settings] autorelease];
+                   navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+                   [self presentModalViewController:navController animated:YES];
+                   )
     }
 }
 
@@ -555,60 +513,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark UIPickerView delegate
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    if (row == 0) {
-        // on startup
-        return BWLocalize(@"HockeySectionCheckStartup");
-    } else if (row == 1) {
-        // daily
-        return BWLocalize(@"HockeySectionCheckDaily");
-    } else {
-        // manually
-        return BWLocalize(@"HockeySectionCheckManually");
-    }
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-    return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return 3;
-}
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    if (row == 0) {
-        // on startup
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckStartup] forKey:kHockeyAutoUpdateSetting];
-        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckStartup];
-    } else if (row == 1) {
-        // daily
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckDaily] forKey:kHockeyAutoUpdateSetting];
-        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckDaily];
-    } else {
-        // manually
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:HockeyUpdateCheckManually] forKey:kHockeyAutoUpdateSetting];
-        [self.hockeyManager setUpdateSetting: HockeyUpdateCheckManually];
-    }
-
-    // persist the new value
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 #pragma mark Rotation
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     BOOL shouldAutorotate;
 
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait ||
-                            interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-                            interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait);
     } else {
         shouldAutorotate = YES;
     }
