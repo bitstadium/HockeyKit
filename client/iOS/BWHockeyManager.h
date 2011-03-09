@@ -80,7 +80,7 @@ typedef enum {
     BOOL sendUsageTime_;
     BOOL allowUserToDisableSendData_;
     BOOL userAllowsSendUserData_;
-    BOOL userAllowsSendUsageData_;
+    BOOL userAllowsSendUsageTime_;
     BOOL showUpdateReminder_;
     BOOL checkForUpdateOnLaunch_;
     HockeyComparisonResult compareVersionType_;
@@ -128,7 +128,7 @@ typedef enum {
 
 // if YES, the user allowed to send usage data (default)
 // if NO, the user denied to send usage data
-@property (nonatomic, assign, getter=doesUserAllowsSendUsageData) BOOL userAllowsSendUsageData;
+@property (nonatomic, assign, getter=doesUserAllowsSendUsageTime) BOOL userAllowsSendUsageTime;
 
 // if YES, the new version alert will be displayed always if the current version is outdated
 // if NO, the alert will be displayed only once for each new update (default)

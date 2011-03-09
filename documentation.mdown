@@ -264,6 +264,14 @@ The first option to integrate the client is by downloading the sources and integ
 
   **Description:** Send the the users usage time of the app to the service, only in 15 minute granularity!
 
+* *allowUserToDisableSendData* (optional)
+
+  **Value:** BOOL
+
+  **default:** YES
+
+  **Description:** Allows the user to overwrite the developers settings of *sendUserData* and *sendUsageTime*. *showUserSettings* has to be set to YES to allow the user to change the settings which the developer activated. If the develop does not activate *sendUsageTime* e.g., the user also cannot change it.
+
 * *alwaysShowUpdateReminder* (optional)
 
   **Value:** BOOL
@@ -279,6 +287,30 @@ The first option to integrate the client is by downloading the sources and integ
   **default:** YES
 
   **Description:** Check for updates will be performed after the application becomes active. If set to *NO* you have to take care your to invoke the checks yourself in your code by calling *- (void)checkForUpdate;*
+
+* showDirectInstallOption* (optional)
+
+  **Value:** BOOL
+
+  **default:** NO
+
+  **Description:** Shows an install button in the alert view notifying about pending updates. This way the user can install the update without checking the update screen first.
+
+* *requireAuthorization* (optional)
+
+  **Value:** BOOL
+
+  **default:** NO
+
+  **Description:** Each new version requires an authorization against the server, if that is denied, the version will always be block the screen. The *authenticationSecret* has to be also set and be identical to the server side setting!
+
+* *authenticationSecret* (optional)
+
+  **Value:** NSString
+
+  **default:** nil
+
+  **Description:** Defines the secret string which is also used to generate the authorization token string. It is mandatory if *requireAuthorization* is set to *YES*. And the value has to be identical to the server side secret token.
 
 * *compareVersionType* (optional)
 

@@ -152,7 +152,7 @@
 }
 
 - (void)sendUsageData:(UISwitch *)switcher {
-    [self.hockeyManager setUserAllowsSendUsageData:switcher.on];
+    [self.hockeyManager setUserAllowsSendUsageTime:switcher.on];
 }
 
 
@@ -221,7 +221,7 @@
             cell.textLabel.text = BWLocalize(@"HockeySettingsUsageData");
             [toggleSwitch addTarget:self action:@selector(sendUsageData:)
                    forControlEvents:UIControlEventValueChanged];
-            [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUsageData]];
+            [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUsageTime]];
         }
 
         cell.accessoryView = toggleSwitch;
