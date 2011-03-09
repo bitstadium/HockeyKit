@@ -260,7 +260,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSData *savedHockeyData = [[NSUserDefaults standardUserDefaults] objectForKey:kArrayOfLastHockeyCheck];
     NSArray *savedHockeyCheck = nil;
     if (savedHockeyData) {
-        [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
+        savedHockeyCheck = [NSKeyedUnarchiver unarchiveObjectWithData:savedHockeyData];
     }
     if (savedHockeyCheck) {
         self.apps = [NSArray arrayWithArray:savedHockeyCheck];
@@ -273,6 +273,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)saveAppCache_ {
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.apps];
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:kArrayOfLastHockeyCheck];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (UIWindow *)visibleWindow:(UIViewController *)parentViewController {
