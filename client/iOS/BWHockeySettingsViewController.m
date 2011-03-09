@@ -214,14 +214,14 @@
             cell.textLabel.text = BWLocalize(@"HockeySettingsUserData");
             [toggleSwitch addTarget:self action:@selector(sendUserData:)
                    forControlEvents:UIControlEventValueChanged];
-            [toggleSwitch setOn:YES];
+            [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUserData]];
             
         } else if ([self.hockeyManager shouldSendUsageTime] && [self.hockeyManager isAllowUserToDisableSendData]) {
             // send usage time
             cell.textLabel.text = BWLocalize(@"HockeySettingsUsageData");
             [toggleSwitch addTarget:self action:@selector(sendUsageData:)
                    forControlEvents:UIControlEventValueChanged];
-            [toggleSwitch setOn:YES];
+            [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUsageData]];
         }
 
         cell.accessoryView = toggleSwitch;
