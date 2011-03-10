@@ -182,6 +182,8 @@ It is possible to import the UDID strings and names from the Apple developer por
 
 The first option to integrate the client is by downloading the sources and integrate them into your repository. You might already have some required 3rd party frameworks integrated into your project, like the JSONKit parser. Simply leave those out and replace them with the most recent version.
 
+If you already have a supported JSON library present in your project, there is no need to add it again. Currently the client supports JSONKit and SBJson.
+
 ### Integrate via Git submodules
 
 ### Set up the client code

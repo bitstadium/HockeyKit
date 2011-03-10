@@ -14,7 +14,7 @@ E.g. use where appropriate (if your configuration is named AppStore_Distribution
 
 Include Client Code:
 - It is assumed that the server is already installed, refer to the server README for more details
-- Import the files into your project
+- Import the files into your project, if you already have a JSONKit or SBJson added to your project, you don't need to add them again.
 - Include the header as shown above
 - Include the library in application:didFinishLaunchingWithOptions: via
 #if !defined (CONFIGURATION_AppStore_Distribution)

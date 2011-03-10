@@ -505,16 +505,25 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (id)parseJSONResultString:(NSString *)jsonString {
     NSError *error = nil;
     id feedResult = nil;
-    
-    // equivalent to feedArray = [responseString objectFromJSONStringWithParseOptions:0 error:&error];
+        
+    SEL sbJSONSelector = NSSelectorFromString(@"JSONValue");
     SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
+
     if (jsonKitSelector && [jsonString respondsToSelector:jsonKitSelector]) {
+        // first try JSONkit
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:jsonKitSelector]];
         invocation.target = jsonString;
         invocation.selector = jsonKitSelector;
         int parseOptions = 0;
         [invocation setArgument:&parseOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
         [invocation setArgument:&error atIndex:3];
+        [invocation invoke];
+        [invocation getReturnValue:&feedResult];
+    } else if (sbJSONSelector && [jsonString respondsToSelector:sbJSONSelector]) {
+        // now try SBJson
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:sbJSONSelector]];
+        invocation.target = jsonString;
+        invocation.selector = sbJSONSelector;
         [invocation invoke];
         [invocation getReturnValue:&feedResult];
     } else {
