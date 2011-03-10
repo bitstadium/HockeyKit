@@ -403,7 +403,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
 
     // use topmost modal view
-    if (parentViewController.modalViewController) {
+    while (parentViewController.modalViewController) {
         parentViewController = parentViewController.modalViewController;
     }
     
