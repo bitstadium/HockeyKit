@@ -1,4 +1,4 @@
-# About Hockey Framework
+# About HockeyKit
 
 ## The Idea
 
@@ -60,6 +60,26 @@ Easily distribute applications, including updates with maximum ease of use for e
 
 * iOS
 * Android
+
+## Development
+
+### Branching concept
+The branching structure follows the git flow concept, defined by Vincent Driessen: http://nvie.com/posts/a-successful-git-branching-model/
+
+#### Master branch
+The main branch where the source code of HEAD always reflects a production-ready state.
+
+#### Develop branch
+Consider this to be the main branch where the source code of HEAD always reflects a state with the latest delivered development changes for the next release. Some would call this the “integration branch”.
+
+#### Feature branches
+These are used to develop new features for the upcoming or a distant future release. The essence of a feature branch is that it exists as long as the feature is in development, but will eventually be merged back into develop (to definitely add the new feature to the upcoming release) or discarded (in case of a disappointing experiment).
+
+#### Release branches
+These branches support preparation of a new production release. By using this, the develop branch is cleared to receive features for the next big release.
+
+#### Hotfix branches
+Hotfix branches are very much like release branches in that they are also meant to prepare for a new production release, albeit unplanned.
 
 # Tutorials
 
