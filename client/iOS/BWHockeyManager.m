@@ -401,6 +401,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
         parentViewController = [visibleWindow rootViewController];
     }
+
+    // use topmost modal view
+    if (parentViewController.modalViewController) {
+        parentViewController = parentViewController.modalViewController;
+    }
     
     // special addition to get rootViewController from three20 which has it's own controller handling
     if (NSClassFromString(@"TTNavigator")) {
