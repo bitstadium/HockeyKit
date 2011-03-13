@@ -337,13 +337,13 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         } else {
             self.userAllowsSendUserData = YES;
         }
-
+        
         if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAllowUsageSetting]) {
             self.userAllowsSendUsageTime = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAllowUsageSetting];
         } else {
             self.userAllowsSendUsageTime = YES;
         }
-
+        
         [self loadAppCache_];
         
         [self startUsage];
@@ -391,17 +391,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     UIViewController *parentViewController = nil;
-
+    
     if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
         parentViewController = [[self delegate] viewControllerForHockeyController:self];
     }
     
     UIWindow *visibleWindow = [self visibleWindow:parentViewController];
-
+    
     if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
         parentViewController = [visibleWindow rootViewController];
     }
-
+    
     // use topmost modal view
     while (parentViewController.modalViewController) {
         parentViewController = parentViewController.modalViewController;
@@ -413,7 +413,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     if (navController_ != nil) [navController_ release];
-
+    
     BWHockeyViewController *hockeyViewController = [self hockeyViewController:YES];    
     navController_ = [[UINavigationController alloc] initWithRootViewController:hockeyViewController];
     
@@ -510,10 +510,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (id)parseJSONResultString:(NSString *)jsonString {
     NSError *error = nil;
     id feedResult = nil;
-        
+    
     SEL sbJSONSelector = NSSelectorFromString(@"JSONValue");
     SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
-
+    
     if (jsonKitSelector && [jsonString respondsToSelector:jsonKitSelector]) {
         // first try JSONkit
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:jsonKitSelector]];
@@ -597,9 +597,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if ([responseData length]) {
         NSString *responseString = [[[NSString alloc] initWithBytes:[responseData bytes] length:[responseData length] encoding: NSUTF8StringEncoding] autorelease];
         NSLog(@"%@", responseString);
-
+        
         NSDictionary *feedDict = (NSDictionary *)[self parseJSONResultString:responseString];
-
+        
         // server returned empty response?
         if (![feedDict count]) {
             [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
@@ -607,10 +607,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             return;
 		} else {
             NSString *token = [[feedDict objectForKey:@"authcode"] lowercaseString];
+            failed = NO;
             if ([token compare:[self authenticationToken]] == NSOrderedSame) {
                 // identical token, activate this version
-                failed = NO;
-
+                
                 // store the new data
                 [[NSUserDefaults standardUserDefaults] setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:kHockeyAuthorizedVersion];
                 [[NSUserDefaults standardUserDefaults] setObject:token forKey:kHockeyAuthorizedToken];
@@ -625,12 +625,19 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                 }
             } else {
                 // different token, block this version
-                NSLog(@"FAILURE");
+                NSLog(@"AUTH FAILURE");
+                
+                // store the new data
+                [[NSUserDefaults standardUserDefaults] setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:kHockeyAuthorizedVersion];
+                [[NSUserDefaults standardUserDefaults] setObject:token forKey:kHockeyAuthorizedToken];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationDenied") image:@"authorize_denied.png"];
             }
         }
-                
-    }
         
+    }
+    
     if (failed) {
         [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationOffline") image:@"authorize_request.png"];
         
@@ -671,11 +678,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
          [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
          ];
     }
-
+    
     // build request & send
     NSString *url = [NSString stringWithFormat:@"%@%@", self.updateURL, parameter];
     BWLog(@"sending api request to %@", url);
-
+    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
@@ -729,7 +736,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (self.requireAuthorization && !authenticationSecret_) {
         [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientAuthorizationMissingSecret userInfo:
                             [NSDictionary dictionaryWithObjectsAndKeys:@"Authentication secret is not set but required.", NSLocalizedDescriptionKey, nil]]];
-
+        
         return NO;
     }
     
@@ -748,7 +755,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         self.requireAuthorization = NO;
         return YES;
     }
-        
+    
     return NO;
 }
 
@@ -758,7 +765,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (![self appVersionIsAuthorized]) {
         if ([self authorizationState] == HockeyAuthorizationPending) {
             [self showAuthorizationScreen:BWLocalize(@"HockeyAuthorizationProgress") image:@"authorize_request.png"];
-        
+            
             [self performSelector:@selector(checkForAuthorization) withObject:nil afterDelay:0.0f];
         }
     } else {
@@ -841,7 +848,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 		} else {
             lastCheckFailed_ = NO;
         }
-
+        
         
         NSString *currentAppCacheVersion = [[[self app].version copy] autorelease];
         
