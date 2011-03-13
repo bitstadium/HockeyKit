@@ -34,16 +34,16 @@
 "HockeySettingsTitle" = "Einstellungen";
 
 /* Text asking the user to send user data (on/off switch) */
-"HockeySettingsUserData" = "Benutzerdaten senden";
+"HockeySettingsUserData" = "Daten senden";
 
 /* Description text for turning on/off sending user data */
-"HockeySettingsUserDataDescription" = "Benutzerdaten senden liefert dem Entwickler die folgenden Daten: Programmversion, Sprache, Gerätetyp und iOS Version.";
+"HockeySettingsUserDataDescription" = "Daten senden liefert dem Entwickler die folgenden Daten: Programmversion, Sprache, Gerätetyp und iOS Version.";
 
 /* Text asking the user to send usage data (on/off switch) */
-"HockeySettingsUsageData" = "Benutzungszeit senden";
+"HockeySettingsUsageData" = "Testzeit senden";
 
 /* Description text for turning on/off sending usage data */
-"HockeySettingsUsageDataDescription" = "enutzungszeit senden informiert den Entwickler über die Summe der Testzeit, in einer Genauigkeit von 15 Minuten.";
+"HockeySettingsUsageDataDescription" = "Testzeit senden informiert den Entwickler über die Summe der Testzeit, in einer Genauigkeit von 15 Minuten.";
 
 /* Title for defining when update checks may be made */
 "HockeySectionCheckTitle" = "Nach Aktualisierung Prüfen";
