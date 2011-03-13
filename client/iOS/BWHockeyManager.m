@@ -577,7 +577,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     [parameter appendFormat:@"?format=json&authorize=yes&app_version=%@&udid=%@",
      [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-     @"710fb31679b4eb484b854684ab1562ced857062c" // [[UIDevice currentDevice] uniqueIdentifier]
+     [[UIDevice currentDevice] uniqueIdentifier]
      ];
     
     // build request & send
