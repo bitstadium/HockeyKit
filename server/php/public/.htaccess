@@ -1,5 +1,5 @@
 # REWRITE RULES
-<IfModule rewrite_module>
+<IfModule mod_rewrite.c>
     RewriteEngine On
 
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -7,7 +7,7 @@
 </IfModule>
 
 # MIME TYPES
-<IfModule mime_module>
+<IfModule mod_mime.c>
     AddType application/octet-stream .ipa
     AddType application/vnd.android.package-archive .apk
     AddType text/xml .plist
