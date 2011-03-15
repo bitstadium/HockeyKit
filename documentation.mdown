@@ -204,15 +204,31 @@ It is possible to import the UDID strings and names from the Apple developer por
 
 The first option to integrate the client is by downloading the sources and integrate them into your repository. You might already have some required 3rd party frameworks integrated into your project, like the JSONKit parser. Simply leave those out and replace them with the most recent version.
 
-If you already have a supported JSON library present in your project, there is no need to add it again. The currently supported JSON frameworks are  JSONKit and SBJson.
+Add all the files from the */client/iOS/* folder, except the *Beta Automatisation* and *HockeyLib* folder into your project. If you already have a supported JSON library present in your project, then there is no need to copy the one from HockeyKit. The currently supported JSON frameworks are  JSONKit and SBJson.
+
+### Integrate via static library
+
+t.b.d.
 
 ### Integrate via Git submodules
 
+t.b.d.
+
 ### Set up the version 2 client code
 
-* Add the following setting to your Xcode project settings *Proprocessor Macros*
+* Add the following setting to your Xcode project settings *Preprocessor Macros*
 
 		CONFIGURATION_$(CONFIGURATION)
+
+* Include the following frameworks into your project, if they are not yet present:
+
+		SystemConfiguration.framework
+		QuartzCode.framework
+		CoreGraphics.framework
+		UIKit.framework
+		Foundation.framework
+		
+  To add frameworks into Xcode 4, select the project, the target, the *Build Phase* tab and open the *Link Binaries With Libraries* expander. Click on the *+* button to add frameworks.
 		
 * Include the header into your UIApplicationDelegate subclass, this assumes your AppStore distribution configuration is named *AppStore_Distribution*
 
@@ -236,7 +252,7 @@ If you already have a supported JSON library present in your project, there is n
       		[window setRootViewController:YourRootViewControllerClass];
 		}
 
-* If you want the update view to be accessable without a new update being actually, add the BWHockeyViewController to your In-App Settings page
+* If you want the update view to be accessible without a new update being actually, add the BWHockeyViewController to your In-App Settings page
 
 		#if !defined (CONFIGURATION_AppStore_Distribution)
   			BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyManager] hockeyViewController:NO];
@@ -250,7 +266,11 @@ If you already have a supported JSON library present in your project, there is n
 
 ### Xcode 3
 
+t.b.d.
+
 ### Xcode 4
+
+t.b.d.
 
 
 # Hockey client appendix

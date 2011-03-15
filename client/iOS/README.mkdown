@@ -1,36 +1,60 @@
-**Requirements:**
+# Requirements
 
 * Server software available and installed
 * The iOS application needs to be build with base SDK set to 4.0 or higher
 
 **Important:**
 
-* This code may NEVER be used in an app version distributed to Apple!
-* Make sure to #IFDEF the code when building for AppStore distribution.
+This code may NEVER be used in an app version distributed to Apple!
 
-E.g. use where appropriate (if your configuration is named AppStore_Distribution):
+# Integrate the source code
+
+Download the sources and drag’n’drop all files from `/client/iOS/` (except `Beta Automatisation` and `HockeyLib` folders) into your project. If you already use one of the required 3rd party frameworks (JSONKit or SBJson) in your project, exclude these from the Hockey client
+
+# Setup the client
+
+* Add the following setting to your Xcode project settings *Preprocessor Macros*
+
+		CONFIGURATION_$(CONFIGURATION)
+
+* Include the following frameworks into your project, if they are not yet present:
+
+		SystemConfiguration.framework
+		QuartzCode.framework
+		CoreGraphics.framework
+		UIKit.framework
+		Foundation.framework
+		
+  To add frameworks into Xcode 4, select the project, the target, the *Build Phase* tab and open the *Link Binaries With Libraries* expander. Click on the *+* button to add frameworks.
+		
+* Include the header into your UIApplicationDelegate subclass, this assumes your AppStore distribution configuration is named *AppStore_Distribution*
 
 		#if !defined (CONFIGURATION_AppStore_Distribution)
-			#import "BWHockeyManager.h"
+		#import "BWHockeyManager.h"
 		#endif
 
+* Initialize Hockey with the code below and replace the URL to point to your server hockey public URL path (without index.php !).
 
-**Include Client Code:**
+  Optionally adjust additional Hockey parameters. The first update check will be invoked automatically in the next runloop.
 
-* It is assumed that the server is already installed, refer to the server README for more details
-* Import the files into your project, if you already have a JSONKit or SBJson added to your project, you don't need to add them again.
-* Include the header as shown above
-* Include the library in application:didFinishLaunchingWithOptions: via
+		// This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
+		// to the Preprocessor Macros in the project settings to all configurations
+		#if !defined (CONFIGURATION_AppStore_Distribution)
+  			[BWHockeyManager sharedHockeyManager].updateURL = @"http://your.server.com/";
+		#endif
+
+* Optionally set the *UIWindow* *rootViewController* property (iOS 4 only, make sure it is not set on iOS 3.x if you require compatibility) which should be used to push the modal Hockey Update view onto. If it is not set Hockey will try to find the best way by itself.
+
+		if ([window respondsToSelector:@selector(setRootViewController:)]) {
+      		[window setRootViewController:YourRootViewControllerClass];
+		}
+
+* If you want the update view to be accessible without a new update being actually, add the BWHockeyViewController to your In-App Settings page
 
 		#if !defined (CONFIGURATION_AppStore_Distribution)
-		    [BWHockeyManager sharedHockeyManager].updateURL = @"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated";
+  			BWHockeyViewController *hockeyViewController = [[BWHockeyManager sharedHockeyManager] hockeyViewController:NO];
+  			// ...
+  			// Pass the selected object to the new view controller.
+			[self.navigationController pushViewController:hockeyViewController animated:YES];
 		#endif
 
-* Replace the URL
-* Add the BWHockeyViewController to your In-App Settings page
-* Optionally include the strings localization, example file present in the demo project
-* Version numbers are compared via CFBundleVersion value of the apps main bundle
-
-**Notes:**
-
-* Check the server README for how to create a new build and distribute it via the update mechanism
