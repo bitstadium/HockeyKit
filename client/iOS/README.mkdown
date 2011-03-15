@@ -1,0 +1,36 @@
+**Requirements:**
+
+* Server software available and installed
+* The iOS application needs to be build with base SDK set to 4.0 or higher
+
+**Important:**
+
+* This code may NEVER be used in an app version distributed to Apple!
+* Make sure to #IFDEF the code when building for AppStore distribution.
+
+E.g. use where appropriate (if your configuration is named AppStore_Distribution):
+
+		#if !defined (CONFIGURATION_AppStore_Distribution)
+			#import "BWHockeyManager.h"
+		#endif
+
+
+**Include Client Code:**
+
+* It is assumed that the server is already installed, refer to the server README for more details
+* Import the files into your project, if you already have a JSONKit or SBJson added to your project, you don't need to add them again.
+* Include the header as shown above
+* Include the library in application:didFinishLaunchingWithOptions: via
+
+		#if !defined (CONFIGURATION_AppStore_Distribution)
+		    [BWHockeyManager sharedHockeyManager].updateURL = @"YourUrlPointToThePathWhereTheIndexPHPFileIsLocated";
+		#endif
+
+* Replace the URL
+* Add the BWHockeyViewController to your In-App Settings page
+* Optionally include the strings localization, example file present in the demo project
+* Version numbers are compared via CFBundleVersion value of the apps main bundle
+
+**Notes:**
+
+* Check the server README for how to create a new build and distribute it via the update mechanism

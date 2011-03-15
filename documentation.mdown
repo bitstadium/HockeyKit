@@ -1,3 +1,5 @@
+This document is the base of the wiki documentation currently available at: https://github.com/TheRealKerni/HockeyKit/wiki
+
 # About HockeyKit
 
 ## The Idea
@@ -162,7 +164,7 @@ Once a new *version directory* has been added, simply upload the files mentioned
     The application images can be provided as a *.png* file, copied into the *application directory*
 3.  Hiding application from main web page
 
-    Place a file named *private* into the *application directory*. This will hide the application from the main page and make it only accessible via the application specific web page. E.g. *http://www.yourdomain.com/beta/bundleidentifier/*
+    Place a file named *private* into the *application directory*. This will hide the application from the main page and make it only accessible via the application specific web page. To get that specific page add */apps/bundleidentifier* to your hockey installation path, where *bundleidentifier* is the bundle identifier of the requested application, e.g. *http://www.yourdomain.com/beta/apps/com.mycompany.myapp*. Watch for case-sensitivity of the bundle identifier!
 4.  Restricting access to specific teams (iOS only)
 
     Place a *.team* file inside the *version directory*. Add a comma separated list of team strings which will get access to this specific app version. If non of the team strings is actually associated to any device, this app version will not be available for anybody. Definition of the possible team strings, will be described below in TODO
@@ -202,11 +204,11 @@ It is possible to import the UDID strings and names from the Apple developer por
 
 The first option to integrate the client is by downloading the sources and integrate them into your repository. You might already have some required 3rd party frameworks integrated into your project, like the JSONKit parser. Simply leave those out and replace them with the most recent version.
 
-If you already have a supported JSON library present in your project, there is no need to add it again. Currently the client supports JSONKit and SBJson.
+If you already have a supported JSON library present in your project, there is no need to add it again. The currently supported JSON frameworks are  JSONKit and SBJson.
 
 ### Integrate via Git submodules
 
-### Set up the client code
+### Set up the version 2 client code
 
 * Add the following setting to your Xcode project settings *Proprocessor Macros*
 
@@ -230,6 +232,10 @@ If you already have a supported JSON library present in your project, there is n
 
 * Optionally set the *UIWindow* *rootViewController* property (iOS 4 only, make sure it is not set on iOS 3.x if you require compatibility) which should be used to push the modal Hockey Update view onto. If it is not set Hockey will try to find the best way by itself.
 
+		if ([window respondsToSelector:@selector(setRootViewController:)]) {
+      		[window setRootViewController:YourRootViewControllerClass];
+		}
+
 * If you want the update view to be accessable without a new update being actually, add the BWHockeyViewController to your In-App Settings page
 
 		#if !defined (CONFIGURATION_AppStore_Distribution)
@@ -239,9 +245,6 @@ If you already have a supported JSON library present in your project, there is n
 			[self.navigationController pushViewController:hockeyViewController animated:YES];
 		#endif
 
-* Optionally include the strings localization, example file present in the demo project
-
-  **Note:** Don't include localization strings for languages your apps localization does not support!
 
 ## Build and Distribution Automatization
 
