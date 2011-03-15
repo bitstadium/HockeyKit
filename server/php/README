@@ -34,7 +34,7 @@ How to add a new application version:
 - Save it, two files will be saved, one .plist and one .ipa
 - Upload the plist file into the subdirectory on the server, it is important to have the extension ".plist" (mandatory)
 - Upload the application file into the subdirectory on the server, it is important to have the extension ".ipa" (mandatory)
-- If you want to web interface to show the app icon, upload the icon into the subdirectory on the server, it is important to have an extension ".ipa" (optional)
+- If you want to web interface to show the app icon, upload the icon (.png format and extension required) into the subdirectory on the server, it is important to have an extension ".ipa" (optional)
 - If you don't want this application to appear in the web interface, add a file named "private" (optional)
 - If you want to add release information to the web interface and the client, add a file with the extension ".html" which contains the release information as HTML (without header and body)
 - Note: Only the extensions of each file type are important, and only the first one found by PHP will be used!
