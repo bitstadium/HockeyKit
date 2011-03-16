@@ -19,8 +19,8 @@ class Helper
         while (!feof($handle)) {
             $buffer = fread($handle, self::CHUNK_SIZE);
             echo $buffer;
-            ob_flush();
-            flush();
+            @ob_flush();
+            @flush();
             if ($retbytes) {
                 $cnt += strlen($buffer);
             }
