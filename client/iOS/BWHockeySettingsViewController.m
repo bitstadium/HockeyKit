@@ -15,6 +15,10 @@
 
 @synthesize hockeyManager = hockeyManager_;
 
+- (void)dismissSettings {
+  [self.navigationController dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -59,12 +63,6 @@
 - (id)init {
 	return [self init:[BWHockeyManager sharedHockeyManager]];
 }
-
-
-- (void)dismissSettings {
-    [self.navigationController dismissModalViewControllerAnimated:YES];
-}
-
 
 #pragma mark -
 #pragma mark Table view data source
