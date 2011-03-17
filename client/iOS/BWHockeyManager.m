@@ -1,5 +1,5 @@
 //
-//  BWHockeyController.m
+//  BWHockeyManager.m
 //
 //  Created by Andreas Linde on 8/17/10.
 //  Copyright 2010 Andreas Linde. All rights reserved.
@@ -171,7 +171,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         BWLog(@"setting up reachability for %@", hostName);
         reachability_ = [[reachabilityClass performSelector:NSSelectorFromString(@"reachabilityWithHostName:") withObject:hostName] retain];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:selector name:@"kNetworkReachabilityChangedNotification" object:reachability_];
-        [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
+        if ([reachability_ respondsToSelector:NSSelectorFromString(@"startNotifier")]) {
+            [reachability_ performSelector:NSSelectorFromString(@"startNotifier")];
+        }
     }
 }
 

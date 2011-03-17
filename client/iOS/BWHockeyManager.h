@@ -1,5 +1,5 @@
 //
-//  BWHockeyController.h
+//  BWHockeyManager.h
 //
 //  Created by Andreas Linde on 8/17/10.
 //  Copyright 2010 Andreas Linde. All rights reserved.
