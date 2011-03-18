@@ -86,6 +86,9 @@ class Helper
             case "iPad1,1":
                 $platform = "iPad";
                 break;
+            case "iPad2,1":
+                $platform = "iPad 2";
+                break;
             case "iPod1,1":
                 $platform = "iPod Touch";
                 break;
