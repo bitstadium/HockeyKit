@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,17 +19,29 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class UpdateActivity extends ListActivity {
+  public static int iconDrawableId = -1;
+
   private DownloadFileTask downloadTask;
+  private UpdateInfoAdapter adapter;
   
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     setTitle("Application Update");
     setContentView(R.layout.update_view);
-    setListAdapter(new UpdateInfoAdapter(this, getIntent().getStringExtra("json")));
+    moveViewBelowOrBesideHeader(this, android.R.id.list, R.id.header_view, 23);
+
+    adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"));
+    getListView().setDivider(null);
+    setListAdapter(adapter);
+    configureView();
     
     downloadTask = (DownloadFileTask)getLastNonConfigurationInstance();
     if (downloadTask != null) {
@@ -36,6 +49,31 @@ public class UpdateActivity extends ListActivity {
     }
   }
   
+  private void configureView() {
+    if (iconDrawableId != -1) {
+      ImageView iconView = (ImageView)findViewById(R.id.icon_view);
+      iconView.setImageDrawable(getResources().getDrawable(iconDrawableId));
+    }
+    
+    TextView versionLabel = (TextView)findViewById(R.id.version_label);
+    versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+  }
+
+  private static void moveViewBelowOrBesideHeader(Activity activity, int viewID, int headerID, float offset) {
+    ViewGroup headerView = (ViewGroup)activity.findViewById(headerID); 
+    View view = (View)activity.findViewById(viewID);
+    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, activity.getWindowManager().getDefaultDisplay().getHeight() - headerView.getHeight() + (int)(offset * activity.getResources().getDisplayMetrics().density));
+    if (((String)view.getTag()).equalsIgnoreCase("right")) {
+      layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.header_view);
+      layoutParams.setMargins(-(int)(offset * activity.getResources().getDisplayMetrics().density), 0, 0, 0);
+    }
+    else {
+      layoutParams.addRule(RelativeLayout.BELOW, R.id.header_view);
+      layoutParams.setMargins(0, -(int)(offset * activity.getResources().getDisplayMetrics().density), 0, 0);
+    }
+    view.setLayoutParams(layoutParams);
+  }
+
   @Override
   public Object onRetainNonConfigurationInstance() {
     if (downloadTask != null) {
@@ -44,13 +82,8 @@ public class UpdateActivity extends ListActivity {
     return downloadTask;
   }
   
-  @Override
-  public void onListItemClick(ListView l, View v, int position, long id) {
-    switch (position) {
-    case 4:
-      startDownloadTask();
-      break;
-    }
+  public void onClickUpdate(View v) {
+    startDownloadTask();
   }
   
   private void startDownloadTask() {

@@ -40,7 +40,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
     try {
       int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA).versionCode;
       
-      URL url = new URL(getURLString());
+      URL url = new URL(getURLString("json"));
       URLConnection connection = url.openConnection();
       connection.addRequestProperty("User-Agent", "Hockey/Android");
       connection.connect();
@@ -58,6 +58,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
       }
     }
     catch (Exception e) {
+      e.printStackTrace();
     }
     
     return null;
@@ -70,8 +71,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
     }
   }
   
-  private String getURLString() {
-    return urlString + "?bundleidentifier=" + context.getPackageName();      
+  private String getURLString(String format) {
+    return urlString + "api/2/apps/" + context.getPackageName() + "?format=" + format;      
   }
   
   private void showDialog(final JSONObject updateInfo) {
@@ -92,7 +93,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
       public void onClick(DialogInterface dialog, int which) {
         Intent intent = new Intent(context, UpdateActivity.class);
         intent.putExtra("json", updateInfo.toString());
-        intent.putExtra("url", getURLString());
+        intent.putExtra("url", getURLString("apk"));
         context.startActivity(intent);
       } 
     });

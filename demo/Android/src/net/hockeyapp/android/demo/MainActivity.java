@@ -1,6 +1,7 @@
 package net.hockeyapp.android.demo;
 
 import net.hockeyapp.android.CheckUpdateTask;
+import net.hockeyapp.android.UpdateActivity;
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
     
+    UpdateActivity.iconDrawableId = R.drawable.icon;
     checkForUpdates();
   }
 

@@ -1,9 +1,11 @@
 package net.hockeyapp.android;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,9 +14,11 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TwoLineListItem;
 
 public class UpdateInfoAdapter extends BaseAdapter {
   Activity activity;
@@ -33,48 +37,53 @@ public class UpdateInfoAdapter extends BaseAdapter {
   }
   
   public int getCount() {
-    return 5;
+    return 3;
   }
 
   public Object getItem(int position) {
-    String[] item = new String[2];
+    String item = null;
     switch (position) {
     case 0:
-      item[0] = "Title";
-      item[1] = failSafeGetStringFromJSON(info, "title", "");
+      item = "Release Notes:";
       break;
     case 1:
-      try {
-        PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-        item[0] = "Package";
-        item[1] = packageInfo.packageName;
-      }
-      catch (NameNotFoundException e) {
-      }
+      item = failSafeGetStringFromJSON(info, "notes", "");
       break;
     case 2:
       try {
         PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-        item[0] = "Installed Version";
-        item[1] = packageInfo.versionName + " (" + packageInfo.versionCode + ")";
+        item = "Installed Version: " + packageInfo.versionName + " (" + packageInfo.versionCode + ")";
       }
       catch (NameNotFoundException e) {
       }
-      break;
-    case 3:
-      item[0] = "Available Version";
-      item[1] = failSafeGetStringFromJSON(info, "shortversion", "") + " (" + failSafeGetStringFromJSON(info, "version", "") + ")";
-      break;
-    case 4:
-      item[0] = "Install Update";
-      break;
     }
     return item;
+  }
+  
+  public String getVersionString() {
+    return failSafeGetStringFromJSON(info, "shortversion", "") + " (" + failSafeGetStringFromJSON(info, "version", "") + ")";
+  }
+  
+  public String getFileInfoString() {
+    int appSize = failSafeGetIntFromJSON(info, "appsize", 0);
+    long timestamp = failSafeGetIntFromJSON(info, "timestamp", 0);
+    Date date = new Date(timestamp * 1000);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
   }
   
   private static String failSafeGetStringFromJSON(JSONObject json, String name, String defaultValue) {
     try {
       return json.getString(name);
+    }
+    catch (JSONException e) {
+      return defaultValue;
+    }
+  }
+  
+  private static int failSafeGetIntFromJSON(JSONObject json, String name, int defaultValue) {
+    try {
+      return json.getInt(name);
     }
     catch (JSONException e) {
       return defaultValue;
@@ -87,45 +96,57 @@ public class UpdateInfoAdapter extends BaseAdapter {
 
   public View getView(int position, View convertView, ViewGroup parent) {
     switch (position) {
-    case 4:
-      return getOneLineView(position, convertView, parent);
+    case 0:
+    case 2:
+      return getSimleView(position, convertView, parent);
+    case 1:
+      return getWebView(position, convertView, parent);
     default:
-      return getTwoLineView(position, convertView, parent);
+      return null;
     }
   }
 
-  private View getOneLineView(int position, View convertView, ViewGroup parent) {
+  private View getSimleView(int position, View convertView, ViewGroup parent) {
     View row = convertView;
     if (!(row instanceof TextView)) {
       LayoutInflater inflater = activity.getLayoutInflater();
-      row = inflater.inflate(R.layout.simple_list_item_1, parent, false);
+      row = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
     }
       
-    String[] item = (String[])getItem(position);
+    String item = (String)getItem(position);
     
-    TextView textView = (TextView)row.findViewById(R.id.text1);
-    textView.setText(item[0]);
+    
+    TextView textView = (TextView)row.findViewById(android.R.id.text1);
+    float scale = activity.getResources().getDisplayMetrics().density;
+    boolean leftPadding = (parent.getTag().equals("right"));
+    textView.setPadding((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(20 * scale) * (leftPadding ? 1 : 2), (int)(20 * scale), 0);
+    textView.setText(item);
     textView.setTextColor(Color.BLACK);
     
     return row;
   }
-  
-  private View getTwoLineView(int position, View convertView, ViewGroup parent) {
+
+  private View getWebView(int position, View convertView, ViewGroup parent) {
     View row = convertView;
-    if (!(row instanceof TwoLineListItem)) {
-      LayoutInflater inflater = activity.getLayoutInflater();
-      row = inflater.inflate(R.layout.simple_list_item_2, parent, false);
+    if (row == null) {
+      RelativeLayout layout = new RelativeLayout(activity);
+      layout.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.FILL_PARENT, ListView.LayoutParams.WRAP_CONTENT));
+      row = layout;
+      
+      WebView webView = new WebView(activity);
+      webView.setId(1337);
+      RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT); 
+      float scale = activity.getResources().getDisplayMetrics().density;
+      boolean leftPadding = (parent.getTag().equals("right"));
+      params.setMargins((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(0 * scale), (int)(20 * scale), 0);
+      webView.setLayoutParams(params);
+      layout.addView(webView);
     }
       
-    String[] item = (String[])getItem(position);
+    String item = (String)getItem(position);
     
-    TextView text1View = (TextView)row.findViewById(R.id.text1);
-    text1View.setText(item[0]);
-    text1View.setTextColor(Color.BLACK);
-    
-    TextView text2View = (TextView)row.findViewById(R.id.text2);
-    text2View.setText(item[1]);
-    text2View.setTextColor(Color.BLUE);
+    WebView webView = (WebView)row.findViewById(1337);
+    webView.loadData(item, "text/html", "utf-8");
     
     return row;
   }
