@@ -3,6 +3,7 @@ Requirements:
 
 + ADT Plugin 0.9.7 (or higher)
 + Android 2.2 (or higher); it might work with older SDKs, but we haven't tested it
++ HockeyKit 2 (or higher)
 
 Steps to integrate Hockey into your Android app:
 ************************************************
@@ -39,8 +40,13 @@ public class MainActivity extends Activity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    // Your creation code...
+    // Some code to create view
+    // ...
     
+    // Set icon drawable
+    UpdateActivity.iconDrawableId = R.drawable.icon;
+    
+    // Check for updates
     checkUpdateTask();
   }
 
