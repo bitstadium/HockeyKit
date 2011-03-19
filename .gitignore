@@ -13,6 +13,9 @@ xcuserdata
 profile
 *.moved-aside
 
+# Java
+bin
+
 # osx noise
 .DS_Store
 *.ipa
