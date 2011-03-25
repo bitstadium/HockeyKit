@@ -87,7 +87,13 @@ class Helper
                 $platform = "iPad";
                 break;
             case "iPad2,1":
-                $platform = "iPad 2";
+                $platform = "iPad 2 WiFi";
+                break;
+            case "iPad2,2":
+                $platform = "iPad 2 GSM";
+                break;
+            case "iPad2,3":
+                $platform = "iPad 2 CDMA";
                 break;
             case "iPod1,1":
                 $platform = "iPod Touch";
