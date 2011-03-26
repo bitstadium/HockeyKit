@@ -43,7 +43,10 @@ class iOSAppUpdater extends AbstractAppUpdater
             {
                 return Router::get()->serve404();
             }
-            self::deliverIOSAppPlist($bundleidentifier, $file, $image);
+
+            $pos = strpos($current[self::FILE_IOS_IPA], $bundleidentifier);
+            $ipa_file = substr($current[self::FILE_IOS_IPA], $pos);
+            self::deliverIOSAppPlist($bundleidentifier, $file, $image, $ipa_file);
             exit();
         }
         elseif ($format == self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION) // || $type == self::PARAM_1_TYPE_VALUE_PROFILE)
@@ -167,12 +170,12 @@ class iOSAppUpdater extends AbstractAppUpdater
         return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
     }
 
-    static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image)
+    static protected function deliverIOSAppPlist($bundleidentifier, $plist, $image, $ipa_file)
     {
         $r = Router::get();
         $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
         // send XML with url to app binary file
-        $ipa_url = "<![CDATA[" . $r->baseURL . "api/2/apps/$bundleidentifier?format=" . self::PARAM_2_FORMAT_VALUE_IPA . ($udid ? "&udid=$udid" : '') . "]]>";
+        $ipa_url = "<![CDATA[{$r->baseURL}{$ipa_file}]]>";
 
         $plist_content = file_get_contents($plist);
         $plist_content = str_replace('__URL__', $ipa_url, $plist_content);
@@ -241,9 +244,17 @@ XML;
 
         $this->addStats($bundleidentifier, null);
         switch ($format) {
-            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:    Helper::sendFile($profile); break;
-            case self::PARAM_2_FORMAT_VALUE_PLIST:              self::deliverIOSAppPlist($bundleidentifier, $plist, $image); break;
-            case self::PARAM_2_FORMAT_VALUE_IPA:                Helper::sendFile($ipa); break;
+            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:
+              Helper::sendFile($profile);
+              break;
+            case self::PARAM_2_FORMAT_VALUE_PLIST:
+              $pos = strpos($current[self::FILE_IOS_IPA], $bundleidentifier);
+              $ipa_file = substr($current[self::FILE_IOS_IPA], $pos);
+              self::deliverIOSAppPlist($bundleidentifier, $plist, $image, $ipa_file);
+              break;
+            case self::PARAM_2_FORMAT_VALUE_IPA:
+              Helper::sendFile($ipa);
+              break;
 /*
             case self::TYPE_AUTH:
                 if ($api != self::API_V1 && $udid && $appversion) {
@@ -253,7 +264,9 @@ XML;
                 }
                 break;
 */
-            default: $this->deliverJSON($api, $files); break;
+            default:
+              $this->deliverJSON($api, $files);
+              break;
         }
 
         exit();

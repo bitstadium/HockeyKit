@@ -322,10 +322,10 @@
                     <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) : ?>
                             <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Download Profile </a>
                     <?php endif;
-                          if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
-                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=ipa">Download Application</a>
+                    if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
+                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
                     <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
-                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=apk">Download Application</a>
+                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
                     <?php endif ?>
                         </div>
 

@@ -432,10 +432,20 @@ class AppUpdater
         $this->addStats($bundleidentifier, $format);
         
         switch ($format) {
-            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:    Helper::sendFile($profile); break;
-            case self::PARAM_2_FORMAT_VALUE_PLIST:              $this->deliverIOSAppPlist($bundleidentifier, $ipa, $plist, $image); break;
-            case self::PARAM_2_FORMAT_VALUE_IPA:                Helper::sendFile($ipa); break;
-            case self::PARAM_2_FORMAT_VALUE_APK:                Helper::sendFile($apk, self::CONTENT_TYPE_APK); break;
+            case self::PARAM_2_FORMAT_VALUE_MOBILEPROVISION:
+              Helper::sendFile($profile);
+              break;
+            case self::PARAM_2_FORMAT_VALUE_PLIST:
+              $pos = strpos($current[self::FILE_IOS_IPA], $bundleidentifier);
+              $ipa_file = substr($current[self::FILE_IOS_IPA], $pos);
+              $this->deliverIOSAppPlist($bundleidentifier, $plist, $image, $ipa_file);
+              break;
+            case self::PARAM_2_FORMAT_VALUE_IPA:
+              Helper::sendFile($ipa);
+              break;
+            case self::PARAM_2_FORMAT_VALUE_APK:
+              Helper::sendFile($apk, self::CONTENT_TYPE_APK);
+              break;
             default: break;
         }
 
@@ -511,12 +521,14 @@ class AppUpdater
                     $current = $this->findPublicVersion($files);
                 }
                 
-                $newApp = array();
+                $app = $ipa ? $ipa : $apk;
 
-                $newApp[self::INDEX_DIR]            = $file;
-                $newApp[self::INDEX_IMAGE]          = substr($image, strpos($image, $file));
-                $newApp[self::INDEX_NOTES]          = $note ? Helper::nl2br_skip_html(file_get_contents($note)) : '';
-                $newApp[self::INDEX_STATS]          = array();
+                $newApp = array();
+                $newApp['path']            = substr($app, strpos($app, $file));
+                $newApp[self::INDEX_DIR]   = $file;
+                $newApp[self::INDEX_IMAGE] = substr($image, strpos($image, $file));
+                $newApp[self::INDEX_NOTES] = $note ? Helper::nl2br_skip_html(file_get_contents($note)) : '';
+                $newApp[self::INDEX_STATS] = array();
 
                 if ($ipa) {
                     // iOS application
