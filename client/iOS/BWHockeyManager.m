@@ -610,7 +610,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 		} else {
             NSString *token = [[feedDict objectForKey:@"authcode"] lowercaseString];
             failed = NO;
-            if ([token compare:[self authenticationToken]] == NSOrderedSame) {
+            if ([[self authenticationToken] compare:token] == NSOrderedSame) {
                 // identical token, activate this version
                 
                 // store the new data
