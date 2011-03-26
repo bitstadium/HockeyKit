@@ -172,6 +172,7 @@ class AppUpdater
     
     protected function __construct($options) {
         $this->appDirectory = $options['appDirectory'];
+        $this->logic = isset($options['logic']) ? $options['logic'] : null;
     }
     
     public function execute($action, $arguments = array()) {
@@ -479,7 +480,16 @@ class AppUpdater
         // first get all the subdirectories, which do not have a file named "private" present
         if ($handle = opendir($this->appDirectory)) {
             while (($file = readdir($handle)) !== false) {
-                if (in_array($file, array('.', '..')) || !is_dir($this->appDirectory . $file) || (glob($this->appDirectory . $file . '/private') && !$appBundleIdentifier)) {
+                if (
+                  in_array($file, array('.', '..')) ||
+                  !is_dir($this->appDirectory . $file) ||
+                  (
+                    glob($this->appDirectory . $file . '/private') &&
+                    !$appBundleIdentifier &&
+                    $this->logic != 'stats'
+                  )
+                )
+                {
                     // skip if not a directory or has `private` file
                     // but only if no bundle identifier is provided to this function
                     continue;
