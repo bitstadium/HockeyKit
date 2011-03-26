@@ -776,6 +776,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             if (!NSClassFromString(@"Reachability")) {
                 [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
             } else {
+                // we did not check yet, so force reachability to check
+                lastCheckFailed_ = YES;
                 [self setupReachability:@selector(reachabilityChanged:)];
             }
         }
