@@ -55,6 +55,7 @@ typedef enum {
     NSArray *apps_;
     
     NSString *updateURL_;
+    NSString *appIdentifier_;
     id reachability_;
     NSString *currentAppVersion_;
     
@@ -99,6 +100,9 @@ typedef enum {
 
 // update url needs to be set
 @property (nonatomic, retain) NSString *updateURL;
+
+// private app identifier (optional)
+@property (nonatomic, retain) NSString *appIdentifier;
 
 // delegate is optional
 @property (nonatomic, assign) id <BWHockeyManagerDelegate> delegate;

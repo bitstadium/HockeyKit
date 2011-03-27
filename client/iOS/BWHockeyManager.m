@@ -79,6 +79,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 @synthesize delegate = delegate_;
 @synthesize updateURL = updateURL_;
+@synthesize appIdentifier = appIdentifier_;
 @synthesize urlConnection = urlConnection_;
 @synthesize updateURLOffline = updateURLOffline_;
 @synthesize checkInProgress = checkInProgress_;
@@ -134,7 +135,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (NSString *)encodedAppIdentifier_ {
-    return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  return (self.appIdentifier ? [self.appIdentifier stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] : [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]);
 }
 
 - (NSString *)getDevicePlatform_ {
@@ -305,6 +306,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (id)init {
 	if ((self = [super init])) {
         updateURL_ = nil;
+        appIdentifier_ = nil;
         checkInProgress_ = NO;
         dataFound = NO;
         updateAvailable_ = NO;
