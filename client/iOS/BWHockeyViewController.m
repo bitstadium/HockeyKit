@@ -156,6 +156,14 @@
     }
 }
 
+- (void)changePreviousVersionButtonBackground:(id)sender {
+    [(UIButton *)sender setBackgroundColor:BW_RGBCOLOR(183,183,183)];
+}
+
+- (void)changePreviousVersionButtonBackgroundHighlighted:(id)sender {
+    [(UIButton *)sender setBackgroundColor:BW_RGBCOLOR(183,183,183)];
+}
+
 - (void)showHidePreviousVersionsButton {
     BOOL multipleVersionButtonNeeded = [self.hockeyManager.apps count] > 1 && !showAllVersions_;
 
@@ -173,6 +181,8 @@
         footerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
         [footerButton setTitle:BWLocalize(@"HockeyShowPreviousVersions") forState:UIControlStateNormal];
         [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [footerButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+        [footerButton setBackgroundImage:[UIImage bw_imageNamed:@"buttonHighlight.png" bundle:kHockeyBundleName] forState:UIControlStateHighlighted];
         footerButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         [footerButton addTarget:self action:@selector(showPreviousVersionAction) forControlEvents:UIControlEventTouchUpInside];
         footerButton.frame = CGRectMake(0, kMinPreviousVersionButtonHeight-44, self.view.frame.size.width, 44);
