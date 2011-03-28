@@ -406,15 +406,27 @@
     }
     [cells_ removeAllObjects];
 
+    int i = 0;
+    BOOL breakAfterThisApp = NO;
     for (BWApp *app in self.hockeyManager.apps) {
+        i++;
+
+        // only show the newer version of the app by default, if we don't show all versions
+        if (!showAllVersions_) {
+            if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
+                if (i == 1) {
+                    breakAfterThisApp = YES;
+                } else {
+                    break;
+                }
+            }
+        }
+        
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
         [self configureWebCell:cell forApp_:app];
         [cells_ addObject:cell];
 
-        // stop on first app if we don't show all versions
-        if (!showAllVersions_) {
-            break;
-        }
+        if (breakAfterThisApp) break;
     }
 
     [self.tableView reloadData];
