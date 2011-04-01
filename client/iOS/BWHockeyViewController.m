@@ -435,12 +435,20 @@
 
 - (void)showPreviousVersionAction {
     showAllVersions_ = YES;
-
+    BOOL showAllPending = NO;
+    
     [self.tableView beginUpdates];
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[self.hockeyManager.apps count]-1];
     for (BWApp *app in self.hockeyManager.apps) {
-        if ([app isEqual:self.hockeyManager.app]) {
-            continue; // skip first
+        if (!showAllPending) {
+            if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {            
+                showAllPending = YES;
+                if (app == self.hockeyManager.app) {
+                    continue; // skip this version already if it the latest version is the installed one
+                }
+            } else {
+                continue; // skip already shown
+            }
         }
 
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
