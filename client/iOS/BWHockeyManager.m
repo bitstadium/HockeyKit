@@ -677,7 +677,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
          [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[UIDevice currentDevice] systemVersion],
          [self getDevicePlatform_],
-         [[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0],
+         [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0],
          [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
          ];
