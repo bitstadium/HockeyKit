@@ -673,11 +673,12 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     // add additional statistics if user didn't disable flag
     if (self.shouldSendUserData) {
-        [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&usage_time=%@&first_start_at=%@",
+        [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@_%@&usage_time=%@&first_start_at=%@",
          [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[UIDevice currentDevice] systemVersion],
          [self getDevicePlatform_],
          [[NSLocale preferredLanguages] objectAtIndex:0],
+         [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode],
          [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
          [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
          ];
