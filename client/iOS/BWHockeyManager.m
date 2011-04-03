@@ -454,9 +454,23 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                [alertView addButtonWithTitle:BWLocalize(@"HockeyInstallUpdate")];
                            }
                            )
+        [alertView setTag:0];
         [alertView show];
         updateAlertShowing_ = YES;
     }
+}
+
+
+// nag the user with neverending alerts if we cannot find out the window for presenting the covering sheet
+- (void)alertFallback:(NSString *)message {
+    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:nil
+                                                         message:message
+                                                        delegate:self
+                                               cancelButtonTitle:@"Ok"
+                                               otherButtonTitles:nil
+                               ] autorelease];
+    [alertView setTag:1];
+    [alertView show];    
 }
 
 
@@ -466,13 +480,20 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [authorizeView_ removeFromSuperview];
     }
     
-    UIViewController *parentViewController = nil;
+    UIWindow *visibleWindow = nil;
     
-    if ([[self delegate] respondsToSelector:@selector(viewControllerForHockeyController:)]) {
-        parentViewController = [[self delegate] viewControllerForHockeyController:self];
+    NSArray *windows = [[UIApplication sharedApplication] windows];
+    for (UIWindow *window in windows) {
+        if (!window.hidden && !visibleWindow) {
+            visibleWindow = window;
+        }
     }
     
-    UIWindow *visibleWindow = [self visibleWindow:parentViewController];
+    if (visibleWindow == nil) {
+        [self alertFallback:message];
+        return;
+    }
+    
     CGRect frame = [visibleWindow frame];
     
     authorizeView_ = [[[UIView alloc] initWithFrame:frame] autorelease];
@@ -1049,6 +1070,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // invoke the selected action from the actionsheet for a location element
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if ([alertView tag] == 1) {
+        [self alertFallback:[alertView message]];
+        return;
+    }
+    
     updateAlertShowing_ = NO;
     if (buttonIndex == [alertView firstOtherButtonIndex]) {
         // YES button has been clicked
