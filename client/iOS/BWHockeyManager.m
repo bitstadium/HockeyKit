@@ -279,15 +279,16 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (UIWindow *)visibleWindow:(UIViewController *)parentViewController {
+- (UIWindow *)findVisibleWindow {
     UIWindow *visibleWindow = nil;
-	if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
-        // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
-        NSArray *windows = [[UIApplication sharedApplication] windows];
-        for (UIWindow *window in windows) {
-            if (!window.hidden && !visibleWindow) {
-                visibleWindow = window;
-            }
+    
+    // if the rootViewController property (available >= iOS 4.0) of the main window is set, we present the modal view controller on top of the rootViewController
+    NSArray *windows = [[UIApplication sharedApplication] windows];
+    for (UIWindow *window in windows) {
+        if (!window.hidden && !visibleWindow) {
+            visibleWindow = window;
+        }
+        if ([UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
             if ([window rootViewController]) {
                 visibleWindow = window;
                 BWLog(@"UIWindow with rootViewController found: %@", visibleWindow);
@@ -295,7 +296,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             }
         }
 	}
-    
+        
     return visibleWindow;
 }
 
@@ -400,8 +401,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         parentViewController = [[self delegate] viewControllerForHockeyController:self];
     }
     
-    UIWindow *visibleWindow = [self visibleWindow:parentViewController];
-    
+    UIWindow *visibleWindow = [self findVisibleWindow];
+        
     if (parentViewController == nil && [UIWindow instancesRespondToSelector:@selector(rootViewController)]) {
         parentViewController = [visibleWindow rootViewController];
     }
@@ -480,14 +481,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [authorizeView_ removeFromSuperview];
     }
     
-    UIWindow *visibleWindow = nil;
-    
-    NSArray *windows = [[UIApplication sharedApplication] windows];
-    for (UIWindow *window in windows) {
-        if (!window.hidden && !visibleWindow) {
-            visibleWindow = window;
-        }
-    }
+    UIWindow *visibleWindow = [self findVisibleWindow];
     
     if (visibleWindow == nil) {
         [self alertFallback:message];
