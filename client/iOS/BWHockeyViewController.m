@@ -437,8 +437,6 @@
     showAllVersions_ = YES;
     BOOL showAllPending = NO;
     
-    [self.tableView beginUpdates];
-    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:[self.hockeyManager.apps count]-1];
     for (BWApp *app in self.hockeyManager.apps) {
         if (!showAllPending) {
             if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {            
@@ -454,10 +452,8 @@
         PSWebTableViewCell *cell = [[[PSWebTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kWebCellIdentifier] autorelease];
         [self configureWebCell:cell forApp_:app];
         [cells_ addObject:cell];
-        [indexPaths addObject:[NSIndexPath indexPathForRow:[cells_ count]-1 inSection:0]];
     }
-    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-    [self.tableView endUpdates];
+    [self.tableView reloadData];
     [self showHidePreviousVersionsButton];
 }
 
@@ -512,9 +508,7 @@
   // only make changes if we are visible
   if(self.view.window) {
     if ([keyPath isEqualToString:@"webViewSize"]) {
-        NSInteger anIndex = [cells_ indexOfObject:object];
-        IF_3_2_OR_GREATER([self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:anIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];)
-        IF_PRE_3_2([self.tableView reloadData];)
+        [self.tableView reloadData];
         [self realignPreviousVersionButton];
     } else if ([keyPath isEqualToString:@"checkInProgress"]) {
         if (self.hockeyManager.isCheckInProgress) {
