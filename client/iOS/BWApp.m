@@ -131,8 +131,8 @@
 }
 
 - (NSString *)versionString {
-    NSString *shortString = self.shortVersion ? [NSString stringWithFormat:@"%@ ", self.shortVersion] : @"";
-    NSString *versionString = [shortString length] ? [NSString stringWithFormat:@"(%@)", self.version] : self.version;
+    NSString *shortString = [self.shortVersion length] ? [NSString stringWithFormat:@"%@", self.shortVersion] : @"";
+    NSString *versionString = [shortString length] ? [NSString stringWithFormat:@" (%@)",self.version] : self.version;
     return [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortString, versionString];
 }
 

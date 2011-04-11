@@ -67,9 +67,7 @@
 - (void)updateAppStoreHeader_ {
     BWApp *app = self.hockeyManager.app;
     appStoreHeader_.headerLabel = app.name;
-    NSString *shortVersion = app.shortVersion ? [NSString stringWithFormat:@"%@ ", app.shortVersion] : @"";
-    NSString *version = [shortVersion length] ? [NSString stringWithFormat:@"(%@)",app.version] : app.version;
-    appStoreHeader_.middleHeaderLabel = [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortVersion, version];
+    appStoreHeader_.middleHeaderLabel = [app versionString];
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
     NSMutableString *subHeaderString = [NSMutableString string];
