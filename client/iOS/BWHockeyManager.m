@@ -352,11 +352,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [self loadAppCache_];
         
         [self startUsage];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(stopUsage)
+                                                     name:UIApplicationWillTerminateNotification
+                                                   object:nil];
     }
     return self;
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+    
     IF_IOS4_OR_GREATER(
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
