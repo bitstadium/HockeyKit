@@ -115,7 +115,7 @@
     
     // sub
     [secondaryTextColor set];
-    [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UIBaselineAdjustmentNone];
+    [subHeaderLabel drawAtPoint:CGPointMake(kTextRow, kImageMargin+kImageHeight-12) forWidth:globalWidth-kTextRow withFont:smallFont lineBreakMode:UILineBreakModeTailTruncation];
     
     CGColorRelease(myColor);
     CGColorSpaceRelease(myColorSpace);
