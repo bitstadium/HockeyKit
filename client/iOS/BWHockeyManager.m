@@ -987,6 +987,15 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [self performSelector:@selector(startManager) withObject:nil afterDelay:0.0f];
 }
 
+- (void)setAppIdentifier:(NSString *)anAppIdentifier {    
+    if (appIdentifier_ != anAppIdentifier) {
+        [appIdentifier_ release];
+        appIdentifier_ = [anAppIdentifier copy];
+    }
+    
+    [self setUpdateURL:@"https://beta.hockeyapp.net/"];
+}
+
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
     if (checkForUpdateOnLaunch_ != flag) {
         checkForUpdateOnLaunch_ = flag;

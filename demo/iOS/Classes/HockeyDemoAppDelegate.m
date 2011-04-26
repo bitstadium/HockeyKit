@@ -16,8 +16,6 @@
 @synthesize viewController;
 @synthesize navigationController;
 
-#define kHockeyUpdateURL @"http://alpha.buzzworks.de"
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     // 4.x property
@@ -34,7 +32,7 @@
     // Add these two lines if you want to activate the authorization feature
     //    [BWHockeyManager sharedHockeyManager].requireAuthorization = YES;
     //    [BWHockeyManager sharedHockeyManager].authenticationSecret = @"ChangeThisToYourOwnSecretString";
-    [BWHockeyManager sharedHockeyManager].updateURL = kHockeyUpdateURL;
+    [BWHockeyManager sharedHockeyManager].updateURL = @"http://alpha.buzzworks.de";
     [BWHockeyManager sharedHockeyManager].delegate = self;
 #endif
     
