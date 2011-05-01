@@ -47,7 +47,6 @@
         app.name = [dict objectForKey:@"title"];
         app.version = [dict objectForKey:@"version"];
         app.shortVersion = [dict objectForKey:@"shortversion"];
-        app.shortVersion = [[NSNull alloc] init];
         [app setDateWithTimestamp:[[dict objectForKey:@"timestamp"] doubleValue]];
         app.size = [dict objectForKey:@"appsize"];
         app.notes = [dict objectForKey:@"notes"];
