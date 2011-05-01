@@ -47,6 +47,7 @@
         app.name = [dict objectForKey:@"title"];
         app.version = [dict objectForKey:@"version"];
         app.shortVersion = [dict objectForKey:@"shortversion"];
+        app.shortVersion = [[NSNull alloc] init];
         [app setDateWithTimestamp:[[dict objectForKey:@"timestamp"] doubleValue]];
         app.size = [dict objectForKey:@"appsize"];
         app.notes = [dict objectForKey:@"notes"];
@@ -131,8 +132,8 @@
 }
 
 - (NSString *)versionString {
-    NSString *shortString = [self.shortVersion length] ? [NSString stringWithFormat:@"%@", self.shortVersion] : @"";
-    NSString *versionString = [shortString length] ? [NSString stringWithFormat:@" (%@)",self.version] : self.version;
+    NSString *shortString = ([self.shortVersion respondsToSelector:@selector(length)] && [self.shortVersion length]) ? [NSString stringWithFormat:@"%@", self.shortVersion] : @"";
+    NSString *versionString = [shortString length] ? [NSString stringWithFormat:@" (%@)", self.version] : self.version;
     return [NSString stringWithFormat:@"%@ %@%@", BWLocalize(@"HockeyVersion"), shortString, versionString];
 }
 
