@@ -2,7 +2,7 @@
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.hockeyapp.android.demo"
-    android:versionName="1.0" android:versionCode="3">
+    android:versionName="1.0" android:versionCode="7">
       
     <application 
         android:icon="@drawable/icon" 

@@ -19,10 +19,18 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
-  private Context context;
-  private String urlString;
+  private Context context = null;
+  private String urlString = null;
+  private String appIdentifier = null;
   
   public CheckUpdateTask(Context context, String urlString) {
+    this.appIdentifier = null;
+    this.context = context;
+    this.urlString = urlString;
+  }
+  
+  public CheckUpdateTask(Context context, String urlString, String appIdentifier) {
+    this.appIdentifier = appIdentifier;
     this.context = context;
     this.urlString = urlString;
   }
@@ -72,7 +80,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
   }
   
   private String getURLString(String format) {
-    return urlString + "api/2/apps/" + context.getPackageName() + "?format=" + format;      
+    return urlString + "api/2/apps/" + (this.appIdentifier != null ? this.appIdentifier : context.getPackageName()) + "?format=" + format;      
   }
   
   private void showDialog(final JSONObject updateInfo) {

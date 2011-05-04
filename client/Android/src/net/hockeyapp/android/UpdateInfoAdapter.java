@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +99,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
     switch (position) {
     case 0:
     case 2:
-      return getSimleView(position, convertView, parent);
+      return getSimpleView(position, convertView, parent);
     case 1:
       return getWebView(position, convertView, parent);
     default:
@@ -106,7 +107,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
     }
   }
 
-  private View getSimleView(int position, View convertView, ViewGroup parent) {
+  private View getSimpleView(int position, View convertView, ViewGroup parent) {
     View row = convertView;
     if (!(row instanceof TextView)) {
       LayoutInflater inflater = activity.getLayoutInflater();
@@ -122,6 +123,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
     textView.setPadding((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(20 * scale) * (leftPadding ? 1 : 2), (int)(20 * scale), 0);
     textView.setText(item);
     textView.setTextColor(Color.BLACK);
+    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
     
     return row;
   }
