@@ -25,7 +25,7 @@
 - (id)init:(BWHockeyManager *)newHockeyManager {
     if ((self = [super init])) {
         self.hockeyManager = newHockeyManager;
-        self.title = BWLocalize(@"HockeySettingsTitle");
+        self.title = BWHockeyLocalize(@"HockeySettingsTitle");
 
         CGRect frame = self.view.frame;
         frame.origin.y = 0;
@@ -81,7 +81,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == [self numberOfSections] - 1) {
-        return BWLocalize(@"HockeySectionCheckTitle");
+        return BWHockeyLocalize(@"HockeySectionCheckTitle");
     } else {
         return nil;
     }
@@ -106,9 +106,9 @@
         footer.font = [UIFont systemFontOfSize:13];
         
         if (section == 0 && [self.hockeyManager isAllowUserToDisableSendData] && [self.hockeyManager shouldSendUserData]) {
-            footer.text = BWLocalize(@"HockeySettingsUserDataDescription");
+            footer.text = BWHockeyLocalize(@"HockeySettingsUserDataDescription");
         } else if ([self.hockeyManager isAllowUserToDisableSendData] && section < [self numberOfSections]) {
-            footer.text = BWLocalize(@"HockeySettingsUsageDataDescription");
+            footer.text = BWHockeyLocalize(@"HockeySettingsUsageDataDescription");
         }
         
         UIView* view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 285, footer.frame.size.height + 6 + 11)] autorelease];
@@ -187,19 +187,19 @@
         HockeyUpdateSetting hockeyAutoUpdateSetting = [[BWHockeyManager sharedHockeyManager] updateSetting];        
         if (indexPath.row == 0) {
             // on startup
-            cell.textLabel.text = BWLocalize(@"HockeySectionCheckStartup");
+            cell.textLabel.text = BWHockeyLocalize(@"HockeySectionCheckStartup");
             if (hockeyAutoUpdateSetting == HockeyUpdateCheckStartup) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         } else if (indexPath.row == 1) {
             // daily
-            cell.textLabel.text = BWLocalize(@"HockeySectionCheckDaily");
+            cell.textLabel.text = BWHockeyLocalize(@"HockeySectionCheckDaily");
             if (hockeyAutoUpdateSetting == HockeyUpdateCheckDaily) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
         } else {
             // manually
-            cell.textLabel.text = BWLocalize(@"HockeySectionCheckManually");
+            cell.textLabel.text = BWHockeyLocalize(@"HockeySectionCheckManually");
             if (hockeyAutoUpdateSetting == HockeyUpdateCheckManually) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }
@@ -209,14 +209,14 @@
         
         if (indexPath.section == 0 && [self.hockeyManager shouldSendUserData] && [self.hockeyManager isAllowUserToDisableSendData]) {
             // send user data
-            cell.textLabel.text = BWLocalize(@"HockeySettingsUserData");
+            cell.textLabel.text = BWHockeyLocalize(@"HockeySettingsUserData");
             [toggleSwitch addTarget:self action:@selector(sendUserData:)
                    forControlEvents:UIControlEventValueChanged];
             [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUserData]];
             
         } else if ([self.hockeyManager shouldSendUsageTime] && [self.hockeyManager isAllowUserToDisableSendData]) {
             // send usage time
-            cell.textLabel.text = BWLocalize(@"HockeySettingsUsageData");
+            cell.textLabel.text = BWHockeyLocalize(@"HockeySettingsUsageData");
             [toggleSwitch addTarget:self action:@selector(sendUsageData:)
                    forControlEvents:UIControlEventValueChanged];
             [toggleSwitch setOn:[self.hockeyManager doesUserAllowsSendUsageTime]];

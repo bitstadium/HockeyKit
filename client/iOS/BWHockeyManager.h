@@ -56,7 +56,6 @@ typedef enum {
     
     NSString *updateURL_;
     NSString *appIdentifier_;
-    id reachability_;
     NSString *currentAppVersion_;
     
     UINavigationController *navController_;
@@ -163,9 +162,6 @@ typedef enum {
 @property (nonatomic, assign) HockeyUpdateSetting updateSetting;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// only valid if Reachability is available
-- (BOOL)isUpdateURLOffline;
 
 // is an update available?
 - (BOOL)isUpdateAvailable;

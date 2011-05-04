@@ -55,9 +55,7 @@
 #pragma mark private
 
 - (void)restoreStoreButtonStateAnimated_:(BOOL)animated {
-    if ([self.hockeyManager isUpdateURLOffline]) {
-        [self setAppStoreButtonState:AppStoreButtonStateOffline animated:animated];
-    } else if ([self.hockeyManager isUpdateAvailable]) {
+    if ([self.hockeyManager isUpdateAvailable]) {
         [self setAppStoreButtonState:AppStoreButtonStateUpdate animated:animated];
     } else {
         [self setAppStoreButtonState:AppStoreButtonStateCheck animated:animated];
@@ -177,7 +175,7 @@
                            footerButton.layer.shadowRadius = 2.0f;
                            )
         footerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
-        [footerButton setTitle:BWLocalize(@"HockeyShowPreviousVersions") forState:UIControlStateNormal];
+        [footerButton setTitle:BWHockeyLocalize(@"HockeyShowPreviousVersions") forState:UIControlStateNormal];
         [footerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [footerButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
         [footerButton setBackgroundImage:[UIImage bw_imageNamed:@"buttonHighlight.png" bundle:kHockeyBundleName] forState:UIControlStateHighlighted];
@@ -198,7 +196,7 @@
     // create web view for a version
     NSString *installed = @"";
     if ([app.version isEqualToString:[self.hockeyManager currentAppVersion]]) {
-        installed = [NSString stringWithFormat:@"<span style=\"float:%@;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>%@</b></span>", [app isEqual:self.hockeyManager.app] ? @"left" : @"right", BWLocalize(@"HockeyInstalled")];
+        installed = [NSString stringWithFormat:@"<span style=\"float:%@;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\"><b>%@</b></span>", [app isEqual:self.hockeyManager.app] ? @"left" : @"right", BWHockeyLocalize(@"HockeyInstalled")];
     }
 
     if ([app isEqual:self.hockeyManager.app]) {
@@ -206,7 +204,7 @@
             installed = [NSString stringWithFormat:@"<p>&nbsp;%@</p>", installed];
             cell.webViewContent = [NSString stringWithFormat:@"%@%@", installed, app.notes];
         } else {
-            cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWLocalize(@"HockeyNoReleaseNotesAvailable")];
+            cell.webViewContent = [NSString stringWithFormat:@"<div style=\"min-height:200px;vertical-align:middle;text-align:center;text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</div>", BWHockeyLocalize(@"HockeyNoReleaseNotesAvailable")];
         }
     } else {
         cell.webViewContent = [NSString stringWithFormat:@"<p><b style=\"text-shadow:rgba(255,255,255,0.6) 1px 1px 0px;\">%@</b>%@<br/><small>%@</small></p><p>%@</p>", [app versionString], installed, [app dateString], [app notesOrEmptyString]];
@@ -228,7 +226,7 @@
     if ((self = [super initWithStyle:UITableViewStylePlain])) {
         self.hockeyManager = newHockeyManager;
         self.modal = newModal;
-        self.title = BWLocalize(@"HockeyUpdateScreenTitle");
+        self.title = BWHockeyLocalize(@"HockeyUpdateScreenTitle");
 
         if ([self.hockeyManager shouldShowUserSettings]) {
             self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithImage:[UIImage bw_imageNamed:@"gear.png" bundle:kHockeyBundleName]
@@ -529,7 +527,7 @@
     if ([cells_ count] > indexPath.row) {
         return [cells_ objectAtIndex:indexPath.row];
     } else {
-        BWLog(@"Warning: cells_ and indexPath do not match? forgot calling redrawTableView?");
+        BWHockeyLog(@"Warning: cells_ and indexPath do not match? forgot calling redrawTableView?");
     }
     return nil;
 }
@@ -569,19 +567,19 @@
 
     switch (anAppStoreButtonState) {
         case AppStoreButtonStateOffline:
-            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonOffline") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWHockeyLocalize(@"HockeyButtonOffline") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
             break;
         case AppStoreButtonStateCheck:
-            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonCheck") colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
+            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWHockeyLocalize(@"HockeyButtonCheck") colors:[PSStoreButton appStoreGreenColor] enabled:YES] animated:animated];
             break;
         case AppStoreButtonStateSearching:
-            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonSearching") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWHockeyLocalize(@"HockeyButtonSearching") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
             break;
         case AppStoreButtonStateUpdate:
-            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonUpdate") colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:animated];
+            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWHockeyLocalize(@"HockeyButtonUpdate") colors:[PSStoreButton appStoreBlueColor] enabled:YES] animated:animated];
             break;
         case AppStoreButtonStateInstalling:
-            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWLocalize(@"HockeyButtonInstalling") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
+            [appStoreButton_ setButtonData:[PSStoreButtonData dataWithLabel:BWHockeyLocalize(@"HockeyButtonInstalling") colors:[PSStoreButton appStoreGrayColor] enabled:NO] animated:animated];
             break;
         default:
             break;
