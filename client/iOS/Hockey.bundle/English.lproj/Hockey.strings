@@ -43,7 +43,7 @@
 "HockeySettingsUsageData" = "Send Usage Data";
 
 /* Description text for turning on/off sending usage data */
-"HockeySettingsUsageDataDescription" = "Send Usage Data will send the amount of test time to the developer, in a granularity of 15 minutes.";
+"HockeySettingsUsageDataDescription" = "Send Usage Data will send the amount of test time to the developer, in a granularity of 1 minute.";
 
 /* Title for defining when update checks may be made */
 "HockeySectionCheckTitle" = "Check For Update";

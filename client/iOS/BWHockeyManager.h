@@ -117,7 +117,7 @@ typedef enum {
 // if NO, no such data is send to the server
 @property (nonatomic, assign, getter=shouldSendUserData) BOOL sendUserData;
 
-// if YES, the the users usage time of the app to the service, only in 15 minute granularity! (default)
+// if YES, the the users usage time of the app to the service, only in 1 minute granularity! (default)
 // if NO, no such data is send to the server
 @property (nonatomic, assign, getter=shouldSendUsageTime) BOOL sendUsageTime;
 

@@ -43,7 +43,7 @@
 "HockeySettingsUsageData" = "Invia dati di utilizzo";
 
 /* Description text for turning on/off sending usage data */
-"HockeySettingsUsageDataDescription" = "Invia il tempo di utilizzo allo svilupatore, con un dettaglio di 15 minuti.";
+"HockeySettingsUsageDataDescription" = "Invia il tempo di utilizzo allo svilupatore, con un dettaglio di 1 minuto.";
 
 /* Title for defining when update checks may be made */
 "HockeySectionCheckTitle" = "Controlla gli aggiornamenti";
