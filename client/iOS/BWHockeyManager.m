@@ -352,7 +352,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     IF_IOS4_OR_GREATER(
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        )
     self.delegate = nil;
     
@@ -931,10 +931,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                        if (!updateURL_ && anUpdateURL) {
                            [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
+                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationWillResignActiveNotification object:nil];
                        } else if (updateURL_ && !anUpdateURL) {
                            [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                           [dnc removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        }
                        )
     
