@@ -62,14 +62,15 @@ public class UpdateActivity extends ListActivity {
   private static void moveViewBelowOrBesideHeader(Activity activity, int viewID, int headerID, float offset) {
     ViewGroup headerView = (ViewGroup)activity.findViewById(headerID); 
     View view = (View)activity.findViewById(viewID);
-    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, activity.getWindowManager().getDefaultDisplay().getHeight() - headerView.getHeight() + (int)(offset * activity.getResources().getDisplayMetrics().density));
+    float density = activity.getResources().getDisplayMetrics().density; 
+    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, activity.getWindowManager().getDefaultDisplay().getHeight() - headerView.getHeight() + (int)(offset * density));
     if (((String)view.getTag()).equalsIgnoreCase("right")) {
       layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.header_view);
-      layoutParams.setMargins(-(int)(offset * activity.getResources().getDisplayMetrics().density), 0, 0, 0);
+      layoutParams.setMargins(-(int)(offset * density), 0, 0, (int)(10 * density));
     }
     else {
       layoutParams.addRule(RelativeLayout.BELOW, R.id.header_view);
-      layoutParams.setMargins(0, -(int)(offset * activity.getResources().getDisplayMetrics().density), 0, 0);
+      layoutParams.setMargins(0, -(int)(offset * density), 0, (int)(10 * density));
     }
     view.setLayoutParams(layoutParams);
   }

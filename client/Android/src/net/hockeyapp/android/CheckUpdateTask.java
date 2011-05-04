@@ -18,7 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
-public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
+public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   private Context context = null;
   private String urlString = null;
   private String appIdentifier = null;
@@ -44,7 +44,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
   }
   
   @Override
-  protected JSONObject doInBackground(String... args) {
+  protected JSONArray doInBackground(String... args) {
     try {
       int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA).versionCode;
       
@@ -61,7 +61,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
         if (entry.getInt("version") > versionCode) {
-          return entry;
+          return json;
         }
       }
     }
@@ -73,7 +73,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
   }
 
   @Override
-  protected void onPostExecute(JSONObject updateInfo) {
+  protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       showDialog(updateInfo);
     }
@@ -83,7 +83,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONObject>{
     return urlString + "api/2/apps/" + (this.appIdentifier != null ? this.appIdentifier : context.getPackageName()) + "?format=" + format;      
   }
   
-  private void showDialog(final JSONObject updateInfo) {
+  private void showDialog(final JSONArray updateInfo) {
     if (context == null) {
       return;
     }

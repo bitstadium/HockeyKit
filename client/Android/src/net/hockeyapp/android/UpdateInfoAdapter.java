@@ -1,8 +1,13 @@
 package net.hockeyapp.android;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,51 +28,100 @@ import android.widget.TextView;
 
 public class UpdateInfoAdapter extends BaseAdapter {
   Activity activity;
-  JSONObject info;
+  JSONObject newest;
+  ArrayList<JSONObject> sortedVersions;
   
   public UpdateInfoAdapter(Activity activity, String infoJSON) {
     super();
-    
+
     this.activity = activity;
-    try {
-      this.info = new JSONObject(infoJSON);
-    }
-    catch (JSONException e) {
-      this.info = new JSONObject();
-    }
+
+    loadVersions(infoJSON);
+    sortVersions();
   }
   
+  private void loadVersions(String infoJSON) {
+    this.newest = new JSONObject();
+
+    try {
+      JSONArray versions = new JSONArray(infoJSON);
+      this.sortedVersions = new ArrayList<JSONObject>();
+      
+      int versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      for (int index = 0; index < versions.length(); index++) {
+        JSONObject entry = versions.getJSONObject(index);
+        if (entry.getInt("version") > versionCode) {
+          newest = entry;
+          versionCode = entry.getInt("version");
+        }
+        sortedVersions.add(entry);
+      }
+    }
+    catch (JSONException e) {
+    }
+    catch (NameNotFoundException e) {
+    }
+  }
+
+  private void sortVersions() {
+    Collections.sort(sortedVersions, new Comparator<JSONObject>() {
+      @Override
+      public int compare(JSONObject object1, JSONObject object2) {
+        try {
+          if (object1.getInt("version") > object2.getInt("version")) {
+            return 0;
+          }
+        }
+        catch (JSONException e) {
+        }
+
+        return 0;
+      }
+    });
+  }
+
   public int getCount() {
-    return 3;
+    return 2 * sortedVersions.size();
   }
 
   public Object getItem(int position) {
+    int currentVersionCode = -1;
+    try {
+      currentVersionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+    }
+
+    JSONObject version = sortedVersions.get(position / 2);
+    int versionCode = 0;
+    String versionName= "";
+    try { 
+      versionCode = version.getInt("version");
+      versionName = version.getString("shortversion");
+    }
+    catch (JSONException e) {
+    }
+    
     String item = null;
-    switch (position) {
+    switch (position % 2) {
     case 0:
-      item = "Release Notes:";
+      item = (position == 0 ? "Release Notes:" : "Version " + versionName + " (" + versionCode + "): " + (versionCode == currentVersionCode ? "[INSTALLED]" : ""));
       break;
     case 1:
-      item = failSafeGetStringFromJSON(info, "notes", "");
+      item = failSafeGetStringFromJSON(version, "notes", "");
       break;
     case 2:
-      try {
-        PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-        item = "Installed Version: " + packageInfo.versionName + " (" + packageInfo.versionCode + ")";
-      }
-      catch (NameNotFoundException e) {
-      }
     }
     return item;
   }
   
   public String getVersionString() {
-    return failSafeGetStringFromJSON(info, "shortversion", "") + " (" + failSafeGetStringFromJSON(info, "version", "") + ")";
+    return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
   }
   
   public String getFileInfoString() {
-    int appSize = failSafeGetIntFromJSON(info, "appsize", 0);
-    long timestamp = failSafeGetIntFromJSON(info, "timestamp", 0);
+    int appSize = failSafeGetIntFromJSON(newest, "appsize", 0);
+    long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
     Date date = new Date(timestamp * 1000);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
@@ -96,9 +150,8 @@ public class UpdateInfoAdapter extends BaseAdapter {
   }
 
   public View getView(int position, View convertView, ViewGroup parent) {
-    switch (position) {
+    switch (position % 2) {
     case 0:
-    case 2:
       return getSimpleView(position, convertView, parent);
     case 1:
       return getWebView(position, convertView, parent);
@@ -116,11 +169,11 @@ public class UpdateInfoAdapter extends BaseAdapter {
       
     String item = (String)getItem(position);
     
-    
     TextView textView = (TextView)row.findViewById(android.R.id.text1);
     float scale = activity.getResources().getDisplayMetrics().density;
     boolean leftPadding = (parent.getTag().equals("right"));
-    textView.setPadding((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(20 * scale) * (leftPadding ? 1 : 2), (int)(20 * scale), 0);
+    boolean topPadding = (position == 0);
+    textView.setPadding((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(20 * scale) * (!leftPadding && topPadding ? 1 : 0), (int)(20 * scale), 0);
     textView.setText(item);
     textView.setTextColor(Color.BLACK);
     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
@@ -130,7 +183,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
 
   private View getWebView(int position, View convertView, ViewGroup parent) {
     View row = convertView;
-    if (row == null) {
+    if ((row == null) || (row.findViewById(1337) == null)) {
       RelativeLayout layout = new RelativeLayout(activity);
       layout.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.FILL_PARENT, ListView.LayoutParams.WRAP_CONTENT));
       row = layout;
@@ -145,10 +198,15 @@ public class UpdateInfoAdapter extends BaseAdapter {
       layout.addView(webView);
     }
       
-    String item = (String)getItem(position);
-    
     WebView webView = (WebView)row.findViewById(1337);
-    webView.loadData(item, "text/html", "utf-8");
+
+    String item = (String)getItem(position);
+    if (item.trim().length() == 0) {
+      webView.loadData("<em>No information.</em>", "text/html", "utf-8");
+    }
+    else {
+      webView.loadData(item, "text/html", "utf-8");
+    }
     
     return row;
   }
