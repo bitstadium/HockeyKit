@@ -577,11 +577,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForAuthorization {
-    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [[self encodedAppIdentifier_] bw_URLEncodedString]];
     
     [parameter appendFormat:@"?format=json&authorize=yes&app_version=%@&udid=%@",
-     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-     [[UIDevice currentDevice] uniqueIdentifier]
+     [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+     [[[UIDevice currentDevice] uniqueIdentifier] bw_URLEncodedString]
      ];
     
     // build request & send
@@ -665,18 +665,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@?format=json&udid=%@", 
-                                  [self encodedAppIdentifier_],
-                                  [[UIDevice currentDevice] uniqueIdentifier]];
+                                  [[self encodedAppIdentifier_] bw_URLEncodedString],
+                                  [[[UIDevice currentDevice] uniqueIdentifier] bw_URLEncodedString]];
     
     // add additional statistics if user didn't disable flag
     if (self.shouldSendUserData) {
         [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&usage_time=%@&first_start_at=%@",
-         [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-         [[UIDevice currentDevice] systemVersion],
-         [self getDevicePlatform_],
-         [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0],
-         [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-         [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+         [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+         [[[UIDevice currentDevice] systemVersion] bw_URLEncodedString],
+         [[self getDevicePlatform_] bw_URLEncodedString],
+         [[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0] bw_URLEncodedString],
+         [[[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+         [[[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString]
          ];
     }
     
