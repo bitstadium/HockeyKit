@@ -186,6 +186,7 @@
         [footerView addSubview:footerButton];
         self.tableView.tableFooterView = footerView;
         [self realignPreviousVersionButton];
+        [footerView release];
     } else {
         self.tableView.tableFooterView = nil;
         self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
@@ -365,7 +366,7 @@
     if (self.modal) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                               target:self
-                                                                                              action:@selector(onAction:)];
+                                                                                              action:@selector(onAction:)] autorelease];
     }
 
     PSStoreButton *storeButton = [[[PSStoreButton alloc] initWithPadding:CGPointMake(5, 40)] autorelease];
