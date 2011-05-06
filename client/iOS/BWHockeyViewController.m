@@ -541,7 +541,9 @@
     BOOL shouldAutorotate;
 
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationPortrait);
+        shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
+                            interfaceOrientation == UIInterfaceOrientationLandscapeRight ||
+                            interfaceOrientation == UIInterfaceOrientationPortrait);
     } else {
         shouldAutorotate = YES;
     }
