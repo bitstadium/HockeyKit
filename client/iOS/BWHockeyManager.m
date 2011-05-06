@@ -689,7 +689,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     
-    self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    self.urlConnection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
     if (!urlConnection_) {
         self.checkInProgress = NO;
         [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientCannotCreateConnection userInfo:
