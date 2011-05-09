@@ -89,15 +89,15 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
     
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("Update available");
-    builder.setMessage("Show information about the new update?");
+    builder.setTitle(R.string.update_dialog_title);
+    builder.setMessage(R.string.update_dialog_message);
 
-    builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
       } 
     });
     
-    builder.setPositiveButton("Show", new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         Intent intent = new Intent(context, UpdateActivity.class);
         intent.putExtra("json", updateInfo.toString());

@@ -1,9 +1,11 @@
 package net.hockeyapp.android.demo;
 
 import net.hockeyapp.android.CheckUpdateTask;
+import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateActivity;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
 public class MainActivity extends Activity {
   private CheckUpdateTask checkUpdateTask;
@@ -15,7 +17,12 @@ public class MainActivity extends Activity {
     
     UpdateActivity.iconDrawableId = R.drawable.icon;
     checkForUpdates();
+    checkForCrashes();
   }
+  
+  public void onClickCheckButton(View view) {
+    checkForUpdates();
+ }
 
   private void checkForUpdates() {
     checkUpdateTask = (CheckUpdateTask)getLastNonConfigurationInstance();
@@ -23,7 +30,7 @@ public class MainActivity extends Activity {
       checkUpdateTask.attach(this);
     }
     else {
-      checkUpdateTask = new CheckUpdateTask(this, "http://worldviewmobileapp.com/apps/demo/");
+      checkUpdateTask = new CheckUpdateTask(this, "https://beta.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
       checkUpdateTask.execute();
     }
   }
@@ -32,5 +39,17 @@ public class MainActivity extends Activity {
   public Object onRetainNonConfigurationInstance() {
     checkUpdateTask.detach();
     return checkUpdateTask;
+  }
+
+  public void onClickCrashButton(View view) {
+    // Find a view that does not exist
+    View missing = (View)findViewById(R.id.icon_view);
+    
+    // This should raise a null pointer exception
+    missing.bringToFront();
+  }
+  
+  private void checkForCrashes() {
+    // TODO
   }
 }
