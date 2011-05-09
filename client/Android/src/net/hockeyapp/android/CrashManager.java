@@ -39,7 +39,7 @@ public class CrashManager {
     PackageManager packageManager = context.getPackageManager();
     try {
       PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-      Constants.APP_VERSION = packageInfo.versionName;
+      Constants.APP_VERSION = "" + packageInfo.versionCode;
       Constants.APP_PACKAGE = packageInfo.packageName;
       Constants.FILES_PATH = context.getFilesDir().getAbsolutePath();
 
