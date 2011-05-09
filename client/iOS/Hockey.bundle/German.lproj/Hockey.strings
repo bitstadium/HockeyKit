@@ -43,7 +43,7 @@
 "HockeySettingsUsageData" = "Testzeit senden";
 
 /* Description text for turning on/off sending usage data */
-"HockeySettingsUsageDataDescription" = "Testzeit senden informiert den Entwickler über die Summe der Testzeit, in einer Genauigkeit von 15 Minuten.";
+"HockeySettingsUsageDataDescription" = "Testzeit senden informiert den Entwickler über die Summe der Testzeit, in einer Genauigkeit von 1 Minute.";
 
 /* Title for defining when update checks may be made */
 "HockeySectionCheckTitle" = "Nach Aktualisierung Prüfen";

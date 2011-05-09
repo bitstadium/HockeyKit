@@ -191,8 +191,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
     
     if (currentUsageTime > 0) {
-        // round (up) to 15 minutes
-        return [NSString stringWithFormat:@"%.0f", ceil(currentUsageTime / 900.0)*900];
+        // round (up) to 1 minute
+        return [NSString stringWithFormat:@"%.0f", ceil(currentUsageTime / 60.0)*60];
     } else {
         return @"0";
     }
@@ -352,7 +352,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     IF_IOS4_OR_GREATER(
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        )
     self.delegate = nil;
     
@@ -577,11 +577,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForAuthorization {
-    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [self encodedAppIdentifier_]];
+    NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@", [[self encodedAppIdentifier_] bw_URLEncodedString]];
     
     [parameter appendFormat:@"?format=json&authorize=yes&app_version=%@&udid=%@",
-     [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-     [[UIDevice currentDevice] uniqueIdentifier]
+     [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+     [[[UIDevice currentDevice] uniqueIdentifier] bw_URLEncodedString]
      ];
     
     // build request & send
@@ -665,18 +665,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@?format=json&udid=%@", 
-                                  [self encodedAppIdentifier_],
-                                  [[UIDevice currentDevice] uniqueIdentifier]];
+                                  [[self encodedAppIdentifier_] bw_URLEncodedString],
+                                  [[[UIDevice currentDevice] uniqueIdentifier] bw_URLEncodedString]];
     
     // add additional statistics if user didn't disable flag
     if (self.shouldSendUserData) {
         [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&usage_time=%@&first_start_at=%@",
-         [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-         [[UIDevice currentDevice] systemVersion],
-         [self getDevicePlatform_],
-         [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0],
-         [[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-         [[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+         [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+         [[[UIDevice currentDevice] systemVersion] bw_URLEncodedString],
+         [[self getDevicePlatform_] bw_URLEncodedString],
+         [[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0] bw_URLEncodedString],
+         [[[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
+         [[[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString]
          ];
     }
     
@@ -689,7 +689,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [request setValue:@"Hockey/iOS" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     
-    self.urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    self.urlConnection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] autorelease];
     if (!urlConnection_) {
         self.checkInProgress = NO;
         [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientCannotCreateConnection userInfo:
@@ -931,10 +931,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                        if (!updateURL_ && anUpdateURL) {
                            [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationDidEnterBackgroundNotification object:nil];
+                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationWillResignActiveNotification object:nil];
                        } else if (updateURL_ && !anUpdateURL) {
                            [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+                           [dnc removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        }
                        )
     
