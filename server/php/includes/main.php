@@ -587,7 +587,7 @@ class AppUpdater
                         if (!$line) continue;
                         
                         $device = explode(self::STATS_SEPARATOR, $line);
-                    
+                        $device[0] = strtolower($device[0]); // need case-insensitive match
                         $newdevice = array();
                         $newdevice[self::DEVICE_USER]        = isset($users[$device[0]]) ? $users[$device[0]]['name'] : '-';
                         $newdevice[self::DEVICE_PLATFORM]    = Helper::mapPlatform(isset($device[1]) ? $device[1] : null);
@@ -626,7 +626,7 @@ class AppUpdater
         {
             @list($udid, $name, $teams) = explode(";", $line);
             if (!$udid || isset($users[$udid])) continue;
-
+            $udid = strtolower($udid); // could be uppercase
             $teams = array_filter(array_map('trim', explode(',', $teams)));
             $users[$udid] = array(
                 'udid'  => $udid,
