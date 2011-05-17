@@ -161,7 +161,7 @@
     static NSString *SwitchCellIdentifier = @"SwitchCell";
     
     NSString *requiredIdentifier = nil;
-    NSInteger cellStyle = UITableViewCellStyleSubtitle;
+    UITableViewCellStyle cellStyle = UITableViewCellStyleSubtitle;
     
     if (indexPath.section == [self numberOfSections] - 1) {
         cellStyle = UITableViewCellStyleDefault;

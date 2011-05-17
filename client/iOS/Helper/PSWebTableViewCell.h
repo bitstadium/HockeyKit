@@ -24,6 +24,7 @@
 //  THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface PSWebTableViewCell : UITableViewCell <UIWebViewDelegate> {
     UIWebView *webView_;

@@ -142,7 +142,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (NSString *)getDevicePlatform_ {
 	size_t size;
 	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-	char *answer = malloc(size);
+	char *answer = (char*)malloc(size);
 	sysctlbyname("hw.machine", answer, &size, NULL, 0);
 	NSString *platform = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
 	free(answer);
@@ -312,7 +312,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         
         // load update setting from user defaults and check value
         if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAutoUpdateSetting]) {
-            self.updateSetting = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAutoUpdateSetting];
+            self.updateSetting = (HockeyUpdateSetting)[[NSUserDefaults standardUserDefaults] integerForKey:kHockeyAutoUpdateSetting];
         } else {
             self.updateSetting = HockeyUpdateCheckStartup;
         }
