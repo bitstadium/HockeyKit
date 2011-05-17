@@ -24,6 +24,7 @@
 //  THE SOFTWARE.
 
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 
 // defines a button action set (data container)
 @interface PSStoreButtonData : NSObject {
