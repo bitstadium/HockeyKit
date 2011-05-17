@@ -46,7 +46,7 @@ Download the sources and drag’n’drop all files from `/client/iOS/` (except `
 * Optionally set the *UIWindow* *rootViewController* property (iOS 4 only, make sure it is not set on iOS 3.x if you require compatibility) which should be used to push the modal Hockey Update view onto. If it is not set Hockey will try to find the best way by itself.
 
 		if ([window respondsToSelector:@selector(setRootViewController:)]) {
-      		[window setRootViewController:YourRootViewControllerClass];
+      		[window setRootViewController:YourRootViewControllerObject];
 		}
 
 * If you want the update view to be accessible without a new update being actually, add the BWHockeyViewController to your In-App Settings page
