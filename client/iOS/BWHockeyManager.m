@@ -142,7 +142,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (NSString *)getDevicePlatform_ {
 	size_t size;
 	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-	char *answer = malloc(size);
+	char *answer = (char*)malloc(size);
 	sysctlbyname("hw.machine", answer, &size, NULL, 0);
 	NSString *platform = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
 	free(answer);
