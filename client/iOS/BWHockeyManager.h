@@ -43,9 +43,9 @@ typedef enum {
 } HockeyAuthorizationState;
 
 typedef enum {
-    HockeyUpdateCheckStartup,
-    HockeyUpdateCheckDaily,
-    HockeyUpdateCheckManually
+    HockeyUpdateCheckStartup = 0,
+    HockeyUpdateCheckDaily = 1,
+    HockeyUpdateCheckManually = 2
 } HockeyUpdateSetting;
 
 @protocol BWHockeyManagerDelegate;
