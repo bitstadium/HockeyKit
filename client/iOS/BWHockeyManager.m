@@ -166,7 +166,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (![[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString]) {
         newVersion = YES;
     } else {
-        if ([[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
+        if ([(NSString *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeForVersionString] compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] != NSOrderedSame) {
             newVersion = YES;
         }
     }
