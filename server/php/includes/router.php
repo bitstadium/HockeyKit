@@ -81,6 +81,11 @@ class Router
     protected function init($options) {
 
         $path = dirname($_SERVER['SCRIPT_NAME']);
+
+	/* Check if HockeyKit is running on a Windows server, if so: update the path variable to let it parse correctly. */
+	if (PHP_SHLIB_SUFFIX != "so")
+		$path = str_replace($path, "\\", "/");
+
         if ($path == '/') $path = '';
 
         $request = substr($_SERVER['REQUEST_URI'], strlen($path));
