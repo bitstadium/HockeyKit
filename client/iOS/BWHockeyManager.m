@@ -470,6 +470,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image {
     if (authorizeView_ != nil) {
         [authorizeView_ removeFromSuperview];
+        [authorizeView_ release];
     }
     
     UIWindow *visibleWindow = [self findVisibleWindow];
@@ -744,6 +745,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (!self.requireAuthorization) {
         if (authorizeView_ != nil) {
             [authorizeView_ removeFromSuperview];
+            [authorizeView_ release];
         }
         
         return YES;
