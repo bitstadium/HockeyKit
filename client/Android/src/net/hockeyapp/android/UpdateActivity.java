@@ -9,8 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
-import net.hockeyapp.android.demo.R;
-
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;

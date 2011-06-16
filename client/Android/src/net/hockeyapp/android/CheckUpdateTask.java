@@ -93,7 +93,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     builder.append("api/2/apps/");
     builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
     builder.append("?format=" + format);
-    builder.append("&udid=" + URLEncoder.encode(Settings.Secure.ANDROID_ID));
+    builder.append("&udid=" + URLEncoder.encode(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
     builder.append("&os=Android");
     builder.append("&os_version=" + URLEncoder.encode(Constants.ANDROID_VERSION));
     builder.append("&device=" + URLEncoder.encode(Constants.PHONE_MODEL));
