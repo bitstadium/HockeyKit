@@ -609,6 +609,46 @@ JK_STATIC_INLINE JKHash calculateHash(JKHash currentHash, unsigned char c);
 // classes receive the mutating methods, but this is handled by having those methods throw an exception when the ivar bit is set to immutable.
 // We adopt the same strategy here.  It's both cleaner and gets rid of the method swizzling hackery used in JSONKit v1.4.
 
+
+// This is a workaround for issue #23 https://github.com/johnezang/JSONKit/pull/23
+// Basically, there seem to be a problem with using +load in static libraries on iOS.  However, __attribute__ ((constructor)) does work correctly.
+// Since we do not require anything "special" that +load provides, and we can accomplish the same thing using __attribute__ ((constructor)), the +load logic was moved here.
+
+static Class                               _JKArrayClass                           = NULL;
+static size_t                              _JKArrayInstanceSize                    = 0UL;
+static Class                               _JKDictionaryClass                      = NULL;
+static size_t                              _JKDictionaryInstanceSize               = 0UL;
+
+// For JSONDecoder...
+static Class                               _jk_NSNumberClass                       = NULL;
+static NSNumberAllocImp                    _jk_NSNumberAllocImp                    = NULL;
+static NSNumberInitWithUnsignedLongLongImp _jk_NSNumberInitWithUnsignedLongLongImp = NULL;
+
+extern void jk_collectionClassLoadTimeInitialization(void) __attribute__ ((constructor));
+
+void jk_collectionClassLoadTimeInitialization(void) {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at load time initialization may be less than ideal.
+  
+  _JKArrayClass             = objc_getClass("JKArray");
+  _JKArrayInstanceSize      = jk_max(16UL, class_getInstanceSize(_JKArrayClass));
+  
+  _JKDictionaryClass        = objc_getClass("JKDictionary");
+  _JKDictionaryInstanceSize = jk_max(16UL, class_getInstanceSize(_JKDictionaryClass));
+  
+  // For JSONDecoder...
+  _jk_NSNumberClass = [NSNumber class];
+  _jk_NSNumberAllocImp = (NSNumberAllocImp)[NSNumber methodForSelector:@selector(alloc)];
+  
+  // Hacktacular.  Need to do it this way due to the nature of class clusters.
+  id temp_NSNumber = [NSNumber alloc];
+  _jk_NSNumberInitWithUnsignedLongLongImp = (NSNumberInitWithUnsignedLongLongImp)[temp_NSNumber methodForSelector:@selector(initWithUnsignedLongLong:)];
+  [[temp_NSNumber init] release];
+  temp_NSNumber = NULL;
+  
+  [pool release]; pool = NULL;
+}
+
+
 #pragma mark -
 @interface JKArray : NSMutableArray <NSCopying, NSMutableCopying, NSFastEnumeration> {
   id         *objects;
@@ -617,19 +657,6 @@ JK_STATIC_INLINE JKHash calculateHash(JKHash currentHash, unsigned char c);
 @end
 
 @implementation JKArray
-
-static Class _JKArrayClass         = NULL;
-static size_t _JKArrayInstanceSize = 0UL;
-
-+ (void)load
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at +load time may be less than ideal.
-
-  _JKArrayClass        = objc_getClass("JKArray");
-  _JKArrayInstanceSize = jk_max(16UL, class_getInstanceSize(_JKArrayClass));
-
-  [pool release]; pool = NULL;
-}
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -736,7 +763,11 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count + 1UL]; }
+#ifdef __clang_analyzer__
+  [anObject retain]; // Stupid clang analyzer...  Issue #19.
+#else
   anObject = [anObject retain];
+#endif
   _JKArrayInsertObjectAtIndex(self, anObject, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
@@ -754,7 +785,11 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+#ifdef __clang_analyzer__
+  [anObject retain]; // Stupid clang analyzer...  Issue #19.
+#else
   anObject = [anObject retain];
+#endif
   _JKArrayReplaceObjectAtIndexWithObject(self, objectIndex, anObject);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
@@ -835,19 +870,6 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 @end
 
 @implementation JKDictionary
-
-static Class  _JKDictionaryClass        = NULL;
-static size_t _JKDictionaryInstanceSize = 0UL;
-
-+ (void)load
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at +load time may be less than ideal.
-
-  _JKDictionaryClass        = objc_getClass("JKDictionary");
-  _JKDictionaryInstanceSize = jk_max(16UL, class_getInstanceSize(_JKDictionaryClass));
-
-  [pool release]; pool = NULL;
-}
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -2044,26 +2066,6 @@ static void *jk_object_for_token(JKParseState *parseState) {
 
 #pragma mark -
 @implementation JSONDecoder
-
-static Class            _jk_NSNumberClass;
-static NSNumberAllocImp _jk_NSNumberAllocImp;
-static NSNumberInitWithUnsignedLongLongImp _jk_NSNumberInitWithUnsignedLongLongImp;
-
-+ (void)load
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at +load time may be less than ideal.
-  
-  _jk_NSNumberClass = [NSNumber class];
-  _jk_NSNumberAllocImp = (NSNumberAllocImp)[NSNumber methodForSelector:@selector(alloc)];
-  
-  // Hacktacular.  Need to do it this way due to the nature of class clusters.
-  id temp_NSNumber = [NSNumber alloc];
-  _jk_NSNumberInitWithUnsignedLongLongImp = (NSNumberInitWithUnsignedLongLongImp)[temp_NSNumber methodForSelector:@selector(initWithUnsignedLongLong:)];
-  [[temp_NSNumber init] release];
-  temp_NSNumber = NULL;
-  
-  [pool release]; pool = NULL;
-}
 
 + (id)decoder
 {
