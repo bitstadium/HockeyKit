@@ -18,9 +18,6 @@ import org.apache.http.protocol.HTTP;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
 public class CrashManager {
@@ -30,25 +27,12 @@ public class CrashManager {
 
   public static void register(Context context, String urlString, String appIdentifier) {
     CrashManager.urlString = urlString;
-    CrashManager.identifier = null;
+    CrashManager.identifier = appIdentifier;
 
-    Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
-    Constants.PHONE_MODEL = android.os.Build.MODEL;
-    Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
-
-    PackageManager packageManager = context.getPackageManager();
-    try {
-      PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-      Constants.APP_VERSION = "" + packageInfo.versionCode;
-      Constants.APP_PACKAGE = packageInfo.packageName;
-      Constants.FILES_PATH = context.getFilesDir().getAbsolutePath();
-
-      if (CrashManager.identifier == null) {
-        CrashManager.identifier = Constants.APP_PACKAGE;
-      }
-    } 
-    catch (NameNotFoundException e) {
-      e.printStackTrace();
+    Constants.loadFromContext(context);
+    
+    if (CrashManager.identifier == null) {
+      CrashManager.identifier = Constants.APP_PACKAGE;
     }
 
     if (hasStackTraces()) {

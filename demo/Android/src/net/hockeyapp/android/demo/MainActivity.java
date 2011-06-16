@@ -17,6 +17,11 @@ public class MainActivity extends Activity {
     
     UpdateActivity.iconDrawableId = R.drawable.icon;
     checkForUpdates();
+  }
+  
+  @Override
+  public void onResume() {
+    super.onResume();
     checkForCrashes();
   }
   
@@ -50,6 +55,6 @@ public class MainActivity extends Activity {
   }
   
   private void checkForCrashes() {
-    // TODO
+    CrashManager.register(this, "https://beta.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
   }
 }

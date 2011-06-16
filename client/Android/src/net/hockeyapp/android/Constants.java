@@ -1,5 +1,10 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+
 /**
  * LICENSE INFORMATION
  * 
@@ -47,4 +52,21 @@ public class Constants {
   public static String PHONE_MANUFACTURER = null;
   
   public static String TAG = "HockeyApp";
+
+  public static void loadFromContext(Context context) {
+    Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
+    Constants.PHONE_MODEL = android.os.Build.MODEL;
+    Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
+
+    PackageManager packageManager = context.getPackageManager();
+    try {
+      PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+      Constants.APP_VERSION = "" + packageInfo.versionCode;
+      Constants.APP_PACKAGE = packageInfo.packageName;
+      Constants.FILES_PATH = context.getFilesDir().getAbsolutePath();
+    } 
+    catch (NameNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
 }

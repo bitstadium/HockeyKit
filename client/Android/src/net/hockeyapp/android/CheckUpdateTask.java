@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.provider.Settings;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   private Context context = null;
@@ -27,16 +29,22 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     this.appIdentifier = null;
     this.context = context;
     this.urlString = urlString;
+    
+    Constants.loadFromContext(context);
   }
   
   public CheckUpdateTask(Context context, String urlString, String appIdentifier) {
     this.appIdentifier = appIdentifier;
     this.context = context;
     this.urlString = urlString;
+
+    Constants.loadFromContext(context);
   }
   
   public void attach(Context context) {
     this.context = context;
+
+    Constants.loadFromContext(context);
   }
   
   public void detach() {
@@ -80,7 +88,19 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private String getURLString(String format) {
-    return urlString + "api/2/apps/" + (this.appIdentifier != null ? this.appIdentifier : context.getPackageName()) + "?format=" + format;      
+    StringBuilder builder = new StringBuilder();
+    builder.append(urlString);
+    builder.append("api/2/apps/");
+    builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
+    builder.append("?format=" + format);
+    builder.append("&udid=" + URLEncoder.encode(Settings.Secure.ANDROID_ID));
+    builder.append("&os=Android");
+    builder.append("&os_version=" + URLEncoder.encode(Constants.ANDROID_VERSION));
+    builder.append("&device=" + URLEncoder.encode(Constants.PHONE_MODEL));
+    builder.append("&oem=" + URLEncoder.encode(Constants.PHONE_MANUFACTURER));
+    builder.append("&app_version=" + URLEncoder.encode(Constants.APP_VERSION));
+    
+    return builder.toString();
   }
   
   private void showDialog(final JSONArray updateInfo) {
