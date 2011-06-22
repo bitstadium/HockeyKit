@@ -389,6 +389,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     self.hockeyManager.currentHockeyViewController = nil;
+    //if the popover is still visible, dismiss it
+    [popOverController_ dismissPopoverAnimated:YES];
     [super viewWillDisappear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle_];
 }
@@ -456,6 +458,7 @@
 
 - (void)viewDidUnload {
     [appStoreHeader_ release]; appStoreHeader_ = nil;
+    [popOverController_ release], popOverController_ = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
     [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
