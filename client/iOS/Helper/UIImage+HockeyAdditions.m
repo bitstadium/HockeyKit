@@ -27,8 +27,11 @@
 #import "BWGlobal.h"
 
 // Private helper methods
-@interface UIImage ()
+@interface UIImage (HockeyAdditionsPrivate)
 - (void)addRoundedRectToPath:(CGRect)rect context:(CGContextRef)context ovalWidth:(CGFloat)ovalWidth ovalHeight:(CGFloat)ovalHeight;
+
+CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh);
+CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, float toAlpha);
 @end
 
 @implementation UIImage (HockeyAdditions)
