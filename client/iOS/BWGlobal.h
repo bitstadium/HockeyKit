@@ -55,7 +55,7 @@
 #define BWHockeyLog(...)
 #endif
 
-NSBundle *hockeyBundle();
+NSBundle *hockeyBundle(void);
 NSString *BWmd5(NSString *str);
 
 #define BWHockeyLocalize(StringToken) NSLocalizedStringFromTableInBundle(StringToken, @"Hockey", hockeyBundle(), @"")

@@ -25,7 +25,7 @@
 #import "BWGlobal.h"
 #include <CommonCrypto/CommonDigest.h>
 
-NSBundle *hockeyBundle() {
+NSBundle *hockeyBundle(void) {
     static NSBundle* bundle = nil;
     if (!bundle) {
         NSString* path = [[[NSBundle mainBundle] resourcePath]
