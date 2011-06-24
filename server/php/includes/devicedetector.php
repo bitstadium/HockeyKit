@@ -13,16 +13,16 @@ class DeviceDetector
         $agent = $_SERVER['HTTP_USER_AGENT'];
     
         if (strpos($agent, 'iPad') !== false) {
-            if (strpos($agent, 'OS 4') !== false) {
-                self::$isiPad4Device = true;
-            } else {
+            if (strpos($agent, 'OS 3') !== false) {
                 self::$isOldIOSDevice = true;
+            } else {
+                self::$isiPad4Device = true;
             }
         } else if (strpos($agent, 'iPhone') !== false) {
-            if (strpos($agent, 'iPhone OS 4') !== false) {
-                self::$isNewIOSDevice = true;
-            } else {
+            if (strpos($agent, 'iPhone OS 3') !== false) {
                 self::$isOldIOSDevice = true;
+            } else {
+                self::$isNewIOSDevice = true;
             }
         } else if (strpos($agent, 'Android') !== false) {
             self::$isAndroidDevice = true;
