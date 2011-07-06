@@ -1,7 +1,7 @@
 <?php
 
 /**
-* iOS implementation
+* Android implementation
 */
 class AndroidAppUpdater extends AbstractAppUpdater
 {
