@@ -28,7 +28,7 @@
         self.title = BWHockeyLocalize(@"HockeySettingsTitle");
 
         CGRect frame = self.view.frame;
-        frame.origin.y = 0;
+        frame.origin = CGPointZero;
 
         UITableView *tableView_ = [[[UITableView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 260, self.view.frame.size.width, 260) style:UITableViewStyleGrouped] autorelease];
         tableView_.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth;
