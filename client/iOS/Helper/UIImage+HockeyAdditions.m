@@ -30,7 +30,7 @@
 @interface UIImage (HockeyAdditionsPrivate)
 - (void)addRoundedRectToPath:(CGRect)rect context:(CGContextRef)context ovalWidth:(CGFloat)ovalWidth ovalHeight:(CGFloat)ovalHeight;
 
-CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh);
+CGContextRef MyOpenBitmapContext(int pixelsWide, int pixelsHigh);
 CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, float toAlpha);
 @end
 
@@ -276,7 +276,7 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
     return theCGImage;
 }
 
-CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
+CGContextRef MyOpenBitmapContext(int pixelsWide, int pixelsHigh) {
     CGSize size = CGSizeMake(pixelsWide, pixelsHigh);
     if (UIGraphicsBeginImageContextWithOptions != NULL) {
         UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
@@ -293,7 +293,7 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
 		return nil;
     
 	// create a bitmap graphics context the size of the image
-	CGContextRef mainViewContentContext = MyCreateBitmapContext(self.size.width, height);
+	CGContextRef mainViewContentContext = MyOpenBitmapContext(self.size.width, height);
     
 	// create a 2 bit CGImage containing a gradient that will be used for masking the
 	// main view content to create the 'fade' of the reflection.  The CGImageCreateWithMask
@@ -309,7 +309,8 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh) {
 	CGContextDrawImage(mainViewContentContext, CGRectMake(0, 0, self.size.width, self.size.height), self.CGImage);
     
 	// convert the finished reflection image to a UIImage
-	UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
+	UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext(); // returns autoreleased
+    UIGraphicsEndImageContext();
     
 	return theImage;
 }
