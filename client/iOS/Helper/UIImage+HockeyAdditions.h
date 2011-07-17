@@ -31,7 +31,7 @@
 - (UIImage *)bw_imageToFitSize:(CGSize)fitSize honorScaleFactor:(BOOL)honorScaleFactor;
 - (UIImage *)bw_reflectedImageWithHeight:(NSUInteger)height fromAlpha:(float)fromAlpha toAlpha:(float)toAlpha;
 
-- (id)bw_initWithContentsOfResolutionIndependentFile:(NSString *)path;
+- (id)bw_initWithContentsOfResolutionIndependentFile:(NSString *)path NS_RETURNS_RETAINED;
 + (UIImage*)bw_imageWithContentsOfResolutionIndependentFile:(NSString *)path;
 + (UIImage *)bw_imageNamed:(NSString *)imageName bundle:(NSString *)bundleName;
 

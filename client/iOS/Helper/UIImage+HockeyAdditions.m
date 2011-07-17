@@ -331,7 +331,10 @@ CGContextRef MyOpenBitmapContext(int pixelsWide, int pixelsHigh) {
 }
 
 + (UIImage*)bw_imageWithContentsOfResolutionIndependentFile:(NSString *)path {
+#ifndef __clang_analyzer__
+    // clang alayzer in 4.2b3 thinks here's a leak, which is not the case.
     return [[[UIImage alloc] bw_initWithContentsOfResolutionIndependentFile:path] autorelease];
+#endif
 }
 
 
