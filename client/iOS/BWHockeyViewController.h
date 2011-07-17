@@ -43,6 +43,7 @@ typedef enum {
     NSDictionary *cellLayout;
     
     BOOL modal_;
+    BOOL kvoRegistered_;
     BOOL showAllVersions_;
     UIStatusBarStyle statusBarStyle_;
     PSAppStoreHeader *appStoreHeader_;

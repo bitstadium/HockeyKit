@@ -35,9 +35,7 @@
 #define kWebCellIdentifier @"PSWebTableViewCell"
 #define kAppStoreViewHeight 90
 
-@interface BWHockeyViewController () {
-    BOOL kvoRegistered_;
-}
+@interface BWHockeyViewController ()
 // updates the whole view
 - (void)showPreviousVersionAction;
 - (void)redrawTableView;
