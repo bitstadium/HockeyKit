@@ -102,8 +102,11 @@
     // shadows are a beast
     NSInteger shadowOffset = 2;
     IF_IOS4_OR_GREATER(if([[UIScreen mainScreen] scale] == 2) shadowOffset = 1;)
+    IF_IOS5_OR_GREATER(shadowOffset = 1;) // iOS5 changes this - again!
+    
     IF_3_2_OR_GREATER(CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);)
     IF_PRE_3_2(shadowOffset=1;CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, -shadowOffset), 0, myColor);)
+    
     
     [mainTextColor set];
     [headerLabel_ drawInRect:CGRectMake(kTextRow, kImageMargin, globalWidth-kTextRow, 20) withFont:mainFont lineBreakMode:UILineBreakModeTailTruncation];
