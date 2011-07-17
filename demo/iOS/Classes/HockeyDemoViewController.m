@@ -18,20 +18,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationItem.leftBarButtonItem =  [[UIBarButtonItem alloc] initWithTitle:@"Settings"
-                                                                              style:UIBarButtonItemStyleBordered
-                                                                             target:self
-                                                                             action:@selector(showSettings)];
+    self.navigationItem.leftBarButtonItem =  [[[UIBarButtonItem alloc] initWithTitle:@"Settings"
+                                                                               style:UIBarButtonItemStyleBordered
+                                                                              target:self
+                                                                              action:@selector(showSettings)] autorelease];
 }
-
-- (void)dealloc {
-    [super dealloc];
-}
-
 
 - (void)showSettings {
     HockeyDemoSettingsViewController *hockeySettingsViewController = [[[HockeyDemoSettingsViewController alloc] init] autorelease];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:hockeySettingsViewController];
+    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:hockeySettingsViewController] autorelease];
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentModalViewController:navController animated:YES];
 }
@@ -43,7 +38,11 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
-    return toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return YES;
+    }else {
+        return toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown;
+    }
 }
 
 @end

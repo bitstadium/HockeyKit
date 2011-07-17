@@ -11,23 +11,8 @@
 
 @implementation HockeyDemoSettingsViewController
 
-
 #pragma mark -
 #pragma mark Initialization
-
-/*
- - (id)initWithStyle:(UITableViewStyle)style {
- // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
- if ((self = [super initWithStyle:style])) {
- }
- return self;
- }
- */
-
-- (void)dealloc {
-    [super dealloc];
-}
-
 
 - (void)dismissSelf {
     [self dismissModalViewControllerAnimated:YES];
@@ -37,13 +22,12 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                           target:self
-                                                                                          action:@selector(dismissSelf)];
+                                                                                          action:@selector(dismissSelf)] autorelease];
     
 }
 
