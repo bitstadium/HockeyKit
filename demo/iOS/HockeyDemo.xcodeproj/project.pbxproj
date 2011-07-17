@@ -36,7 +36,6 @@
 		784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B93BF12FC39B000FF906D /* PSWebTableViewCell.m */; };
 		784B961D12FC645300FF906D /* BWGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B961C12FC645300FF906D /* BWGlobal.m */; };
 		784B967F12FC912B00FF906D /* BWApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 784B967E12FC912B00FF906D /* BWApp.m */; };
-		78641EE513085398003FD8A9 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 78641EE413085398003FD8A9 /* Reachability.m */; };
 		78641EFA1308546A003FD8A9 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78641EF91308546A003FD8A9 /* SystemConfiguration.framework */; };
 		789C24C012EE291E00FDDD4C /* NSString+HockeyAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AB12EE291E00FDDD4C /* NSString+HockeyAdditions.m */; };
 		789C24C112EE291E00FDDD4C /* PSAppStoreHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 789C24AD12EE291E00FDDD4C /* PSAppStoreHeader.m */; };
@@ -87,8 +86,6 @@
 		784B961C12FC645300FF906D /* BWGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWGlobal.m; sourceTree = "<group>"; };
 		784B967D12FC912B00FF906D /* BWApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWApp.h; sourceTree = "<group>"; };
 		784B967E12FC912B00FF906D /* BWApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWApp.m; sourceTree = "<group>"; };
-		78641EE313085398003FD8A9 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Helper/Reachability.h; sourceTree = "<group>"; };
-		78641EE413085398003FD8A9 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Helper/Reachability.m; sourceTree = "<group>"; };
 		78641EF91308546A003FD8A9 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		789C24AA12EE291E00FDDD4C /* NSString+HockeyAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HockeyAdditions.h"; sourceTree = "<group>"; };
 		789C24AB12EE291E00FDDD4C /* NSString+HockeyAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HockeyAdditions.m"; sourceTree = "<group>"; };
@@ -134,7 +131,6 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				78641EE113085391003FD8A9 /* Helper */,
 				1D3623240D0F684500981E51 /* HockeyDemoAppDelegate.h */,
 				1D3623250D0F684500981E51 /* HockeyDemoAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* HockeyDemoViewController.h */,
@@ -232,15 +228,6 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
-		78641EE113085391003FD8A9 /* Helper */ = {
-			isa = PBXGroup;
-			children = (
-				78641EE313085398003FD8A9 /* Reachability.h */,
-				78641EE413085398003FD8A9 /* Reachability.m */,
-			);
-			name = Helper;
-			sourceTree = "<group>";
-		};
 		789C24A912EE291E00FDDD4C /* Helper */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +280,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = Buzzworks;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HockeyDemo" */;
@@ -373,7 +361,6 @@
 				784B93C012FC39B000FF906D /* PSWebTableViewCell.m in Sources */,
 				784B961D12FC645300FF906D /* BWGlobal.m in Sources */,
 				784B967F12FC912B00FF906D /* BWApp.m in Sources */,
-				78641EE513085398003FD8A9 /* Reachability.m in Sources */,
 				1EBA98A7132685B60090A8DE /* BWHockeySettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,7 +422,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = HockeyDemo;
 				ZERO_LINK = NO;
 			};
@@ -453,7 +439,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
@@ -479,7 +464,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = HockeyDemo;
 				ZERO_LINK = NO;
 			};
@@ -496,7 +480,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
@@ -514,7 +497,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
