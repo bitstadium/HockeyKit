@@ -8,7 +8,6 @@
 
 #import "HockeyDemoAppDelegate.h"
 #import "HockeyDemoViewController.h"
-#import "Reachability.h"
 
 @implementation HockeyDemoAppDelegate
 
@@ -25,7 +24,7 @@
         [window addSubview:navigationController.view];
     }
     [window makeKeyAndVisible];
-    
+
     // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
     // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
