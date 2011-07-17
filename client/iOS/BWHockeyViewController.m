@@ -97,9 +97,13 @@
         if (popOverController_ == nil) {
             popOverController_ = [[popoverControllerClass alloc] initWithContentViewController:settings];
         }
-        [popOverController_ setPopoverContentSize: CGSizeMake(320, 440)];
-        [popOverController_ presentPopoverFromBarButtonItem:self.navigationItem.rightBarButtonItem
-                                   permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        if ([popOverController_ contentViewController].view.window) {
+            [popOverController_ dismissPopoverAnimated:YES];
+        }else {
+            [popOverController_ setPopoverContentSize: CGSizeMake(320, 440)];
+            [popOverController_ presentPopoverFromBarButtonItem:self.navigationItem.rightBarButtonItem
+                                       permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        }
     } else {
 
         IF_3_2_OR_GREATER(
@@ -263,7 +267,12 @@
 - (void)onAction:(id)sender {
     if (self.modal) {
 
-		if (self.navigationController.parentViewController) {
+        // Note that as of 5.0, parentViewController will no longer return the presenting view controller
+        UIViewController *presentingViewController;
+        IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
+        IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
+        
+		if (presentingViewController) {
 			[self.navigationController dismissModalViewControllerAnimated:YES];
 		} else {
 			[self.navigationController.view removeFromSuperview];
