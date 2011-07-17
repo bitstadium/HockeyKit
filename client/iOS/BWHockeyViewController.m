@@ -35,7 +35,9 @@
 #define kWebCellIdentifier @"PSWebTableViewCell"
 #define kAppStoreViewHeight 90
 
-@interface BWHockeyViewController ()
+@interface BWHockeyViewController () {
+    BOOL kvoRegistered_;
+}
 // updates the whole view
 - (void)showPreviousVersionAction;
 - (void)redrawTableView;
@@ -320,6 +322,7 @@
     [self.hockeyManager addObserver:self forKeyPath:@"isUpdateURLOffline" options:0 context:nil];
     [self.hockeyManager addObserver:self forKeyPath:@"updateAvailable" options:0 context:nil];
     [self.hockeyManager addObserver:self forKeyPath:@"apps" options:0 context:nil];
+    kvoRegistered_ = YES;
 
     self.tableView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -469,10 +472,16 @@
     [appStoreHeader_ release]; appStoreHeader_ = nil;
     [popOverController_ release], popOverController_ = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
-    [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
+    
+    // test if KVO's are registered. if class is destroyed before it was shown(viewDidLoad) no KVOs are registered.
+    if (kvoRegistered_) {
+        [self.hockeyManager removeObserver:self forKeyPath:@"checkInProgress"];
+        [self.hockeyManager removeObserver:self forKeyPath:@"isUpdateURLOffline"];
+        [self.hockeyManager removeObserver:self forKeyPath:@"updateAvailable"];
+        [self.hockeyManager removeObserver:self forKeyPath:@"apps"];
+        kvoRegistered_ = NO;
+    }
+    
     [super viewDidUnload];
 }
 
