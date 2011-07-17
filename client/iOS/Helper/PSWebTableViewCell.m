@@ -108,6 +108,16 @@ body { font: 13px 'Helvetica Neue', Helvetica; word-wrap:break-word; padding:8px
 }
 
 
+- (void)setWebViewContent:(NSString *)aWebViewContent {
+    if (webViewContent_ != aWebViewContent) {
+        [webViewContent_ release];
+        webViewContent_ = [aWebViewContent retain];
+        
+        // add basic accessiblity (prevents "snarfed from ivar layout") logs
+        self.accessibilityLabel = aWebViewContent;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSObject
