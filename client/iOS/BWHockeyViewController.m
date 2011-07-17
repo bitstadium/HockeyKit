@@ -268,7 +268,7 @@
     if (self.modal) {
 
         // Note that as of 5.0, parentViewController will no longer return the presenting view controller
-        UIViewController *presentingViewController;
+        UIViewController *presentingViewController = nil;
         IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
         IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
         
