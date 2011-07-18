@@ -2,8 +2,8 @@ package net.hockeyapp.android;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ import android.content.DialogInterface;
 import android.util.Log;
 
 public class CrashManager {
-  private static String[] stackTraceFileList = null;
   private static String identifier = null;
   private static String urlString = null;
 
@@ -47,7 +46,7 @@ public class CrashManager {
     register(context, url, null);
   }
 
-  private static void showDialog(Context context) {
+  private static void showDialog(final Context context) {
     if (context == null) {
       return;
     }
@@ -58,6 +57,7 @@ public class CrashManager {
 
     builder.setNegativeButton(R.string.crash_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
+        deleteStackTraces(context);
         registerHandler();
       } 
     });
@@ -67,7 +67,7 @@ public class CrashManager {
         new Thread() {
           @Override
           public void run() {
-            submitStackTraces();
+            submitStackTraces(context);
             registerHandler();
           }
         }.start();
@@ -94,7 +94,26 @@ public class CrashManager {
     return urlString + "api/2/apps/" + identifier + "/crashes/";      
   }
 
-  public static void submitStackTraces() {
+  public static void deleteStackTraces(Context context) {
+    Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
+    String[] list = searchForStackTraces();
+
+    if ((list != null) && (list.length > 0)) {
+      Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
+
+      for (int index = 0; index < list.length; index++) {
+        try {
+          Log.d(Constants.TAG, "Delete stacktrace " + list[index] + ".");
+          context.deleteFile(list[index]);
+        } 
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+  
+  public static void submitStackTraces(Context context) {
     Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
 
@@ -104,9 +123,8 @@ public class CrashManager {
       for (int index = 0; index < list.length; index++) {
         try {
           // Read contents of stack trace
-          String path = Constants.FILES_PATH + "/" + list[index];
           StringBuilder contents = new StringBuilder();
-          BufferedReader reader =  new BufferedReader(new FileReader(path));
+          BufferedReader reader = new BufferedReader(new InputStreamReader(context.openFileInput(list[index])));
           String line = null;
           while ((line = reader.readLine()) != null) {
             contents.append(line);
@@ -129,8 +147,7 @@ public class CrashManager {
         } 
         finally {
           try {
-            File file = new File(Constants.FILES_PATH + "/" + list[index]);
-             file.delete();
+            context.deleteFile(list[index]);
           } 
           catch (Exception e) {
             e.printStackTrace();
@@ -145,10 +162,6 @@ public class CrashManager {
   }
 
   private static String[] searchForStackTraces() {
-    if (stackTraceFileList != null) {
-      return stackTraceFileList;
-    }
-
     // Try to create the files folder if it doesn't exist
     File dir = new File(Constants.FILES_PATH + "/");
     dir.mkdir();
@@ -159,6 +172,6 @@ public class CrashManager {
         return name.endsWith(".stacktrace"); 
       } 
     }; 
-    return (stackTraceFileList = dir.list(filter)); 
+    return dir.list(filter); 
   }
 }
