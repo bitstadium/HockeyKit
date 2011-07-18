@@ -61,6 +61,7 @@
 @property (nonatomic, copy) NSArray *apps;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
 @property (nonatomic, copy) NSDate *usageStartTimestamp;
+@property (nonatomic, retain) UIView *authorizeView;
 @end
 
 // hockey api error domain
@@ -100,6 +101,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize showDirectInstallOption = showDirectInstallOption_;
 @synthesize requireAuthorization = requireAuthorization_;
 @synthesize authenticationSecret = authenticationSecret_;
+@synthesize authorizeView = authorizeView_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -468,13 +470,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // open an authorization screen
 - (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image {
-    if (authorizeView_ != nil) {
-        [authorizeView_ removeFromSuperview];
-        [authorizeView_ release];
-    }
+    self.authorizeView = nil;
     
     UIWindow *visibleWindow = [self findVisibleWindow];
-    
     if (visibleWindow == nil) {
         [self alertFallback:message];
         return;
@@ -621,7 +619,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 self.requireAuthorization = NO;
-                [authorizeView_ removeFromSuperview];
+                self.authorizeView = nil;
                 
                 // now continue with an update check right away
                 if (self.checkForUpdateOnLaunch) {
@@ -743,11 +741,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     if (!self.requireAuthorization) {
-        if (authorizeView_ != nil) {
-            [authorizeView_ removeFromSuperview];
-            [authorizeView_ release];
-        }
-        
+        self.authorizeView = nil;
         return YES;
     }
     
@@ -1034,6 +1028,13 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return app;
 }
 
+- (void)setAuthorizeView:(UIView *)anAuthorizeView {
+    if (authorizeView_ != anAuthorizeView) {
+        [authorizeView_ removeFromSuperview];
+        [authorizeView_ release];
+        authorizeView_ = [anAuthorizeView retain];
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
