@@ -481,17 +481,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
     CGRect frame = [visibleWindow frame];
     
-    authorizeView_ = [[[UIView alloc] initWithFrame:frame] autorelease];
+    self.authorizeView = [[[UIView alloc] initWithFrame:frame] autorelease];
     UIImageView *backgroundView = [[[UIImageView alloc] initWithImage:[UIImage bw_imageNamed:@"bg.png" bundle:kHockeyBundleName]] autorelease];
     backgroundView.contentMode = UIViewContentModeScaleAspectFill;
     backgroundView.frame = frame;
-    [authorizeView_ addSubview:backgroundView];
+    [self.authorizeView addSubview:backgroundView];
     
     if (image != nil) {
         UIImageView *imageView = [[[UIImageView alloc] initWithImage:[UIImage bw_imageNamed:image bundle:kHockeyBundleName]] autorelease];
         imageView.contentMode = UIViewContentModeCenter;
         imageView.frame = frame;
-        [authorizeView_ addSubview:imageView];
+        [self.authorizeView addSubview:imageView];
     }
     
     if (message != nil) {
@@ -506,10 +506,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         label.numberOfLines = 2;
         label.backgroundColor = [UIColor clearColor];
         
-        [authorizeView_ addSubview:label];
+        [self.authorizeView addSubview:label];
     }
     
-    [visibleWindow addSubview:authorizeView_];
+    [visibleWindow addSubview:self.authorizeView];
 }
 
 
