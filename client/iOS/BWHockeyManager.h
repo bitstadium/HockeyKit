@@ -146,16 +146,16 @@ typedef enum {
 // if NO, the user can not change it, and the default or developer defined value will be used
 @property (nonatomic, assign, getter=shouldShowUserSettings) BOOL showUserSettings;
 
-//if YES, then an update check will be performed after the application becomes active (default)
-//if NO, then the update check will not happen unless invoked explicitly
+// if YES, then an update check will be performed after the application becomes active (default)
+// if NO, then the update check will not happen unless invoked explicitly
 @property (nonatomic, assign, getter=isCheckForUpdateOnLaunch) BOOL checkForUpdateOnLaunch;
 
-//if YES, the alert notifying about an new update also shows a button to install the update directly
-//if NO, the alert notifying about an new update only shows ignore and show update button
+// if YES, the alert notifying about an new update also shows a button to install the update directly
+// if NO, the alert notifying about an new update only shows ignore and show update button
 @property (nonatomic, assign, getter=ishowingDirectInstallOption) BOOL showDirectInstallOption;
 
-//if YES, each app version needs to be authorized by the server to run on this device
-//if NO, each app version does not need to be authorized (default) 
+// if YES, each app version needs to be authorized by the server to run on this device
+// if NO, each app version does not need to be authorized (default) 
 @property (nonatomic, assign, getter=isRequireAuthorization) BOOL requireAuthorization;
 
 // HockeyComparisonResultDifferent: alerts if the version on the server is different (default)
