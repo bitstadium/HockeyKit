@@ -609,6 +609,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                 [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned empty response.", NSLocalizedDescriptionKey, nil]]];
             return;
 		} else {
+            BWHockeyLog(@"Received API response: %@", responseString);
             NSString *token = [[feedDict objectForKey:@"authcode"] lowercaseString];
             failed = NO;
             if ([[self authenticationToken] compare:token] == NSOrderedSame) {
@@ -628,8 +629,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                 }
             } else {
                 // different token, block this version
-                NSLog(@"AUTH FAILURE");
-                
+                BWHockeyLog(@"AUTH FAILURE: %@", [self authenticationToken]);
+                                
                 // store the new data
                 [[NSUserDefaults standardUserDefaults] setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] forKey:kHockeyAuthorizedVersion];
                 [[NSUserDefaults standardUserDefaults] setObject:token forKey:kHockeyAuthorizedToken];
