@@ -301,6 +301,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         authorizeView_ = nil;
         requireAuthorization_ = NO;
         authenticationSecret_= nil;
+        loggingEnabled_ = NO;
         
         // set defaults
         self.showDirectInstallOption = NO;
