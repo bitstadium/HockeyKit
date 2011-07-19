@@ -33,6 +33,9 @@
     //    [BWHockeyManager sharedHockeyManager].authenticationSecret = @"ChangeThisToYourOwnSecretString";
     [BWHockeyManager sharedHockeyManager].updateURL = @"http://alpha.buzzworks.de";
     [BWHockeyManager sharedHockeyManager].delegate = self;
+    
+    // optionally enable logging to get more information about states.
+    [BWHockeyManager sharedHockeyManager].loggingEnabled = YES;
 #endif
     
     return YES;

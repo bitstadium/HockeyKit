@@ -64,6 +64,7 @@ typedef enum {
     
     NSMutableData *receivedData_;
     
+    BOOL loggingEnabled_;
     BOOL checkInProgress_;
     BOOL dataFound;
     BOOL updateAvailable_;
@@ -112,6 +113,10 @@ typedef enum {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // settings
+
+// if YES, states will be logged using NSLog. Only enable this for debugging!
+// if NO, nothing will be logged. (default)
+@property (nonatomic, assign, getter=isLoggingEnabled) BOOL loggingEnabled;
 
 // if YES, the current user data is send: device type, iOS version, app version, UDID (default)
 // if NO, no such data is send to the server

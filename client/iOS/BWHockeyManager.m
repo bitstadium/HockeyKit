@@ -81,6 +81,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize updateURL = updateURL_;
 @synthesize appIdentifier = appIdentifier_;
 @synthesize urlConnection = urlConnection_;
+@synthesize loggingEnabled = loggingEnabled_;
 @synthesize checkInProgress = checkInProgress_;
 @synthesize receivedData = receivedData_;
 @synthesize sendUserData = sendUserData_;
