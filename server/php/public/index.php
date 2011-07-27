@@ -227,16 +227,16 @@
             var agent = navigator.userAgent;
 
             if (agent.indexOf('iPad') != -1) {
-                if (agent.indexOf('OS 4') != -1) {
-                    isiPad4Device = true;
-                } else {
+                if (agent.indexOf('OS 3') != -1) {
                     isOldIOSDevice = true;
+                } else {
+                    isiPad4Device = true;
                 }
             } else if (agent.indexOf('iPhone') != -1) {
-                if (agent.indexOf('iPhone OS 4') != -1) {
-                    isNewIOSDevice = true;
-                } else {
+                if (agent.indexOf('iPhone OS 3') != -1) {
                     isOldIOSDevice = true;
+                } else {
+                    isNewIOSDevice = true;
                 }
             }
             
