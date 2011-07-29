@@ -14,7 +14,11 @@
 
 @class HockeyDemoViewController;
 
+#if !defined (CONFIGURATION_AppStore_Distribution)
 @interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate, BWHockeyManagerDelegate> {
+#else
+@interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate> {
+#endif
     UIWindow *window;
     UINavigationController *navigationController;
     HockeyDemoViewController *viewController;    
