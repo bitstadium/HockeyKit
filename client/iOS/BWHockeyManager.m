@@ -971,7 +971,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)setUserAllowsSendUserData:(BOOL)flag {
     userAllowsSendUserData_ = flag;
     
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:userAllowsSendUserData_] forKey:kHockeyAllowUsageSetting];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:userAllowsSendUserData_] forKey:kHockeyAllowUserSetting];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
