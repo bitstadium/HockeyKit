@@ -6,7 +6,7 @@ The client framework should only be included in AdHoc builds and should NOT (!!)
 
 This framework was created after reading the blog post at http://jeffreysambells.com/posts/2010/06/22/ios-wireless-app-distribution/ where Jeffrey Sambells wrote about the mechanisms required and being available for us to use.
 
-A complete documentation can be found in documentation.mdown
+A complete documentation can be found in the wiki at https://github.com/TheRealKerni/HockeyKit/wiki
 
 # Requirements:
 - A PHP5 server needs to be available and is required for distribution of the apps
@@ -27,7 +27,7 @@ A complete documentation can be found in documentation.mdown
 - Framework optionally sends UDID, app version, iOS version, device type to the server, overview will appear automatically in /stats/ website (write access for PHP scripts required)
 - Stats website supports replacing UDIDs with names by entering them into a userlist.txt file within the stats subdirectory
 - Bookmarklet to extract all UDIDs and names from iOS program portal device page available in the stats page
-- Template for an Xcode build script to upload all files to your server after a build (Beta Automatisation.sh)
+- Template for an Xcode 3 build script to upload all files to your server after a build (Beta Automatisation.sh)
 
 
 # Notes:
