@@ -1,0 +1,3 @@
+#UDID;the testers name (this is an example entry, you might want to replace it);team1,team2 (optional)
+1234567890123456789012345678901234567890;Test 1;
+1234567890123456789012345678901234567891;Test 2;secret

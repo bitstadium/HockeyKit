@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <TextView  
+        android:id="@+id/hockey_title_label" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_width="fill_parent" 
+        android:text="@string/hockey_title"
+        android:textStyle="bold"
+        />
+
+    <TextView  
+        android:id="@+id/hockey_text_label" 
+        android:layout_below="@id/hockey_title_label" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_width="fill_parent" 
+        android:text="@string/hockey_text"
+        />
+
+    <Button 
+        android:id="@+id/check_button" 
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/hockey_text_label" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_width="wrap_content"
+        android:onClick="onClickCheckButton" 
+        android:text="Check" 
+        />
+
+    <TextView  
+        android:id="@+id/quincy_title_label" 
+        android:layout_below="@id/check_button" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_marginTop="40dip" 
+        android:layout_width="fill_parent" 
+        android:text="@string/quincy_title"
+        android:textStyle="bold"
+        />
+        
+    <TextView  
+        android:id="@+id/quincy_text_label" 
+        android:layout_below="@id/quincy_title_label" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_width="fill_parent" 
+        android:text="@string/quincy_text"
+        />
+
+	<Button 
+        android:id="@+id/crash_button" 
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/quincy_text_label" 
+        android:layout_height="wrap_content" 
+        android:layout_margin="10dip" 
+        android:layout_width="wrap_content"
+        android:onClick="onClickCrashButton" 
+        android:text="Crash" 
+        />
+    
+</RelativeLayout>

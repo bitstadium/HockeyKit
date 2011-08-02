@@ -1,0 +1,36 @@
+# Server Requirements:
+- PHP 5.x
+
+# About:
+* This server part is required for handling update requests by the client framework
+* The server part can also be used without the client. It provides a web interface which beta testers can use to install the latest AdHoc provisioning profile and also the latest beta version via Safari right from the device.
+* It can handle multiple applications via different bundle identifiers (I highly suggest using different bundle identifiers for Debug, AdHoc Beta and AppStore release builds !!!)
+
+
+# Installation PHP Server:
+* Copy the content of the public subfolder, including the .htaccess file (!!), into a publicly accessible directory on your web server
+* Copy the content of the includes subfolder into a publicly not accessible directory (for security) on your web server
+* Adjust the path to the includes subfolder in HOCKEY_INCLUDE_DIR definition in config.php
+* Done
+
+
+# How to add a new iOS application version (Xcode 3):
+* Create a subdirectory with the bundle identifier string as the name on the server (if it does not exist yet)
+* Copy the provisioning profile into that subdirectory, it is important to have the extension ".mobileprovision" (mandatory file)
+* Start XCode
+* Invoke "Build and Archive"
+* Open the Organizer
+* Choose "Archived Applications"
+* Select the build you want to publish
+* Select "Share application"
+* Select "Distribute for Enterprise..."
+* Fill out the URL field and type "__URL__" (important !!)
+* Enter a title, this will be shown in the web interface and on the client
+* Version number will be taken automatically from the generated plist file
+* Note: The client does not check if the version number is actually a bigger number, it only checks if they are different, which should be fine anyway
+* Save it, two files will be saved, one .plist and one .ipa
+* Upload the plist file into the subdirectory on the server, it is important to have the extension ".plist" (mandatory)
+* Upload the application file into the subdirectory on the server, it is important to have the extension ".ipa" (mandatory)
+* If you don't want this application to appear in the web interface, add a file named "private" (optional)
+* If you want to add release information to the web interface and the client, add a file with the extension ".html" which contains the release information as HTML (without header and body)
+* Note: If one of the mandatory files do not exist in the directory, the update or installation will not be made available

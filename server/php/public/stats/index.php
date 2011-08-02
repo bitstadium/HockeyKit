@@ -2,75 +2,113 @@
     require_once('../config.php');
     require('../' . constant('HOCKEY_INCLUDE_DIR'));
     
-    $ios = new iOSUpdater(dirname(__FILE__).DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR);
+    $router = Router::get(array('appDirectory' => dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR, 'logic' => 'stats'));
+    $apps = $router->app;
+    $baseURL = $router->baseURL;
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title>iOS App Installer Statistics</title>
+        <title>App Installer Statistics</title>
     	<meta name="viewport" content="width=device-width" />
         <link rel="stylesheet" href="../blueprint/screen.css" type="text/css" media="screen, projection">
         <link rel="stylesheet" href="../blueprint/print.css" type="text/css" media="print">
         <!--[if IE]><link rel="stylesheet" href="../blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
         <link rel="stylesheet" href="../blueprint/plugins/buttons/screen.css" type="text/css" media="screen, projection">
         <link rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+        <script type="text/javascript">
+            activeAppId = -1;
+            function showAppStats(appId) {
+                if (activeAppId >= -1) {
+                    document.getElementById('app' + activeAppId).style.display = "none";
+                }
+                document.getElementById('app' + appId).style.display = "block";
+                activeAppId = appId;
+            }
+        </script>
     </head>
     <body class='browser-desktop'>
         <div id="container" class="container">            
             <div class='desktop'>
-                <h1>Install Apps Statistics</h1>
+                <h1>App Statistics</h1>
 
+                <div class="column span-23">
             <?php 
-                foreach ($ios->applications as $i => $app) :
+                foreach ($apps->applications as $i => $app) :
+                    echo "<div class=\"column span-3 appgridelement\"><a href=\"javascript:showAppStats(".$i.")\">";
+                    if ($app[AppUpdater::INDEX_IMAGE]) {
+                        echo "<img src=\"../" . $app[AppUpdater::INDEX_IMAGE] . "\" title=\"" . $app[AppUpdater::INDEX_APP] . "\" class=\"appgridicon\"><br/>";
+                    }
+                    echo $app[AppUpdater::INDEX_APP] . "</a></div>";
+                endforeach;
             ?>
+                </div>
+                <div style='clear:both;'><br/></div>
+                <hr/>
+                <div class="column span-23" id="app-1" style="display:block;">
+                    <p>Please select an app from above to see its statistics</p>
+                </div>
+            <?php
+                foreach ($apps->applications as $i => $app) :
+            ?>
+                <div class="column span-23" id="app<?php echo $i ?>" style="display:none;">
                 <div class="column span-3">
-                <?php if ($app[iOSUpdater::INDEX_IMAGE]) { ?>
-                    <img class="icon" src="../<?php echo $app[iOSUpdater::INDEX_IMAGE] ?>">
+                <?php if ($app[AppUpdater::INDEX_IMAGE]) { ?>
+                    <img class="appgridicon" src="../<?php echo $app[AppUpdater::INDEX_IMAGE] ?>">
                 <?php } ?>
                 </div>
-                <div class="column span-7">
-                    <h2><?php echo $app[iOSUpdater::INDEX_APP] ?></h2>
-                  <?php if (array_key_exists(iOSUpdater::INDEX_SUBTITLE, $app)) { ?>
-                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[iOSUpdater::INDEX_VERSION] ?>)</p>
+                <div class="column span-6">
+                    <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
+                  <?php if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) { ?>
+                    	<b>Version:</b> <?php echo $app[AppUpdater::INDEX_SUBTITLE] ?> (<?php echo $app[AppUpdater::INDEX_VERSION] ?>)
                   <?php } else { ?>
-                    <p><b>Version:</b> <?php echo $app[iOSUpdater::INDEX_VERSION] ?></p>
+                    	<b>Version:</b> <?php echo $app[AppUpdater::INDEX_VERSION] ?>
                   <?php } ?>
-                    <p><b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[iOSUpdater::INDEX_DATE]) ?></p>
+                      	<br/>
+						<b>Released:</b> <?php echo date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]) ?>
+					
+                </div>
 
-                <?php if ($app[iOSUpdater::INDEX_NOTES]) : ?>
-                    <p><b>What's New:</b><br/><?php echo $app[iOSUpdater::INDEX_NOTES] ?></p>
+                <div class="column span-13">
+                <?php if (isset($app[AppUpdater::INDEX_NOTES]) && $app[AppUpdater::INDEX_NOTES]) : ?>
+                    <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
                 <?php endif ?>
-
                 </div>
                 
-                <div class="column span-13">
+                <div class="column span-23">
                     <table>
                         <tr>
                             <th>Version</th>
                             <th>User</th>
                             <th>iOS</th>
                             <th>Device</th>
+                            <th>Lang</th>
+                            <th>Installed</th>
+                            <th>Usage Time</th>
                             <th>Last Check</th>
                         </tr>
             <?php 
-                foreach ($app[iOSUpdater::INDEX_STATS] as $i => $device) :
+                foreach ($app[AppUpdater::INDEX_STATS] as $i => $device) :
                     echo "<tr>";
-                    echo "  <td>".$device[iOSUpdater::DEVICE_APPVERSION]."</td>";
-					if (strlen($device[iOSUpdater::DEVICE_USER]) > 15) {
-						echo "  <td title='".$device[iOSUpdater::DEVICE_USER]."'>".substr($device[iOSUpdater::DEVICE_USER],0,12)."...</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_APPVERSION]."</td>";
+					if (strlen($device[AppUpdater::DEVICE_USER]) > 15) {
+						echo "  <td title='".$device[AppUpdater::DEVICE_USER]."'>".substr($device[AppUpdater::DEVICE_USER],0,12)."...</td>";
 					} else {
-                    	echo "  <td>".$device[iOSUpdater::DEVICE_USER]."</td>";
+                    	echo "  <td>".$device[AppUpdater::DEVICE_USER]."</td>";
 					}
-                    echo "  <td>".$device[iOSUpdater::DEVICE_OSVERSION]."</td>";
-                    echo "  <td>".$device[iOSUpdater::DEVICE_PLATFORM]."</td>";
-                    echo "  <td>".$device[iOSUpdater::DEVICE_LASTCHECK]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_OSVERSION]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_PLATFORM]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_LANGUAGE]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_INSTALLDATE]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_USAGETIME]."</td>";
+                    echo "  <td>".$device[AppUpdater::DEVICE_LASTCHECK]."</td>";
                     echo "</tr>";
                 endforeach;
             ?>
                     </table>
                 </div>
-                <div style='clear:both;'><br/></div>
+                </div>
             <?php
                 endforeach;
             ?>

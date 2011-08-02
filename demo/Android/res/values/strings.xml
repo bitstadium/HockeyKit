@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HockeyDemo</string>
+
+    <string name="hockey_text">If your device is connected to the internet, the app should bring up an update alert every time you start it. You can start a manual check by tapping the following button.</string>
+    <string name="hockey_title">HockeyKit</string>
+
+    <string name="quincy_text">If you tap the following button, the app will crash. At the next start, you will be asked to send the crash data to the demo server.</string>
+    <string name="quincy_title">QuincyKit</string>
+</resources>

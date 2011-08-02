@@ -2,7 +2,7 @@
     margin-top: 15px;
 }
 
-.old-ios, .new-ios, .ipad-ios4, .desktop, .desktopbuttons, .ipadbuttons, .hintdevice, .hintipad {
+.old-ios, .new-ios, .ipad-ios4, .desktop, .android, .desktopbuttons, .ipadbuttons, .hintdevice, .hintipad {
 	display: none;
 }
 
@@ -41,6 +41,11 @@
     padding-right: 10px;
 }
 
+.browser-ios4 .version .icon {
+    border-radius: 20px;
+    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+}
+
 .browser-ios4 .grid {
     min-height: 330px;
     text-align: center;
@@ -55,6 +60,7 @@
 .browser-ios4 .version .icon {
     float: left;
     padding-right: 10px;
+    margin-bottom: 35px;
 }
 
 .browser-ios4 .version .button {
@@ -75,6 +81,7 @@
 }
 
 .browser-ipad4 .icon {
+    border-radius: 20px;
     -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
 }
 
@@ -84,6 +91,42 @@
 
 .browser-ipad4 .span-8 {
     margin-left: 15px;
+}
+
+
+/* Android devices */
+
+.browser-android .android {
+    display: block;
+}
+
+.browser-android .container {
+	width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+.browser-android .grid {
+    min-height: 330px;
+    text-align: center;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.browser-android .version {
+    min-height: 460px;
+}
+
+.browser-android .version .icon {
+    float: left;
+    padding-right: 10px;
+    margin-bottom: 35px;
+    border-radius: 20px;
+}
+
+.browser-android .version .button {
+    margin-left: 25px;
 }
 
 
@@ -99,9 +142,24 @@
 }
 
 .browser-desktop .icon {
+    border-radius: 20px;
     -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
 }
 
 .browser-desktop .span-8 {
     margin-left: 15px;
+}
+
+/* Stats page */
+
+.appgridelement {
+    text-align:center;
+    float:left;
+    height:100px;
+}
+
+.appgridicon {
+    border-radius: 20px;
+    max-height:75px;
+    max-width:75px;
 }

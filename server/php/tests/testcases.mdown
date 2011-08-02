@@ -1,0 +1,994 @@
+# Test Scenarios
+
+a.  No version subdirectories
+
+b.  Multiple version subdirectories
+
+c.  Multiple version subdirectories, newest version restricted access and additional german release note, requesting UDID has no access
+
+d.  Multiple version subdirectories, newest version restricted access and additional german release note, requesting UDID does have access
+
+# API Version 1
+This API version is iOS only
+
+## Test Case a / 1
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single"
+
+**Expected Result:**
+
+	{"notes":"Single iOS app version release notes","title":"iOS Test App","subtitle":"1.0","result":"1"}
+
+## Test Case a / 2 
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+
+**Expected Result:**
+
+	{"notes":"Single iOS app version release notes","title":"iOS Test App","subtitle":"1.0","result":"1"}
+	
+	stats file updated
+
+## Test Case a / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=app"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+		 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+			 <plist version="1.0">
+			 <dict>
+				<key>items</key>
+				<array>
+					<dict>
+						<key>assets</key>
+						<array>
+							<dict>
+								<key>kind</key>
+								<string>software-package</string>
+								<key>url</key>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa]]></string>
+							</dict>
+						        <dict>
+                            <key>kind</key>
+                            <string>display-image</string>
+                            <key>needs-shine</key>
+                            <false/>
+                            <key>url</key>
+                            <string>http://localhost/hockey/test.ios.single/app.png</string>
+                        </dict>
+                </array>
+						<key>metadata</key>
+						<dict>
+							<key>bundle-identifier</key>
+							<string>test.ios.single</string>
+							<key>bundle-version</key>
+							<string>1</string>
+							<key>kind</key>
+							<string>software</string>
+							<key>title</key>
+							<string>iOS Test App</string>
+							<key>subtitle</key>
+							<string>1.0</string>
+						</dict>
+					</dict>
+				</array>
+			 </dict>
+			 </plist>
+
+## Test Case a / 4
+**Description:**
+
+Get the iOS mobile provisioning file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=profile"
+
+**Expected Result:**
+
+	mobileprovision
+
+## Test Case a / 5
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.single&type=ipa"
+
+**Expected Result:**
+
+	ipa
+
+## Test Case b / 1
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple"
+
+**Expected Result:**
+
+	{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","subtitle":"2.0","result":"1"}
+
+## Test Case b / 2
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+
+**Expected Result:**
+	{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","subtitle":"2.0","result":"1"}
+
+	stats file updated
+
+## Test Case b / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=app"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+		 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+			 <plist version="1.0">
+			 <dict>
+				<key>items</key>
+				<array>
+					<dict>
+						<key>assets</key>
+						<array>
+							<dict>
+								<key>kind</key>
+								<string>software-package</string>
+								<key>url</key>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa]]></string>
+							</dict>
+						        <dict>
+                            <key>kind</key>
+                            <string>display-image</string>
+                            <key>needs-shine</key>
+                            <false/>
+                            <key>url</key>
+                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
+                        </dict>
+                </array>
+						<key>metadata</key>
+						<dict>
+							<key>bundle-identifier</key>
+							<string>test.ios.multiple</string>
+							<key>bundle-version</key>
+							<string>1</string>
+							<key>kind</key>
+							<string>software</string>
+							<key>title</key>
+							<string>iOS Test App</string>
+							<key>subtitle</key>
+							<string>2.0</string>
+						</dict>
+					</dict>
+				</array>
+			 </dict>
+			 </plist>
+
+## Test Case b / 4
+**Description:**
+
+Get the iOS mobile provisioning file
+
+**Request:**
+	
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=profile"
+
+**Expected Result:**
+
+	mobileprovision
+
+## Test Case b / 5
+**Description:**
+
+Get the iOS mobile provisioning file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.multiple&type=ipa"
+
+**Expected Result:**
+
+	ipa v2
+
+
+## Test Case c / 1
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions"
+
+**Expected Result:**
+
+	{"notes":"Restriction iOS app version 1 release notes","title":"iOS Test App","subtitle":"1.0","result":"1"}
+
+## Test Case c / 2
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&ios=4.2.1&version=1&udid=1234567890123456789012345678901234567890&platform=iPhone3,1"
+
+**Expected Result:**
+
+	{"notes":"Restriction iOS app version 1 release notes","title":"iOS Test App","subtitle":"1.0","result":"1"}
+
+	stats file updated
+
+## Test Case c / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=app"
+
+**Expected Result:**
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+		 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+			 <plist version="1.0">
+			 <dict>
+				<key>items</key>
+				<array>
+					<dict>
+						<key>assets</key>
+						<array>
+							<dict>
+								<key>kind</key>
+								<string>software-package</string>
+								<key>url</key>
+								<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
+							</dict>
+						        <dict>
+                            <key>kind</key>
+                            <string>display-image</string>
+                            <key>needs-shine</key>
+                            <false/>
+                            <key>url</key>
+                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
+                        </dict>
+                </array>
+						<key>metadata</key>
+						<dict>
+							<key>bundle-identifier</key>
+							<string>test.ios.restrictions</string>
+							<key>bundle-version</key>
+							<string>1</string>
+							<key>kind</key>
+							<string>software</string>
+							<key>title</key>
+							<string>iOS Test App</string>
+							<key>subtitle</key>
+							<string>1.0</string>
+						</dict>
+					</dict>
+				</array>
+			 </dict>
+			 </plist>
+
+## Test Case c / 4
+**Description:**
+
+Get the iOS mobile provisioning file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=profile"
+
+**Expected Result:**
+
+	mobileprovision
+
+## Test Case c / 5
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "CFNetwork" "http://localhost/hockey/index.php?bundleidentifier=test.ios.restrictions&type=ipa"
+
+**Expected Result:**
+
+	ipa version 1
+
+
+# API Version 2 - iOS
+
+## Test Case a / 1
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+
+**Expected Result:**
+
+	[{"notes":"Single iOS app version release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":3}]
+	
+	stats file updated
+
+## Test Case a / 2
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=plist"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.single/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.single</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>1.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+	
+
+## Test Case a / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=plist&udid=1234567890123456789012345678901234567890"
+
+**Expected Result:**
+
+	?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.single?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.single/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.single</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>1.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>	
+
+## Test Case a / 4
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=mobileprovision"
+
+**Expected Result:**
+
+	mobileprovision
+
+## Test Case a / 5
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=ipa"
+
+**Expected Result:**
+
+	ipa
+
+## Test Case a / 6
+**Description:**
+
+Get authorization code
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.single?format=json&authorize=yes&udid=1234567890123456789012345678901234567890&app_version=1.0"
+
+**Expected Result:**
+
+	{"authcode":"ba613c7afc882b4eea41bc27d863ceb3"}
+
+
+## Test Case b / 1
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+
+**Expected Result:**
+
+	[{"notes":"Multiple iOS app version 2 release notes","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":6},{"notes":"Multiple iOS app version 1 release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":6}]
+
+	stats file updated
+
+## Test Case b / 2
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=plist"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.multiple</string>
+								<key>bundle-version</key>
+								<string>2</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>2.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>	
+
+## Test Case b / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=plist&udid=1234567890123456789012345678901234567890"
+
+**Expected Result:**
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.multiple/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.multiple</string>
+								<key>bundle-version</key>
+								<string>2</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>2.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+
+## Test Case b / 4
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=ipa"
+
+**Expected Result:**
+
+	ipa v2
+
+## Test Case b / 5
+**Description:**
+
+Get authorization code
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.multiple?format=json&authorize=yes&udid=1234567890123456789012345678901234567890&app_version=2.0"
+
+**Expected Result:**
+
+	{"authcode":"622962f037e8d68bfd7edab421710b18"}
+
+## Test Case c / 1
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567890&app_version=1&os:iOS&os_version=4.3.1&lang=en&first_start_at=now&usage_time=15m&device=iPhone3,1"
+
+**Expected Result:**
+
+	[{"notes":"Restriction iOS app version 1 release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":13}]
+	
+	stats file updated
+
+## Test Case c / 2
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.restrictions</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>1.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+	
+## Test Case c / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567890"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567890]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.restrictions</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>1.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+
+## Test Case c / 4
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa"
+
+**Expected Result:**
+
+	ipa version 1
+
+## Test Case c / 5
+**Description:**
+
+Get authorization code
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&authorize=yes&udid=1234567890123456789012345678901234567890&app_version=1.0"
+
+**Expected Result:**
+
+	{"authcode":"47491529e664972934abb03def8e1547"}
+
+## Test Case d / 1
+**Description:**
+
+Get all available versions and update the stats file.
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&udid=1234567890123456789012345678901234567891&app_version=1&os:iOS&os_version=4.3.1&lang=de&first_start_at=now&usage_time=15m&device=iPhone3,1"
+
+**Expected Result:**
+
+	[{"notes":"Einschraenkung iOS app version 2 informationen","title":"iOS Test App","shortversion":"2.0","version":"1","timestamp":1297445966,"appsize":13},{"notes":"Restriction iOS app version 1 release notes","title":"iOS Test App","shortversion":"1.0","version":"1","timestamp":1297445966,"appsize":13}]
+	
+	stats file updated
+
+## Test Case d / 2
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.restrictions</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>1.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+
+## Test Case d / 3
+**Description:**
+
+Get the iOS plist manifest file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=plist&udid=1234567890123456789012345678901234567891"
+
+**Expected Result:**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+			 	 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+				 <plist version="1.0">
+				 <dict>
+					<key>items</key>
+					<array>
+						<dict>
+							<key>assets</key>
+							<array>
+								<dict>
+									<key>kind</key>
+									<string>software-package</string>
+									<key>url</key>
+									<string><![CDATA[http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891]]></string>
+								</dict>
+							        <dict>
+	                            <key>kind</key>
+	                            <string>display-image</string>
+	                            <key>needs-shine</key>
+	                            <false/>
+	                            <key>url</key>
+	                            <string>http://localhost/hockey/test.ios.restrictions/app.png</string>
+	                        </dict>
+	                </array>
+							<key>metadata</key>
+							<dict>
+								<key>bundle-identifier</key>
+								<string>test.ios.restrictions</string>
+								<key>bundle-version</key>
+								<string>1</string>
+								<key>kind</key>
+								<string>software</string>
+								<key>title</key>
+								<string>iOS Test App</string>
+								<key>subtitle</key>
+								<string>2.0</string>
+							</dict>
+						</dict>
+					</array>
+				 </dict>
+				 </plist>
+
+## Test Case d / 4
+**Description:**
+
+Get the iOS ipa package file
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=ipa&udid=1234567890123456789012345678901234567891"
+
+**Expected Result:**
+
+	ipa version 2
+
+## Test Case c / 5
+**Description:**
+
+Get authorization code
+
+**Request:**
+
+	curl -A "Hockey/iOS" "http://localhost/hockey/api/2/apps/test.ios.restrictions?format=json&authorize=yes&udid=1234567890123456789012345678901234567891&app_version=2.0"
+
+**Expected Result:**
+
+	{"authcode":"cf685002ca6452c30ae35ba41bd12234"}
+
+
+# API Version 2 - Android
+
+## Test Case a / 1
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.single?format=json&app_version=1&os:Android&os_version=2.3.1&lang=en&first_start_at=now&usage_time=15m&device=NexusS"
+
+**Expected Result:**
+
+	[{"notes":"Single Android app version release notes","title":"Android Test App","shortversion":"1.0","version":1,"timestamp":1297445966,"appsize":3}]
+
+## Test Case a / 2
+**Description:**
+
+Get the android package file
+
+**Request:**
+
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.single?format=apk"
+
+**Expected Result:**
+
+	apk
+
+## Test Case b / 1
+**Description:**
+
+Get all available versions
+
+**Request:**
+
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.multiple?format=json&app_version=1&os:Android&os_version=2.3.1&lang=de&first_start_at=now&usage_time=15m&device=NexusS"
+
+**Expected Result:**
+
+	[{"notes":"Multiple Android app version 2 release notes","title":"Android Test App","shortversion":"2.0","version":2,"timestamp":1297445966,"appsize":7},{"notes":"Multiple Android app version 1 release notes","title":"Android Test App","shortversion":"1.0","version":1,"timestamp":1297445966,"appsize":7}]
+
+## Test Case b / 2
+**Description:**
+
+Get the android package file
+
+**Request:**
+
+	curl -A "Hockey/Android" "http://localhost/hockey/api/2/apps/test.android.multiple?format=apk"
+
+**Expected Result:**
+
+	apk 2.0

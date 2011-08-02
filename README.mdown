@@ -1,0 +1,77 @@
+# About:
+
+Hockey is a iOS Ad-Hoc updater framework. It can be used for all apps that target the Apple AppStore and improves the beta testing process dramatically. All beta testers. It consists of two components, a server and a client framework.
+The server component is required for all scenarios. But it also can work standalone without the client library. It provides a web interface which beta testers can use to install the latest AdHoc provisioning profile and also the latest beta version via Safari right from the device. One server installation is able to  handle multiple applications via different bundle identifiers (I highly suggest using different bundle identifiers for Debug, AdHoc Beta and AppStore release builds !!!).
+The client framework should only be included in AdHoc builds and should NOT (!!) be used in AppStore distribution builds! By default the client library will check for updates on your server whenever the app is started or will wake up. The user can adjust this in the settings dialog to alternatively only check once a day or manually.
+
+This framework was created after reading the blog post at http://jeffreysambells.com/posts/2010/06/22/ios-wireless-app-distribution/ where Jeffrey Sambells wrote about the mechanisms required and being available for us to use.
+
+A complete documentation can be found in the wiki at https://github.com/TheRealKerni/HockeyKit/wiki
+
+# Requirements:
+- A PHP5 server needs to be available and is required for distribution of the apps
+- No database required!
+
+
+# Features:
+- iOS AdHoc build OTA distribution
+- Automatically generated website, in specific versions for all device types and desktop browser
+- Web interface only requires subdirectory to be created and and .ipa and .plist file (any name) being added/updated
+- Website can be used for first time installation and updates, iOS3 users can use the website from a desktop browser to download the app, iTunes installation instructions for those are also included
+- Can handle multiple apps on one server, one subdirectory per app
+- Optionally shows release notes by displaying the content of a file with the extension .html (use HTML format without wrapping it in <html> and <body>)
+- Provisioning profile link shown optionally (useful if new users are added without building a new version just for them)
+- Support for app icon on website and during installation on the device, place any .png file into the subdirectory (114x114 pixel works on all devices!)
+- Optional client side framework
+- Framework notifies users on startup of new updates, iOS4 users can install directly from within the client (In-App-Updates), iOS3 users will be hinted to the website
+- Framework optionally sends UDID, app version, iOS version, device type to the server, overview will appear automatically in /stats/ website (write access for PHP scripts required)
+- Stats website supports replacing UDIDs with names by entering them into a userlist.txt file within the stats subdirectory
+- Bookmarklet to extract all UDIDs and names from iOS program portal device page available in the stats page
+- Template for an Xcode 3 build script to upload all files to your server after a build (Beta Automatisation.sh)
+
+
+# Notes:
+- The server can run stand alone, the client is optional
+- Beta testers need to run at least iOS 4 to benefit from the auto update functionality
+- Beta testers using iOS 3 will also be notified of updates within the app
+- The client framework optionally watches for Reachability notifications to detect if the device is online or not
+- To automatically exclude the library from the AppStore version make sure to add access to the build configuration variable by adding "CONFIGURATION_$(CONFIGURATION)" to the preprocessor macros of all configurations in the project settings of your app.
+- Do not enter a link to the app icon in the organizer screen. Hockey will add that part into the PList automatically on the server, if there is a PNG file found (114pixel icons work on all devices!)
+- Make sure the IPA filename has no space in it. iOS is not able to call that URL correctly.
+- Don't make separate names per IPA file you make, because only the first file found per directory be served
+
+
+# BRANCHES:
+The branching structure follows the git flow concept, defined by Vincent Driessen: http://nvie.com/posts/a-successful-git-branching-model/
+
+* Master branch:
+
+	The main branch where the source code of HEAD always reflects a production-ready state.
+
+* Develop branch:
+
+	Consider this to be the main branch where the source code of HEAD always reflects a state with the latest delivered development changes for the next release. Some would call this the “integration branch”.
+
+* Feature branches:
+
+	These are used to develop new features for the upcoming or a distant future release. The essence of a feature branch is that it exists as long as the feature is in development, but will eventually be merged back into develop (to definitely add the new feature to the upcoming release) or discarded (in case of a disappointing experiment).
+
+* Release branches:
+
+	These branches support preparation of a new production release. By using this, the develop branch is cleared to receive features for the next big release.
+
+* Hotfix branches:
+
+	Hotfix branches are very much like release branches in that they are also meant to prepare for a new production release, albeit unplanned.
+
+
+# Acknowledgments:
+
+The following 3rd party open source libraries have been used:
+
+* JSONKit by johnezang (https://github.com/johnezang/JSONKit)
+* SBJson by Stig Brautaset (http://github.com/stig/json-framework)
+* PSStoreButton by Peter Steinberger (https://github.com/steipete/PSStoreButton)
+* NSString+URLEncoding by Kaboomerang LLC.
+* bluescreen css framework (http://blueprintcss.org/)
+* PHP plist reader code from http://blog.iconara.net/2007/05/08/php-plist-parsing/

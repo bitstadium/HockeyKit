@@ -1,0 +1,17 @@
+# REWRITE RULES
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^stats/$ stats/index.php [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule .* index.php [L]
+
+</IfModule>
+
+# MIME TYPES
+<IfModule mod_mime.c>
+    AddType application/octet-stream .ipa
+    AddType application/vnd.android.package-archive .apk
+    AddType text/xml .plist
+</IfModule>
