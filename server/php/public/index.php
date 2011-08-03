@@ -197,6 +197,7 @@
                           echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                     ?>
                         </p>
+	                    <div style='clear:both;'></div>
                         <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
                         <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
                     <?php } ?>
