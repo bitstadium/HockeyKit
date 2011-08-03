@@ -49,6 +49,8 @@
 - (void)startManager;
 - (void)wentOnline;
 - (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image;
+- (BOOL)canSendUserData;
+- (BOOL)canSendUsageTime;
 - (NSString *)currentUsageString;
 - (NSString *)installationDateString;
 - (NSString *)authenticationToken;
@@ -283,6 +285,31 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         
     return visibleWindow;
 }
+
+- (BOOL)canSendUserData {
+    if (self.shouldSendUserData) {
+        if (self.allowUserToDisableSendData) {
+            return self.userAllowsSendUserData;
+        }
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (BOOL)canSendUsageTime {
+    if (self.shouldSendUsageTime) {
+        if (self.allowUserToDisableSendData) {
+            return self.userAllowsSendUsageTime;
+        }
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -671,15 +698,19 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                   [[[UIDevice currentDevice] uniqueIdentifier] bw_URLEncodedString]];
     
     // add additional statistics if user didn't disable flag
-    if (self.shouldSendUserData) {
-        [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&usage_time=%@&first_start_at=%@",
+    if ([self canSendUserData]) {
+        [parameter appendFormat:@"&app_version=%@&os=iOS&os_version=%@&device=%@&lang=%@&first_start_at=%@",
          [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
          [[[UIDevice currentDevice] systemVersion] bw_URLEncodedString],
          [[self getDevicePlatform_] bw_URLEncodedString],
          [[[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0] bw_URLEncodedString],
-         [[[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString],
          [[[self installationDateString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString]
          ];
+        if ([self canSendUsageTime]) {
+            [parameter appendFormat:@"&usage_time=%@",
+             [[[self currentUsageString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] bw_URLEncodedString]
+             ];
+        }
     }
     
     // build request & send
@@ -720,7 +751,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #endif
     
     NSString *extraParameter = [NSString string];
-    if (self.shouldSendUserData) {
+    if ([self canSendUserData]) {
         extraParameter = [NSString stringWithFormat:@"&udid=%@", [[UIDevice currentDevice] uniqueIdentifier]];
     }
     
