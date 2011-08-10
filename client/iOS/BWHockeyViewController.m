@@ -268,9 +268,15 @@
     if (self.modal) {
 
         // Note that as of 5.0, parentViewController will no longer return the presenting view controller
+
         UIViewController *presentingViewController = nil;
-        IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
-        IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
+
+        // this 2 lines can be used when compiling against iOS5 base SDK
+//        IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
+//        IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
+
+        // these following line should be replaced with the above 2 lines when compiled against iOS5 base SDK
+        presentingViewController = self.navigationController.parentViewController;
         
 		if (presentingViewController) {
 			[self.navigationController dismissModalViewControllerAnimated:YES];
