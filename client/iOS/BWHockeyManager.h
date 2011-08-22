@@ -138,8 +138,8 @@ typedef enum {
 // if NO, the user denied to send usage data
 @property (nonatomic, assign, getter=doesUserAllowsSendUsageTime) BOOL userAllowsSendUsageTime;
 
-// if YES, the new version alert will be displayed always if the current version is outdated
-// if NO, the alert will be displayed only once for each new update (default)
+// if YES, the new version alert will be displayed always if the current version is outdated (default)
+// if NO, the alert will be displayed only once for each new update
 @property (nonatomic, assign) BOOL alwaysShowUpdateReminder;
 
 // if YES, the user can change the HockeyUpdateSetting value (default)
