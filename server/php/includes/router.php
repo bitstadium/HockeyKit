@@ -84,7 +84,7 @@ class Router
 
 	    /* Check if HockeyKit is running on a Windows server, if so: update the path variable to let it parse correctly. */
         if( PHP_OS == "WIN32" || PHP_OS == "WINNT" )
-		    $path = str_replace($path, "\\", "/");
+		    $path = str_replace("\\", "/", $path);
 
         if ($path == '/') $path = '';
 
