@@ -136,7 +136,36 @@ class Helper
         echo json_encode($content);
         exit();
     }
-    
+ 
+    static public function secondsToTime($seconds)
+    {
+        if ($seconds == "" or $seconds == 0)
+            return $seconds;
+            
+        // extract hours
+        $hours = floor($seconds / (60 * 60));
+ 
+        // extract minutes
+        $divisor_for_minutes = $seconds % (60 * 60);
+        $minutes = floor($divisor_for_minutes / 60);
+ 
+        // extract the remaining seconds
+        $divisor_for_seconds = $divisor_for_minutes % 60;
+        $seconds = ceil($divisor_for_seconds);
+ 
+        $result = "";
+        if ($hours > 0)
+            $result .= $hours."h ";
+
+        if ($minutes > 0)
+            $result .= $minutes."m ";
+
+        if ($seconds > 0)
+            $result .= $seconds."s";
+            
+        return $result;
+    }
+       
 }
 
 ?>

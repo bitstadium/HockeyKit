@@ -41,9 +41,13 @@
     padding-right: 10px;
 }
 
+.browser-ios4 .grid .icon {
+    border-radius: 20px;
+}
+
 .browser-ios4 .version .icon {
     border-radius: 20px;
-    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+    -webkit-box-reflect:below 2px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.65, transparent), to(white));
 }
 
 .browser-ios4 .grid {
@@ -59,7 +63,7 @@
 
 .browser-ios4 .version .icon {
     float: left;
-    padding-right: 10px;
+    margin-right: 10px;
     margin-bottom: 35px;
 }
 

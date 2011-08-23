@@ -101,7 +101,7 @@
                     echo "  <td>".$device[AppUpdater::DEVICE_PLATFORM]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_LANGUAGE]."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_INSTALLDATE]."</td>";
-                    echo "  <td>".$device[AppUpdater::DEVICE_USAGETIME]."</td>";
+                    echo "  <td>".Helper::secondsToTime($device[AppUpdater::DEVICE_USAGETIME])."</td>";
                     echo "  <td>".$device[AppUpdater::DEVICE_LASTCHECK]."</td>";
                     echo "</tr>";
                 endforeach;
