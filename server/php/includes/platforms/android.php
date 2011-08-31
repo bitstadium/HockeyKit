@@ -93,6 +93,12 @@ class AndroidAppUpdater extends AbstractAppUpdater
                 $newAppVersion[self::RETURN_V2_TIMESTAMP]       = filectime($apk);
                 $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($apk);
 
+                // add the latest release notes if available
+                $note = $parsed_json['notes'];
+                if ($note) {
+                    $newAppVersion[self::RETURN_V2_NOTES] = Helper::nl2br_skip_html($note);
+                }
+
                 $result[] = $newAppVersion;
             }
             return Helper::sendJSONAndExit($result);
