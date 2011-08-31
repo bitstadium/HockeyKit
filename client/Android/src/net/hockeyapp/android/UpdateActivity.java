@@ -96,12 +96,14 @@ public class UpdateActivity extends ListActivity {
     private Context context;
     private String urlString;
     private String filename;
+    private String filePath;
     private ProgressDialog progressDialog;
 
     public DownloadFileTask(Context context, String urlString) {
       this.context = context;
       this.urlString = urlString;
-      this.filename = "download/" + UUID.randomUUID() + ".apk";
+      this.filename = UUID.randomUUID() + ".apk";
+      this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
     }
     
     public void attach(Context context) {
@@ -122,8 +124,12 @@ public class UpdateActivity extends ListActivity {
 
         int lenghtOfFile = connection.getContentLength();
 
+        File dir = new File(this.filePath);
+        dir.mkdirs();
+        File file = new File(dir, this.filename);
+
         InputStream input = new BufferedInputStream(connection.getInputStream());
-        OutputStream output = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), this.filename));
+        OutputStream output = new FileOutputStream(file);
 
         byte data[] = new byte[1024];
         int count = 0;
@@ -163,7 +169,7 @@ public class UpdateActivity extends ListActivity {
        }
        
        Intent intent = new Intent(Intent.ACTION_VIEW);
-       intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), this.filename)), "application/vnd.android.package-archive");
+       intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
        startActivity(intent);
      }
