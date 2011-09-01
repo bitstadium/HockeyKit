@@ -570,9 +570,9 @@ class AppUpdater
                     $newApp[self::INDEX_APP]        = $parsed_json['title'];
                     $newApp[self::INDEX_SUBTITLE]   = $parsed_json['versionName'];
                     $newApp[self::INDEX_VERSION]    = $parsed_json['versionCode'];
+                    $newApp[self::INDEX_NOTES]      = $parsed_json['notes'];
                     $newApp[self::INDEX_DATE]       = filectime($apk);
                     $newApp[self::INDEX_APPSIZE]    = filesize($apk);
-                    
                     $newApp[self::INDEX_PLATFORM]   = self::APP_PLATFORM_ANDROID;
                 }
                 
