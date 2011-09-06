@@ -991,7 +991,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         appIdentifier_ = [anAppIdentifier copy];
     }
     
-    [self setUpdateURL:@"https://beta.hockeyapp.net/"];
+    [self setUpdateURL:@"https://rink.hockeyapp.net/"];
 }
 
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
