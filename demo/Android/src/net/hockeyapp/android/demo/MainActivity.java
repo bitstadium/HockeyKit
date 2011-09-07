@@ -14,7 +14,9 @@ public class MainActivity extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-    
+
+    System.setProperty("http.keepAlive", "false");
+
     UpdateActivity.iconDrawableId = R.drawable.icon;
     checkForUpdates();
   }
@@ -35,7 +37,7 @@ public class MainActivity extends Activity {
       checkUpdateTask.attach(this);
     }
     else {
-      checkUpdateTask = new CheckUpdateTask(this, "https://beta.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
+      checkUpdateTask = new CheckUpdateTask(this, "https://rink.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
       checkUpdateTask.execute();
     }
   }
@@ -55,6 +57,6 @@ public class MainActivity extends Activity {
   }
   
   private void checkForCrashes() {
-    CrashManager.register(this, "https://beta.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
+    CrashManager.register(this, "https://rink.hockeyapp.net/", "dedae71020c1c014120ef0153cb8457c");
   }
 }

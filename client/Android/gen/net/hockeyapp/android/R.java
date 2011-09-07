@@ -38,9 +38,13 @@ public final class R {
         public static final int crash_dialog_negative_button=0x7f040003;
         public static final int crash_dialog_positive_button=0x7f040004;
         public static final int crash_dialog_title=0x7f040001;
-        public static final int update_dialog_message=0x7f040006;
-        public static final int update_dialog_negative_button=0x7f040007;
-        public static final int update_dialog_positive_button=0x7f040008;
-        public static final int update_dialog_title=0x7f040005;
+        public static final int download_failed_dialog_message=0x7f040006;
+        public static final int download_failed_dialog_negative_button=0x7f040007;
+        public static final int download_failed_dialog_positive_button=0x7f040008;
+        public static final int download_failed_dialog_title=0x7f040005;
+        public static final int update_dialog_message=0x7f04000a;
+        public static final int update_dialog_negative_button=0x7f04000b;
+        public static final int update_dialog_positive_button=0x7f04000c;
+        public static final int update_dialog_title=0x7f040009;
     }
 }
