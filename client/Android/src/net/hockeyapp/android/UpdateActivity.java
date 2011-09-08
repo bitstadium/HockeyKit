@@ -175,7 +175,7 @@ public class UpdateActivity extends ListActivity {
        
        if (result) {
          Intent intent = new Intent(Intent.ACTION_VIEW);
-         intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), this.filename)), "application/vnd.android.package-archive");
+         intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
          startActivity(intent);
        }
