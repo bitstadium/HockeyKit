@@ -119,7 +119,7 @@
 }
 
 - (UIImage *)addGlossToImage_:(UIImage *)image {
-    IF_IOS4_OR_GREATER(UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);)
+    BW_IF_IOS4_OR_GREATER(UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);)
     IF_PRE_IOS4(UIGraphicsBeginImageContext(image.size);)
 
     [image drawAtPoint:CGPointZero];
@@ -173,7 +173,7 @@
         footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         footerView.backgroundColor = BW_RGBCOLOR(200, 202, 204);
         UIButton *footerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        IF_IOS4_OR_GREATER(
+        BW_IF_IOS4_OR_GREATER(
                            //footerButton.layer.shadowOffset = CGSizeMake(-2, 2);
                            footerButton.layer.shadowColor = [[UIColor blackColor] CGColor];
                            footerButton.layer.shadowRadius = 2.0f;
@@ -272,7 +272,7 @@
         UIViewController *presentingViewController = nil;
 
         // this 2 lines can be used when compiling against iOS5 base SDK
-//        IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
+//        BW_IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
 //        IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
 
         // these following line should be replaced with the above 2 lines when compiled against iOS5 base SDK
@@ -348,7 +348,7 @@
         }
     } else {
         BOOL useHighResIcon = NO;
-        IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
+        BW_IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
 
         for(NSString *icon in icons) {
             iconString = icon;

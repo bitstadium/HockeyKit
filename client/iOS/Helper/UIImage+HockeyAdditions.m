@@ -84,7 +84,7 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
     
 	UIImage *roundedImage = nil;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-	IF_IOS4_OR_GREATER(
+	BW_IF_IOS4_OR_GREATER(
                        UIGraphicsBeginImageContextWithOptions(self.size, NO, 0.0); // 0.0 for scale means "correct scale for device's main screen".
                        CGImageRef sourceImg = CGImageCreateWithImageInRect([self CGImage], CGRectMake(0, 0, self.size.width * self.scale, self.size.height * self.scale)); // cropping happens here.
                        
@@ -209,8 +209,7 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
     
     // Create appropriately modified image.
 	UIImage *image = nil;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-	IF_IOS4_OR_GREATER
+	BW_IF_IOS4_OR_GREATER
     (
      UIGraphicsBeginImageContextWithOptions(destRect.size, NO, honorScaleFactor ? 0.0 : 1.0); // 0.0 for scale means "correct scale for device's main screen".
      CGImageRef sourceImg = CGImageCreateWithImageInRect([self CGImage], sourceRect); // cropping happens here.
@@ -220,7 +219,6 @@ CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, 
      image = UIGraphicsGetImageFromCurrentImageContext();
      UIGraphicsEndImageContext();
      )
-#endif
 	if (!image) {
 		// Try older method.
 		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
