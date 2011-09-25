@@ -390,7 +390,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BWHockeyNetworkBecomeReachable object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
     
-    IF_IOS4_OR_GREATER(
+    BW_IF_IOS4_OR_GREATER(
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        )
@@ -481,7 +481,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                                    cancelButtonTitle:BWHockeyLocalize(@"HockeyIgnore")
                                                    otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
                                    ] autorelease];
-        IF_IOS4_OR_GREATER(
+        BW_IF_IOS4_OR_GREATER(
                            if (self.ishowingDirectInstallOption) {
                                [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
                            }
@@ -965,7 +965,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
     }
     
-    IF_IOS4_OR_GREATER(
+    BW_IF_IOS4_OR_GREATER(
                        // register/deregister logic
                        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                        if (!updateURL_ && anUpdateURL) {
@@ -997,7 +997,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
     if (checkForUpdateOnLaunch_ != flag) {
         checkForUpdateOnLaunch_ = flag;
-        IF_IOS4_OR_GREATER(
+        BW_IF_IOS4_OR_GREATER(
                            NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                            if (flag) {
                                [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
