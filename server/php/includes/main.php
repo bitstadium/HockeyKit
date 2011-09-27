@@ -96,6 +96,7 @@ class AppUpdater
     const RETURN_V2_TIMESTAMP       = 'timestamp';
     const RETURN_V2_APPSIZE         = 'appsize';
     const RETURN_V2_AUTHCODE        = 'authcode';
+    const RETURN_V2_MANDATORY       = 'mandatory';
 
     const RETURN_V2_AUTH_FAILED     = 'FAILED';
 
@@ -121,9 +122,10 @@ class AppUpdater
     const FILE_ANDROID_APK      = '.apk';
     const FILE_COMMON_NOTES     = '.html';
     const FILE_COMMON_ICON      = '.png';
-    
-    const FILE_VERSION_RESTRICT = '.team';                  // if present in a version subdirectory, defines the teams that do have access, comma separated
-    const FILE_USERLIST         = 'stats/userlist.txt';     // defines UDIDs, real names for stats, and comma separated the associated team names
+
+    const FILE_VERSION_MANDATORY  = '.mandatory';             // if present in a version subdirectory, defines that version to be mandatory
+    const FILE_VERSION_RESTRICT   = '.team';                  // if present in a version subdirectory, defines the teams that do have access, comma separated
+    const FILE_USERLIST           = 'stats/userlist.txt';     // defines UDIDs, real names for stats, and comma separated the associated team names
     
     // define version array structure
     const VERSIONS_COMMON_DATA      = 'common';
@@ -350,6 +352,7 @@ class AppUpdater
                     if (!$note) {
                         $note   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_COMMON_NOTES));
                     }
+                    $mandatory  = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_MANDATORY));    // this file defines if the version is mandatory
                     $restrict   = @array_shift(glob($this->appDirectory.$bundleidentifier . '/'. $subDir . '/*' . self::FILE_VERSION_RESTRICT));    // this file defines the teams allowed to access this version
                                         
                     if ($ipa && $plist && (!$platform || $platform == self::PLATFORM_IOS)) {
@@ -358,6 +361,7 @@ class AppUpdater
                         $version[self::FILE_IOS_PLIST] = $plist;
                         $version[self::FILE_COMMON_NOTES] = $note;
                         $version[self::FILE_VERSION_RESTRICT] = $restrict;
+                        $version[self::FILE_VERSION_MANDATORY] = $mandatory;
                         
                         // if this is a restricted version, check if the UDID is provided and allowed
                         if ($restrict && !$this->checkProtectedVersion($restrict)) {

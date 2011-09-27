@@ -93,10 +93,10 @@ class iOSAppUpdater extends AbstractAppUpdater
         // check for available updates for the given bundleidentifier
         // and return a JSON string with the result values
 
-        $current = current($files[self::VERSIONS_SPECIFIC_DATA]);
-        $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
-        $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
-        $note     = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
+        $current    = current($files[self::VERSIONS_SPECIFIC_DATA]);
+        $ipa        = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
+        $plist      = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
+        $note       = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
         
         if ($ipa && $plist) {
             
@@ -136,6 +136,7 @@ class iOSAppUpdater extends AbstractAppUpdater
                     $ipa = $version[self::FILE_IOS_IPA];
                     $plist = $version[self::FILE_IOS_PLIST];
                     $note = $version[self::FILE_COMMON_NOTES];
+                    $mandatory  = isset($version[self::FILE_VERSION_MANDATORY]) ? $version[self::FILE_VERSION_MANDATORY] : null;
                     
                     // parse the plist file
                     $plistDocument = new DOMDocument();
@@ -149,6 +150,12 @@ class iOSAppUpdater extends AbstractAppUpdater
                     // add the latest release notes if available
                     if ($note) {
                         $newAppVersion[self::RETURN_V2_NOTES]           = Helper::nl2br_skip_html(file_get_contents($note));
+                    }
+                    
+                    if ($mandatory) {
+                        $newAppVersion[self::RETURN_V2_MANDATORY]       = true;
+                    } else {
+                        $newAppVersion[self::RETURN_V2_MANDATORY]       = false;
                     }
 
                     $newAppVersion[self::RETURN_V2_TITLE]               = $parsed_plist['items'][0]['metadata']['title'];
