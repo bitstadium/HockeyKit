@@ -475,20 +475,32 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)showCheckForUpdateAlert_ {
     if (!updateAlertShowing_) {
-        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
-                                                             message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
-                                                            delegate:self
-                                                   cancelButtonTitle:BWHockeyLocalize(@"HockeyIgnore")
-                                                   otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
-                                   ] autorelease];
-        BW_IF_IOS4_OR_GREATER(
-                           if (self.ishowingDirectInstallOption) {
-                               [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
-                           }
-                           )
-        [alertView setTag:0];
-        [alertView show];
-        updateAlertShowing_ = YES;
+        if ([self.app.mandatory boolValue] ) {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
+                                                                 message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertMandatoryTextWithAppVersion"), [self.app nameAndVersionString]]
+                                                                delegate:self
+                                                       cancelButtonTitle:BWHockeyLocalize(@"HockeyInstallUpdate")
+                                                       otherButtonTitles:nil
+                                       ] autorelease];
+            [alertView setTag:2];
+            [alertView show];
+            updateAlertShowing_ = YES;
+        } else {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
+                                                                 message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
+                                                                delegate:self
+                                                       cancelButtonTitle:BWHockeyLocalize(@"HockeyIgnore")
+                                                       otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
+                                       ] autorelease];
+            BW_IF_IOS4_OR_GREATER(
+                                  if (self.ishowingDirectInstallOption) {
+                                      [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
+                                  }
+                                  )
+            [alertView setTag:0];
+            [alertView show];
+            updateAlertShowing_ = YES;
+        }
     }
 }
 
@@ -686,6 +698,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)checkForUpdate {
     if (self.requireAuthorization) return;
+    if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
+        [self showCheckForUpdateAlert_];
+        return;
+    }
     [self checkForUpdateShowFeedback:NO];
 }
 
@@ -934,7 +950,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [alert release];
         }
         
-        if (self.isUpdateAvailable && (self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion)) {
+        if (self.isUpdateAvailable && (self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion || [self.app.mandatory boolValue])) {
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForUpdateAlert_];
             }
@@ -1085,7 +1101,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // invoke the selected action from the actionsheet for a location element
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if ([alertView tag] == 1) {
+    if ([alertView tag] == 2) {
+        [self initiateAppDownload];
+        updateAlertShowing_ = NO;
+        return;
+    } else if ([alertView tag] == 1) {
         [self alertFallback:[alertView message]];
         return;
     }

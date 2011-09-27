@@ -104,7 +104,7 @@ Optional parameters, *HTTP GET/POST*.
 ### Output
 
 * JSON
-* Success: ` [{"notes":release notes,"title":app title,"result":version number}, {"notes":release notes,"title":app title,"result":version number}, ...]`
+* Success: ` [{"notes":release notes,"mandatory":true,"title":app title,"result":version number}, {"notes":release notes,"mandatory":false,"title":app title,"result":version number}, ...]`
 * Error: `{ result: "-1" }`
 * Info about app versions (multiple versions, authentication and team membership by UDID)
 
