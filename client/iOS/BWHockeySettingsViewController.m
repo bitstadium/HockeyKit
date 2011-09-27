@@ -3,7 +3,7 @@
 //  HockeyDemo
 //
 //  Created by Andreas Linde on 3/8/11.
-//  Copyright 2011 Buzzworks. All rights reserved.
+//  Copyright 2011 Andreas Linde. All rights reserved.
 //
 
 #import "BWHockeySettingsViewController.h"
