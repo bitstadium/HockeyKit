@@ -110,6 +110,22 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark -
 #pragma mark static
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 40000
++(BWHockeyManager *)sharedHockeyManager
+{   
+    static BWHockeyManager *sharedInstance = nil;
+    static dispatch_once_t pred;
+    
+    if (sharedInstance) return sharedInstance;
+    
+    dispatch_once(&pred, ^{
+        sharedInstance = [BWHockeyManager alloc];
+        sharedInstance = [sharedInstance init];
+    });
+    
+    return sharedInstance;
+}
+#else
 + (BWHockeyManager *)sharedHockeyManager {
 	static BWHockeyManager *hockeyManager = nil;
     
@@ -119,6 +135,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
 	return hockeyManager;
 }
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
