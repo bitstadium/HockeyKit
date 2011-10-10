@@ -18,6 +18,7 @@ public class MainActivity extends Activity {
     System.setProperty("http.keepAlive", "false");
 
     UpdateActivity.iconDrawableId = R.drawable.icon;
+    UpdateActivity.packageName = this.getPackageName();
     checkForUpdates();
   }
   
@@ -50,7 +51,7 @@ public class MainActivity extends Activity {
 
   public void onClickCrashButton(View view) {
     // Find a view that does not exist
-    View missing = (View)findViewById(R.id.icon_view);
+    View missing = (View)findViewById(R.id.hockey_header_image_view);
     
     // This should raise a null pointer exception
     missing.bringToFront();

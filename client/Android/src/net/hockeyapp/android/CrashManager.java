@@ -51,18 +51,20 @@ public class CrashManager {
       return;
     }
 
+    ResourceHelper resources = new ResourceHelper("hockey", "net.hockeyapp.android");
+    
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(R.string.crash_dialog_title);
-    builder.setMessage(R.string.crash_dialog_message);
+    builder.setTitle(resources.getStringId("crash_dialog_title"));
+    builder.setMessage(resources.getStringId("crash_dialog_message"));
 
-    builder.setNegativeButton(R.string.crash_dialog_negative_button, new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(resources.getStringId("crash_dialog_negative_button"), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         deleteStackTraces(context);
         registerHandler();
       } 
     });
 
-    builder.setPositiveButton(R.string.crash_dialog_positive_button, new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(resources.getStringId("crash_dialog_positive_button"), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         new Thread() {
           @Override

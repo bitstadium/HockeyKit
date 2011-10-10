@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hockey_app_name">Hockey</string>
+    
+    <string name="hockey_crash_dialog_title">Crash Data</string>
+    <string name="hockey_crash_dialog_message">The app found information about previous crashes. Would you like to send this data to the developer?</string>
+    <string name="hockey_crash_dialog_negative_button">Dismiss</string>
+    <string name="hockey_crash_dialog_positive_button">Send</string>
+
+    <string name="hockey_download_failed_dialog_title">Download Failed</string>
+    <string name="hockey_download_failed_dialog_message">The update could not be downloaded. Would you like to try again?</string>
+    <string name="hockey_download_failed_dialog_negative_button">Cancel</string>
+    <string name="hockey_download_failed_dialog_positive_button">Retry</string>
+
+    <string name="hockey_update_dialog_title">Update Available</string>
+    <string name="hockey_update_dialog_message">Show information about the new update?</string>
+    <string name="hockey_update_dialog_negative_button">Dismiss</string>
+    <string name="hockey_update_dialog_positive_button">Show</string>
+</resources>

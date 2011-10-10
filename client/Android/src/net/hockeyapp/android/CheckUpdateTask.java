@@ -17,13 +17,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.provider.Settings;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
-  private Context context = null;
-  private String urlString = null;
-  private String appIdentifier = null;
+  protected Context context = null;
+  protected String urlString = null;
+  protected String appIdentifier = null;
   
   public CheckUpdateTask(Context context, String urlString) {
     this.appIdentifier = null;
@@ -54,7 +55,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   @Override
   protected JSONArray doInBackground(String... args) {
     try {
-      int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      int versionCode = getVersionCode();
       
       URL url = new URL(getURLString("json"));
       URLConnection connection = url.openConnection();
@@ -81,6 +82,15 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     return null;
   }
 
+  protected int getVersionCode() {
+    try {
+      return context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+      return 0;
+    }
+  }
+  
   @Override
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
@@ -88,7 +98,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
   }
   
-  private String getURLString(String format) {
+  protected String getURLString(String format) {
     StringBuilder builder = new StringBuilder();
     builder.append(urlString);
     builder.append("api/2/apps/");
@@ -109,16 +119,18 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       return;
     }
     
+    ResourceHelper resources = new ResourceHelper("hockey", "net.hockeyapp.android");
+    
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(R.string.update_dialog_title);
-    builder.setMessage(R.string.update_dialog_message);
+    builder.setTitle(resources.getStringId("update_dialog_title"));
+    builder.setMessage(resources.getStringId("update_dialog_message"));
 
-    builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(resources.getStringId("update_dialog_negative_button"), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
       } 
     });
     
-    builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(resources.getStringId("update_dialog_positive_button"), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         Intent intent = new Intent(context, UpdateActivity.class);
         intent.putExtra("json", updateInfo.toString());
