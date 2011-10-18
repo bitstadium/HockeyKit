@@ -83,6 +83,9 @@ class Helper
             case "iPhone3,3":
                 $platform = "iPhone 4 CDMA";
                 break;
+            case "iPhone4,1":
+                $platform = "iPhone 4S";
+                break;
             case "iPad1,1":
                 $platform = "iPad";
                 break;

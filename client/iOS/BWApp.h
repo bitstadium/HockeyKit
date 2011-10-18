@@ -32,6 +32,7 @@
   NSString *notes_;
   NSDate   *date_;
   NSNumber *size_;
+  NSNumber *mandatory_;
 }
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *version;
@@ -39,6 +40,7 @@
 @property (nonatomic, copy) NSString *notes;
 @property (nonatomic, copy) NSDate *date;
 @property (nonatomic, copy) NSNumber *size;
+@property (nonatomic, copy) NSNumber *mandatory;
 
 - (NSString *)nameAndVersionString;
 - (NSString *)versionString;

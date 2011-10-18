@@ -2,7 +2,7 @@
 //  BWHockeyManager.m
 //
 //  Created by Andreas Linde on 8/17/10.
-//  Copyright 2010 Andreas Linde. All rights reserved.
+//  Copyright 2010-2011 Andreas Linde. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,22 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark -
 #pragma mark static
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 40000
++(BWHockeyManager *)sharedHockeyManager
+{   
+    static BWHockeyManager *sharedInstance = nil;
+    static dispatch_once_t pred;
+    
+    if (sharedInstance) return sharedInstance;
+    
+    dispatch_once(&pred, ^{
+        sharedInstance = [BWHockeyManager alloc];
+        sharedInstance = [sharedInstance init];
+    });
+    
+    return sharedInstance;
+}
+#else
 + (BWHockeyManager *)sharedHockeyManager {
 	static BWHockeyManager *hockeyManager = nil;
     
@@ -119,6 +135,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     
 	return hockeyManager;
 }
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -390,7 +408,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BWHockeyNetworkBecomeReachable object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
     
-    IF_IOS4_OR_GREATER(
+    BW_IF_IOS4_OR_GREATER(
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
                        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
                        )
@@ -475,20 +493,32 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)showCheckForUpdateAlert_ {
     if (!updateAlertShowing_) {
-        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
-                                                             message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
-                                                            delegate:self
-                                                   cancelButtonTitle:BWHockeyLocalize(@"HockeyIgnore")
-                                                   otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
-                                   ] autorelease];
-        IF_IOS4_OR_GREATER(
-                           if (self.ishowingDirectInstallOption) {
-                               [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
-                           }
-                           )
-        [alertView setTag:0];
-        [alertView show];
-        updateAlertShowing_ = YES;
+        if ([self.app.mandatory boolValue] ) {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
+                                                                 message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertMandatoryTextWithAppVersion"), [self.app nameAndVersionString]]
+                                                                delegate:self
+                                                       cancelButtonTitle:BWHockeyLocalize(@"HockeyInstallUpdate")
+                                                       otherButtonTitles:nil
+                                       ] autorelease];
+            [alertView setTag:2];
+            [alertView show];
+            updateAlertShowing_ = YES;
+        } else {
+            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyUpdateAvailable")
+                                                                 message:[NSString stringWithFormat:BWHockeyLocalize(@"HockeyUpdateAlertTextWithAppVersion"), [self.app nameAndVersionString]]
+                                                                delegate:self
+                                                       cancelButtonTitle:BWHockeyLocalize(@"HockeyIgnore")
+                                                       otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
+                                       ] autorelease];
+            BW_IF_IOS4_OR_GREATER(
+                                  if (self.ishowingDirectInstallOption) {
+                                      [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
+                                  }
+                                  )
+            [alertView setTag:0];
+            [alertView show];
+            updateAlertShowing_ = YES;
+        }
     }
 }
 
@@ -686,6 +716,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)checkForUpdate {
     if (self.requireAuthorization) return;
+    if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
+        [self showCheckForUpdateAlert_];
+        return;
+    }
     [self checkForUpdateShowFeedback:NO];
 }
 
@@ -934,7 +968,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [alert release];
         }
         
-        if (self.isUpdateAvailable && (self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion)) {
+        if (self.isUpdateAvailable && (self.alwaysShowUpdateReminder || newVersionDiffersFromCachedVersion || [self.app.mandatory boolValue])) {
             if (updateAvailable_ && !currentHockeyViewController_) {
                 [self showCheckForUpdateAlert_];
             }
@@ -965,7 +999,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         anUpdateURL = [NSString stringWithFormat:@"%@/", anUpdateURL];
     }
     
-    IF_IOS4_OR_GREATER(
+    BW_IF_IOS4_OR_GREATER(
                        // register/deregister logic
                        NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                        if (!updateURL_ && anUpdateURL) {
@@ -997,7 +1031,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)setCheckForUpdateOnLaunch:(BOOL)flag {
     if (checkForUpdateOnLaunch_ != flag) {
         checkForUpdateOnLaunch_ = flag;
-        IF_IOS4_OR_GREATER(
+        BW_IF_IOS4_OR_GREATER(
                            NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
                            if (flag) {
                                [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -1085,7 +1119,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // invoke the selected action from the actionsheet for a location element
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if ([alertView tag] == 1) {
+    if ([alertView tag] == 2) {
+        [self initiateAppDownload];
+        updateAlertShowing_ = NO;
+        return;
+    } else if ([alertView tag] == 1) {
         [self alertFallback:[alertView message]];
         return;
     }

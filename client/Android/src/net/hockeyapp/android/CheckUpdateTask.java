@@ -59,6 +59,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       URL url = new URL(getURLString("json"));
       URLConnection connection = url.openConnection();
       connection.addRequestProperty("User-Agent", "Hockey/Android");
+      connection.setRequestProperty("connection", "close");
       connection.connect();
 
       InputStream inputStream = new BufferedInputStream(connection.getInputStream());

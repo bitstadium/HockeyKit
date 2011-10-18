@@ -34,6 +34,7 @@
 @synthesize notes = notes_;
 @synthesize date = date_;
 @synthesize size = size_;
+@synthesize mandatory = mandatory_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -50,6 +51,7 @@
         [app setDateWithTimestamp:[[dict objectForKey:@"timestamp"] doubleValue]];
         app.size = [dict objectForKey:@"appsize"];
         app.notes = [dict objectForKey:@"notes"];
+        app.mandatory = [dict objectForKey:@"mandatory"];
     }
     
     return app;
@@ -66,6 +68,7 @@
     [notes_ release];
     [date_ release];
     [size_ release];
+    [mandatory_ release];
     
     [super dealloc];
 }
@@ -93,6 +96,8 @@
         return NO;
     if (self.size != anApp.size && ![self.size isEqualToNumber:anApp.size])
         return NO;
+    if (self.mandatory != anApp.mandatory && ![self.mandatory isEqualToNumber:anApp.mandatory])
+        return NO;
     return YES;
 }
 
@@ -107,6 +112,7 @@
     [encoder encodeObject:self.notes forKey:@"notes"];
     [encoder encodeObject:self.date forKey:@"date"];
     [encoder encodeObject:self.size forKey:@"size"];
+    [encoder encodeObject:self.mandatory forKey:@"mandatory"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -117,6 +123,7 @@
         self.notes = [decoder decodeObjectForKey:@"notes"];
         self.date = [decoder decodeObjectForKey:@"date"];
         self.size = [decoder decodeObjectForKey:@"size"];
+        self.mandatory = [decoder decodeObjectForKey:@"mandatory"];
     }
     return self;
 }

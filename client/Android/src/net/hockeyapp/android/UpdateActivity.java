@@ -10,9 +10,11 @@ import java.net.URLConnection;
 import java.util.UUID;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -92,7 +94,7 @@ public class UpdateActivity extends ListActivity {
     downloadTask.execute();
   }
 
-  private class DownloadFileTask extends AsyncTask<String, Integer, Void>{
+  private class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     private Context context;
     private String urlString;
     private String filename;
@@ -116,10 +118,11 @@ public class UpdateActivity extends ListActivity {
     }
 
     @Override
-    protected Void doInBackground(String... args) {
+    protected Boolean doInBackground(String... args) {
       try {
         URL url = new URL(getURLString());
         URLConnection connection = url.openConnection();
+        connection.setRequestProperty("connection", "close");
         connection.connect();
 
         int lenghtOfFile = connection.getContentLength();
@@ -143,11 +146,13 @@ public class UpdateActivity extends ListActivity {
         output.flush();
         output.close();
         input.close();
+        
+        return (total > 0);
       } 
       catch (Exception e) {
         e.printStackTrace();
+        return false;
       }
-      return null;
     }
   
      @Override
@@ -163,15 +168,36 @@ public class UpdateActivity extends ListActivity {
      }
      
      @Override
-     protected void onPostExecute(Void result) {
+     protected void onPostExecute(Boolean result) {
        if (progressDialog != null) {
          progressDialog.dismiss();
        }
        
-       Intent intent = new Intent(Intent.ACTION_VIEW);
-       intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
-       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-       startActivity(intent);
+       if (result) {
+         Intent intent = new Intent(Intent.ACTION_VIEW);
+         intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
+         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
+       }
+       else {
+         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+         builder.setTitle(R.string.download_failed_dialog_title);
+         builder.setMessage(R.string.download_failed_dialog_message);
+
+         builder.setNegativeButton(R.string.download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int which) {
+           } 
+         });
+
+         builder.setPositiveButton(R.string.download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int which) {
+             downloadTask = new DownloadFileTask(UpdateActivity.this, getIntent().getStringExtra("url"));
+             downloadTask.execute();
+           } 
+         });
+         
+         builder.create().show();
+       }
      }
 
      private String getURLString() {
