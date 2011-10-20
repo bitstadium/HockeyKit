@@ -227,4 +227,16 @@ public class UpdateActivity extends ListActivity {
        return urlString + "&type=apk";      
      }
   }
+
+  public int getCurrentVersionCode() {
+    int currentVersionCode = -1;
+    
+    try {
+      currentVersionCode = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+    }
+    
+    return currentVersionCode;
+  }
 }

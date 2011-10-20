@@ -10,9 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -25,11 +22,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class UpdateInfoAdapter extends BaseAdapter {
-  Activity activity;
+  UpdateActivity activity;
   JSONObject newest;
   ArrayList<JSONObject> sortedVersions;
   
-  public UpdateInfoAdapter(Activity activity, String infoJSON) {
+  public UpdateInfoAdapter(UpdateActivity activity, String infoJSON) {
     super();
 
     this.activity = activity;
@@ -45,10 +42,10 @@ public class UpdateInfoAdapter extends BaseAdapter {
       JSONArray versions = new JSONArray(infoJSON);
       this.sortedVersions = new ArrayList<JSONObject>();
       
-      int versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      int versionCode = -1;
       for (int index = 0; index < versions.length(); index++) {
         JSONObject entry = versions.getJSONObject(index);
-        if (entry.getInt("version") > versionCode) {
+        if (entry.getInt("version") >= versionCode) {
           newest = entry;
           versionCode = entry.getInt("version");
         }
@@ -56,8 +53,6 @@ public class UpdateInfoAdapter extends BaseAdapter {
       }
     }
     catch (JSONException e) {
-    }
-    catch (NameNotFoundException e) {
     }
   }
 
@@ -83,12 +78,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
   }
 
   public Object getItem(int position) {
-    int currentVersionCode = -1;
-    try {
-      currentVersionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
-    }
-    catch (NameNotFoundException e) {
-    }
+    int currentVersionCode = activity.getCurrentVersionCode();
 
     JSONObject version = sortedVersions.get(position / 2);
     int versionCode = 0;
