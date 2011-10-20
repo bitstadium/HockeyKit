@@ -104,8 +104,8 @@
     BW_IF_IOS4_OR_GREATER(if([[UIScreen mainScreen] scale] == 2) shadowOffset = 1;)
     BW_IF_IOS5_OR_GREATER(shadowOffset = 1;) // iOS5 changes this - again!
     
-    IF_3_2_OR_GREATER(CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);)
-    IF_PRE_3_2(shadowOffset=1;CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, -shadowOffset), 0, myColor);)
+    BW_IF_3_2_OR_GREATER(CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, shadowOffset), 0, myColor);)
+    BW_IF_PRE_3_2(shadowOffset=1;CGContextSetShadowWithColor(context, CGSizeMake(shadowOffset, -shadowOffset), 0, myColor);)
     
     
     [mainTextColor set];

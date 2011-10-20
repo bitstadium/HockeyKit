@@ -779,7 +779,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         return NO;
     }
     
-    IF_PRE_IOS4
+    BW_IF_PRE_IOS4
     (
      NSString *message = [NSString stringWithFormat:BWHockeyLocalize(@"HockeyiOS3Message"), self.updateURL];
      UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyWarning") message:message delegate:nil cancelButtonTitle:BWHockeyLocalize(@"HockeyOK") otherButtonTitles:nil] autorelease];
