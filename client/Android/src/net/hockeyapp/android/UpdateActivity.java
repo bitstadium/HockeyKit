@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -26,6 +25,7 @@ import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -108,8 +108,9 @@ public class UpdateActivity extends ListActivity {
     return downloadTask;
   }
   
-  public void onClickUpdate(View v) {
+  public void onClickUpdate(View view) {
     startDownloadTask();
+    view.setEnabled(false);
   }
   
   private void startDownloadTask() {
@@ -118,25 +119,25 @@ public class UpdateActivity extends ListActivity {
   }
 
   private class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
-    private Context context;
+    private Activity activity;
     private String urlString;
     private String filename;
     private String filePath;
     private ProgressDialog progressDialog;
 
-    public DownloadFileTask(Context context, String urlString) {
-      this.context = context;
+    public DownloadFileTask(Activity activity, String urlString) {
+      this.activity = activity;
       this.urlString = urlString;
       this.filename = UUID.randomUUID() + ".apk";
       this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
     }
     
-    public void attach(Context context) {
-      this.context = context;
+    public void attach(Activity activity) {
+      this.activity = activity;
     }
     
     public void detach() {
-      context = null;
+      activity = null;
       progressDialog = null;
     }
 
@@ -181,7 +182,7 @@ public class UpdateActivity extends ListActivity {
      @Override
      protected void onProgressUpdate(Integer... args){
        if (progressDialog == null) {
-         progressDialog = new ProgressDialog(context);
+         progressDialog = new ProgressDialog(activity);
          progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
          progressDialog.setMessage("Loading...");
          progressDialog.setCancelable(false);
@@ -195,7 +196,10 @@ public class UpdateActivity extends ListActivity {
        if (progressDialog != null) {
          progressDialog.dismiss();
        }
-       
+
+       View updateButton = activity.findViewById(resources.getItemId("update_button"));
+       updateButton.setEnabled(true);
+
        if (result) {
          Intent intent = new Intent(Intent.ACTION_VIEW);
          intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
@@ -203,7 +207,7 @@ public class UpdateActivity extends ListActivity {
          startActivity(intent);
        }
        else {
-         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
          builder.setTitle(resources.getStringId("download_failed_dialog_title"));
          builder.setMessage(resources.getStringId("hockey_download_failed_dialog_message"));
 
