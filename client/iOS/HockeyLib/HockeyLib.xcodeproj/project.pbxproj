@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1EFEB9FC145DA8AF004C79B1 /* BWHockeySettingsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFEB9FA145DA8AF004C79B1 /* BWHockeySettingsViewController.h */; };
+		1EFEB9FD145DA8AF004C79B1 /* BWHockeySettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EFEB9FB145DA8AF004C79B1 /* BWHockeySettingsViewController.m */; };
 		78F88FCC13086FAB00DC1D9A /* BWApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 78F88FC313086FAB00DC1D9A /* BWApp.h */; };
 		78F88FCD13086FAB00DC1D9A /* BWApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 78F88FC413086FAB00DC1D9A /* BWApp.m */; };
 		78F88FCE13086FAB00DC1D9A /* BWGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 78F88FC513086FAB00DC1D9A /* BWGlobal.h */; };
@@ -34,6 +36,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1EFEB9FA145DA8AF004C79B1 /* BWHockeySettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWHockeySettingsViewController.h; path = ../BWHockeySettingsViewController.h; sourceTree = "<group>"; };
+		1EFEB9FB145DA8AF004C79B1 /* BWHockeySettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWHockeySettingsViewController.m; path = ../BWHockeySettingsViewController.m; sourceTree = "<group>"; };
 		78F88FC313086FAB00DC1D9A /* BWApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWApp.h; path = ../BWApp.h; sourceTree = SOURCE_ROOT; };
 		78F88FC413086FAB00DC1D9A /* BWApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BWApp.m; path = ../BWApp.m; sourceTree = SOURCE_ROOT; };
 		78F88FC513086FAB00DC1D9A /* BWGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BWGlobal.h; path = ../BWGlobal.h; sourceTree = SOURCE_ROOT; };
@@ -120,6 +124,8 @@
 				78F88FC813086FAB00DC1D9A /* BWHockeyManager.m */,
 				78F88FC913086FAB00DC1D9A /* BWHockeyViewController.h */,
 				78F88FCA13086FAB00DC1D9A /* BWHockeyViewController.m */,
+				1EFEB9FA145DA8AF004C79B1 /* BWHockeySettingsViewController.h */,
+				1EFEB9FB145DA8AF004C79B1 /* BWHockeySettingsViewController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -167,6 +173,7 @@
 				78F88FE713086FB100DC1D9A /* PSStoreButton.h in Headers */,
 				78F88FE913086FB100DC1D9A /* PSWebTableViewCell.h in Headers */,
 				78F88FEB13086FB100DC1D9A /* UIImage+HockeyAdditions.h in Headers */,
+				1EFEB9FC145DA8AF004C79B1 /* BWHockeySettingsViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +236,7 @@
 				78F88FE813086FB100DC1D9A /* PSStoreButton.m in Sources */,
 				78F88FEA13086FB100DC1D9A /* PSWebTableViewCell.m in Sources */,
 				78F88FEC13086FB100DC1D9A /* UIImage+HockeyAdditions.m in Sources */,
+				1EFEB9FD145DA8AF004C79B1 /* BWHockeySettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
