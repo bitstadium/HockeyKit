@@ -23,6 +23,8 @@
 //  THE SOFTWARE.
 
 #import "BWHockeyManager.h"
+#import "BWGlobal.h"
+#import "BWApp.h"
 #import "NSString+HockeyAdditions.h"
 #import "UIImage+HockeyAdditions.h"
 #import <sys/sysctl.h>

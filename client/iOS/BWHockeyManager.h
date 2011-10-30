@@ -24,8 +24,6 @@
 
 
 #import <UIKit/UIKit.h>
-#import "BWGlobal.h"
-#import "BWApp.h"
 #import "BWHockeyViewController.h"
 
 typedef enum {
@@ -46,6 +44,8 @@ typedef enum {
 } HockeyUpdateSetting;
 
 @protocol BWHockeyManagerDelegate;
+
+@class BWApp;
 
 @interface BWHockeyManager : NSObject <UIAlertViewDelegate> {
     id <BWHockeyManagerDelegate> delegate_;
