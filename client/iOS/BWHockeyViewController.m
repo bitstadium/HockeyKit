@@ -267,18 +267,14 @@
 - (void)onAction:(id)sender {
     if (self.modal) {
         
-        // Note that as of 5.0, parentViewController will no longer return the presenting view controller
-        UIViewController *presentingViewController = nil;
-        
-        BW_IF_IOS5_OR_GREATER(presentingViewController = self.navigationController.presentingViewController;);
-        BW_IF_PRE_IOS5(presentingViewController = self.navigationController.parentViewController;)
-        
-        if (presentingViewController) {
-            [self.navigationController dismissModalViewControllerAnimated:YES];
-        } else {
-            [self.navigationController.view removeFromSuperview];
-        }
-    }
+        // Support for both iOS 5.0 and 4.0
+        SEL presentingViewController = NSSelectorFromString(@"presentingViewController");
+        if ([self respondsToSelector:presentingViewController])
+            [[self performSelector:presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+        else
+            [[self parentViewController] dismissModalViewControllerAnimated:YES];
+
+	}
     else
         [self.navigationController popViewControllerAnimated:YES];
     
