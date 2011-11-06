@@ -268,12 +268,19 @@
     if (self.modal) {
         
         // Support for both iOS 5.0 and 4.0
-        SEL presentingViewController = NSSelectorFromString(@"presentingViewController");
-        if ([self respondsToSelector:presentingViewController])
-            [[self performSelector:presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+        SEL presentingViewControllerSelector = NSSelectorFromString(@"presentingViewController");
+        UIViewController *presentingViewController = nil;
+        if ([self respondsToSelector:presentingViewControllerSelector])
+            presentingViewController = [self performSelector:presentingViewControllerSelector];
         else
-            [[self parentViewController] dismissModalViewControllerAnimated:YES];
-
+            presentingViewController = [self parentViewController];
+        
+        // if there is no presenting view controller just remove view.
+        if (presentingViewController)
+            [presentingViewController dismissModalViewControllerAnimated:YES];
+        else
+            [self.navigationController.view removeFromSuperview];
+        
 	}
     else
         [self.navigationController popViewControllerAnimated:YES];
