@@ -107,6 +107,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize requireAuthorization = requireAuthorization_;
 @synthesize authenticationSecret = authenticationSecret_;
 @synthesize authorizeView = authorizeView_;
+@synthesize alternativeInstallURL = alternativeInstallURL_;
+@synthesize useAlternativeInstallURL = useAlternativeInstallURL_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -801,7 +803,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     NSString *hockeyAPIURL = [NSString stringWithFormat:@"%@api/2/apps/%@?format=plist%@", self.updateURL, [self encodedAppIdentifier_], extraParameter];
-    NSString *iOSUpdateURL = [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
+    NSString *iOSUpdateURL = (useAlternativeInstallURL_) ? alternativeInstallURL_ : [NSString stringWithFormat:@"itms-services://?action=download-manifest&url=%@", [hockeyAPIURL bw_URLEncodedString]];
     
     BWHockeyLog(@"API Server Call: %@, calling iOS with %@", hockeyAPIURL, iOSUpdateURL);
     BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iOSUpdateURL]];
