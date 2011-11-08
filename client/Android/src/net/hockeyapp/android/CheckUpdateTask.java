@@ -119,7 +119,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       return;
     }
     
-    ResourceHelper resources = new ResourceHelper("hockey", "net.hockeyapp.android");
+    ResourceHelper resources = new ResourceHelper("hockey", context.getApplicationContext().getPackageName());
     
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
     builder.setTitle(resources.getStringId("update_dialog_title"));

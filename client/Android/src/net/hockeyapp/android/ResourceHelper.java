@@ -16,8 +16,6 @@
 
 package net.hockeyapp.android;
 
-import android.util.Log;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -150,7 +148,6 @@ public class ResourceHelper {
   private Class getResourceClass(String defType) {
     for (Class klass : resources.getClasses()) {
       if (defType.equals(klass.getSimpleName())) {
-        Log.i("Hockey", klass.getName());
         return(klass);
       }
     }

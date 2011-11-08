@@ -40,7 +40,7 @@ public class UpdateActivity extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    resources = new ResourceHelper("hockey", this.getPackageName());
+    resources = new ResourceHelper("hockey", this.getApplicationContext().getPackageName());
     
     setTitle("Application Update");
     setContentView(resources.getLayoutId("update_view"));
