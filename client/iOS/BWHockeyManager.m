@@ -594,6 +594,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     SEL nsjsonSelect = NSSelectorFromString(@"JSONObjectWithData:options:error:");
     SEL sbJSONSelector = NSSelectorFromString(@"JSONValue");
     SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
+    SEL yajlSelector = NSSelectorFromString(@"yajl_JSONWithOptions:error:");
     
     if (nsjsonClass && [nsjsonClass respondsToSelector:nsjsonSelect]) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[nsjsonClass methodSignatureForSelector:nsjsonSelect]];
@@ -621,6 +622,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:sbJSONSelector]];
         invocation.target = jsonString;
         invocation.selector = sbJSONSelector;
+        [invocation invoke];
+        [invocation getReturnValue:&feedResult];
+    } else if (yajlSelector && [jsonString respondsToSelector:yajlSelector]) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:yajlSelector]];
+        invocation.target = jsonString;
+        invocation.selector = yajlSelector;
+        
+        NSUInteger yajlParserOptions = 0;
+        [invocation setArgument:&yajlParserOptions atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        [invocation setArgument:&error atIndex:3];
+        
         [invocation invoke];
         [invocation getReturnValue:&feedResult];
     } else {
