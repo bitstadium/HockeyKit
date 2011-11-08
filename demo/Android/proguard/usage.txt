@@ -1,0 +1,36 @@
+net.hockeyapp.android.CheckUpdateTask:
+    28:34:public CheckUpdateTask(android.content.Context,java.lang.String)
+net.hockeyapp.android.CrashManager:
+    46:47:public static void register(android.content.Context,java.lang.String)
+net.hockeyapp.android.R$attr
+net.hockeyapp.android.R$drawable
+net.hockeyapp.android.R$id:
+    public static final int check_button
+    public static final int crash_button
+    public static final int header_image_view
+    public static final int header_start
+    public static final int hockey_text_label
+    public static final int hockey_title_label
+    public static final int name_label
+    public static final int quincy_text_label
+    public static final int quincy_title_label
+    public static final int update_button
+    public static final int web_view
+net.hockeyapp.android.R$layout:
+    public static final int main
+    public static final int web_view_list_item
+net.hockeyapp.android.R$string:
+    public static final int app_name
+    public static final int hockey_text
+    public static final int hockey_title
+    public static final int quincy_text
+    public static final int quincy_title
+net.hockeyapp.android.demo.MainActivity:
+    31:32:public void onClickCheckButton(android.view.View)
+    53:57:public void onClickCrashButton(android.view.View)
+net.hockeyapp.android.demo.R
+net.hockeyapp.android.demo.R$attr
+net.hockeyapp.android.demo.R$drawable
+net.hockeyapp.android.demo.R$id
+net.hockeyapp.android.demo.R$layout
+net.hockeyapp.android.demo.R$string
