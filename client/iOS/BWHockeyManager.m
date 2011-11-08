@@ -590,10 +590,23 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSError *error = nil;
     id feedResult = nil;
     
+    id nsjsonClass = NSClassFromString(@"NSJSONSerialization");
+    SEL nsjsonSelect = NSSelectorFromString(@"JSONObjectWithData:options:error:");
     SEL sbJSONSelector = NSSelectorFromString(@"JSONValue");
     SEL jsonKitSelector = NSSelectorFromString(@"objectFromJSONStringWithParseOptions:error:");
     
-    if (jsonKitSelector && [jsonString respondsToSelector:jsonKitSelector]) {
+    if (nsjsonClass && [nsjsonClass respondsToSelector:nsjsonSelect]) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[nsjsonClass methodSignatureForSelector:nsjsonSelect]];
+        invocation.target = nsjsonClass;
+        invocation.selector = nsjsonSelect;
+        NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        [invocation setArgument:&jsonData atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        NSUInteger readOptions = kNilOptions;
+        [invocation setArgument:&readOptions atIndex:3];
+        [invocation setArgument:&error atIndex:4];
+        [invocation invoke];
+        [invocation getReturnValue:&feedResult];
+    } else if (jsonKitSelector && [jsonString respondsToSelector:jsonKitSelector]) {
         // first try JSONkit
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[jsonString methodSignatureForSelector:jsonKitSelector]];
         invocation.target = jsonString;
