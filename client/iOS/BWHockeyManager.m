@@ -590,6 +590,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     NSError *error = nil;
     id feedResult = nil;
     
+#if BW_NATIVE_JSON_AVAILABLE
+    feedResult = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&error];
+#else
     id nsjsonClass = NSClassFromString(@"NSJSONSerialization");
     SEL nsjsonSelect = NSSelectorFromString(@"JSONObjectWithData:options:error:");
     SEL sbJSONSelector = NSSelectorFromString(@"JSONValue");
@@ -638,7 +641,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     } else {
         BWHockeyLog(@"Error: You need a JSON Framework in your runtime!");
         [self doesNotRecognizeSelector:_cmd];
-    }    
+    }
+#endif
+    
     if (error) {
         BWHockeyLog(@"Error while parsing response feed: %@", [error localizedDescription]);
         [self reportError_:error];
