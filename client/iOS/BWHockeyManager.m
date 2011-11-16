@@ -106,6 +106,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize requireAuthorization = requireAuthorization_;
 @synthesize authenticationSecret = authenticationSecret_;
 @synthesize authorizeView = authorizeView_;
+@synthesize isAppStoreEnvironment = isAppStoreEnvironment_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -357,6 +358,17 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         requireAuthorization_ = NO;
         authenticationSecret_= nil;
         loggingEnabled_ = NO;
+                
+        // check if we are really not in an app store environment
+        if ([[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"]) {
+            isAppStoreEnvironment_ = NO;
+        } else {
+            isAppStoreEnvironment_ = YES;
+        }
+        
+#if TARGET_IPHONE_SIMULATOR
+        isAppStoreEnvironment_ = NO;
+#endif
         
         // set defaults
         self.showDirectInstallOption = NO;
@@ -388,31 +400,36 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             self.userAllowsSendUsageTime = YES;
         }
         
-        [self loadAppCache_];
+        if (!isAppStoreEnvironment_) {
         
-        [self startUsage];
+            [self loadAppCache_];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(startManager)
-                                                     name:BWHockeyNetworkBecomeReachable
-                                                   object:nil];
+            [self startUsage];
+        
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(startManager)
+                                                         name:BWHockeyNetworkBecomeReachable
+                                                       object:nil];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(stopUsage)
-                                                     name:UIApplicationWillTerminateNotification
-                                                   object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(stopUsage)
+                                                         name:UIApplicationWillTerminateNotification
+                                                       object:nil];
+        }
     }
     return self;
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:BWHockeyNetworkBecomeReachable object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+    if (!isAppStoreEnvironment_) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:BWHockeyNetworkBecomeReachable object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
     
-    BW_IF_IOS4_OR_GREATER(
-                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
-                       )
+        BW_IF_IOS4_OR_GREATER(
+                              [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                              [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+                              )
+    }
     self.delegate = nil;
     
     [urlConnection_ cancel];
@@ -440,6 +457,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)showUpdateView {
+    if (isAppStoreEnvironment_) {
+        BWHockeyLog(@"this should not be called from an app store build.");
+        return;
+    }
+    
     if (currentHockeyViewController_) {
         BWHockeyLog(@"update view already visible, aborting");
         return;
@@ -657,6 +679,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark RequestComments
 
 - (BOOL)shouldCheckForUpdates {
+    if (isAppStoreEnvironment_) return NO;
     BOOL checkForUpdate = NO;
     switch (self.updateSetting) {
         case HockeyUpdateCheckStartup:
@@ -746,6 +769,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdate {
+    if (isAppStoreEnvironment_) return;
     if (self.requireAuthorization) return;
     if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
         [self showCheckForUpdateAlert_];
@@ -755,6 +779,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdateShowFeedback:(BOOL)feedback {
+    if (isAppStoreEnvironment_) return;
     if (self.isCheckInProgress) return;
     
     showFeedback_ = feedback;
@@ -867,6 +892,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // begin the startup process
 - (void)startManager {
+    if (isAppStoreEnvironment_) return;
+    
     if (![self appVersionIsAuthorized]) {
         if ([self authorizationState] == HockeyAuthorizationPending) {
             [self showAuthorizationScreen:BWHockeyLocalize(@"HockeyAuthorizationProgress") image:@"authorize_request.png"];
@@ -1018,23 +1045,27 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     
     BW_IF_IOS4_OR_GREATER(
-                       // register/deregister logic
-                       NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-                       if (!updateURL_ && anUpdateURL) {
-                           [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationWillResignActiveNotification object:nil];
-                       } else if (updateURL_ && !anUpdateURL) {
-                           [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                           [dnc removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
-                       }
-                       )
+                          if (!isAppStoreEnvironment_) {
+                              // register/deregister logic
+                              NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+                              if (!updateURL_ && anUpdateURL) {
+                                  [dnc addObserver:self selector:@selector(startUsage) name:UIApplicationDidBecomeActiveNotification object:nil];
+                                  [dnc addObserver:self selector:@selector(stopUsage) name:UIApplicationWillResignActiveNotification object:nil];
+                              } else if (updateURL_ && !anUpdateURL) {
+                                  [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                                  [dnc removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+                              }
+                          }
+                          )
     
     if (updateURL_ != anUpdateURL) {
         [updateURL_ release];
         updateURL_ = [anUpdateURL copy];
     }
     
-    [self performSelector:@selector(startManager) withObject:nil afterDelay:0.0f];
+    if (!isAppStoreEnvironment_) {
+        [self performSelector:@selector(startManager) withObject:nil afterDelay:0.0f];
+    }
 }
 
 - (void)setAppIdentifier:(NSString *)anAppIdentifier {    
@@ -1050,12 +1081,14 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     if (checkForUpdateOnLaunch_ != flag) {
         checkForUpdateOnLaunch_ = flag;
         BW_IF_IOS4_OR_GREATER(
-                           NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
-                           if (flag) {
-                               [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
-                           } else {
-                               [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-                           }
+                              if (!isAppStoreEnvironment_) {
+                                  NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
+                                  if (flag) {
+                                      [dnc addObserver:self selector:@selector(checkForUpdate) name:UIApplicationDidBecomeActiveNotification object:nil];
+                                  } else {
+                                      [dnc removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+                                  }
+                              }
                            )
     }
 }
