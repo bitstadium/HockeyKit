@@ -268,7 +268,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (void)checkUpdateAvailable_ {
     // check if there is an update available
     if (self.compareVersionType == HockeyComparisonResultGreater) {
-        self.updateAvailable = ([self.app.version compare:self.currentAppVersion options:NSNumericSearch] == NSOrderedDescending);
+        self.updateAvailable = ([self.app.version versionCompare:self.currentAppVersion] == NSOrderedDescending);
     } else {
         self.updateAvailable = ([self.app.version compare:self.currentAppVersion] != NSOrderedSame);
     }
