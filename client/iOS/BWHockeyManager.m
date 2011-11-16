@@ -49,7 +49,6 @@
 - (void)startUsage;
 - (void)stopUsage;
 - (void)startManager;
-- (void)wentOnline;
 - (void)showAuthorizationScreen:(NSString *)message image:(NSString *)image;
 - (BOOL)canSendUserData;
 - (BOOL)canSendUsageTime;
@@ -877,19 +876,6 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     } else {
         if ([self shouldCheckForUpdates]) {
             [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
-        }
-    }
-}
-
-
-- (void)wentOnline {
-    if (![self appVersionIsAuthorized]) {
-        if ([self authorizationState] == HockeyAuthorizationPending) {
-            [self checkForAuthorization];
-        }
-    } else {
-        if (lastCheckFailed_) {
-            [self checkForUpdate];
         }
     }
 }
