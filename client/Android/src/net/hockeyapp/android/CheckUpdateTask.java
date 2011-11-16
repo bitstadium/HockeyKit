@@ -12,8 +12,8 @@ import java.net.URLEncoder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,40 +21,40 @@ import android.os.AsyncTask;
 import android.provider.Settings;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
-  private Context context = null;
+  private Activity activity = null;
   private String urlString = null;
   private String appIdentifier = null;
   
-  public CheckUpdateTask(Context context, String urlString) {
+  public CheckUpdateTask(Activity activity, String urlString) {
     this.appIdentifier = null;
-    this.context = context;
+    this.activity = activity;
     this.urlString = urlString;
     
-    Constants.loadFromContext(context);
+    Constants.loadFromContext(activity);
   }
   
-  public CheckUpdateTask(Context context, String urlString, String appIdentifier) {
+  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier) {
     this.appIdentifier = appIdentifier;
-    this.context = context;
+    this.activity = activity;
     this.urlString = urlString;
 
-    Constants.loadFromContext(context);
+    Constants.loadFromContext(activity);
   }
   
-  public void attach(Context context) {
-    this.context = context;
+  public void attach(Activity activity) {
+    this.activity = activity;
 
-    Constants.loadFromContext(context);
+    Constants.loadFromContext(activity);
   }
   
   public void detach() {
-    context = null;
+    activity = null;
   }
   
   @Override
   protected JSONArray doInBackground(String... args) {
     try {
-      int versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      int versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
       
       URL url = new URL(getURLString("json"));
       URLConnection connection = url.openConnection();
@@ -92,9 +92,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     StringBuilder builder = new StringBuilder();
     builder.append(urlString);
     builder.append("api/2/apps/");
-    builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
+    builder.append((this.appIdentifier != null ? this.appIdentifier : activity.getPackageName()));
     builder.append("?format=" + format);
-    builder.append("&udid=" + URLEncoder.encode(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
+    builder.append("&udid=" + URLEncoder.encode(Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)));
     builder.append("&os=Android");
     builder.append("&os_version=" + URLEncoder.encode(Constants.ANDROID_VERSION));
     builder.append("&device=" + URLEncoder.encode(Constants.PHONE_MODEL));
@@ -105,11 +105,11 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private void showDialog(final JSONArray updateInfo) {
-    if (context == null) {
+    if ((activity == null) || (activity.isFinishing())) {
       return;
     }
     
-    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
     builder.setTitle(R.string.update_dialog_title);
     builder.setMessage(R.string.update_dialog_message);
 
@@ -120,10 +120,10 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     
     builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        Intent intent = new Intent(context, UpdateActivity.class);
+        Intent intent = new Intent(activity, UpdateActivity.class);
         intent.putExtra("json", updateInfo.toString());
         intent.putExtra("url", getURLString("apk"));
-        context.startActivity(intent);
+        activity.startActivity(intent);
       } 
     });
     
