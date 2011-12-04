@@ -558,7 +558,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
                                                        otherButtonTitles:BWHockeyLocalize(@"HockeyShowUpdate"), nil
                                        ] autorelease];
             BW_IF_IOS4_OR_GREATER(
-                                  if (self.ishowingDirectInstallOption) {
+                                  if (self.ishowingDirectInstallOption && !isAppStoreEnvironment_) {
                                       [alertView addButtonWithTitle:BWHockeyLocalize(@"HockeyInstallUpdate")];
                                   }
                                   )
