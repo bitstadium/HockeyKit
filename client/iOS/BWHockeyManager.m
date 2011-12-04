@@ -424,6 +424,10 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             self.userAllowsSendUsageTime = YES;
         }
         
+        if (!hockeyBundle()) {
+			NSLog(@"WARNING: Hockey.bundle is missing, make sure it is added!");
+        }
+        
         if (!isAppStoreEnvironment_) {
         
             [self loadAppCache_];
