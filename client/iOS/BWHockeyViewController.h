@@ -24,7 +24,6 @@
 
 #import <UIKit/UIKit.h>
 #import "PSStoreButton.h"
-#import "PSAppStoreHeader.h"
 
 typedef enum {
 	AppStoreButtonStateOffline,
@@ -36,6 +35,7 @@ typedef enum {
 
 
 @class BWHockeyManager;
+@class PSAppStoreHeader;
 
 @interface BWHockeyViewController : UITableViewController <PSStoreButtonDelegate> {
     BWHockeyManager *hockeyManager_;
