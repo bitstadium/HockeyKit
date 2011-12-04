@@ -151,7 +151,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     lastCheckFailed_ = YES;
     
     // only show error if we enable that
-    if (showFeedback_) {
+    if (showFeedback_ && !isAppStoreEnvironment_) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:BWHockeyLocalize(@"HockeyError")
                                                         message:[error localizedDescription]
                                                        delegate:nil
@@ -233,7 +233,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (NSString *)deviceIdentifier {
   if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
-    return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+      if (!isAppStoreEnvironment_) {
+          return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+      } else {
+          return @"appstore";
+      }
   }
   else {
     return @"invalid";
@@ -253,6 +257,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (HockeyAuthorizationState)authorizationState {
     NSString *version = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAuthorizedVersion];
     NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAuthorizedToken];
+    
+    if (isAppStoreEnvironment_)
+        return HockeyAuthorizationAllowed;
     
     if (version != nil && token != nil) {
         if ([version compare:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]] == NSOrderedSame) {
@@ -318,6 +325,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (BOOL)canSendUserData {
+    if (isAppStoreEnvironment_) return NO;
+    
     if (self.shouldSendUserData) {
         if (self.allowUserToDisableSendData) {
             return self.userAllowsSendUserData;
@@ -360,7 +369,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         requireAuthorization_ = NO;
         authenticationSecret_= nil;
         loggingEnabled_ = NO;
-                
+        alternativeInstallURL_ = nil;
+        lastCheck_ = nil;
+        
         // check if we are really not in an app store environment
         if ([[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"]) {
             isAppStoreEnvironment_ = NO;
@@ -389,7 +400,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         } else {
             self.updateSetting = HockeyUpdateCheckStartup;
         }
-        
+
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kDateOfLastHockeyCheck]) {
+            // we did write something else in the past, so for compatibility reasons do this
+            id tempLastCheck = [[NSUserDefaults standardUserDefaults] objectForKey:kDateOfLastHockeyCheck];
+            if ([tempLastCheck isKindOfClass:[NSDate class]]) {
+                lastCheck_ = tempLastCheck;
+            }
+        }
+        if (!lastCheck_) {
+            lastCheck_ = [NSDate distantPast];
+        }
+
         if ([[NSUserDefaults standardUserDefaults] objectForKey:kHockeyAllowUserSetting]) {
             self.userAllowsSendUserData = [[NSUserDefaults standardUserDefaults] boolForKey:kHockeyAllowUserSetting];
         } else {
@@ -681,20 +703,30 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 #pragma mark RequestComments
 
 - (BOOL)shouldCheckForUpdates {
-    if (isAppStoreEnvironment_) return NO;
+    NSTimeInterval dateDiff = fabs([self.lastCheck timeIntervalSinceNow]);
+    if (dateDiff != 0)
+        dateDiff = dateDiff / (60*60*24);
+    
     BOOL checkForUpdate = NO;
-    switch (self.updateSetting) {
-        case HockeyUpdateCheckStartup:
-            checkForUpdate = YES;
-            break;
-        case HockeyUpdateCheckDaily:
-            checkForUpdate = [[[self.lastCheck description] substringToIndex:10] compare:[[[NSDate date] description] substringToIndex:10]] != NSOrderedSame;
-            break;
-        case HockeyUpdateCheckManually:
-            checkForUpdate = NO;
-            break;
-        default:
-            break;
+    if (isAppStoreEnvironment_) {
+        // don't spam when running in an app store environment
+        if (useAlternativeInstallURL_) {
+            checkForUpdate = (dateDiff >= 7);
+        }
+    } else {
+        switch (self.updateSetting) {
+            case HockeyUpdateCheckStartup:
+                checkForUpdate = YES;
+                break;
+            case HockeyUpdateCheckDaily:
+                checkForUpdate = (dateDiff >= 1);
+                break;
+            case HockeyUpdateCheckManually:
+                checkForUpdate = NO;
+                break;
+            default:
+                break;
+        }
     }
     return checkForUpdate;
 }
@@ -771,17 +803,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdate {
-    if (isAppStoreEnvironment_) return;
-    if (self.requireAuthorization) return;
-    if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
-        [self showCheckForUpdateAlert_];
-        return;
+    if (!isAppStoreEnvironment_) {
+        if (self.requireAuthorization) return;
+        if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
+            [self showCheckForUpdateAlert_];
+            return;
+        }
     }
     [self checkForUpdateShowFeedback:NO];
 }
 
 - (void)checkForUpdateShowFeedback:(BOOL)feedback {
-    if (isAppStoreEnvironment_) return;
+    if (isAppStoreEnvironment_ && !useAlternativeInstallURL_) return;
     if (self.isCheckInProgress) return;
     
     showFeedback_ = feedback;
@@ -868,6 +901,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 // checks wether this app version is authorized
 - (BOOL)appVersionIsAuthorized {
+    if (isAppStoreEnvironment_) return YES;
+    
     if (self.requireAuthorization && !authenticationSecret_) {
         [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIClientAuthorizationMissingSecret userInfo:
                             [NSDictionary dictionaryWithObjectsAndKeys:@"Authentication secret is not set but required.", NSLocalizedDescriptionKey, nil]]];
@@ -893,9 +928,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 
 // begin the startup process
-- (void)startManager {
-    if (isAppStoreEnvironment_) return;
-    
+- (void)startManager {    
     if (![self appVersionIsAuthorized]) {
         if ([self authorizationState] == HockeyAuthorizationPending) {
             [self showAuthorizationScreen:BWHockeyLocalize(@"HockeyAuthorizationProgress") image:@"authorize_request.png"];
@@ -903,6 +936,9 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
             [self performSelector:@selector(checkForAuthorization) withObject:nil afterDelay:0.0f];
         }
     } else {
+        if (useAlternativeInstallURL_ && alternativeInstallURL_ == nil)
+            useAlternativeInstallURL_ = NO;
+        
         if ([self shouldCheckForUpdates]) {
             [self performSelector:@selector(checkForUpdate) withObject:nil afterDelay:0.0f];
         }
@@ -1129,7 +1165,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
         [lastCheck_ release];
         lastCheck_ = [aLastCheck copy];
         
-		[[NSUserDefaults standardUserDefaults] setObject:[[lastCheck_ description] substringToIndex:10] forKey:kDateOfLastHockeyCheck];
+		[[NSUserDefaults standardUserDefaults] setObject:lastCheck_ forKey:kDateOfLastHockeyCheck];
 		[[NSUserDefaults standardUserDefaults] synchronize];
     }
 }
