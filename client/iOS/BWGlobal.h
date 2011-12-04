@@ -57,7 +57,14 @@ NSString *BWmd5(NSString *str);
 
 
 // compatibility helper
+#ifdef HOCKEYLIB_STATIC_LIBRARY
+// if HockeyLib is built as a static library and linked into the project
+// we can't use this project's deployment target to statically decide if
+// native JSON is available
+#define BW_NATIVE_JSON_AVAILABLE 0
+#else
 #define BW_NATIVE_JSON_AVAILABLE __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
+#endif
 
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_2
 #define kCFCoreFoundationVersionNumber_iPhoneOS_3_2 478.61
