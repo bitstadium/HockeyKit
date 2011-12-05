@@ -11,7 +11,7 @@
 
 
 @interface BWHockeySettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
-    BWHockeyManager *hockeyManager_;
+  BWHockeyManager *hockeyManager_;
 }
 
 @property (nonatomic, retain) BWHockeyManager *hockeyManager;

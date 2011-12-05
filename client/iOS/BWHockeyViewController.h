@@ -38,22 +38,22 @@ typedef enum {
 @class PSAppStoreHeader;
 
 @interface BWHockeyViewController : UITableViewController <PSStoreButtonDelegate> {
-    BWHockeyManager *hockeyManager_;
-    
-    NSDictionary *cellLayout;
-    
-    BOOL modal_;
-    BOOL kvoRegistered_;
-    BOOL showAllVersions_;
-    UIStatusBarStyle statusBarStyle_;
-    PSAppStoreHeader *appStoreHeader_;
-    PSStoreButton *appStoreButton_;
-    
-    id popOverController_;
-    
-    AppStoreButtonState appStoreButtonState_;
-    
-    NSMutableArray *cells_;
+  BWHockeyManager *hockeyManager_;
+  
+  NSDictionary *cellLayout;
+  
+  BOOL modal_;
+  BOOL kvoRegistered_;
+  BOOL showAllVersions_;
+  UIStatusBarStyle statusBarStyle_;
+  PSAppStoreHeader *appStoreHeader_;
+  PSStoreButton *appStoreButton_;
+  
+  id popOverController_;
+  
+  AppStoreButtonState appStoreButtonState_;
+  
+  NSMutableArray *cells_;
 }
 
 @property (nonatomic, retain) BWHockeyManager *hockeyManager;

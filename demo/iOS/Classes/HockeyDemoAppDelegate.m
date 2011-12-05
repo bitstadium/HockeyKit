@@ -16,46 +16,46 @@
 @synthesize navigationController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    // 4.x property
-    if ([window respondsToSelector:@selector(setRootViewController:)]) {
-        [window setRootViewController:navigationController];
-    } else {
-        [window addSubview:navigationController.view];
-    }
-    [window makeKeyAndVisible];
-
-    // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
-    // to the Preprocessor Macros in the project settings to all configurations
+  
+  // 4.x property
+  if ([window respondsToSelector:@selector(setRootViewController:)]) {
+    [window setRootViewController:navigationController];
+  } else {
+    [window addSubview:navigationController.view];
+  }
+  [window makeKeyAndVisible];
+  
+  // This variable is available if you add "CONFIGURATION_$(CONFIGURATION)"
+  // to the Preprocessor Macros in the project settings to all configurations
 #if !defined (CONFIGURATION_AppStore_Distribution)
-    // Add these two lines if you want to activate the authorization feature
-    //    [BWHockeyManager sharedHockeyManager].requireAuthorization = YES;
-    //    [BWHockeyManager sharedHockeyManager].authenticationSecret = @"ChangeThisToYourOwnSecretString";
-    [BWHockeyManager sharedHockeyManager].updateURL = @"http://alpha.buzzworks.de";
-    [BWHockeyManager sharedHockeyManager].delegate = self;
-    
-    // optionally enable logging to get more information about states.
-    [BWHockeyManager sharedHockeyManager].loggingEnabled = YES;
+  // Add these two lines if you want to activate the authorization feature
+  //    [BWHockeyManager sharedHockeyManager].requireAuthorization = YES;
+  //    [BWHockeyManager sharedHockeyManager].authenticationSecret = @"ChangeThisToYourOwnSecretString";
+  [BWHockeyManager sharedHockeyManager].updateURL = @"http://alpha.buzzworks.de";
+  [BWHockeyManager sharedHockeyManager].delegate = self;
+  
+  // optionally enable logging to get more information about states.
+  [BWHockeyManager sharedHockeyManager].loggingEnabled = YES;
 #endif
-    
-    return YES;
+  
+  return YES;
 }
 
 - (void)dealloc {
-    [viewController release];
-    [window release];
-    [super dealloc];
+  [viewController release];
+  [window release];
+  [super dealloc];
 }
 
 #pragma mark -
 #pragma mark BWHockeyControllerDelegate
 
 - (void)connectionOpened {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
 - (void)connectionClosed {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+  [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 

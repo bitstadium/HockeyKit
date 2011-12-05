@@ -19,9 +19,9 @@
 #else
 @interface HockeyDemoAppDelegate : NSObject <UIApplicationDelegate> {
 #endif
-    UIWindow *window;
-    UINavigationController *navigationController;
-    HockeyDemoViewController *viewController;    
+  UIWindow *window;
+  UINavigationController *navigationController;
+  HockeyDemoViewController *viewController;    
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
