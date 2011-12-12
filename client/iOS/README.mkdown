@@ -9,7 +9,10 @@ This code may NEVER be used in an app version distributed to Apple!
 
 # Integrate the source code
 
-Download the sources and drag’n’drop all files from `/client/iOS/` (except `Beta Automatisation` and `HockeyLib` folders) into your project. If you already use one of the required 3rd party frameworks (JSONKit or SBJson) in your project, exclude these from the Hockey client
+Download the sources and drag’n’drop all files from `/client/iOS/` (except `Beta Automatisation` and `HockeyLib` folders) into your project. If you already use one of the required 3rd party frameworks (JSONKit, SBJson, Yail) in your project, you should NOT copy and include these files again.
+
+If your app is iOS 5.0 only, you don't need any 3rd party JSON frameworks, since the native implementation will always be used when running on iOS 5. (That is only true if you are not including the framework as static lib, in that case you need to have a 3rd party JSON framework!)
+
 
 # Setup the client
 
@@ -58,3 +61,5 @@ Download the sources and drag’n’drop all files from `/client/iOS/` (except `
 			[self.navigationController pushViewController:hockeyViewController animated:YES];
 		#endif
 
+
+* The client framework optionally watches for Reachability notifications to detect if the device is online or not. To use that, include your desired reachability framework and send a notification `NetworkDidBecomeReachable` to inform the framework that the device is now online.

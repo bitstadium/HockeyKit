@@ -1,0 +1,4 @@
+net.hockeyapp.android.UpdateActivity: void onClickUpdate(android.view.View)
+net.hockeyapp.android.demo.MainActivity
+net.hockeyapp.android.UpdateActivity
+net.hockeyapp.android.UpdateActivity

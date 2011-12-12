@@ -1,0 +1,123 @@
+net.hockeyapp.android.CheckUpdateTask -> net.hockeyapp.android.o:
+    android.content.Context context -> a
+    java.lang.String urlString -> b
+    java.lang.String appIdentifier -> c
+    void attach(android.content.Context) -> a
+    void detach() -> a
+    org.json.JSONArray doInBackground$4d6d4ee6() -> b
+    java.lang.String getURLString(java.lang.String) -> a
+    java.lang.String convertStreamToString(java.io.InputStream) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    android.content.Context access$2(net.hockeyapp.android.CheckUpdateTask) -> a
+    java.lang.String access$3(net.hockeyapp.android.CheckUpdateTask,java.lang.String) -> a
+net.hockeyapp.android.CheckUpdateTask$1 -> net.hockeyapp.android.q:
+    net.hockeyapp.android.CheckUpdateTask this$0 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.CheckUpdateTask$2 -> net.hockeyapp.android.r:
+    net.hockeyapp.android.CheckUpdateTask this$0 -> a
+    org.json.JSONArray val$updateInfo -> b
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.Constants -> net.hockeyapp.android.c:
+    java.lang.String FILES_PATH -> a
+    java.lang.String APP_VERSION -> b
+    java.lang.String APP_PACKAGE -> c
+    java.lang.String ANDROID_VERSION -> d
+    java.lang.String PHONE_MODEL -> e
+    java.lang.String PHONE_MANUFACTURER -> f
+    java.lang.String TAG -> g
+    void loadFromContext(android.content.Context) -> a
+net.hockeyapp.android.CrashManager -> net.hockeyapp.android.f:
+    java.lang.String identifier -> a
+    java.lang.String urlString -> b
+    void register(android.content.Context,java.lang.String,java.lang.String) -> a
+    void registerHandler() -> b
+    void deleteStackTraces(android.content.Context) -> a
+    void submitStackTraces(android.content.Context) -> b
+    java.lang.String[] searchForStackTraces() -> c
+    void access$0() -> a
+net.hockeyapp.android.CrashManager$1 -> net.hockeyapp.android.i:
+    android.content.Context val$context -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.CrashManager$2 -> net.hockeyapp.android.m:
+    android.content.Context val$context -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.CrashManager$2$1 -> net.hockeyapp.android.h:
+    net.hockeyapp.android.CrashManager$2 this$1 -> a
+    android.content.Context val$context -> b
+    void run() -> run
+net.hockeyapp.android.CrashManager$3 -> net.hockeyapp.android.b:
+    boolean accept(java.io.File,java.lang.String) -> accept
+net.hockeyapp.android.ExceptionHandler -> net.hockeyapp.android.p:
+    java.lang.Thread$UncaughtExceptionHandler defaultExceptionHandler -> a
+    void uncaughtException(java.lang.Thread,java.lang.Throwable) -> uncaughtException
+net.hockeyapp.android.R -> net.hockeyapp.android.j:
+net.hockeyapp.android.R$id -> net.hockeyapp.android.l:
+    int header_view -> a
+    int icon_view -> b
+    int version_label -> c
+net.hockeyapp.android.R$layout -> net.hockeyapp.android.s:
+    int update_view -> a
+net.hockeyapp.android.R$string -> net.hockeyapp.android.n:
+    int crash_dialog_message -> a
+    int crash_dialog_negative_button -> b
+    int crash_dialog_positive_button -> c
+    int crash_dialog_title -> d
+    int download_failed_dialog_message -> e
+    int download_failed_dialog_negative_button -> f
+    int download_failed_dialog_positive_button -> g
+    int download_failed_dialog_title -> h
+    int update_dialog_message -> i
+    int update_dialog_negative_button -> j
+    int update_dialog_positive_button -> k
+    int update_dialog_title -> l
+net.hockeyapp.android.UpdateActivity -> net.hockeyapp.android.UpdateActivity:
+    int iconDrawableId -> a
+    net.hockeyapp.android.UpdateActivity$DownloadFileTask downloadTask -> b
+    net.hockeyapp.android.UpdateInfoAdapter adapter -> c
+    void onCreate(android.os.Bundle) -> onCreate
+    java.lang.Object onRetainNonConfigurationInstance() -> onRetainNonConfigurationInstance
+    void onClickUpdate(android.view.View) -> onClickUpdate
+    void access$0(net.hockeyapp.android.UpdateActivity,net.hockeyapp.android.UpdateActivity$DownloadFileTask) -> a
+    net.hockeyapp.android.UpdateActivity$DownloadFileTask access$1(net.hockeyapp.android.UpdateActivity) -> a
+net.hockeyapp.android.UpdateActivity$DownloadFileTask -> net.hockeyapp.android.a:
+    android.content.Context context -> b
+    java.lang.String urlString -> c
+    java.lang.String filename -> d
+    java.lang.String filePath -> e
+    android.app.ProgressDialog progressDialog -> f
+    net.hockeyapp.android.UpdateActivity this$0 -> a
+    void attach(android.content.Context) -> a
+    void detach() -> a
+    java.lang.Boolean doInBackground$7273979() -> b
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+net.hockeyapp.android.UpdateActivity$DownloadFileTask$1 -> net.hockeyapp.android.e:
+    net.hockeyapp.android.UpdateActivity$DownloadFileTask this$1 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.UpdateActivity$DownloadFileTask$2 -> net.hockeyapp.android.d:
+    net.hockeyapp.android.UpdateActivity$DownloadFileTask this$1 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+net.hockeyapp.android.UpdateInfoAdapter -> net.hockeyapp.android.k:
+    android.app.Activity activity -> a
+    org.json.JSONObject newest -> b
+    java.util.ArrayList sortedVersions -> c
+    void loadVersions(java.lang.String) -> a
+    int getCount() -> getCount
+    java.lang.Object getItem(int) -> getItem
+    java.lang.String getVersionString() -> a
+    java.lang.String getFileInfoString() -> b
+    java.lang.String failSafeGetStringFromJSON(org.json.JSONObject,java.lang.String,java.lang.String) -> a
+    int failSafeGetIntFromJSON$4afff19d(org.json.JSONObject,java.lang.String) -> a
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+net.hockeyapp.android.UpdateInfoAdapter$1 -> net.hockeyapp.android.g:
+    net.hockeyapp.android.UpdateInfoAdapter this$0 -> a
+    int compare(org.json.JSONObject,org.json.JSONObject) -> a
+    int compare(java.lang.Object,java.lang.Object) -> compare
+net.hockeyapp.android.demo.MainActivity -> net.hockeyapp.android.demo.MainActivity:
+    net.hockeyapp.android.CheckUpdateTask checkUpdateTask -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void onResume() -> onResume
+    java.lang.Object onRetainNonConfigurationInstance() -> onRetainNonConfigurationInstance

@@ -52,24 +52,32 @@
 
 NSBundle *hockeyBundle(void);
 NSString *BWmd5(NSString *str);
-
-#define BWHockeyLocalize(StringToken) NSLocalizedStringFromTableInBundle(StringToken, @"Hockey", hockeyBundle(), @"")
+NSString *BWHockeyLocalize(NSString *stringToken);
 
 
 // compatibility helper
+#ifdef HOCKEYLIB_STATIC_LIBRARY
+// if HockeyLib is built as a static library and linked into the project
+// we can't use this project's deployment target to statically decide if
+// native JSON is available
+#define BW_NATIVE_JSON_AVAILABLE 0
+#else
+#define BW_NATIVE_JSON_AVAILABLE __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
+#endif
+
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_3_2
 #define kCFCoreFoundationVersionNumber_iPhoneOS_3_2 478.61
 #endif
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 32000
-#define IF_3_2_OR_GREATER(...) \
+#define BW_IF_3_2_OR_GREATER(...) \
 if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_3_2) \
 { \
 __VA_ARGS__ \
 }
 #else
-#define IF_3_2_OR_GREATER(...)
+#define BW_IF_3_2_OR_GREATER(...)
 #endif
-#define IF_PRE_3_2(...) \
+#define BW_IF_PRE_3_2(...) \
 if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iPhoneOS_3_2) \
 { \
 __VA_ARGS__ \
@@ -88,7 +96,7 @@ __VA_ARGS__ \
 #define BW_IF_IOS4_OR_GREATER(...)
 #endif
 
-#define IF_PRE_IOS4(...)  \
+#define BW_IF_PRE_IOS4(...)  \
 if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iPhoneOS_4_0)  \
 { \
 __VA_ARGS__ \
@@ -99,7 +107,7 @@ __VA_ARGS__ \
 #ifndef kCFCoreFoundationVersionNumber_iPhoneOS_5_0
 #define kCFCoreFoundationVersionNumber_iPhoneOS_5_0 674.0
 #endif
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 50000
 #define BW_IF_IOS5_OR_GREATER(...) \
 if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_5_0) \
 { \
@@ -109,7 +117,7 @@ __VA_ARGS__ \
 #define BW_IF_IOS5_OR_GREATER(...)
 #endif
 
-#define IF_PRE_IOS5(...)  \
+#define BW_IF_PRE_IOS5(...)  \
 if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iPhoneOS_5_0)  \
 { \
 __VA_ARGS__ \
