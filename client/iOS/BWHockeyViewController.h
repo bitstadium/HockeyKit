@@ -43,6 +43,7 @@ typedef enum {
   NSDictionary *cellLayout;
   
   BOOL modal_;
+  BOOL modalAnimated_;
   BOOL kvoRegistered_;
   BOOL showAllVersions_;
   UIStatusBarStyle statusBarStyle_;
@@ -58,6 +59,7 @@ typedef enum {
 
 @property (nonatomic, retain) BWHockeyManager *hockeyManager;
 @property (nonatomic, readwrite) BOOL modal;
+@property (nonatomic, readwrite) BOOL modalAnimated;
 
 - (id)init:(BWHockeyManager *)newHockeyManager modal:(BOOL)newModal;
 - (id)init;
