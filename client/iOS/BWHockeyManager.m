@@ -814,6 +814,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (void)checkForUpdate {
+  if (!updateURL_) return;
   if (!isAppStoreEnvironment_) {
     if (self.requireAuthorization) return;
     if (self.isUpdateAvailable && [self.app.mandatory boolValue]) {
