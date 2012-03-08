@@ -40,6 +40,9 @@
 #define BETA_UPDATE_TIMESTAMP       @"timestamp"
 #define BETA_UPDATE_APPSIZE         @"appsize"
 
+#define SDK_NAME @"Hockey"
+#define SDK_VERSION @"2.0.6"
+
 @interface BWHockeyManager ()
 - (NSString *)getDevicePlatform_;
 - (id)parseJSONResultString:(NSString *)jsonString;
@@ -839,9 +842,11 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     return;
   }
   
-  NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@?format=json&udid=%@", 
+  NSMutableString *parameter = [NSMutableString stringWithFormat:@"api/2/apps/%@?format=json&udid=%@&sdk=%@&sdk_version=%@", 
                                 [self encodedAppIdentifier_],
-                                [[self deviceIdentifier] bw_URLEncodedString]];
+                                [[self deviceIdentifier] bw_URLEncodedString],
+                                SDK_NAME,
+                                SDK_VERSION];
   
   // add additional statistics if user didn't disable flag
   if ([self canSendUserData]) {
