@@ -50,6 +50,14 @@
 #pragma mark -
 #pragma mark BWHockeyControllerDelegate
 
+-(NSString *)customDeviceIdentifier {
+#if !defined (CONFIGURATION_AppStore_Distribution)
+  if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
+    return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+#endif
+  return nil;
+}
+
 - (void)connectionOpened {
   [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }

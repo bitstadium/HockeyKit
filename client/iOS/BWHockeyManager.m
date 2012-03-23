@@ -23,7 +23,6 @@
 //  THE SOFTWARE.
 
 #import "BWHockeyManager.h"
-#import "BWGlobal.h"
 #import "BWApp.h"
 #import "NSString+HockeyAdditions.h"
 #import "UIImage+HockeyAdditions.h"
@@ -238,16 +237,19 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (NSString *)deviceIdentifier {
-  if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
-    if (!isAppStoreEnvironment_) {
-      return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
-    } else {
-      return @"appstore";
+#if HOCKEY_BLOCK_UDID == 0 || defined (CONFIGRATION_Debug) || defined (CONFIGRATION_AdHoc) || defined (CONFIGURATION_Beta)
+  if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
+    return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+#endif
+  
+  if ([delegate_ respondsToSelector:@selector(customDeviceIdentifier)]) {
+    NSString *identifier = [delegate_ performSelector:@selector(customDeviceIdentifier)];
+    if (identifier && [identifier length] > 0) {
+      return identifier;
     }
   }
-  else {
-    return @"invalid";
-  }
+  
+  return @"invalid";
 }
 
 - (NSString *)authenticationToken {
