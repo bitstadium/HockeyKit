@@ -40,7 +40,7 @@
 #define BETA_UPDATE_APPSIZE         @"appsize"
 
 #define SDK_NAME @"Hockey"
-#define SDK_VERSION @"2.0.6"
+#define SDK_VERSION @"2.0.7-develop"
 
 @interface BWHockeyManager ()
 - (NSString *)getDevicePlatform_;
