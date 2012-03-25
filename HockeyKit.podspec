@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'HockeyKit'
-  s.version  = '2.0.3'
+  s.version  = '2.0.7'
   s.license  = 'MIT'
   s.platform = :ios
   s.summary  = 'A software update kit for iOS.'
