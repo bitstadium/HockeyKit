@@ -45,10 +45,6 @@
 
 #define kHockeyBundleName @"Hockey.bundle"
 
-#ifndef HOCKEY_BLOCK_UDID
-#define HOCKEY_BLOCK_UDID 1
-#endif
-
 // Notification message which HockeyManager is listening to, to retry requesting updated from the server
 #define BWHockeyNetworkBecomeReachable @"NetworkDidBecomeReachable"
 
