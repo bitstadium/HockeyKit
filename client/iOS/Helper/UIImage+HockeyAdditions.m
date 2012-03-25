@@ -29,12 +29,12 @@
 // Private helper methods
 @interface UIImage (HockeyAdditionsPrivate)
 - (void)addRoundedRectToPath:(CGRect)rect context:(CGContextRef)context ovalWidth:(CGFloat)ovalWidth ovalHeight:(CGFloat)ovalHeight;
-
-CGContextRef MyOpenBitmapContext(int pixelsWide, int pixelsHigh);
-CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, float toAlpha);
 @end
 
 @implementation UIImage (HockeyAdditions)
+
+CGContextRef MyOpenBitmapContext(int pixelsWide, int pixelsHigh);
+CGImageRef CreateGradientImage(int pixelsWide, int pixelsHigh, float fromAlpha, float toAlpha);
 
 // Returns true if the image has an alpha layer
 - (BOOL)hasAlpha {

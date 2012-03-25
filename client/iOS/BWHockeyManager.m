@@ -23,7 +23,6 @@
 //  THE SOFTWARE.
 
 #import "BWHockeyManager.h"
-#import "BWGlobal.h"
 #import "BWApp.h"
 #import "NSString+HockeyAdditions.h"
 #import "UIImage+HockeyAdditions.h"
@@ -41,7 +40,7 @@
 #define BETA_UPDATE_APPSIZE         @"appsize"
 
 #define SDK_NAME @"Hockey"
-#define SDK_VERSION @"2.0.6"
+#define SDK_VERSION @"2.0.7"
 
 @interface BWHockeyManager ()
 - (NSString *)getDevicePlatform_;
@@ -216,7 +215,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 }
 
 - (NSString *)currentUsageString {
-  double currentUsageTime = [(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kUsageTimeOfCurrentVersion] doubleValue];
+  double currentUsageTime = [[NSUserDefaults standardUserDefaults] doubleForKey:kUsageTimeOfCurrentVersion];
   
   if (currentUsageTime > 0) {
     // round (up) to 1 minute
@@ -229,20 +228,23 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 - (NSString *)installationDateString {
   NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
   [formatter setDateFormat:@"MM/dd/yyyy"];
-  return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:[(NSNumber *)[[NSUserDefaults standardUserDefaults] valueForKey:kDateOfVersionInstallation] doubleValue]]];
+  double installationTimeStamp = [[NSUserDefaults standardUserDefaults] doubleForKey:kDateOfVersionInstallation];
+  if (installationTimeStamp == 0.0f) {
+    return [formatter stringFromDate:[NSDate date]];
+  } else {
+    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSinceReferenceDate:installationTimeStamp]];
+  }
 }
 
 - (NSString *)deviceIdentifier {
-  if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
-    if (!isAppStoreEnvironment_) {
-      return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
-    } else {
-      return @"appstore";
+  if ([delegate_ respondsToSelector:@selector(customDeviceIdentifier)]) {
+    NSString *identifier = [delegate_ performSelector:@selector(customDeviceIdentifier)];
+    if (identifier && [identifier length] > 0) {
+      return identifier;
     }
   }
-  else {
-    return @"invalid";
-  }
+  
+  return @"invalid";
 }
 
 - (NSString *)authenticationToken {
@@ -1084,7 +1086,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
   BOOL result = NO;
   
   for (BWApp *app in self.apps) {
-    if ([app.version isEqualToString:self.currentAppVersion]) {
+    if ([app.version isEqualToString:self.currentAppVersion] || [app.version versionCompare:self.currentAppVersion] == NSOrderedAscending) {
       break;
     }
     
