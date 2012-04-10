@@ -3,10 +3,6 @@
 * Server software available and installed
 * The iOS application needs to be build with base SDK set to 4.0 or higher
 
-**Important:**
-
-This code may NEVER be used in an app version distributed to Apple!
-
 # Integrate the source code
 
 Download the sources and drag’n’drop all files from `/client/iOS/` (except `Beta Automatisation` and `HockeyLib` folders) into your project. If you already use one of the required 3rd party frameworks (JSONKit, SBJson, Yail) in your project, you should NOT copy and include these files again.
