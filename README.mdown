@@ -2,7 +2,7 @@
 
 Hockey is a iOS Ad-Hoc updater framework. It can be used for all apps that target the Apple AppStore and improves the beta testing process dramatically. All beta testers. It consists of two components, a server and a client framework.
 The server component is required for all scenarios. But it also can work standalone without the client library. It provides a web interface which beta testers can use to install the latest AdHoc provisioning profile and also the latest beta version via Safari right from the device. One server installation is able to  handle multiple applications via different bundle identifiers (I highly suggest using different bundle identifiers for Debug, AdHoc Beta and AppStore release builds !!!).
-The client framework should only be included in AdHoc builds and should NOT (!!) be used in AppStore distribution builds! By default the client library will check for updates on your server whenever the app is started or will wake up. The user can adjust this in the settings dialog to alternatively only check once a day or manually.
+By default the client library will check for updates on your server whenever the app is started or will wake up. The user can adjust this in the settings dialog to alternatively only check once a day or manually.
 
 This framework was created after reading the blog post at http://jeffreysambells.com/posts/2010/06/22/ios-wireless-app-distribution/ where Jeffrey Sambells wrote about the mechanisms required and being available for us to use.
 

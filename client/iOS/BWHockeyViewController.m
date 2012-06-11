@@ -50,6 +50,7 @@
 @synthesize appStoreButtonState = appStoreButtonState_;
 @synthesize hockeyManager = hockeyManager_;
 @synthesize modal = modal_;
+@synthesize modalAnimated = modalAnimated_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -234,6 +235,7 @@
   if ((self = [super initWithStyle:UITableViewStylePlain])) {
     self.hockeyManager = newHockeyManager;
     self.modal = newModal;
+    self.modalAnimated = YES;
     self.title = BWHockeyLocalize(@"HockeyUpdateScreenTitle");
     
     if ([self.hockeyManager shouldShowUserSettings]) {
@@ -279,7 +281,7 @@
       presentingViewController = [self parentViewController];
     
     // if there is no presenting view controller just remove view.
-    if (presentingViewController)
+    if (presentingViewController && self.modalAnimated)
       [presentingViewController dismissModalViewControllerAnimated:YES];
     else
       [self.navigationController.view removeFromSuperview];
@@ -342,11 +344,20 @@
   NSString *iconString = nil;
   NSArray *icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFiles"];
   if (!icons) {
-    iconString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFile"];
-    if (!iconString) {
-      iconString = @"Icon.png";
+    icons = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIcons"];
+    if ((icons) && ([icons isKindOfClass:[NSDictionary class]])) {
+      icons = [icons valueForKeyPath:@"CFBundlePrimaryIcon.CFBundleIconFiles"];
     }
-  } else {
+    
+    if (!icons) {
+      iconString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIconFile"];
+      if (!iconString) {
+        iconString = @"Icon.png";
+      }
+    }
+  } 
+  
+  if (icons) {
     BOOL useHighResIcon = NO;
     BW_IF_IOS4_OR_GREATER(if ([UIScreen mainScreen].scale == 2.0f) useHighResIcon = YES;)
     
