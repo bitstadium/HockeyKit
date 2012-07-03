@@ -104,13 +104,17 @@ class Router
             $protocol = 'https';
             $default_port = 443;
         }
-        $this->baseURL = sprintf(
-            '%s://%s%s%s/',
-            $protocol,
-            $_SERVER['SERVER_NAME'],
-            $_SERVER['SERVER_PORT'] != $default_port ? ':'.$_SERVER['SERVER_PORT'] : '',
-            $path
-        );
+        if (defined('BASE_URL') && BASE_URL !== NULL) {
+        	$this->baseURL =  BASE_URL;
+        } else {         
+		$this->baseURL = sprintf(
+			'%s://%s%s%s/',
+			$protocol,
+			$_SERVER['SERVER_NAME'],
+			$_SERVER['SERVER_PORT'] != $default_port ? ':'.$_SERVER['SERVER_PORT'] : '',
+			$path
+			);
+        }
         
         $this->servername =  $_SERVER['SERVER_NAME'];
 
