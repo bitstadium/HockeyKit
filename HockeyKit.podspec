@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.summary  = 'A software update kit for iOS.'
   s.homepage = 'http://hockeykit.net/'
   s.author   = { 'Andreas Linde' => 'mail@andreaslinde.de' }
-  s.source   = { :git => 'https://github.com/TheRealKerni/HockeyKit.git', :tag => '2.0.3' }
+  s.source   = { :git => 'https://github.com/TheRealKerni/HockeyKit.git', :tag => '2.0.7' }
 
   s.description = 'Hockey is a iOS Ad-Hoc updater framework. It can be used for all apps that '        \
                   'target the Apple AppStore and improves the beta testing process dramatically. '     \
@@ -22,6 +22,5 @@ Pod::Spec.new do |s|
                    'client/iOS/Helper'
 
   s.resource     = 'client/iOS/Hockey.bundle'
-  s.clean_paths  = 'client/Android', 'demo', 'server', 'client/iOS/HockeyLib', 'client/iOS/JSON'
   s.frameworks   = 'QuartzCore', 'SystemConfiguration'
 end
