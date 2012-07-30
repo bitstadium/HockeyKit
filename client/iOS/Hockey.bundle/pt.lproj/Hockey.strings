@@ -1,0 +1,89 @@
+/*
+   Hockey.strings
+   Hockey
+
+   Created by Andreas Linde on 11/15/10.
+   Copyright 2010 buzzworks.de. All rights reserved.
+ 
+   Translated by Everton Cunha ever.cunha@gmail.com on 07/30/12.
+ */
+
+
+/* Alert view */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Sim";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Não";
+
+/* Update available */
+"HockeyUpdateAvailable" = "Atualização disponível";
+
+/* Would you like to check out the new update? You can do this later on at any time in the In-App settings. */
+"HockeyUpdateAlertText" = "Há uma nova versão do aplicativo disponível. Você gostaria de vê-la agora?";
+
+
+/* Update details screen */
+
+/* Update Details */
+"HockeyUpdateScreenTitle" = "Atualizar";
+
+
+/* Settings */
+
+/* Screen title for settings view */
+"HockeySettingsTitle" = "Preferências";
+
+/* Text asking the user to send user data (on/off switch) */
+"HockeySettingsUserData" = "Info. usuário";
+
+/* Description text for turning on/off sending user data */
+"HockeySettingsUserDataDescription" = "Ao enviar informações de usuário será enviado os seguintes dados: versão do aplicativo, idioma, tipo de aparelho e a versão do sistema iOS.";
+
+/* Text asking the user to send usage data (on/off switch) */
+"HockeySettingsUsageData" = "Info. uso";
+
+/* Description text for turning on/off sending usage data */
+"HockeySettingsUsageDataDescription" = "Ao enviar informações de uso será enviado as informações de teste ao desenvolvedor dentro da janela de 1 minuto.";
+
+/* Title for defining when update checks may be made */
+"HockeySectionCheckTitle" = "Verificar atualizações";
+
+/* On Startup */
+"HockeySectionCheckStartup" = "Ao iniciar";
+
+/* Daily */
+"HockeySectionCheckDaily" = "Diariamente";
+
+/* Manually */
+"HockeySectionCheckManually" = "Manualmente";
+
+
+"HockeyVersion" = "Versão";
+"HockeyShowPreviousVersions" = "Mostrar versões anteriores...";
+"HockeyNoUpdateNeededTitle" = "Sem atualização disponível";
+"HockeyNoUpdateNeededMessage" = "%@ já é a última versão disponível.";
+"HockeyUpdateAlertTextWithAppVersion" = "%@ está disponível.";
+"HockeyUpdateAlertMandatoryTextWithAppVersion" = "%@ está disponível e é uma atualização obrigatória!";
+"HockeyIgnore" = "Ignorar";
+"HockeyShowUpdate" = "Mostrar";
+"HockeyInstallUpdate" = "Instalar";
+"HockeyError" = "Erro";
+"HockeyOK" = "OK";
+"HockeyWarning" = "Alerta";
+"HockeyNoReleaseNotesAvailable" = "Sem notas de atualização disponível.";
+
+"HockeyAuthorizationProgress" = "Autorizando...";
+"HockeyAuthorizationOffline" = "É necessário conexão com a internet!";
+"HockeyAuthorizationDenied" = "Autorização negada. Contate o desenvolvedor.";
+
+"HockeyiOS3Message" = "In-App download requer iOS 4 ou mais recente. Você pode atualizar essa aplicação fazendo o download do IPA em %@ e sincronizando com o iTunes.";
+"HockeySimulatorMessage" = "Hockey Update não funciona no Simulador.\nA url itms-services:// é implementada mas não é funcional.";
+
+"HockeyButtonCheck" = "VERIFICAR";
+"HockeyButtonSearching" = "BUSCANDO";
+"HockeyButtonUpdate" = "ATUALIZAR";
+"HockeyButtonInstalling" = "INSTALANDO";
+"HockeyButtonOffline" = "DESCONECTADO";
+"HockeyInstalled" = "INSTALADO";
