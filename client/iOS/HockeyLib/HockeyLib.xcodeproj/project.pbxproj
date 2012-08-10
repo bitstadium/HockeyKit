@@ -259,6 +259,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = HOCKEYLIB_STATIC_LIBRARY;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = HockeyLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -274,6 +275,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = HOCKEYLIB_STATIC_LIBRARY;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = HockeyLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
