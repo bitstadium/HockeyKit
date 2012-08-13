@@ -109,16 +109,21 @@
                                  permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     }
   } else {
-    
-    BW_IF_3_2_OR_GREATER(
-                         settings.modalTransitionStyle = UIModalTransitionStylePartialCurl;
-                         [self presentModalViewController:settings animated:YES];
-                         )
+    BW_IF_IOS5_OR_GREATER(
+                          settings.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+                          [self presentViewController:settings animated:YES completion:NULL];
+                          )
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    else BW_IF_3_2_OR_GREATER(
+                              settings.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+                              [self presentModalViewController:settings animated:YES];
+                              )
     BW_IF_PRE_3_2(
                   UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:settings] autorelease];
                   navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
                   [self presentModalViewController:navController animated:YES];
                   )
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
   }
 }
 
@@ -281,8 +286,16 @@
       presentingViewController = [self parentViewController];
     
     // if there is no presenting view controller just remove view.
-    if (presentingViewController && self.modalAnimated)
-      [presentingViewController dismissModalViewControllerAnimated:YES];
+    if (presentingViewController && self.modalAnimated) {
+      BW_IF_IOS5_OR_GREATER(
+                            [presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+                            )
+      else {
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        [presentingViewController dismissModalViewControllerAnimated:YES];
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+      }
+    }
     else
       [self.navigationController.view removeFromSuperview];
     
