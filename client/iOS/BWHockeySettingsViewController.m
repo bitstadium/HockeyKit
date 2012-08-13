@@ -17,7 +17,14 @@
 @synthesize hockeyManager = hockeyManager_;
 
 - (void)dismissSettings {
-  [self.navigationController dismissModalViewControllerAnimated:YES];
+  BW_IF_IOS5_OR_GREATER(
+                        [self.navigationController dismissViewControllerAnimated:YES completion:NULL];
+                        )
+  else {
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    [self.navigationController dismissModalViewControllerAnimated:YES];
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+  }
 }
 
 #pragma mark -

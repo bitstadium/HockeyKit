@@ -511,8 +511,18 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
   }
   
   // use topmost modal view
-  while (parentViewController.modalViewController) {
-    parentViewController = parentViewController.modalViewController;
+  BW_IF_IOS5_OR_GREATER(
+                        while (parentViewController.presentedViewController) {
+                          parentViewController = parentViewController.presentedViewController;
+                        }
+                        )
+  else
+  {
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    while (parentViewController.modalViewController) {
+      parentViewController = parentViewController.modalViewController;
+    }
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
   }
   
   // special addition to get rootViewController from three20 which has it's own controller handling
@@ -535,8 +545,15 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
       navController_.modalPresentationStyle = UIModalPresentationFormSheet;
     }
     hockeyViewController.modalAnimated = YES;
-    
-    [parentViewController presentModalViewController:navController_ animated:YES];
+
+    BW_IF_IOS5_OR_GREATER(
+                          [parentViewController presentViewController:navController_ animated:YES completion:NULL];
+                          )
+    else {
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+      [parentViewController presentModalViewController:navController_ animated:YES];
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+    }
   } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)
