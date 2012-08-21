@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
     UpdateActivity.iconDrawableId = R.drawable.icon;
     
     // Check for updates
-    checkUpdateTask();
+    checkForUpdates();
   }
 
   private void checkForUpdates() {

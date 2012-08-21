@@ -58,4 +58,5 @@ NSString *BWHockeyLocalize(NSString *stringToken) {
   } else {
     return stringToken;
   }
+
 }
