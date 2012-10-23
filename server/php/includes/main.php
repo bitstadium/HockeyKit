@@ -187,12 +187,12 @@ class AppUpdater
     
     protected function index($arguments)
     {
-        return $this->show(null);
+        return $this->show(null, null);
     }
     
     protected function app($arguments)
     {
-        return $this->show($arguments['bundleidentifier']);
+        return $this->show($arguments['bundleidentifier'], $arguments['version']);
     }
     
     protected function validateDir($dir)
@@ -457,29 +457,33 @@ class AppUpdater
         exit();
     }
     
-    protected function findPublicVersion($files)
+    protected function findPublicVersion($files, $version)
     {
         $publicVersion = array();
         
-        foreach ($files as $version => $fileSet) {
-            if (isset($fileSet[self::FILE_ANDROID_APK])) {
-                $publicVersion = $fileSet;
-                break;
-            }
-            
-            $restrict = isset($fileSet[self::FILE_VERSION_RESTRICT]) ? $fileSet[self::FILE_VERSION_RESTRICT] : null;
-            if (isset($fileSet[self::FILE_IOS_IPA]) && $restrict && filesize($restrict) > 0) {
-                continue;
-            }
-            
-            $publicVersion = $fileSet;
-            break;
+        foreach ($files as $fileVersion => $fileSet) {
+        
+        	if ($version == null || $fileVersion == $version) {
+        	
+	            if (isset($fileSet[self::FILE_ANDROID_APK])) {
+	                $publicVersion = $fileSet;
+	                break;
+	            }
+	            
+	            $restrict = isset($fileSet[self::FILE_VERSION_RESTRICT]) ? $fileSet[self::FILE_VERSION_RESTRICT] : null;
+	            if (isset($fileSet[self::FILE_IOS_IPA]) && $restrict && filesize($restrict) > 0) {
+	                continue;
+	            }
+	            
+	            $publicVersion = $fileSet;
+	            break;
+        	}
         }
         
         return $publicVersion;
     }
     
-    public function show($appBundleIdentifier)
+    public function show($appBundleIdentifier, $version)
     {
         // first get all the subdirectories, which do not have a file named "private" present
         if ($handle = opendir($this->appDirectory)) {
@@ -512,7 +516,8 @@ class AppUpdater
                     continue;
                 }
                 
-                $current = $this->findPublicVersion($files[self::VERSIONS_SPECIFIC_DATA]);
+                // Get version
+                $current = $this->findPublicVersion($files[self::VERSIONS_SPECIFIC_DATA], $version);
                 $ipa      = isset($current[self::FILE_IOS_IPA]) ? $current[self::FILE_IOS_IPA] : null;
                 $plist    = isset($current[self::FILE_IOS_PLIST]) ? $current[self::FILE_IOS_PLIST] : null;
                 $apk      = isset($current[self::FILE_ANDROID_APK]) ? $current[self::FILE_ANDROID_APK] : null;

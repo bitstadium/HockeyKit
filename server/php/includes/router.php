@@ -10,6 +10,7 @@ class Router
         '/apps' => '/index',
         '/apps/' => '/index',
         '/apps/:bundleidentifier@^[\w-.]+$' => '/app',
+        '/apps/:bundleidentifier@^[\w-.]+$/versions/:version@^[\w-.]+$' => '/app',
         '/api/2/apps/:bundleidentifier@^[\w-.]+$' => '/api'
     );
 
