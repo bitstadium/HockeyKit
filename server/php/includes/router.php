@@ -11,6 +11,7 @@ class Router
         '/apps/' => '/index',
         '/apps/:bundleidentifier@^[\w-.]+$' => '/app',
         '/apps/:bundleidentifier@^[\w-.]+$/versions/:version@^[\w-.]+$' => '/app',
+        '/apps/:bundleidentifier@^[\w-.]+$/versions' => '/versions',
         '/api/2/apps/:bundleidentifier@^[\w-.]+$' => '/api'
     );
 

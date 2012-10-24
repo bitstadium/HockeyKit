@@ -113,6 +113,8 @@ class AppUpdater
     const INDEX_IMAGE           = 'image';
     const INDEX_STATS           = 'stats';
     const INDEX_PLATFORM        = 'platform';
+    const INDEX_SHOW_VERSIONS   = 'showversions';
+    const INDEX_ALL_VERSIONS    = 'allversions';
 
     // define filetypes
     const FILE_IOS_PLIST        = '.plist';
@@ -187,12 +189,17 @@ class AppUpdater
     
     protected function index($arguments)
     {
-        return $this->show(null, null);
+        return $this->show(null, null, false);
+    }
+    
+    protected function versions($arguments)
+    {
+    	return $this->show($arguments['bundleidentifier'], null, true);
     }
     
     protected function app($arguments)
     {
-        return $this->show($arguments['bundleidentifier'], $arguments['version']);
+        return $this->show($arguments['bundleidentifier'], $arguments['version'], false);
     }
     
     protected function validateDir($dir)
@@ -483,7 +490,7 @@ class AppUpdater
         return $publicVersion;
     }
     
-    public function show($appBundleIdentifier, $version)
+    public function show($appBundleIdentifier, $version, $showVersions)
     {
         // first get all the subdirectories, which do not have a file named "private" present
         if ($handle = opendir($this->appDirectory)) {
@@ -612,6 +619,12 @@ class AppUpdater
                 
                     // sort by app version
                     $newApp[self::INDEX_STATS] = Helper::array_orderby($newApp[self::INDEX_STATS], self::DEVICE_APPVERSION, SORT_DESC, self::DEVICE_OSVERSION, SORT_DESC, self::DEVICE_PLATFORM, SORT_ASC, self::DEVICE_INSTALLDATE, SORT_DESC, self::DEVICE_LASTCHECK, SORT_DESC);
+                }
+                
+                // Add all versions to page
+                $newApp[self::INDEX_SHOW_VERSIONS] = $showVersions;
+                if ($showVersions) {
+	                $newApp[self::INDEX_ALL_VERSIONS] = $files[self::VERSIONS_SPECIFIC_DATA];
                 }
             
                 // add it to the array

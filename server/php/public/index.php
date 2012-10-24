@@ -87,25 +87,45 @@
                         <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                     <?php } ?>
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                        <p><b>Version:</b>
-                    <?php
-                          if ($app[AppUpdater::INDEX_SUBTITLE]) {
-                              echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
-                          } else {
-                              echo $app[AppUpdater::INDEX_VERSION];
-                          }
-                          echo "<br/>";
-                          if ($app[AppUpdater::INDEX_APPSIZE]) {
-                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
-                          }
-                          echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
-                    ?>
-                        </p>
-                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=apk">Install Application</a>
-                    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
-                        <p><br/><br/></p>
-                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
-                    <?php endif ?>
+                        
+                        <?php if ($app[AppUpdater::INDEX_SHOW_VERSIONS]) { ?>
+
+	                        <p>
+	                        	<b>Versions:</b><br/><br />
+	                        	<?php 
+	                        	
+	                        		foreach ($app[AppUpdater::INDEX_ALL_VERSIONS] as $version => $fileSet)
+	                        		{
+	                        			echo "<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions/$version\">$version</a><br />";
+	                        		}
+	                        	
+	                        	?>
+	                        </p>
+	                        
+                        <?php } else { ?>
+                        
+	                        <p>
+	                        	<b>Version:</b>
+		                    	<?php
+		                          if ($app[AppUpdater::INDEX_SUBTITLE]) {
+		                              echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+		                          } else {
+		                              echo $app[AppUpdater::INDEX_VERSION];
+		                          }
+	                              echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+		                          if ($app[AppUpdater::INDEX_APPSIZE]) {
+		                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+		                          }
+		                          echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+		                    	?>
+	                        </p>
+	                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=apk">Install Application</a>
+	                    	<?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+	                        	<p><br/><br/></p>
+	                        	<p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
+	                    	<?php endif ?>
+	                    	
+	                    <?php } ?>
                     </div>
                 <?php endforeach ?>
                 </div>
@@ -183,29 +203,48 @@
                         <img class="icon" src="<?php echo $b.$app[AppUpdater::INDEX_IMAGE] ?>">
                     <?php } ?>
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                        <p><b>Version:</b>
-                    <?php
-                          if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
-                              echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
-                          } else {
-                              echo $app[AppUpdater::INDEX_VERSION];
-                          }
-                          echo "<br/>";
-                          if ($app[AppUpdater::INDEX_APPSIZE]) {
-                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
-                          }
-                          echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
-                    ?>
-                        </p>
-	                    <div style='clear:both;'></div>
-                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
-                        <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
-                    <?php } ?>
-                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
-                    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
-                        <p><br/><br/></p>
-                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
-                    <?php endif ?>
+                        
+                        <?php if ($app[AppUpdater::INDEX_SHOW_VERSIONS]) { ?>
+
+	                        <p>
+	                        	<b>Versions:</b><br/><br />
+	                        	<?php 
+	                        	
+	                        		foreach ($app[AppUpdater::INDEX_ALL_VERSIONS] as $version => $fileSet)
+	                        		{
+	                        			echo "<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions/$version\">$version</a><br />";
+	                        		}
+	                        	
+	                        	?>
+	                        </p>
+	                        
+                        <?php } else { ?>
+                        
+	                        <p><b>Version:</b>
+	                	    <?php
+								if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
+									echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+								} else {
+									echo $app[AppUpdater::INDEX_VERSION];
+								}
+	                            echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+								if ($app[AppUpdater::INDEX_APPSIZE]) {
+									echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+								}
+								echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+	            	        ?>
+	                        </p>
+		                    <div style='clear:both;'></div>
+	                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
+	        	                <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
+	        	            <?php } ?>
+	                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
+	    	                <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+	    	                    <p><br/><br/></p>
+	    	                    <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
+		                    <?php endif ?>
+	                    
+	                    <?php } ?>
                     </div>
                 <?php endforeach ?>
                 </div>
@@ -239,32 +278,51 @@
                     </div>
                     <div class="column span-6">
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                        <p><b>Version:</b>
-                    <?php
-                      if ($app[AppUpdater::INDEX_SUBTITLE]) {
-                          echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
-                      } else {
-                          echo $app[AppUpdater::INDEX_VERSION];
-                      }
-                      echo "<br/>";
-                      if ($app[AppUpdater::INDEX_APPSIZE]) {
-                          echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
-                      }
-                      echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
-                    ?>
-                        </p>
+                        
+                        <?php if ($app[AppUpdater::INDEX_SHOW_VERSIONS]) { ?>
 
-                        <div class="ipadbuttons">
-                    <?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
-                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
-                    <?php } ?>
-                            <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
-                        </div>
-
-                    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
-                        <p><br/><br/></p>
-                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
-                    <?php endif ?>
+	                        <p>
+	                        	<b>Versions:</b><br/><br />
+	                        	<?php 
+	                        	
+	                        		foreach ($app[AppUpdater::INDEX_ALL_VERSIONS] as $version => $fileSet)
+	                        		{
+	                        			echo "<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions/$version\">$version</a><br />";
+	                        		}
+	                        	
+	                        	?>
+	                        </p>
+	                        
+                        <?php } else { ?>
+                        
+	                        <p><b>Version:</b>
+		                    <?php
+		                      if ($app[AppUpdater::INDEX_SUBTITLE]) {
+		                          echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+		                      } else {
+		                          echo $app[AppUpdater::INDEX_VERSION];
+		                      }
+   	                          echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+		                      if ($app[AppUpdater::INDEX_APPSIZE]) {
+		                          echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+		                      }
+		                      echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+		                    ?>
+	                        </p>
+	
+	                        <div class="ipadbuttons">
+	                   	 	<?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
+	                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
+	                    	<?php } ?>
+	                            <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
+	                        </div>
+	
+	                    	<?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+	                        <p><br/><br/></p>
+	                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
+	                    	<?php endif ?>
+                    	
+                    	<?php } ?>
 
                     </div>
 
@@ -304,36 +362,55 @@
                     </div>
                     <div class="column span-8">
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
-                        <p><b>Version:</b>
-                      <?php
-                        if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
-                            echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
-                        } else {
-                            echo $app[AppUpdater::INDEX_VERSION];
-                        }
-                        echo "<br/>";
-                        if ($app[AppUpdater::INDEX_APPSIZE]) {
-                            echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
-                        }
-                        echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
-                      ?>
-                        </p>
+                        
+                        <?php if ($app[AppUpdater::INDEX_SHOW_VERSIONS]) { ?>
 
-                        <div class="desktopbuttons">
-                    <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) : ?>
-                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Download Profile </a>
-                    <?php endif;
-                    if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
-                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
-                    <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
-                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
-                    <?php endif ?>
-                        </div>
+	                        <p>
+	                        	<b>Versions:</b><br/><br />
+	                        	<?php 
+	                        	
+	                        		foreach ($app[AppUpdater::INDEX_ALL_VERSIONS] as $version => $fileSet)
+	                        		{
+	                        			echo "<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions/$version\">$version</a><br />";
+	                        		}
+	                        	
+	                        	?>
+	                        </p>
+	                        
+                        <?php } else { ?>
+                        
+	                        <p><b>Version:</b>
+	                        <?php
+	                        if (isset($app[AppUpdater::INDEX_SUBTITLE]) && $app[AppUpdater::INDEX_SUBTITLE]) {
+	                            echo $app[AppUpdater::INDEX_SUBTITLE] . " (" . $app[AppUpdater::INDEX_VERSION] . ")";
+	                        } else {
+	                            echo $app[AppUpdater::INDEX_VERSION];
+	                        }
+	                        echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+	                        if ($app[AppUpdater::INDEX_APPSIZE]) {
+	                            echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
+	                        }
+	                        echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+	                        ?>
+	                        </p>
 
-                    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
-                        <p><br/><br/></p>
-                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
-                    <?php endif ?>
+	                        <div class="desktopbuttons">
+	                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) : ?>
+	                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Download Profile </a>
+	                        <?php endif;
+	                        if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
+	                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
+	                        <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
+	                        <a class="button" href="<?php echo $b . $app['path'] ?>">Download Application</a>
+	                        <?php endif ?>
+	                        </div>
+
+		                    <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
+		                        <p><br/><br/></p>
+		                        <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
+		                    <?php endif ?>
+
+                        <?php } ?>
 
                     </div>
 
