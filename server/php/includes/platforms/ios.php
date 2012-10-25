@@ -24,6 +24,7 @@ class iOSAppUpdater extends AbstractAppUpdater
     protected function download($arguments) {
         $bundleidentifier = $arguments[self::PARAM_2_IDENTIFIER];
         $format           = $arguments[self::PARAM_2_FORMAT];
+        $dir               = $arguments[self::PARAM_2_APP_VERSION];
         
         $files = $this->getApplicationVersions($bundleidentifier, self::PLATFORM_IOS);
         if (count($files) == 0) {
@@ -31,7 +32,12 @@ class iOSAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
+		// Set the directory to the latest version if not specified
+		if ($dir == null) {
+	        $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
+		}
+		
+		// Get directory information for the version		
         $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
         if ($format == self::PARAM_2_FORMAT_VALUE_PLIST) // || $type == self::PARAM_1_TYPE_VALUE_APP)

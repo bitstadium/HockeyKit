@@ -113,6 +113,8 @@ class AppUpdater
     const INDEX_IMAGE           = 'image';
     const INDEX_STATS           = 'stats';
     const INDEX_PLATFORM        = 'platform';
+    const INDEX_VERSION_DIR     = 'versiondir';    
+    
     const INDEX_SHOW_VERSIONS   = 'showversions';
     const INDEX_ALL_VERSIONS    = 'allversions';
 
@@ -128,6 +130,7 @@ class AppUpdater
     const FILE_VERSION_MANDATORY  = '.mandatory';             // if present in a version subdirectory, defines that version to be mandatory
     const FILE_VERSION_RESTRICT   = '.team';                  // if present in a version subdirectory, defines the teams that do have access, comma separated
     const FILE_USERLIST           = 'stats/userlist.txt';     // defines UDIDs, real names for stats, and comma separated the associated team names
+    const FILE_FOLDER             = 'folder';
     
     // define version array structure
     const VERSIONS_COMMON_DATA      = 'common';
@@ -369,6 +372,7 @@ class AppUpdater
                         $version[self::FILE_COMMON_NOTES] = $note;
                         $version[self::FILE_VERSION_RESTRICT] = $restrict;
                         $version[self::FILE_VERSION_MANDATORY] = $mandatory;
+                        $version[self::FILE_FOLDER] = $subDir;
                         
                         // if this is a restricted version, check if the UDID is provided and allowed
                         if ($restrict && !$this->checkProtectedVersion($restrict)) {
@@ -381,6 +385,7 @@ class AppUpdater
                         $version[self::FILE_ANDROID_APK] = $apk;
                         $version[self::FILE_ANDROID_JSON] = $json;
                         $version[self::FILE_COMMON_NOTES] = $note;
+                        $version[self::FILE_FOLDER] = $subDir;
                         $allVersions[$subDir] = $version;
                     }
                 }
@@ -531,6 +536,7 @@ class AppUpdater
                 $json     = isset($current[self::FILE_ANDROID_JSON]) ? $current[self::FILE_ANDROID_JSON] : null;
                 $note     = isset($current[self::FILE_COMMON_NOTES]) ? $current[self::FILE_COMMON_NOTES] : null;
                 $restrict = isset($current[self::FILE_VERSION_RESTRICT]) ? $current[self::FILE_VERSION_RESTRICT] : null;
+                $folder   = isset($current[self::FILE_FOLDER]) ? $current[self::FILE_FOLDER] : null;
                 
                 $profile = isset($files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE]) ?
                     $files[self::VERSIONS_COMMON_DATA][self::FILE_IOS_PROFILE] : null;
@@ -550,11 +556,12 @@ class AppUpdater
                 $app = $ipa ? $ipa : $apk;
 
                 $newApp = array();
-                $newApp['path']            = substr($app, strpos($app, $file));
-                $newApp[self::INDEX_DIR]   = $file;
-                $newApp[self::INDEX_IMAGE] = substr($image, strpos($image, $file));
-                $newApp[self::INDEX_NOTES] = $note ? Helper::nl2br_skip_html(file_get_contents($note)) : '';
-                $newApp[self::INDEX_STATS] = array();
+                $newApp['path']                    = substr($app, strpos($app, $file));
+                $newApp[self::INDEX_DIR]           = $file;
+                $newApp[self::INDEX_IMAGE]         = substr($image, strpos($image, $file));
+                $newApp[self::INDEX_NOTES]         = $note ? Helper::nl2br_skip_html(file_get_contents($note)) : '';
+                $newApp[self::INDEX_STATS]         = array();
+                $newApp[self::INDEX_VERSION_DIR]   = $folder;
 
                 if ($ipa) {
                     // iOS application

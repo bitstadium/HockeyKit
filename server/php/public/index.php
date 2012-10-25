@@ -112,7 +112,7 @@
 		                          } else {
 		                              echo $app[AppUpdater::INDEX_VERSION];
 		                          }
-	                              echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+	                              echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
 		                          if ($app[AppUpdater::INDEX_APPSIZE]) {
 		                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 		                          }
@@ -227,7 +227,7 @@
 								} else {
 									echo $app[AppUpdater::INDEX_VERSION];
 								}
-	                            echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+	                            echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
 								if ($app[AppUpdater::INDEX_APPSIZE]) {
 									echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 								}
@@ -238,7 +238,7 @@
 	                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
 	        	                <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
 	        	            <?php } ?>
-	                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
+	                        <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist&" . AppUpdater::PARAM_2_APP_VERSION . "=" . $app[AppUpdater::INDEX_VERSION_DIR]) ?>">Install Application</a>
 	    	                <?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
 	    	                    <p><br/><br/></p>
 	    	                    <p><b>What's New:</b><br/><?php echo $app[AppUpdater::INDEX_NOTES] ?></p>
@@ -302,7 +302,7 @@
 		                      } else {
 		                          echo $app[AppUpdater::INDEX_VERSION];
 		                      }
-   	                          echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+   	                          echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
 		                      if ($app[AppUpdater::INDEX_APPSIZE]) {
 		                          echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 		                      }
@@ -314,7 +314,7 @@
 	                   	 	<?php if ($app[AppUpdater::INDEX_PROFILE]) { ?>
 	                            <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
 	                    	<?php } ?>
-	                            <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
+	                            <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist&" . AppUpdater::PARAM_2_APP_VERSION . "=" . $app[AppUpdater::INDEX_VERSION_DIR]) ?>">Install Application</a>
 	                        </div>
 	
 	                    	<?php if ($app[AppUpdater::INDEX_NOTES]) : ?>
@@ -386,7 +386,7 @@
 	                        } else {
 	                            echo $app[AppUpdater::INDEX_VERSION];
 	                        }
-	                        echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(past versions)</a><br/>";
+	                        echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
 	                        if ($app[AppUpdater::INDEX_APPSIZE]) {
 	                            echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 	                        }
