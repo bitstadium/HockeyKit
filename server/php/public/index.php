@@ -112,7 +112,7 @@
 		                          } else {
 		                              echo $app[AppUpdater::INDEX_VERSION];
 		                          }
-	                              echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
+	                              echo " (<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">All Versions</a> &#124; <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "\">Latest Version</a>)<br/>";
 		                          if ($app[AppUpdater::INDEX_APPSIZE]) {
 		                              echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 		                          }
@@ -227,7 +227,7 @@
 								} else {
 									echo $app[AppUpdater::INDEX_VERSION];
 								}
-	                            echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
+	                            echo " (<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">All Versions</a> &#124; <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "\">Latest Version</a>)<br/>";
 								if ($app[AppUpdater::INDEX_APPSIZE]) {
 									echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 								}
@@ -302,7 +302,7 @@
 		                      } else {
 		                          echo $app[AppUpdater::INDEX_VERSION];
 		                      }
-   	                          echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
+   	                          echo " (<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">All Versions</a> &#124; <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "\">Latest Version</a>)<br/>";
 		                      if ($app[AppUpdater::INDEX_APPSIZE]) {
 		                          echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 		                      }
@@ -386,7 +386,7 @@
 	                        } else {
 	                            echo $app[AppUpdater::INDEX_VERSION];
 	                        }
-	                        echo " <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">(all versions)</a><br/>";
+	                        echo " (<a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "/versions\">All Versions</a> &#124; <a href=\"" . $b . "apps/" . $app[AppUpdater::INDEX_DIR] . "\">Latest Version</a>)<br/>";
 	                        if ($app[AppUpdater::INDEX_APPSIZE]) {
 	                            echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
 	                        }
