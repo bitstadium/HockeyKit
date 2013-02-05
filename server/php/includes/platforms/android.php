@@ -32,7 +32,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $dir = array_shift(array_keys($files[self::VERSIONS_SPECIFIC_DATA]));
+        $path = $files[self::VERSIONS_SPECIFIC_DATA]);
+        $dir = array_shift(array_keys($path)); // Only variables should be passed by reference
         $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
         if ($format == self::PARAM_2_FORMAT_VALUE_APK)
