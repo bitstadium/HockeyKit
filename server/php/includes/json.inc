@@ -27,7 +27,8 @@ if (!function_exists('json_encode'))
 				return $a;
 		}
 		$isList = true;
-		for ($i = 0; reset($a); $i++) {
+		for ($i = 0, reset($a); $i < count($a); $i++, next($a))
+		{
 			if (key($a) !== $i)
 			{
 				$isList = false;
