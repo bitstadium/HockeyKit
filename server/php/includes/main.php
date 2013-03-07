@@ -211,15 +211,21 @@ class AppUpdater
     protected function addStats($bundleidentifier, $format)
     {
         // did we get any user data?
-        $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
+        $osname = Router::arg(self::PARAM_2_OS, 'iOS');
+
+        if ($osname == "Android") {
+		    $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{16}$/i');
+	    }
+	    else {
+		    $udid = Router::arg_match(self::PARAM_2_UDID, '/^[0-9a-f]{40}$/i');
+	    }
 
         if (!$udid || !is_dir($this->appDirectory.'stats/')) {
             return;
         }
-
+        
         $appversion     = Router::arg_variants(array(self::PARAM_2_APP_VERSION, self::PARAM_1_APP_VERSION));
         $osversion      = Router::arg_variants(array(self::PARAM_2_OS_VERSION, self::PARAM_1_OS_VERSION));
-        $osname         = Router::arg(self::PARAM_2_OS, 'iOS');
         $device         = Router::arg_variants(array(self::PARAM_2_DEVICE, self::PARAM_1_DEVICE));
         $language       = Router::arg(self::PARAM_2_LANGUAGE, '');
         $firststartdate = Router::arg(self::PARAM_2_FIRST_START, '');
