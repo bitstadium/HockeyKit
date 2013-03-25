@@ -489,7 +489,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 
 - (void)showUpdateView {
   if (isAppStoreEnvironment_) {
-    NSLog(@"This should not be called from an app store build. Exciting.");
+    NSLog(@"This should not be called from an app store build. Exiting.");
     return;
   }
   
