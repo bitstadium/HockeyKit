@@ -26,7 +26,6 @@
 
 date_default_timezone_set('UTC');
 
-require('json.inc');
 require('plist.inc');
 require_once('config.inc');
 require_once('helper.php');
