@@ -32,7 +32,7 @@ class AndroidAppUpdater extends AbstractAppUpdater
             return Helper::sendJSONAndExit(self::E_NO_VERSIONS_FOUND);
         }
 
-        $path = $files[self::VERSIONS_SPECIFIC_DATA]);
+        $path = $files[self::VERSIONS_SPECIFIC_DATA];
         $dir = array_shift(array_keys($path)); // Only variables should be passed by reference
         $current = $files[self::VERSIONS_SPECIFIC_DATA][$dir];
         
@@ -95,9 +95,8 @@ class AndroidAppUpdater extends AbstractAppUpdater
                 $newAppVersion[self::RETURN_V2_APPSIZE]         = filesize($apk);
 
                 // add the latest release notes if available
-                $note = $parsed_json['notes'];
-                if ($note) {
-                    $newAppVersion[self::RETURN_V2_NOTES] = Helper::nl2br_skip_html($note);
+                if (isset($parsed_json['notes'])) {
+                    $newAppVersion[self::RETURN_V2_NOTES] = Helper::nl2br_skip_html($parsed_json['notes']);
                 }
 
                 $result[] = $newAppVersion;
