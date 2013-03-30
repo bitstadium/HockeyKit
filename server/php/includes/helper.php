@@ -66,7 +66,8 @@ class Helper
         
         switch ($device) {
             case "i386":
-                $platform = "iPhone Simulator";
+            case "x86_64":
+                $platform = "iOS Simulator";
                 break;
             case "iPhone1,1":
                 $platform = "iPhone";
