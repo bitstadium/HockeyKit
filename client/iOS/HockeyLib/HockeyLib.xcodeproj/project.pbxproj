@@ -258,6 +258,7 @@
 				GCC_PREFIX_HEADER = HockeyLib_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = HOCKEYLIB_STATIC_LIBRARY;
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = HockeyLib;
 			};
 			name = Debug;
@@ -273,6 +274,7 @@
 				GCC_PREFIX_HEADER = HockeyLib_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = HOCKEYLIB_STATIC_LIBRARY;
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = HockeyLib;
 			};
 			name = Release;
