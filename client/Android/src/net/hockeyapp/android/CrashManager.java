@@ -77,7 +77,7 @@ public class CrashManager {
     builder.create().show();
   }
 
-  private static void registerHandler() {
+  public static void registerHandler() {
     // Get current handler
     UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
     if (currentHandler != null) {

@@ -66,7 +66,8 @@ class Helper
         
         switch ($device) {
             case "i386":
-                $platform = "iPhone Simulator";
+            case "x86_64":
+                $platform = "iOS Simulator";
                 break;
             case "iPhone1,1":
                 $platform = "iPhone";
@@ -86,6 +87,12 @@ class Helper
             case "iPhone4,1":
                 $platform = "iPhone 4S";
                 break;
+            case "iPhone5,1":
+                $platform = "iPhone 5 GSM";
+                break;
+            case "iPhone5,2":
+                $platform = "iPhone 5 CDMA";
+                break;
             case "iPad1,1":
                 $platform = "iPad";
                 break;
@@ -98,6 +105,33 @@ class Helper
             case "iPad2,3":
                 $platform = "iPad 2 CDMA";
                 break;
+            case "iPad3,1":
+                $platform = "iPad 3 WiFi";
+                break;
+            case "iPad3,2":
+                $platform = "iPad 3 CDMA";
+                break;
+            case "iPad3,3":
+                $platform = "iPad 3 GSM";
+                break;
+            case "iPad3,4":
+                $platform = "iPad 4 WiFi";
+                break;
+            case "iPad3,5":
+                $platform = "iPad 4 GSM";
+                break;
+            case "iPad3,6":
+                $platform = "iPad 4 CDMA";
+                break;
+            case "iPad2,5":
+                $platform = "iPad Mini WiFi";
+                break;
+            case "iPad2,6":
+                $platform = "iPad Mini GSM";
+                break;
+            case "iPad2,7":
+                $platform = "iPad Mini CDMA";
+                break;
             case "iPod1,1":
                 $platform = "iPod Touch";
                 break;
@@ -109,6 +143,9 @@ class Helper
                 break;
             case "iPod4,1":
                 $platform = "iPod Touch 4th Gen";
+                break;
+            case "iPod5,1":
+                $platform = "iPod Touch 5th Gen";
                 break;
         }
         

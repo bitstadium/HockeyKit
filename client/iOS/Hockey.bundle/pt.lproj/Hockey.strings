@@ -45,7 +45,7 @@
 "HockeySettingsUsageData" = "Info. uso";
 
 /* Description text for turning on/off sending usage data */
-"HockeySettingsUsageDataDescription" = "Ao enviar informações de uso será enviado as informações de teste ao desenvolvedor dentro da janela de 1 minuto.";
+"HockeySettingsUsageDataDescription" = "Envio de Informação de Uso, enviará o total de tempo de teste ao desenvolvedor em intervalos de 1 minuto.";
 
 /* Title for defining when update checks may be made */
 "HockeySectionCheckTitle" = "Verificar atualizações";
