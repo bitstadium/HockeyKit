@@ -1,0 +1,7 @@
+bin
+gen
+
+.gradle
+.idea
+build
+

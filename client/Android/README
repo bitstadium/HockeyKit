@@ -5,8 +5,25 @@ Requirements:
 + Android 2.2 (or higher); it might work with older SDKs, but we haven't tested it
 + HockeyKit 2 (or higher)
 
-Steps to integrate Hockey into your Android app:
-************************************************
+
+Setps to integrate Hockey into your Gradle/Android Studio project:
+******************************************************************
+1. Add the following to the settings.gradle file at the root of your project:
+
+include ':hockeykit'
+project(':hockeykit').projectDir = new File('/Users/joe/HockeyKit/client/Android/')
+
+Make sure to replace the path with the path of your local HockeyKit copy.
+
+2. Add the following dependency to the build.gradle file of your application:
+
+dependencies {
+    compile project(':hockeykit')
+}
+
+
+Steps to integrate Hockey into your Eclipse project:
+****************************************************
 
 1. Import the project in client/Android into Eclipse.
 
@@ -22,16 +39,20 @@ Steps to integrate Hockey into your Android app:
 
 7. The folder "Hockey_src" should appear in your project; if not, restart Eclipse.
 
-8. Open your "AndroidManifest.xml" and add the following line:
+
+Steps to integrate Hockey into your Android app:
+************************************************
+
+1. Open your "AndroidManifest.xml" and add the following line:
 
   <activity android:name="net.hockeyapp.android.UpdateActivity" />
   
-9. Make sure that your app has permissions for the internet and for writing onto the SD card:
+2. Make sure that your app has permissions for the internet and for writing onto the SD card:
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-10. Open your main activity and the following lines:
+3. Open your main activity and the following lines:
 
 import net.hockeyapp.android.CheckUpdateTask;
 
@@ -70,11 +91,11 @@ public class MainActivity extends Activity {
   // Probably more methods
 }    
 
-11. Replace YOUR_URL by your Hockey Server URL.
+4. Replace YOUR_URL by your Hockey Server URL.
 
-12. Build your project and create a signed apk.
+5. Build your project and create a signed apk.
 
-13. Create a new file info.json with the following content:
+6. Create a new file info.json with the following content:
 
 {
   "title": "HockeyDemo",
@@ -84,9 +105,9 @@ public class MainActivity extends Activity {
 
 Replace the value for title with the title of your app and the values for versionCode and versionName with the latest values (maybe it's possible to automate this with Eclipse).
 
-14. Upload both files to the server.
+7. Upload both files to the server.
 
-15. Done.
+8. Done.
 
 Bugs, Problems, Questions?
 **************************
