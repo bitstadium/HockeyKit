@@ -144,6 +144,18 @@ class Helper
             case "iPad2,7":
                 $platform = "iPad Mini CDMA";
                 break;
+            case "iPad4,1":
+                $platform = "iPad Air WiFi";
+                break;
+            case "iPad4,2":
+                $platform = "iPad Air GSM+CDMA";
+                break;
+            case "iPad4,4":
+                $platform = "iPad Mini Retina WiFi";
+                break;
+            case "iPad4,5":
+                $platform = "iPad Mini Retina WiFi";
+                break;
             case "iPod1,1":
                 $platform = "iPod Touch";
                 break;
