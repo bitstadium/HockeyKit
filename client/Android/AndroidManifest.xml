@@ -4,10 +4,14 @@
 	package="net.hockeyapp.android"
 >
 
+    <uses-sdk
+        android:minSdkVersion="4"
+        android:targetSdkVersion="19" />
+
     <application>
 
         <activity android:name=".UpdateActivity" />
 
     </application>
 
-</manifest> 
+</manifest>
