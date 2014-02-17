@@ -72,5 +72,5 @@ The following 3rd party open source libraries have been used:
 * SBJson by Stig Brautaset (http://github.com/stig/json-framework)
 * PSStoreButton by Peter Steinberger (https://github.com/steipete/PSStoreButton)
 * NSString+URLEncoding by Kaboomerang LLC.
-* bluescreen css framework (http://blueprintcss.org/)
+* blueprint css framework (http://blueprintcss.org/)
 * PHP plist reader code from http://blog.iconara.net/2007/05/08/php-plist-parsing/
