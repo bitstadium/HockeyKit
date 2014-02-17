@@ -10,6 +10,7 @@ A complete documentation can be found in the wiki at https://github.com/TheRealK
 
 # Requirements:
 - A PHP5 server needs to be available and is required for distribution of the apps
+- iOS 7.1 and later require apps to be distributed via https using a valid signed server certificate trusted by the iOS device
 - No database required!
 
 
