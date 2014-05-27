@@ -144,7 +144,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
   }
 
   public long getItemId(int position) {
-    return new Integer(position).hashCode();
+    return Integer.valueOf(position).hashCode();
   }
 
   public View getView(int position, View convertView, ViewGroup parent) {

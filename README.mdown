@@ -10,6 +10,7 @@ A complete documentation can be found in the wiki at https://github.com/TheRealK
 
 # Requirements:
 - A PHP5 server needs to be available and is required for distribution of the apps
+- iOS 7.1 and later require apps to be distributed via https using a valid signed server certificate trusted by the iOS device
 - No database required!
 
 
@@ -72,5 +73,5 @@ The following 3rd party open source libraries have been used:
 * SBJson by Stig Brautaset (http://github.com/stig/json-framework)
 * PSStoreButton by Peter Steinberger (https://github.com/steipete/PSStoreButton)
 * NSString+URLEncoding by Kaboomerang LLC.
-* bluescreen css framework (http://blueprintcss.org/)
+* blueprint css framework (http://blueprintcss.org/)
 * PHP plist reader code from http://blog.iconara.net/2007/05/08/php-plist-parsing/
