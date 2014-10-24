@@ -1,7 +1,7 @@
 <?php
     require_once('config.php');
     require(constant('HOCKEY_INCLUDE_DIR'));
-    
+
     $router = Router::get(array('appDirectory' => dirname(__FILE__).DIRECTORY_SEPARATOR));
     $apps = $router->app;
     $b = $router->baseURL;
@@ -22,7 +22,7 @@
     </head>
     <body class="<?php echo DeviceDetector::$category; ?>">
         <div id="container" class="container">
-            
+
             <?php if (DeviceDetector::$isAndroidDevice) { ?>
                 <div class='android'>
 
@@ -30,13 +30,13 @@
 
                 <?php
                     $androidAppsAvailable = 0;
-                    foreach ($apps->applications as $i => $app) : 
+                    foreach ($apps->applications as $i => $app) :
                         if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) {
                             $androidAppsAvailable++;
                         }
                     endforeach;
-                    
-                    if ($androidAppsAvailable > 1) { 
+
+                    if ($androidAppsAvailable > 1) {
                 ?>
                     <p class="bordertop"></p>
                     <div class="grid">
@@ -75,7 +75,7 @@
                     <p><br/></p>
                 <?php } ?>
                 <?php
-                    foreach ($apps->applications as $i => $app) : 
+                    foreach ($apps->applications as $i => $app) :
                         if ($app[AppUpdater::INDEX_PLATFORM] != AppUpdater::APP_PLATFORM_ANDROID)
                             continue;
                 ?>
@@ -126,13 +126,13 @@
                     <p>If installation of an application fails, please install the provisioning profile. After you install the provisioning profile, try to install the application again. If it still fails, your device might not have been approved yet.</p>
                 <?php
                     $iOSAppsAvailable = 0;
-                    foreach ($apps->applications as $i => $app) : 
+                    foreach ($apps->applications as $i => $app) :
                         if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) {
                             $iOSAppsAvailable++;
                         }
                     endforeach;
 
-                    if ($iOSAppsAvailable > 1) { 
+                    if ($iOSAppsAvailable > 1) {
                 ?>
                     <p class="bordertop"></p>
                     <div class="grid">
@@ -171,7 +171,7 @@
                     <p><br/></p>
                 <?php } ?>
                 <?php
-                    foreach ($apps->applications as $i => $app) : 
+                    foreach ($apps->applications as $i => $app) :
                         if ($app[AppUpdater::INDEX_PLATFORM] != AppUpdater::APP_PLATFORM_IOS)
                             continue;
                 ?>
@@ -198,7 +198,7 @@
                     ?>
                         </p>
 	                    <div style='clear:both;'></div>
-                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>                    
+                        <?php if (isset($app[AppUpdater::INDEX_PROFILE]) && $app[AppUpdater::INDEX_PROFILE]) { ?>
                         <a class="button" href="<?php echo $b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] ?>?format=mobileprovision">Install Profile</a>
                     <?php } ?>
                         <a class="button" href="itms-services://?action=download-manifest&amp;url=<?php echo urlencode($b . 'api/2/apps/' . $app[AppUpdater::INDEX_DIR] . "?format=plist") ?>">Install Application</a>
@@ -224,7 +224,7 @@
                     <br/>
                     <p class="bordertop"><br/></p>
 
-                <?php 
+                <?php
                     $column= 0;
                     foreach ($apps->applications as $i => $app) :
                         if ($app[AppUpdater::INDEX_PLATFORM] != AppUpdater::APP_PLATFORM_IOS)
@@ -268,7 +268,7 @@
 
                     </div>
 
-                <?php 
+                <?php
                         if ($column == 2) {
                             echo "<div style='clear:both;'><br/><p  class='bordertop'><br/></p></div>";
                             $column = 0;
@@ -292,7 +292,7 @@
                     <br/>
                     <p class="bordertop"><br/></p>
 
-                <?php 
+                <?php
                     $column= 0;
                     foreach ($apps->applications as $i => $app) :
                         $column++;
@@ -303,6 +303,11 @@
                     <?php } ?>
                     </div>
                     <div class="column span-8">
+                        <?php if ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_IOS) : ?>
+                          <img src='../img/apple_mac.png' height="40" width="40">
+                        <?php elseif ($app[AppUpdater::INDEX_PLATFORM] == AppUpdater::APP_PLATFORM_ANDROID) : ?>
+                          <img src='../img/android.png' height="40" width="40">
+                        <?php endif ?>
                         <h2><?php echo $app[AppUpdater::INDEX_APP] ?></h2>
                         <p><b>Version:</b>
                       <?php
@@ -315,7 +320,7 @@
                         if ($app[AppUpdater::INDEX_APPSIZE]) {
                             echo "<b>Size:</b> " . round($app[AppUpdater::INDEX_APPSIZE] / 1024 / 1024, 1) . " MB<br/>";
                         }
-                        echo "<b>Released:</b> " . date('m/d/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
+                        echo "<b>Released:</b> " . date('d/M/Y H:i:s', $app[AppUpdater::INDEX_DATE]);
                       ?>
                         </p>
 
@@ -337,7 +342,7 @@
 
                     </div>
 
-                <?php 
+                <?php
                         if ($column == 2) {
                             echo "<div style='clear:both;'><br/><p  class='bordertop'><br/></p></div>";
                             $column = 0;
