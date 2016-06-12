@@ -556,10 +556,10 @@ class AppUpdater
                     $parsed_plist = parsePlist($plistDocument);
 
                     // now get the application name from the plist
-                    $newApp[self::INDEX_APP]            = $parsed_plist['items'][0]['metadata']['title'];
-                    if (isset($parsed_plist['items'][0]['metadata']['subtitle']) && $parsed_plist['items'][0]['metadata']['subtitle'])
-                        $newApp[self::INDEX_SUBTITLE]   = $parsed_plist['items'][0]['metadata']['subtitle'];
-                    $newApp[self::INDEX_VERSION]        = $parsed_plist['items'][0]['metadata']['bundle-version'];
+                    $newApp[self::INDEX_APP]            = $parsed_plist['title'];
+                    if (isset($parsed_plist['subtitle']) && $parsed_plist['subtitle'])
+                        $newApp[self::INDEX_SUBTITLE]   = $parsed_plist['subtitle'];
+                    $newApp[self::INDEX_VERSION]        = $parsed_plist['bundle-version'];
                     $newApp[self::INDEX_DATE]           = filectime($ipa);
                     $newApp[self::INDEX_APPSIZE]        = filesize($ipa);
                     
